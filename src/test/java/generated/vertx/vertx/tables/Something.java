@@ -7,16 +7,24 @@ package generated.vertx.vertx.tables;
 import generated.vertx.vertx.Keys;
 import generated.vertx.vertx.Vertx;
 import generated.vertx.vertx.tables.records.SomethingRecord;
+
 import io.github.jklingsporn.vertx.impl.JsonArrayConverter;
 import io.github.jklingsporn.vertx.impl.JsonObjectConverter;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
-import org.jooq.*;
-import org.jooq.impl.TableImpl;
 
-import javax.annotation.Generated;
 import java.util.Arrays;
 import java.util.List;
+
+import javax.annotation.Generated;
+
+import org.jooq.Field;
+import org.jooq.Identity;
+import org.jooq.Schema;
+import org.jooq.Table;
+import org.jooq.TableField;
+import org.jooq.UniqueKey;
+import org.jooq.impl.TableImpl;
 
 
 /**

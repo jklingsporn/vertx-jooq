@@ -4,6 +4,6 @@ Currently, only Java and only the default 'callbackstyle' with `io.vertx.core.Ha
 See the [VertxGeneratorTest](https://github.com/jklingsporn/vertx-jooq/blob/master/src/test/java/io/github/jklingsporn/vertx/impl/VertxGeneratorTest.java)
 of how to setup the generator.
 
-In addition to the `VertxGenerator`, there is also a generator with Guice support. If you're using the `VertxGuiceGenerator`,
+In addition to the `VertxGenerator`, there is also a generator with [Guice](https://github.com/google/guice) support. If you're using the `VertxGuiceGenerator`,
 the `setConfiguration(org.jooq.Configuration)` and `setVertx(io.core.Vertx)` methods get `@javax.inject.Inject` annotations added
-and a guice Module gets created which binds all created VertxDAOs to their implementation.
+and a Guice `Module` gets created which binds all created VertxDAOs to their implementation.

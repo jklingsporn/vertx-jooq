@@ -6,11 +6,12 @@ package generated.vertx.vertx;
 
 import generated.vertx.vertx.tables.Something;
 import generated.vertx.vertx.tables.records.SomethingRecord;
+
+import javax.annotation.Generated;
+
 import org.jooq.Identity;
 import org.jooq.UniqueKey;
 import org.jooq.impl.AbstractKeys;
-
-import javax.annotation.Generated;
 
 
 /**
