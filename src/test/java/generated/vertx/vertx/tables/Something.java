@@ -7,24 +7,16 @@ package generated.vertx.vertx.tables;
 import generated.vertx.vertx.Keys;
 import generated.vertx.vertx.Vertx;
 import generated.vertx.vertx.tables.records.SomethingRecord;
-
 import io.github.jklingsporn.vertx.impl.JsonArrayConverter;
 import io.github.jklingsporn.vertx.impl.JsonObjectConverter;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
-
-import java.util.Arrays;
-import java.util.List;
+import org.jooq.*;
+import org.jooq.impl.TableImpl;
 
 import javax.annotation.Generated;
-
-import org.jooq.Field;
-import org.jooq.Identity;
-import org.jooq.Schema;
-import org.jooq.Table;
-import org.jooq.TableField;
-import org.jooq.UniqueKey;
-import org.jooq.impl.TableImpl;
+import java.util.Arrays;
+import java.util.List;
 
 
 /**
@@ -40,7 +32,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Something extends TableImpl<SomethingRecord> {
 
-    private static final long serialVersionUID = -1189631974;
+    private static final long serialVersionUID = 1993923274;
 
     /**
      * The reference instance of <code>VERTX.SOMETHING</code>
@@ -143,7 +135,7 @@ public class Something extends TableImpl<SomethingRecord> {
      */
     @Override
     public UniqueKey<SomethingRecord> getPrimaryKey() {
-        return Keys.SYS_PK_10092;
+        return Keys.SYS_PK_10100;
     }
 
     /**
@@ -151,7 +143,7 @@ public class Something extends TableImpl<SomethingRecord> {
      */
     @Override
     public List<UniqueKey<SomethingRecord>> getKeys() {
-        return Arrays.<UniqueKey<SomethingRecord>>asList(Keys.SYS_PK_10092);
+        return Arrays.<UniqueKey<SomethingRecord>>asList(Keys.SYS_PK_10100);
     }
 
     /**

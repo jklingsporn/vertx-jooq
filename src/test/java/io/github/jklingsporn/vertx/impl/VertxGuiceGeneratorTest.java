@@ -14,7 +14,7 @@ import java.util.Arrays;
  */
 public class VertxGuiceGeneratorTest {
 
-    private static final String TARGET_FOLDER = System.getProperty("user.dir") + "/vertx-jooq/src/test/java";
+    private static final String TARGET_FOLDER = System.getProperty("user.dir") + "/src/test/java";
 
     @BeforeClass
     public static void createTestSchema() throws SQLException {

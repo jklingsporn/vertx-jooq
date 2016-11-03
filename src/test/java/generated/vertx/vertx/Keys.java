@@ -6,12 +6,11 @@ package generated.vertx.vertx;
 
 import generated.vertx.vertx.tables.Something;
 import generated.vertx.vertx.tables.records.SomethingRecord;
-
-import javax.annotation.Generated;
-
 import org.jooq.Identity;
 import org.jooq.UniqueKey;
 import org.jooq.impl.AbstractKeys;
+
+import javax.annotation.Generated;
 
 
 /**
@@ -38,7 +37,7 @@ public class Keys {
     // UNIQUE and PRIMARY KEY definitions
     // -------------------------------------------------------------------------
 
-    public static final UniqueKey<SomethingRecord> SYS_PK_10092 = UniqueKeys0.SYS_PK_10092;
+    public static final UniqueKey<SomethingRecord> SYS_PK_10100 = UniqueKeys0.SYS_PK_10100;
 
     // -------------------------------------------------------------------------
     // FOREIGN KEY definitions
@@ -54,6 +53,6 @@ public class Keys {
     }
 
     private static class UniqueKeys0 extends AbstractKeys {
-        public static final UniqueKey<SomethingRecord> SYS_PK_10092 = createUniqueKey(Something.SOMETHING, "SYS_PK_10092", Something.SOMETHING.SOMEID);
+        public static final UniqueKey<SomethingRecord> SYS_PK_10100 = createUniqueKey(Something.SOMETHING, "SYS_PK_10100", Something.SOMETHING.SOMEID);
     }
 }

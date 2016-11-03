@@ -14,7 +14,7 @@ import java.util.Arrays;
  */
 public class VertxGeneratorTest {
 
-    private static final String TARGET_FOLDER = System.getProperty("user.dir") + "/vertx-jooq/src/test/java";
+    private static final String TARGET_FOLDER = System.getProperty("user.dir") + "/src/test/java";
 
     @BeforeClass
     public static void createTestSchema() throws SQLException {
@@ -26,7 +26,7 @@ public class VertxGeneratorTest {
 //        ForcedType boolType = new ForcedType();
 //        boolType.setName("BOOLEAN");
 //        boolType.setTypes("(?:TINYINT)");
-
+        System.out.println(TARGET_FOLDER);
         ForcedType jsonObjectType = new ForcedType();
         jsonObjectType.setUserType("io.vertx.core.json.JsonObject");
         jsonObjectType.setConverter("io.github.jklingsporn.vertx.impl.JsonObjectConverter");
