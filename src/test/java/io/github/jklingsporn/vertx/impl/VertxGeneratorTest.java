@@ -20,7 +20,7 @@ public class VertxGeneratorTest {
 
     @Test
     public void generateCodeShouldSucceed() throws Exception {
-        Configuration configuration = TestTool.createGeneratorConfig(VertxGenerator.class.getName());
+        Configuration configuration = TestTool.createGeneratorConfig(VertxGenerator.class.getName(),"vertx");
         try {
             GenerationTool.generate(configuration);
             Assert.assertTrue(true);

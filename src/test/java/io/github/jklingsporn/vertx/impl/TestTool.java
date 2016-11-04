@@ -37,7 +37,7 @@ class TestTool {
                 ");").execute();
     }
 
-    static Configuration createGeneratorConfig(String generatorName){
+    static Configuration createGeneratorConfig(String generatorName, String packageName){
         /*
          * We convert the field someJsonObject to a JsonObject by using the JsonObjectConverter
          */
@@ -68,7 +68,7 @@ class TestTool {
         databaseConfig.setForcedTypes(Arrays.asList(jsonArrayType, jsonObjectType));
 
         Target targetConfig = new Target();
-        targetConfig.setPackageName("generated.guice");
+        targetConfig.setPackageName("generated."+packageName);
         targetConfig.setDirectory(TARGET_FOLDER);
 
         Generate generateConfig = new Generate();

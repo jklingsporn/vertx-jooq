@@ -21,7 +21,7 @@ public class VertxGuiceGeneratorTest {
     @Test
     public void generateCodeShouldSucceed() throws Exception {
 
-        Configuration configuration = TestTool.createGeneratorConfig(VertxGuiceGenerator.class.getName());
+        Configuration configuration = TestTool.createGeneratorConfig(VertxGuiceGenerator.class.getName(),"guice");
 
         try {
             GenerationTool.generate(configuration);
