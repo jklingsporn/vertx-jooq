@@ -5,6 +5,7 @@ package generated.vertx.vertx;
 
 
 import generated.vertx.vertx.tables.Something;
+import generated.vertx.vertx.tables.Somethingcomposite;
 
 import javax.annotation.Generated;
 
@@ -26,4 +27,9 @@ public class Tables {
      * The table <code>VERTX.SOMETHING</code>.
      */
     public static final Something SOMETHING = generated.vertx.vertx.tables.Something.SOMETHING;
+
+    /**
+     * The table <code>VERTX.SOMETHINGCOMPOSITE</code>.
+     */
+    public static final Somethingcomposite SOMETHINGCOMPOSITE = generated.vertx.vertx.tables.Somethingcomposite.SOMETHINGCOMPOSITE;
 }

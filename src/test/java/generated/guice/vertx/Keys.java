@@ -5,7 +5,9 @@ package generated.guice.vertx;
 
 
 import generated.guice.vertx.tables.Something;
+import generated.guice.vertx.tables.Somethingcomposite;
 import generated.guice.vertx.tables.records.SomethingRecord;
+import generated.guice.vertx.tables.records.SomethingcompositeRecord;
 
 import javax.annotation.Generated;
 
@@ -38,7 +40,8 @@ public class Keys {
     // UNIQUE and PRIMARY KEY definitions
     // -------------------------------------------------------------------------
 
-    public static final UniqueKey<SomethingRecord> SYS_PK_10129 = UniqueKeys0.SYS_PK_10129;
+    public static final UniqueKey<SomethingRecord> SYS_PK_10092 = UniqueKeys0.SYS_PK_10092;
+    public static final UniqueKey<SomethingcompositeRecord> SYS_PK_10094 = UniqueKeys0.SYS_PK_10094;
 
     // -------------------------------------------------------------------------
     // FOREIGN KEY definitions
@@ -54,6 +57,7 @@ public class Keys {
     }
 
     private static class UniqueKeys0 extends AbstractKeys {
-        public static final UniqueKey<SomethingRecord> SYS_PK_10129 = createUniqueKey(Something.SOMETHING, "SYS_PK_10129", Something.SOMETHING.SOMEID);
+        public static final UniqueKey<SomethingRecord> SYS_PK_10092 = createUniqueKey(Something.SOMETHING, "SYS_PK_10092", Something.SOMETHING.SOMEID);
+        public static final UniqueKey<SomethingcompositeRecord> SYS_PK_10094 = createUniqueKey(Somethingcomposite.SOMETHINGCOMPOSITE, "SYS_PK_10094", Somethingcomposite.SOMETHINGCOMPOSITE.SOMEID, Somethingcomposite.SOMETHINGCOMPOSITE.SOMESECONDID);
     }
 }

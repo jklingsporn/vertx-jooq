@@ -3,16 +3,16 @@ package io.github.jklingsporn.vertx;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
-import org.jooq.DAO;
-import org.jooq.DSLContext;
-import org.jooq.Field;
-import org.jooq.UpdatableRecord;
+import org.jooq.*;
 import org.jooq.impl.DSL;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
+
+import static org.jooq.impl.DSL.row;
 
 /**
  * Created by jensklingsporn on 21.10.16.
@@ -32,7 +32,7 @@ public interface VertxDAO<R extends UpdatableRecord<R>, P, T> extends DAO<R, P, 
      * @param <X>
      */
     default <X> void executeAsync(Function<DSLContext,X> function, Handler<AsyncResult<X>> resultHandler){
-        vertx().executeBlocking(h->{X res = function.apply(DSL.using(configuration())); h.complete(res);},resultHandler);
+        vertx().executeBlocking(h->h.complete(function.apply(DSL.using(configuration()))),resultHandler);
     }
 
     /**
@@ -213,5 +213,79 @@ public interface VertxDAO<R extends UpdatableRecord<R>, P, T> extends DAO<R, P, 
      */
     default <Z> void fetchAsync(Field<Z> field, Collection<Z> values, Handler<AsyncResult<List<P>>> resultHandler){
         executeAsync(dslContext -> dslContext.selectFrom(getTable()).where(field.in(values)).fetch().map(mapper()),resultHandler);
+    }
+
+    /**
+     * Performs an async <code>DELETE</code> statement for a given key and passes the number of affected rows
+     * to the <code>resultHandler</code>.
+     * @param id The key to be deleted
+     * @param resultHandler the resultHandler which succeeds when the blocking method of this type succeeds or fails
+     *                      with an <code>DataAccessException</code> if the blocking method of this type throws an exception
+     * @see #updateAsync(Object, Handler)
+     */
+    @SuppressWarnings("unchecked")
+    default void deleteExecAsync(T id, Handler<AsyncResult<Integer>> resultHandler){
+        UniqueKey<?> uk = getTable().getPrimaryKey();
+        Objects.requireNonNull(uk,()->"No primary key");
+        /**
+         * Copied from jOOQs DAOImpl#equal-method
+         */
+        TableField<? extends Record, ?>[] pk = uk.getFieldsArray();
+        Condition condition;
+        if (pk.length == 1) {
+            condition = ((Field<Object>) pk[0]).equal(pk[0].getDataType().convert(id));
+        }
+        else {
+            condition = row(pk).equal((Record) id);
+        }
+        executeAsync(dslContext -> dslContext.deleteFrom(getTable()).where(condition).execute(),resultHandler);
+    }
+
+    /**
+     * Performs an async <code>UPDATE</code> statement for a given POJO and passes the number of affected rows
+     * to the <code>resultHandler</code>.
+     * @param object The POJO to be updated
+     * @param resultHandler the resultHandler which succeeds when the blocking method of this type succeeds or fails
+     *                      with an <code>DataAccessException</code> if the blocking method of this type throws an exception
+     * @see #updateAsync(Object, Handler)
+     */
+    default void updateExecAsync(P object, Handler<AsyncResult<Integer>> resultHandler){
+        executeAsync(dslContext -> dslContext.executeUpdate(dslContext.newRecord(getTable(), object)),resultHandler);
+    }
+
+    /**
+     * Performs an async <code>INSERT</code> statement for a given POJO and passes the number of affected rows
+     * to the <code>resultHandler</code>.
+     * @param object The POJO to be inserted
+     * @param resultHandler the resultHandler which succeeds when the blocking method of this type succeeds or fails
+     *                      with an <code>DataAccessException</code> if the blocking method of this type throws an exception
+     * @see #insertAsync(Object, Handler)
+     */
+    default void insertExecAsync(P object, Handler<AsyncResult<Integer>> resultHandler){
+        executeAsync(dslContext -> dslContext.executeInsert(dslContext.newRecord(getTable(), object)),resultHandler);
+    }
+
+    /**
+     * Performs an async <code>INSERT</code> statement for a given POJO and passes the primary key
+     * to the <code>resultHandler</code>. When the value could not be inserted <code>null</code> is returned.
+     * @param object The POJO to be inserted
+     * @param resultHandler the resultHandler which succeeds when the blocking method of this type succeeds or fails
+     *                      with an <code>DataAccessException</code> if the blocking method of this type throws an exception
+     * @see #insertAsync(Object, Handler)
+     */
+    @SuppressWarnings("unchecked")
+    default void insertReturningPrimaryAsync(P object, Handler<AsyncResult<T>> resultHandler){
+        UniqueKey<?> key = getTable().getPrimaryKey();
+        //usually key shouldn't be null because DAO generation is omitted in such cases
+        Objects.requireNonNull(key,()->"No primary key");
+        executeAsync(dslContext -> {
+            R record = dslContext.insertInto(getTable()).set(dslContext.newRecord(getTable(), object)).returning(key.getFields()).fetchOne();
+            Objects.requireNonNull(record, () -> "Failed inserting record or no key");
+            Record key1 = record.key();
+            if(key1.size() == 1){
+                return ((Record1<T>)key1).value1();
+            }
+            return (T) key1;
+        }, resultHandler);
     }
 }

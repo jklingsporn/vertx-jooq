@@ -27,7 +27,7 @@ import java.util.function.Consumer;
 /**
  * Created by jensklingsporn on 02.11.16.
  */
-public class VertxDaoTest {
+public class VertxSomethingDaoTest {
 
     private static SomethingDao dao;
 
@@ -46,7 +46,7 @@ public class VertxDaoTest {
     public void asyncCRUDShouldSucceed() throws InterruptedException {
         CountDownLatch latch = new CountDownLatch(1);
         dao.insertAsync(createSomething(),awaitLatchHandler(latch));
-        latch.await(3, TimeUnit.SECONDS);
+        await(latch);
         final CountDownLatch latch2 = new CountDownLatch(1);
         dao.executeAsync(dslContext -> dslContext.selectFrom(Tables.SOMETHING).orderBy(Tables.SOMETHING.SOMEID.desc()).limit(1).fetchOne() ,
             consumeOrFailHandler(somethingRecord->
@@ -55,14 +55,14 @@ public class VertxDaoTest {
                                 consumeOrFailHandler(updateHandler -> dao.deleteByIdAsync(somethingRecord.getSomeid(), awaitLatchHandler(latch2)))
                         )))
         ));
-        latch2.await(3, TimeUnit.SECONDS);
+        await(latch2);
     }
 
     @Test
     public void asyncCRUDMultipleShouldSucceed() throws InterruptedException {
         CountDownLatch latch = new CountDownLatch(1);
         dao.insertAsync(Arrays.asList(createSomething(), createSomething()),awaitLatchHandler(latch));
-        latch.await(3, TimeUnit.SECONDS);
+        await(latch);
         final CountDownLatch latch2 = new CountDownLatch(1);
         dao.executeAsync(dslContext -> dslContext.selectFrom(Tables.SOMETHING).orderBy(Tables.SOMETHING.SOMEID.desc()).limit(2).fetch() ,
                 consumeOrFailHandler(somethingRecord-> {
@@ -74,9 +74,58 @@ public class VertxDaoTest {
                                                 consumeOrFailHandler(updateHandler -> dao.deleteByIdAsync(ids, awaitLatchHandler(latch2)))
                                         )));}
                 ));
-        latch2.await(3,TimeUnit.SECONDS);
-
+        await(latch2);
     }
+
+    @Test
+    public void asyncCRUDExecShouldSucceed() throws InterruptedException {
+        CountDownLatch latch = new CountDownLatch(1);
+        dao.insertReturningPrimaryAsync(createSomething(), consumeOrFailHandler(key -> {
+            dao.fetchOneBySomeidAsync(key, consumeOrFailHandler(something -> {
+                dao.updateExecAsync(createSomething().setSomeid(key),
+                        consumeOrFailHandler(updatedRows -> {
+                            Assert.assertEquals(1l, updatedRows.longValue());
+                            dao.deleteExecAsync(key, deletedRows -> {
+                                if (deletedRows.failed()) {
+                                    Assert.fail(deletedRows.cause().getMessage());
+                                } else {
+                                    Assert.assertEquals(1l, deletedRows.result().longValue());
+                                }
+                                latch.countDown();
+                            });
+                        })
+                );
+            }));
+        }));
+        await(latch);
+    }
+
+    @Test
+    public void insertExecShouldSucceed() throws InterruptedException {
+        CountDownLatch latch = new CountDownLatch(1);
+        dao.insertExecAsync(createSomething(), consumeOrFailHandler(insertedRows -> {
+            Assert.assertEquals(1l, insertedRows.longValue());
+            dao.executeAsync(dslContext -> dslContext.selectFrom(Tables.SOMETHING).orderBy(Tables.SOMETHING.SOMEID.desc()).limit(1).fetchOne(), consumeOrFailHandler(something -> {
+                    dao.deleteExecAsync(something.getSomeid(), deletedRows -> {
+                        if (deletedRows.failed()) {
+                            Assert.fail(deletedRows.cause().getMessage());
+                        } else {
+                            Assert.assertEquals(1l, deletedRows.result().longValue());
+                        }
+                        latch.countDown();
+                    });
+                })
+            );
+        }));
+        await(latch);
+    }
+
+    private void await(CountDownLatch latch) throws InterruptedException {
+        if(!latch.await(3, TimeUnit.SECONDS)){
+            Assert.fail("latch not triggered");
+        }
+    }
+
 
     private <T> Handler<AsyncResult<T>> awaitLatchHandler(final CountDownLatch latch){
         return h->{

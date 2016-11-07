@@ -7,16 +7,24 @@ package generated.guice.vertx.tables;
 import generated.guice.vertx.Keys;
 import generated.guice.vertx.Vertx;
 import generated.guice.vertx.tables.records.SomethingRecord;
+
 import io.github.jklingsporn.vertx.impl.JsonArrayConverter;
 import io.github.jklingsporn.vertx.impl.JsonObjectConverter;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
-import org.jooq.*;
-import org.jooq.impl.TableImpl;
 
-import javax.annotation.Generated;
 import java.util.Arrays;
 import java.util.List;
+
+import javax.annotation.Generated;
+
+import org.jooq.Field;
+import org.jooq.Identity;
+import org.jooq.Schema;
+import org.jooq.Table;
+import org.jooq.TableField;
+import org.jooq.UniqueKey;
+import org.jooq.impl.TableImpl;
 
 
 /**
@@ -32,7 +40,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Something extends TableImpl<SomethingRecord> {
 
-    private static final long serialVersionUID = 1896170728;
+    private static final long serialVersionUID = 451904966;
 
     /**
      * The reference instance of <code>VERTX.SOMETHING</code>
@@ -135,7 +143,7 @@ public class Something extends TableImpl<SomethingRecord> {
      */
     @Override
     public UniqueKey<SomethingRecord> getPrimaryKey() {
-        return Keys.SYS_PK_10129;
+        return Keys.SYS_PK_10092;
     }
 
     /**
@@ -143,7 +151,7 @@ public class Something extends TableImpl<SomethingRecord> {
      */
     @Override
     public List<UniqueKey<SomethingRecord>> getKeys() {
-        return Arrays.<UniqueKey<SomethingRecord>>asList(Keys.SYS_PK_10129);
+        return Arrays.<UniqueKey<SomethingRecord>>asList(Keys.SYS_PK_10092);
     }
 
     /**

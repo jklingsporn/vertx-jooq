@@ -6,6 +6,7 @@ package generated.guice.vertx;
 
 import generated.guice.DefaultCatalog;
 import generated.guice.vertx.tables.Something;
+import generated.guice.vertx.tables.Somethingcomposite;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,7 +32,7 @@ import org.jooq.impl.SchemaImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Vertx extends SchemaImpl {
 
-    private static final long serialVersionUID = 888002690;
+    private static final long serialVersionUID = -1355443724;
 
     /**
      * The reference instance of <code>VERTX</code>
@@ -42,6 +43,11 @@ public class Vertx extends SchemaImpl {
      * The table <code>VERTX.SOMETHING</code>.
      */
     public final Something SOMETHING = generated.guice.vertx.tables.Something.SOMETHING;
+
+    /**
+     * The table <code>VERTX.SOMETHINGCOMPOSITE</code>.
+     */
+    public final Somethingcomposite SOMETHINGCOMPOSITE = generated.guice.vertx.tables.Somethingcomposite.SOMETHINGCOMPOSITE;
 
     /**
      * No further instances allowed
@@ -68,6 +74,7 @@ public class Vertx extends SchemaImpl {
 
     private final List<Table<?>> getTables0() {
         return Arrays.<Table<?>>asList(
-            Something.SOMETHING);
+            Something.SOMETHING,
+            Somethingcomposite.SOMETHINGCOMPOSITE);
     }
 }

@@ -35,6 +35,13 @@ class TestTool {
                 "  someJsonObject varchar(45) ,\n" +
                 "  someJsonArray varchar(45) \n" +
                 ");").execute();
+        connection.prepareStatement("DROP TABLE IF EXISTS somethingComposite");
+        connection.prepareStatement("\n" +
+                "CREATE TABLE somethingComposite (\n" +
+                "  someId INTEGER,\n" +
+                "  someSecondId INTEGER,\n" +
+                "  someJsonObject varchar(45), PRIMARY KEY (someId,someSecondId)\n" +
+                ");").execute();
     }
 
     static Configuration createGeneratorConfig(String generatorName, String packageName){
@@ -64,7 +71,7 @@ class TestTool {
         databaseConfig.setName(HSQLDBDatabase.class.getName());
         databaseConfig.setInputSchema("");
         databaseConfig.setOutputSchema("");
-        databaseConfig.setIncludes("something");
+        databaseConfig.setIncludes("something|somethingComposite");
         databaseConfig.setForcedTypes(Arrays.asList(jsonArrayType, jsonObjectType));
 
         Target targetConfig = new Target();
