@@ -1,46 +1,21 @@
 package io.github.jklingsporn.vertx.impl;
 
 import generated.vertx.vertx.Tables;
-import generated.vertx.vertx.tables.daos.SomethingDao;
 import generated.vertx.vertx.tables.pojos.Something;
-import io.vertx.core.AsyncResult;
-import io.vertx.core.Handler;
-import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
-import org.jooq.Configuration;
-import org.jooq.SQLDialect;
-import org.jooq.impl.DefaultConfiguration;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
 
 /**
  * Created by jensklingsporn on 02.11.16.
  */
-public class VertxSomethingDaoTest {
-
-    private static SomethingDao dao;
-
-    @BeforeClass
-    public static void beforeClass() throws SQLException {
-        TestTool.setupDB();
-        Configuration configuration = new DefaultConfiguration();
-        configuration.set(SQLDialect.HSQLDB);
-        configuration.set(DriverManager.getConnection("jdbc:hsqldb:mem:test", "test", ""));
-
-        dao = new SomethingDao(configuration);
-        dao.setVertx(Vertx.vertx());
-    }
+public class VertxSomethingDaoTest extends VertxDaoTestBase{
 
     @Test
     public void asyncCRUDShouldSucceed() throws InterruptedException {
@@ -119,35 +94,6 @@ public class VertxSomethingDaoTest {
         }));
         await(latch);
     }
-
-    private void await(CountDownLatch latch) throws InterruptedException {
-        if(!latch.await(3, TimeUnit.SECONDS)){
-            Assert.fail("latch not triggered");
-        }
-    }
-
-
-    private <T> Handler<AsyncResult<T>> awaitLatchHandler(final CountDownLatch latch){
-        return h->{
-            if(h.failed()){
-                Assert.fail(h.cause().getMessage());
-            }
-            latch.countDown();
-        };
-    }
-
-    private <T> Handler<AsyncResult<T>> consumeOrFailHandler(Consumer<T> consumer){
-        return h->{
-            if(h.succeeded()){
-                consumer.accept(h.result());
-            }else{
-                Assert.fail(h.cause().getMessage());
-            }
-        };
-
-    }
-
-
 
     private Something createSomething(){
         Random random = new Random();
