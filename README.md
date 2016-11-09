@@ -9,9 +9,10 @@ the `setConfiguration(org.jooq.Configuration)` and `setVertx(io.core.Vertx)` met
 and a Guice `Module` gets created which binds all created VertxDAOs to their implementation.
 
 # maven
-`
+```
 <dependency>
   <groupId>io.github.jklingsporn</groupId>
   <artifactId>vertx-jooq</artifactId>
   <version>1.0.0</version>
-</dependency>`
+</dependency>
+```
