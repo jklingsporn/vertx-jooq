@@ -17,6 +17,22 @@
     <groupId>io.github.jklingsporn</groupId>
     <version>1.0.0</version>
     <artifactId>vertx-jooq</artifactId>
+    <name>${project.groupId}:${project.artifactId}</name>
+    <description>A jOOQ-CodeGenerator to create vertxified DAOs and POJOs</description>
+    <url>https://github.com/jklingsporn/vertx-jooq</url>
+    <developers>
+        <developer>
+            <name>Jens Klingpsorn</name>
+            <email>jens.klingsporn@gmail.com</email>
+            <organizationUrl>https://github.com/jklingsporn</organizationUrl>
+        </developer>
+    </developers>
+    <licenses>
+        <license>
+            <name>MIT License</name>
+            <url>https://raw.githubusercontent.com/jklingsporn/vertx-jooq/master/LICENSE</url>
+        </license>
+    </licenses>
     <dependencies>
         <dependency>
             <groupId>org.jooq</groupId>
@@ -58,5 +74,66 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
+    <profiles>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <keyname>${gpg.keyname}</keyname>
+                            <passphraseServerId>${gpg.keyname}</passphraseServerId>
+                            <executable>gpg2</executable>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+    <scm>
+        <connection>scm:git:git://github.com/jklingsporn/vertx-jooq.git</connection>
+        <developerConnection>scm:git:git@github.com/jklingsporn/vertx-jooq.git</developerConnection>
+        <url>https://github.com/jklingsporn/vertx-jooq</url>
+    </scm>
+    <distributionManagement>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+        </repository>
+    </distributionManagement>
 </project>
