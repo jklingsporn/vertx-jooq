@@ -168,7 +168,7 @@ If you are new to jOOQ, I recommend to read the awesome [jOOQ documentation](htt
 </project>
 ```
 # programmatic configuration of the code generator
-See the [VertxGeneratorTest](https://github.com/jklingsporn/vertx-jooq/blob/master/src/test/java/io/github/jklingsporn/vertx/impl/VertxGeneratorTest.java)
+See the [TestTool](https://github.com/jklingsporn/vertx-jooq/blob/master/src/test/java/io/github/jklingsporn/vertx/impl/TestTool.java)
 of how to setup the generator programmatically.
 
 # known issues
