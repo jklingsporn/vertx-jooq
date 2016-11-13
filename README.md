@@ -1,12 +1,54 @@
 # vertx-jooq
-A [jOOQ](http://www.jooq.org/)-CodeGenerator to create [vertx](http://vertx.io/)-ified DAOs and POJOs that can convert from/to a `io.vertx.core.JsonObject`.
-Currently, only Java and only the default 'callbackstyle' with `io.vertx.core.Handler<AsyncResult<T>>` is supported.
-See the [VertxGeneratorTest](https://github.com/jklingsporn/vertx-jooq/blob/master/src/test/java/io/github/jklingsporn/vertx/impl/VertxGeneratorTest.java)
-of how to setup the generator.
+A [jOOQ](http://www.jooq.org/)-CodeGenerator to create [vertx](http://vertx.io/)-ified DAOs and POJOs! Perform all CRUD-operations asynchronously and convert your POJOs
+from/into a `io.vertx.core.JsonObject`.
 
-In addition to the `VertxGenerator`, there is also a generator with [Guice](https://github.com/google/guice) support. If you're using the `VertxGuiceGenerator`,
+#### example
+```
+//Setup your jOOQ configuration
+Configuration configuration = ...
+
+//setup Vertx
+Vertx vertx = Vertx.vertx();
+
+//create a DAO
+SomethingDao somethingDao = new SomethingDao(configuration);
+somethingDao.setVertx(vertx);
+
+//fetch something with ID 123...
+somethingDao.findByIdAsync(123,fetchHandler->{
+    if(fetchHandler.succeeded()){
+        //...convert it into a JsonObject and send it over the eventbus
+        vertx.eventBus().send("sendSomething",fetchHandler.result().toJson());
+    }
+});
+
+//maybe consume it in another verticle
+vertx.eventBus().<JsonObject>consumer("sendSomething", jsonEvent->{
+    JsonObject message = jsonEvent.body();
+    //Convert it back into a POJO...
+    Something something = new Something(message);
+    //... change some values
+    something.setSomeregularnumber(456);
+    //... and update it into the DB
+    somethingDao.updateAsync(something, dbEvent-> {
+        if (dbEvent.succeeded()) {
+            //omg it was updated
+        }
+    });
+    //or do you prefer writing your own typesafe SQL?
+    somethingDao.executeAsync(dslContext ->
+            dslContext.update(Tables.SOMETHING).set(Tables.SOMETHING.SOMEREGULARNUMBER,456).where(Tables.SOMETHING.SOMEID.eq(something.getSomeid())).execute()
+            , dbEvent ->{
+        if(dbEvent.succeeded()){
+            //omg it was updated
+        }
+    });
+});
+```
+
+Do you use dependency injection? In addition to the `VertxGenerator`, there is also a generator with [Guice](https://github.com/google/guice) support. If you're using the `VertxGuiceGenerator`,
 the `setConfiguration(org.jooq.Configuration)` and `setVertx(io.core.Vertx)` methods get `@javax.inject.Inject` annotations added
-and a Guice `Module` gets created which binds all created VertxDAOs to their implementation.
+and a Guice `Module` is created which binds all created VertxDAOs to their implementation. It plays nicely together with the [vertx-guice](https://github.com/ef-labs/vertx-guice) module that enables dependency injection for vertx.
 
 # maven
 ```
@@ -16,7 +58,6 @@ and a Guice `Module` gets created which binds all created VertxDAOs to their imp
   <version>1.0.0</version>
 </dependency>
 ```
-
 # maven code generator configuration example for mysql
 The following code-snippet can be copy-pasted into your pom.xml to generate code from your MySQL database schema.
 
@@ -126,3 +167,11 @@ If you are new to jOOQ, I recommend to read the awesome [jOOQ documentation](htt
   </build>
 </project>
 ```
+# programmatic configuration of the code generator
+See the [VertxGeneratorTest](https://github.com/jklingsporn/vertx-jooq/blob/master/src/test/java/io/github/jklingsporn/vertx/impl/VertxGeneratorTest.java)
+of how to setup the generator programmatically.
+
+# known issues
+- Currently, only Java and only the default 'callbackstyle' with `io.vertx.core.Handler<AsyncResult<T>>` is supported.
+- The generator will omit datatypes that he does not know, e.g. `java.sql.Timestamp`. To fix this, you can easily subclass the generator, handle these types and generate the code using your generator.
+ See the `handleCustomTypeFromJson` and `handleCustomTypeToJson` methods in the `VertxGenerator`.
