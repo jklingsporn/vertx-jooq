@@ -10,7 +10,7 @@ Configuration configuration = ...
 //setup Vertx
 Vertx vertx = Vertx.vertx();
 
-//create a DAO
+//create a DAO (which is generated for you)
 SomethingDao somethingDao = new SomethingDao(configuration);
 somethingDao.setVertx(vertx);
 
@@ -115,7 +115,7 @@ If you are new to jOOQ, I recommend to read the awesome [jOOQ documentation](htt
 
               <!-- Generator parameters -->
               <generator>
-                  <name>io.github.jklingsporn.vertx.impl.VertxGuiceGenerator</name>
+                  <name>io.github.jklingsporn.vertx.impl.VertxkGenerator</name>
                   <database>
                       <name>org.jooq.util.mysql.MySQLDatabase</name>
                       <includes>.*</includes>
@@ -175,3 +175,4 @@ of how to setup the generator programmatically.
 - Currently, only Java and only the default 'callbackstyle' with `io.vertx.core.Handler<AsyncResult<T>>` is supported.
 - The generator will omit datatypes that he does not know, e.g. `java.sql.Timestamp`. To fix this, you can easily subclass the generator, handle these types and generate the code using your generator.
  See the `handleCustomTypeFromJson` and `handleCustomTypeToJson` methods in the `VertxGenerator`.
+- Since jOOQ is using JDBC under the hood, the non-blocking fashion is achieved by using the `Vertx.executeBlocking` method.
