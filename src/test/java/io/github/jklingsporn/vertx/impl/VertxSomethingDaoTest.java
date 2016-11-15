@@ -4,6 +4,7 @@ import generated.vertx.vertx.Tables;
 import generated.vertx.vertx.tables.pojos.Something;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+import org.jooq.exception.DataAccessException;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -91,6 +92,20 @@ public class VertxSomethingDaoTest extends VertxDaoTestBase{
                     });
                 })
             );
+        }));
+        await(latch);
+    }
+
+    @Test
+    public void insertReturningShouldFailOnDuplicateKey() throws InterruptedException {
+        CountDownLatch latch = new CountDownLatch(1);
+        Something something = createSomething();
+        dao.insertReturningPrimaryAsync(something,consumeOrFailHandler(c->{
+            dao.insertReturningPrimaryAsync(something.setSomeid(c), h -> {
+                Assert.assertTrue(h.failed());
+                Assert.assertEquals(DataAccessException.class,h.cause().getClass());
+                latch.countDown();
+            });
         }));
         await(latch);
     }

@@ -267,11 +267,10 @@ public interface VertxDAO<R extends UpdatableRecord<R>, P, T> extends DAO<R, P, 
 
     /**
      * Performs an async <code>INSERT</code> statement for a given POJO and passes the primary key
-     * to the <code>resultHandler</code>. When the value could not be inserted <code>null</code> is returned.
+     * to the <code>resultHandler</code>. When the value could not be inserted, the <code>resultHandler</code>
+     * will fail.
      * @param object The POJO to be inserted
-     * @param resultHandler the resultHandler which succeeds when the blocking method of this type succeeds or fails
-     *                      with an <code>DataAccessException</code> if the blocking method of this type throws an exception
-     * @see #insertAsync(Object, Handler)
+     * @param resultHandler the resultHandler
      */
     @SuppressWarnings("unchecked")
     default void insertReturningPrimaryAsync(P object, Handler<AsyncResult<T>> resultHandler){
