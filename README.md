@@ -10,7 +10,7 @@ Configuration configuration = ...
 //setup Vertx
 Vertx vertx = Vertx.vertx();
 
-//create a DAO (which is generated for you)
+//instantiate a DAO (which is generated for you)
 SomethingDao somethingDao = new SomethingDao(configuration);
 somethingDao.setVertx(vertx);
 
@@ -49,6 +49,9 @@ vertx.eventBus().<JsonObject>consumer("sendSomething", jsonEvent->{
 Do you use dependency injection? In addition to the `VertxGenerator`, there is also a generator with [Guice](https://github.com/google/guice) support. If you're using the `VertxGuiceGenerator`,
 the `setConfiguration(org.jooq.Configuration)` and `setVertx(io.core.Vertx)` methods get `@javax.inject.Inject` annotations added
 and a Guice `Module` is created which binds all created VertxDAOs to their implementation. It plays nicely together with the [vertx-guice](https://github.com/ef-labs/vertx-guice) module that enables dependency injection for vertx.
+
+#### integration example
+Checkout [vertx-auth-jooq](https://github.com/jklingsporn/vertx-auth-jooq) that uses vertx-jooq and vertx-auth to authorize and authenticate users from your database.
 
 # maven
 ```
