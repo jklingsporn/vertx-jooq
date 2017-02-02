@@ -58,7 +58,7 @@ Checkout [vertx-auth-jooq](https://github.com/jklingsporn/vertx-auth-jooq) that 
 <dependency>
   <groupId>io.github.jklingsporn</groupId>
   <artifactId>vertx-jooq</artifactId>
-  <version>1.0.0</version>
+  <version>1.0.1</version>
 </dependency>
 ```
 # maven code generator configuration example for mysql
