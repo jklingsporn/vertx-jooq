@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <packaging>jar</packaging>
     <properties>
-        <jooq.version>3.8.6</jooq.version>
+        <jooq.version>3.9.1</jooq.version>
         <vertx.version>3.3.3</vertx.version>
         <hsqldb.version>2.3.2</hsqldb.version>
         <junit.version>4.12</junit.version>
