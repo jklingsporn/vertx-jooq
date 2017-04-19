@@ -47,8 +47,8 @@ vertx.eventBus().<JsonObject>consumer("sendSomething", jsonEvent->{
 ```
 
 Do you use dependency injection? In addition to the `VertxGenerator`, there is also a generator with [Guice](https://github.com/google/guice) support. If you're using the `VertxGuiceGenerator`,
-the `setConfiguration(org.jooq.Configuration)` and `setVertx(io.core.Vertx)` methods get `@javax.inject.Inject` annotations added
-and a Guice `Module` is created which binds all created VertxDAOs to their implementation. It plays nicely together with the [vertx-guice](https://github.com/ef-labs/vertx-guice) module that enables dependency injection for vertx.
+the `setConfiguration(org.jooq.Configuration)` and `setVertx(io.core.Vertx)` methods are annotated with `@javax.inject.Inject` and a
+Guice `Module` is created which binds all created VertxDAOs to their implementation. It plays nicely together with the [vertx-guice](https://github.com/ef-labs/vertx-guice) module that enables dependency injection for vertx.
 
 #### integration example
 Checkout [vertx-auth-jooq](https://github.com/jklingsporn/vertx-auth-jooq) that uses vertx-jooq and vertx-auth to authorize and authenticate users from your database.
@@ -69,8 +69,8 @@ should put the generated code into, otherwise it won't run!**
 
 After you replaced all placeholders with valid values, you should be able to run `mvn generate-sources` which creates all POJOs and DAOs into the target directory you specified.
 
-If you are new to jOOQ, I recommend to read the awesome [jOOQ documentation](http://www.jooq.org/doc/3.8/manual/), especially the chapter about
-[code generation](http://www.jooq.org/doc/3.8/manual/code-generation/).
+If you are new to jOOQ, I recommend to read the awesome [jOOQ documentation](http://www.jooq.org/doc/latest/manual/), especially the chapter about
+[code generation](http://www.jooq.org/doc/latest/manual/code-generation/).
 
 ```
 <project>
@@ -100,8 +100,8 @@ If you are new to jOOQ, I recommend to read the awesome [jOOQ documentation](htt
               </dependency>
               <dependency>
                   <groupId>io.github.jklingsporn</groupId>
-                  <artifactId>vertx-jooq</artifactId>
-                  <version>1.0.0</version>
+                  <artifactId>vertx-jooq-classic</artifactId>
+                  <version>2.0.0</version>
               </dependency>
           </dependencies>
 
@@ -118,7 +118,7 @@ If you are new to jOOQ, I recommend to read the awesome [jOOQ documentation](htt
 
               <!-- Generator parameters -->
               <generator>
-                  <name>io.github.jklingsporn.vertx.impl.VertxGenerator</name>
+                  <name>io.github.jklingsporn.vertx.jooq.generate.AbstractVertxGenerator</name>
                   <database>
                       <name>org.jooq.util.mysql.MySQLDatabase</name>
                       <includes>.*</includes>
@@ -134,14 +134,14 @@ If you are new to jOOQ, I recommend to read the awesome [jOOQ documentation](htt
                           <!-- Convert varchar column with name 'someJsonObject' to a io.vertx.core.json.JsonObject-->
                           <forcedType>
                               <userType>io.vertx.core.json.JsonObject</userType>
-                              <converter>io.github.jklingsporn.vertx.impl.JsonObjectConverter</converter>
+                              <converter>io.github.jklingsporn.vertx.jooq.generate.JsonObjectConverter</converter>
                               <expression>someJsonObject</expression>
                               <types>.*</types>
                           </forcedType>
                           <!-- Convert varchar column with name 'someJsonArray' to a io.vertx.core.json.JsonArray-->
                           <forcedType>
                               <userType>io.vertx.core.json.JsonArray</userType>
-                              <converter>io.github.jklingsporn.vertx.impl.JsonArrayConverter</converter>
+                              <converter>io.github.jklingsporn.vertx.jooq.generate.JsonArrayConverter</converter>
                               <expression>someJsonArray</expression>
                               <types>.*</types>
                           </forcedType>
@@ -160,7 +160,7 @@ If you are new to jOOQ, I recommend to read the awesome [jOOQ documentation](htt
 
 
                   <strategy>
-                      <name>io.github.jklingsporn.vertx.impl.VertxGeneratorStrategy</name>
+                      <name>io.github.jklingsporn.vertx.jooq.generate.classic.ClassicGeneratorStrategy</name>
                   </strategy>
               </generator>
 

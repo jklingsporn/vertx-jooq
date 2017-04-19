@@ -3,10 +3,15 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <packaging>jar</packaging>
+    <packaging>pom</packaging>
+    <modules>
+        <module>vertx-jooq-classic</module>
+        <module>vertx-jooq-future</module>
+        <module>vertx-jooq-generate</module>
+    </modules>
     <properties>
         <jooq.version>3.9.1</jooq.version>
-        <vertx.version>3.3.3</vertx.version>
+        <vertx.version>3.4.1</vertx.version>
         <hsqldb.version>2.3.2</hsqldb.version>
         <junit.version>4.12</junit.version>
         <guice.version>4.1.0</guice.version>
@@ -15,7 +20,7 @@
         <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
     <groupId>io.github.jklingsporn</groupId>
-    <version>1.0.1</version>
+    <version>2.0.0</version>
     <artifactId>vertx-jooq</artifactId>
     <name>${project.groupId}:${project.artifactId}</name>
     <description>A jOOQ-CodeGenerator to create vertxified DAOs and POJOs</description>
