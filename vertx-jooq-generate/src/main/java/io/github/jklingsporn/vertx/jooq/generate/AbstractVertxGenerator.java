@@ -1,5 +1,7 @@
 package io.github.jklingsporn.vertx.jooq.generate;
 
+import io.github.jklingsporn.vertx.jooq.shared.JsonArrayConverter;
+import io.github.jklingsporn.vertx.jooq.shared.JsonObjectConverter;
 import org.jooq.Constants;
 import org.jooq.Record;
 import org.jooq.tools.JooqLogger;

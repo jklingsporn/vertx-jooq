@@ -1,4 +1,4 @@
-package io.github.jklingsporn.vertx.jooq.generate;
+package io.github.jklingsporn.vertx.jooq.shared;
 
 import io.vertx.core.json.JsonObject;
 import org.jooq.Converter;

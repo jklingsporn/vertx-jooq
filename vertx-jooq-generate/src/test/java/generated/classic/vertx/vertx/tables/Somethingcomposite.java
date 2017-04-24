@@ -8,7 +8,7 @@ import generated.classic.vertx.vertx.Keys;
 import generated.classic.vertx.vertx.Vertx;
 import generated.classic.vertx.vertx.tables.records.SomethingcompositeRecord;
 
-import io.github.jklingsporn.vertx.jooq.generate.JsonObjectConverter;
+import io.github.jklingsporn.vertx.jooq.shared.JsonObjectConverter;
 import io.vertx.core.json.JsonObject;
 
 import java.util.Arrays;

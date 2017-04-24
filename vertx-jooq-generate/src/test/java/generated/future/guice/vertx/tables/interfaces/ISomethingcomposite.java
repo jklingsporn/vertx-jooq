@@ -4,6 +4,7 @@
 package generated.future.guice.vertx.tables.interfaces;
 
 
+import io.github.jklingsporn.vertx.jooq.shared.JsonObjectConverter;
 import io.vertx.core.json.JsonObject;
 
 import java.io.Serializable;
@@ -71,7 +72,7 @@ public interface ISomethingcomposite extends Serializable {
     default ISomethingcomposite fromJson(io.vertx.core.json.JsonObject json) {
         setSomeid(json.getInteger("someid"));
         setSomesecondid(json.getInteger("somesecondid"));
-        setSomejsonobject(new io.github.jklingsporn.vertx.jooq.generate.JsonObjectConverter().from(json.getString("somejsonobject")));
+        setSomejsonobject(new JsonObjectConverter().from(json.getString("somejsonobject")));
         return this;
     }
 

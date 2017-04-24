@@ -21,7 +21,7 @@ import java.util.function.Consumer;
 /**
  * Created by jensklingsporn on 07.11.16.
  */
-class VertxDaoTestBase {
+public class VertxDaoTestBase {
 
     protected static SomethingDao dao;
     protected static SomethingcompositeDao compositeDao;

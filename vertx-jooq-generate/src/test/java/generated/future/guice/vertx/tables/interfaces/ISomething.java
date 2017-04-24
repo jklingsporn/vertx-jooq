@@ -4,6 +4,8 @@
 package generated.future.guice.vertx.tables.interfaces;
 
 
+import io.github.jklingsporn.vertx.jooq.shared.JsonArrayConverter;
+import io.github.jklingsporn.vertx.jooq.shared.JsonObjectConverter;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
@@ -137,8 +139,8 @@ public interface ISomething extends Serializable {
         setSomeregularnumber(json.getInteger("someregularnumber"));
         setSomeboolean(json.getBoolean("someboolean"));
         setSomedouble(json.getDouble("somedouble"));
-        setSomejsonobject(new io.github.jklingsporn.vertx.jooq.generate.JsonObjectConverter().from(json.getString("somejsonobject")));
-        setSomejsonarray(new io.github.jklingsporn.vertx.jooq.generate.JsonArrayConverter().from(json.getString("somejsonarray")));
+        setSomejsonobject(new JsonObjectConverter().from(json.getString("somejsonobject")));
+        setSomejsonarray(new JsonArrayConverter().from(json.getString("somejsonarray")));
         return this;
     }
 

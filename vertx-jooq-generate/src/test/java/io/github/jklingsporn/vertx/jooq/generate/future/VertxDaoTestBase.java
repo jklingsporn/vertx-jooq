@@ -3,8 +3,6 @@ package io.github.jklingsporn.vertx.jooq.generate.future;
 import generated.future.vertx.vertx.tables.daos.SomethingDao;
 import generated.future.vertx.vertx.tables.daos.SomethingcompositeDao;
 import io.github.jklingsporn.vertx.jooq.generate.TestTool;
-import io.vertx.core.AsyncResult;
-import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import org.jooq.Configuration;
 import org.jooq.SQLDialect;
@@ -17,7 +15,7 @@ import java.sql.SQLException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 
 /**
  * Created by jensklingsporn on 07.11.16.
@@ -53,24 +51,22 @@ public class VertxDaoTestBase {
     }
 
 
-    protected <T> Handler<AsyncResult<T>> awaitLatchHandler(final CountDownLatch latch){
-        return h->{
-            if(h.failed()){
-                Assert.fail(h.cause().getMessage());
+    protected <T> BiConsumer<? super T, ? super Throwable> failOnException(){
+        return (t,x)->{
+            if(x!=null){
+                Assert.fail(x.getMessage());
             }
-            latch.countDown();
         };
     }
 
-    protected <T> Handler<AsyncResult<T>> consumeOrFailHandler(Consumer<T> consumer){
-        return h->{
-            if(h.succeeded()){
-                consumer.accept(h.result());
+    protected <T> BiConsumer<? super T, ? super Throwable> failOrCountDown(CountDownLatch latch){
+        return (t,x)->{
+            if(x!=null){
+                Assert.fail(x.getMessage());
             }else{
-                Assert.fail(h.cause().getMessage());
+                latch.countDown();
             }
         };
-
     }
 
 }
