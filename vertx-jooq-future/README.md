@@ -1,4 +1,4 @@
-# vertx-jooq
+# vertx-jooq-future
 A [jOOQ](http://www.jooq.org/)-CodeGenerator to create [vertx](http://vertx.io/)-ified DAOs and POJOs!
 Perform all CRUD-operations asynchronously and convert your POJOs
 from/into a `io.vertx.core.JsonObject`.
