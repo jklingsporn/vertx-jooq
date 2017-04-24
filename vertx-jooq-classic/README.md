@@ -171,7 +171,7 @@ If you are new to jOOQ, I recommend to read the awesome [jOOQ documentation](htt
 </project>
 ```
 # programmatic configuration of the code generator
-See the [TestTool](https://github.com/jklingsporn/vertx-jooq/vertx-jooq-generate/blob/master/src/test/java/io/github/jklingsporn/vertx/jooq/generate/impl/TestTool.java)
+See the [TestTool](https://github.com/jklingsporn/vertx-jooq/blob/master/vertx-jooq-generate/src/test/java/io/github/jklingsporn/vertx/jooq/generate/TestTool.java)
 of how to setup the generator programmatically.
 
 # known issues

@@ -11,9 +11,9 @@ of `java.util.concurrent.CompletableFuture` for all async DAO operations and thu
 It has some limitations which you need to be aware about (see [known issues](https://github.com/jklingsporn/vertx-jooq#known-issues)).
 
 To separate the APIs, there are now three maven modules:
-- [`vertx-jooq-classic`](https://github.com/jklingsporn/vertx-jooq/vertx-jooq-classic) is the module containing the callback handler API.
-- [`vertx-jooq-future`](https://github.com/jklingsporn/vertx-jooq/vertx-jooq-future) is the module containing the `CompletableFuture` based API.
-- [`vertx-jooq-generate`](https://github.com/jklingsporn/vertx-jooq/vertx-jooq-generate) is the module containing the code-generator.
+- [`vertx-jooq-classic`](https://github.com/jklingsporn/vertx-jooq/tree/master/vertx-jooq-classic) is the module containing the callback handler API.
+- [`vertx-jooq-future`](https://github.com/jklingsporn/vertx-jooq/tree/master/vertx-jooq-future) is the module containing the `CompletableFuture` based API.
+- [`vertx-jooq-generate`](https://github.com/jklingsporn/vertx-jooq/tree/master/vertx-jooq-generate) is the module containing the code-generator.
 
 If you're updating from a previous version please also note, that there are breaking API-changes due to
 required package renaming, e.g. `io.github.jklingsporn.vertx.VertxDAO` became
@@ -199,14 +199,14 @@ If you are new to jOOQ, I recommend to read the awesome [jOOQ documentation](htt
 </project>
 ```
 # programmatic configuration of the code generator
-See the [TestTool](https://github.com/jklingsporn/vertx-jooq/vertx-jooq-generate/blob/master/src/test/java/io/github/jklingsporn/vertx/jooq/generate/impl/TestTool.java)
+See the [TestTool](https://github.com/jklingsporn/vertx-jooq/blob/master/vertx-jooq-generate/src/test/java/io/github/jklingsporn/vertx/jooq/generate/TestTool.java)
 of how to setup the generator programmatically.
 
 # known issues
 - The [`VertxCompletableFuture`](https://github.com/cescoffier/vertx-completable-future) is not part of the vertx-core package.
 The reason behind this is that it violates the contract of `CompletableFuture#XXXAsync` methods which states that those methods should
 run on the ForkJoin-Pool if no Executor is provided. This can not be done, because it would break the threading model of Vertx. Please
-keep that in mind. If you can not tolerate this, please use the [`vertx-jooq-classic`](https://github.com/jklingsporn/vertx-jooq/vertx-jooq-classic) dependency.
+keep that in mind. If you can not tolerate this, please use the [`vertx-jooq-classic`](https://github.com/jklingsporn/vertx-jooq/tree/master/vertx-jooq-classic) dependency.
 - The generator will omit datatypes that it does not know, e.g. `java.sql.Timestamp`. To fix this, you can easily subclass the generator, handle these types and generate the code using your generator.
  See the `handleCustomTypeFromJson` and `handleCustomTypeToJson` methods in the `AbstractVertxGenerator`.
 - Since jOOQ is using JDBC under the hood, the non-blocking fashion is achieved by using the `Vertx.executeBlocking` method.
