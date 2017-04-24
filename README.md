@@ -203,7 +203,7 @@ See the [TestTool](https://github.com/jklingsporn/vertx-jooq/vertx-jooq-generate
 of how to setup the generator programmatically.
 
 # known issues
-- The [vertx-ified implementation](https://github.com/cescoffier/vertx-completable-future) is not part of the vertx-core package.
+- The [`VertxCompletableFuture`](https://github.com/cescoffier/vertx-completable-future) is not part of the vertx-core package.
 The reason behind this is that it violates the contract of `CompletableFuture#XXXAsync` methods which states that those methods should
 run on the ForkJoin-Pool if no Executor is provided. This can not be done, because it would break the threading model of Vertx. Please
 keep that in mind. If you can not tolerate this, please use the [`vertx-jooq-classic`](https://github.com/jklingsporn/vertx-jooq/vertx-jooq-classic) dependency.
