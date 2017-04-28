@@ -129,7 +129,7 @@ If you are new to jOOQ, I recommend to read the awesome [jOOQ documentation](htt
               <dependency>
                   <groupId>io.github.jklingsporn</groupId>
                   <artifactId>vertx-jooq-generate</artifactId>
-                  <version>2.0.0</version>
+                  <version>2.1.0</version>
               </dependency>
           </dependencies>
 
