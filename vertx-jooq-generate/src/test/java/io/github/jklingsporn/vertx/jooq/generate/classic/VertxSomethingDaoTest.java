@@ -2,9 +2,12 @@ package io.github.jklingsporn.vertx.jooq.generate.classic;
 
 import generated.classic.vertx.vertx.Tables;
 import generated.classic.vertx.vertx.tables.pojos.Something;
+import io.vertx.core.CompositeFuture;
+import io.vertx.core.Future;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import org.jooq.exception.DataAccessException;
+import org.jooq.exception.TooManyRowsException;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -21,14 +24,14 @@ public class VertxSomethingDaoTest extends VertxDaoTestBase {
     @Test
     public void asyncCRUDShouldSucceed() throws InterruptedException {
         CountDownLatch latch = new CountDownLatch(1);
-        dao.insertAsync(createSomething(),awaitLatchHandler(latch));
+        dao.insertAsync(createSomething(), countdownLatchHandler(latch));
         await(latch);
         final CountDownLatch latch2 = new CountDownLatch(1);
         dao.executeAsync(dslContext -> dslContext.selectFrom(Tables.SOMETHING).orderBy(Tables.SOMETHING.SOMEID.desc()).limit(1).fetchOne() ,
             consumeOrFailHandler(somethingRecord->
                 dao.fetchOneBySomeidAsync(somethingRecord.getSomeid(),
                         consumeOrFailHandler(fetchHandler -> dao.updateAsync(createSomething().setSomeid(fetchHandler.getSomeid()),
-                                consumeOrFailHandler(updateHandler -> dao.deleteByIdAsync(somethingRecord.getSomeid(), awaitLatchHandler(latch2)))
+                                consumeOrFailHandler(updateHandler -> dao.deleteByIdAsync(somethingRecord.getSomeid(), countdownLatchHandler(latch2)))
                         )))
         ));
         await(latch2);
@@ -37,7 +40,7 @@ public class VertxSomethingDaoTest extends VertxDaoTestBase {
     @Test
     public void asyncCRUDMultipleShouldSucceed() throws InterruptedException {
         CountDownLatch latch = new CountDownLatch(1);
-        dao.insertAsync(Arrays.asList(createSomething(), createSomething()),awaitLatchHandler(latch));
+        dao.insertAsync(Arrays.asList(createSomething(), createSomething()), countdownLatchHandler(latch));
         await(latch);
         final CountDownLatch latch2 = new CountDownLatch(1);
         dao.executeAsync(dslContext -> dslContext.selectFrom(Tables.SOMETHING).orderBy(Tables.SOMETHING.SOMEID.desc()).limit(2).fetch() ,
@@ -47,7 +50,7 @@ public class VertxSomethingDaoTest extends VertxDaoTestBase {
                             final List<Integer> ids = Arrays.asList(id1, id2);
                             dao.fetchBySomeidAsync(ids,
                                         consumeOrFailHandler(fetchHandler -> dao.updateAsync(Arrays.asList(createSomething().setSomeid(id1),createSomething().setSomeid(id2)),
-                                                consumeOrFailHandler(updateHandler -> dao.deleteByIdAsync(ids, awaitLatchHandler(latch2)))
+                                                consumeOrFailHandler(updateHandler -> dao.deleteByIdAsync(ids, countdownLatchHandler(latch2)))
                                         )));}
                 ));
         await(latch2);
@@ -81,7 +84,12 @@ public class VertxSomethingDaoTest extends VertxDaoTestBase {
         CountDownLatch latch = new CountDownLatch(1);
         dao.insertExecAsync(createSomething(), consumeOrFailHandler(insertedRows -> {
             Assert.assertEquals(1l, insertedRows.longValue());
-            dao.executeAsync(dslContext -> dslContext.selectFrom(Tables.SOMETHING).orderBy(Tables.SOMETHING.SOMEID.desc()).limit(1).fetchOne(), consumeOrFailHandler(something -> {
+            dao.executeAsync(dslContext -> dslContext.
+                            selectFrom(Tables.SOMETHING).
+                            orderBy(Tables.SOMETHING.SOMEID.desc()).
+                            limit(1).
+                            fetchOne(),
+                    consumeOrFailHandler(something -> {
                     dao.deleteExecAsync(something.getSomeid(), deletedRows -> {
                         if (deletedRows.failed()) {
                             Assert.fail(deletedRows.cause().getMessage());
@@ -107,6 +115,56 @@ public class VertxSomethingDaoTest extends VertxDaoTestBase {
                 latch.countDown();
             });
         }));
+        await(latch);
+    }
+
+    @Test
+    public void asyncCRUDConditionShouldSucceed() throws InterruptedException {
+        CountDownLatch latch = new CountDownLatch(1);
+        dao.insertReturningPrimaryAsync(createSomething(),consumeOrFailHandler(pk->{
+            dao.fetchOneAsync(Tables.SOMETHING.SOMEID.eq(pk),consumeOrFailHandler(val->{
+                Assert.assertNotNull(val);
+                dao.deleteExecAsync(Tables.SOMETHING.SOMEID.eq(pk),countdownLatchHandler(latch));
+            }));
+        }));
+        await(latch);
+    }
+
+    @Test
+    public void fetchOneByConditionWithMultipleMatchesShouldFail() throws InterruptedException {
+        CountDownLatch latch = new CountDownLatch(1);
+        Future<Integer> insertFuture1 = Future.future();
+        Future<Integer> insertFuture2 = Future.future();
+        dao.insertReturningPrimaryAsync(createSomething().setSomehugenumber(1L),insertFuture1);
+        dao.insertReturningPrimaryAsync(createSomething().setSomehugenumber(1L),insertFuture2);
+        CompositeFuture.all(insertFuture1,insertFuture2).
+                setHandler(consumeOrFailHandler(v->{
+                    dao.fetchOneAsync(Tables.SOMETHING.SOMEHUGENUMBER.eq(1L),h->{
+                        Assert.assertNotNull(h.cause());
+                        //cursor fetched more than one row
+                        Assert.assertEquals(TooManyRowsException.class, h.cause().getClass());
+                        dao.deleteExecAsync(Tables.SOMETHING.SOMEHUGENUMBER.eq(1L),countdownLatchHandler(latch));
+                    });
+                }));
+        await(latch);
+    }
+
+    @Test
+    public void fetchByConditionWithMultipleMatchesShouldSucceed() throws InterruptedException {
+        CountDownLatch latch = new CountDownLatch(1);
+        Future<Integer> insertFuture1 = Future.future();
+        Future<Integer> insertFuture2 = Future.future();
+        dao.insertReturningPrimaryAsync(createSomething().setSomehugenumber(1L),insertFuture1);
+        dao.insertReturningPrimaryAsync(createSomething().setSomehugenumber(1L),insertFuture2);
+        CompositeFuture.all(insertFuture1, insertFuture2).
+                setHandler(consumeOrFailHandler(v -> {
+                    dao.fetchAsync(Tables.SOMETHING.SOMEHUGENUMBER.eq(1L), h -> {
+                        Assert.assertNotNull(h.result());
+                        //cursor fetched more than one row
+                        Assert.assertEquals(2, h.result().size());
+                        dao.deleteExecAsync(Tables.SOMETHING.SOMEHUGENUMBER.eq(1L), countdownLatchHandler(latch));
+                    });
+                }));
         await(latch);
     }
 

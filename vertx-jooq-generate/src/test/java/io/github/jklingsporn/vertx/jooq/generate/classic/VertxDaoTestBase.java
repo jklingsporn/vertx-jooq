@@ -47,7 +47,7 @@ public class VertxDaoTestBase {
     }
 
 
-    protected <T> Handler<AsyncResult<T>> awaitLatchHandler(final CountDownLatch latch){
+    protected <T> Handler<AsyncResult<T>> countdownLatchHandler(final CountDownLatch latch){
         return h->{
             if(h.failed()){
                 Assert.fail(h.cause().getMessage());

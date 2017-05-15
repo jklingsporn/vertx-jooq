@@ -185,9 +185,20 @@ public interface VertxDAO<R extends UpdatableRecord<R>, P, T> extends DAO<R, P, 
      * @see #fetchOne(Field, Object)
      */
     default <Z> CompletableFuture<P> fetchOneAsync(Field<Z> field, Z value){
-        return FutureTool.executeBlocking(h->h.complete(fetchOne(field, value)),vertx());
+        return fetchOneAsync(field.eq(value));
     }
 
+    /**
+     * Find a unique record by a given condition asynchronously.
+     *
+     * @param condition The condition to look for this value
+     * @return CompletableFuture which succeeds when the blocking method of this type succeeds or fails
+     *                      with an <code>DataAccessException</code> if the blocking method of this type throws an exception,
+     *                      e.g. when more than one result is returned.
+     */
+    default <Z> CompletableFuture<P> fetchOneAsync(Condition condition){
+        return executeAsync(dslContext -> dslContext.selectFrom(getTable()).where(condition).fetchOne(mapper()));
+    }
 
     /**
      * Find a unique record by a given field and a value asynchronously.
@@ -211,16 +222,26 @@ public interface VertxDAO<R extends UpdatableRecord<R>, P, T> extends DAO<R, P, 
      *                      with an <code>DataAccessException</code> if the blocking method of this type throws an exception
      */
     default <Z> CompletableFuture<List<P>> fetchAsync(Field<Z> field, Collection<Z> values){
-        return executeAsync(dslContext -> dslContext.selectFrom(getTable()).where(field.in(values)).fetch().map(mapper()));
+        return fetchAsync(field.in(values));
+    }
+
+    /**
+     * Find records by a given condition asynchronously.
+     *
+     * @param condition the condition to fetch the values
+     * @return CompletableFuture which succeeds when the blocking method of this type succeeds or fails
+     *                      with an <code>DataAccessException</code> if the blocking method of this type throws an exception
+     */
+    default CompletableFuture<List<P>> fetchAsync(Condition condition){
+        return executeAsync(dslContext -> dslContext.selectFrom(getTable()).where(condition).fetch(mapper()));
     }
 
     /**
      * Performs an async <code>DELETE</code> statement for a given key and passes the number of affected rows
-     * to the <code>resultHandler</code>.
+     * to the returned <code>CompletableFuture</code>.
      * @param id The key to be deleted
      * @return CompletableFuture which succeeds when the blocking method of this type succeeds or fails
      *                      with an <code>DataAccessException</code> if the blocking method of this type throws an exception
-     * @see #updateAsync(Object)
      */
     @SuppressWarnings("unchecked")
     default CompletableFuture<Integer> deleteExecAsync(T id){
@@ -238,6 +259,30 @@ public interface VertxDAO<R extends UpdatableRecord<R>, P, T> extends DAO<R, P, 
             condition = row(pk).equal((Record) id);
         }
         return executeAsync(dslContext -> dslContext.deleteFrom(getTable()).where(condition).execute());
+    }
+
+    /**
+     * Performs an async <code>DELETE</code> statement for a given condition and passes the number of affected rows
+     * to the returned <code>CompletableFuture</code>.
+     * @param condition The condition for the delete query
+     * @return CompletableFuture which succeeds when the blocking method of this type succeeds or fails
+     *                      with an <code>DataAccessException</code> if the blocking method of this type throws an exception
+     */
+    default <Z> CompletableFuture<Integer> deleteExecAsync(Condition condition){
+        return executeAsync(dslContext -> dslContext.deleteFrom(getTable()).where(condition).execute());
+    }
+
+    /**
+     * Performs an async <code>DELETE</code> statement for a given field and value and passes the number of affected rows
+     * to the returned <code>CompletableFuture</code>.
+     * @param field the field
+     * @param value the value
+     * @param <Z>
+     * @return CompletableFuture which succeeds when the blocking method of this type succeeds or fails
+     *                      with an <code>DataAccessException</code> if the blocking method of this type throws an exception
+     */
+    default <Z> CompletableFuture<Integer> deleteExecAsync(Field<Z> field, Z value){
+        return deleteExecAsync(field.eq(value));
     }
 
     /**
@@ -286,4 +331,5 @@ public interface VertxDAO<R extends UpdatableRecord<R>, P, T> extends DAO<R, P, 
             return (T) key1;
         });
     }
+
 }

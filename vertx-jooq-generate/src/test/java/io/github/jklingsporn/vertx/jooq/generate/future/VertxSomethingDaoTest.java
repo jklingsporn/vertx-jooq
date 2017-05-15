@@ -6,6 +6,7 @@ import generated.future.vertx.vertx.tables.records.SomethingRecord;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import org.jooq.exception.DataAccessException;
+import org.jooq.exception.TooManyRowsException;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -108,6 +109,48 @@ public class VertxSomethingDaoTest extends VertxDaoTestBase {
                     Assert.assertEquals(DataAccessException.class,x.getCause().getClass());
                     latch.countDown();
                 });
+        await(latch);
+    }
+
+    @Test
+    public void asyncCRUDConditionShouldSucceed() throws InterruptedException {
+        CountDownLatch latch = new CountDownLatch(1);
+        CompletableFuture<Integer> insertFuture = dao.insertReturningPrimaryAsync(createSomething());
+        insertFuture.
+                thenCompose(v -> dao.fetchOneAsync(Tables.SOMETHING.SOMEID.eq(insertFuture.join()))).
+                thenAccept(Assert::assertNotNull).
+                thenCompose(v -> dao.deleteExecAsync(Tables.SOMETHING.SOMEID.eq(insertFuture.join()))).
+                whenComplete(failOrCountDown(latch));
+        await(latch);
+    }
+
+    @Test
+    public void fetchOneByConditionWithMultipleMatchesShouldFail() throws InterruptedException {
+        CountDownLatch latch = new CountDownLatch(1);
+        CompletableFuture<Integer> insertFuture1 = dao.insertReturningPrimaryAsync(createSomething().setSomehugenumber(1L));
+        CompletableFuture<Integer> insertFuture2 = dao.insertReturningPrimaryAsync(createSomething().setSomehugenumber(1L));
+        CompletableFuture.allOf(insertFuture1, insertFuture2).
+                thenCompose(v->dao.fetchOneAsync(Tables.SOMETHING.SOMEHUGENUMBER.eq(1L))).
+                exceptionally((x) -> {
+                    Assert.assertNotNull(x);
+                    //cursor fetched more than one row
+                    Assert.assertEquals(TooManyRowsException.class, x.getCause().getClass());
+                    return null;}).
+                thenCompose(v -> dao.deleteExecAsync(Tables.SOMETHING.SOMEHUGENUMBER.eq(1L))).
+                whenComplete(failOrCountDown(latch));
+        await(latch);
+    }
+
+    @Test
+    public void fetchByConditionWithMultipleMatchesShouldSucceed() throws InterruptedException {
+        CountDownLatch latch = new CountDownLatch(1);
+        CompletableFuture<Integer> insertFuture1 = dao.insertReturningPrimaryAsync(createSomething().setSomehugenumber(1L));
+        CompletableFuture<Integer> insertFuture2 = dao.insertReturningPrimaryAsync(createSomething().setSomehugenumber(1L));
+        CompletableFuture.allOf(insertFuture1, insertFuture2).
+                thenCompose(v->dao.fetchAsync(Tables.SOMETHING.SOMEHUGENUMBER.eq(1L))).
+                thenAccept(values->Assert.assertEquals(2,values.size())).
+                thenCompose(v -> dao.deleteExecAsync(Tables.SOMETHING.SOMEHUGENUMBER.eq(1L))).
+                whenComplete(failOrCountDown(latch));
         await(latch);
     }
 

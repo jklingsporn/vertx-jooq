@@ -186,7 +186,18 @@ public interface VertxDAO<R extends UpdatableRecord<R>, P, T> extends DAO<R, P, 
      * @see #fetchOne(Field, Object)
      */
     default <Z> void fetchOneAsync(Field<Z> field, Z value, Handler<AsyncResult<P>> resultHandler){
-        vertx().executeBlocking(h->h.complete(fetchOne(field, value)),resultHandler);
+        fetchOneAsync(field.eq(value),resultHandler);
+    }
+
+    /**
+     * Find a unique record by a given condition asynchronously.
+     *
+     * @param condition the condition to fetch one value
+     * @param resultHandler the resultHandler which succeeds when the blocking method of this type succeeds or fails
+     *                      with an <code>DataAccessException</code> if the blocking method of this type throws an exception
+     */
+    default <Z> void fetchOneAsync(Condition condition, Handler<AsyncResult<P>> resultHandler){
+        executeAsync(dslContext -> dslContext.selectFrom(getTable()).where(condition).fetchOne(mapper()), resultHandler);
     }
 
 
@@ -212,7 +223,18 @@ public interface VertxDAO<R extends UpdatableRecord<R>, P, T> extends DAO<R, P, 
      *                      with an <code>DataAccessException</code> if the blocking method of this type throws an exception
      */
     default <Z> void fetchAsync(Field<Z> field, Collection<Z> values, Handler<AsyncResult<List<P>>> resultHandler){
-        executeAsync(dslContext -> dslContext.selectFrom(getTable()).where(field.in(values)).fetch().map(mapper()),resultHandler);
+        fetchAsync(field.in(values),resultHandler);
+    }
+
+    /**
+     * Find records by a given condition asynchronously.
+     *
+     * @param condition the condition to fetch one value
+     * @param resultHandler the resultHandler which succeeds when the blocking method of this type succeeds or fails
+     *                      with an <code>DataAccessException</code> if the blocking method of this type throws an exception
+     */
+    default void fetchAsync(Condition condition, Handler<AsyncResult<List<P>>> resultHandler){
+        executeAsync(dslContext -> dslContext.selectFrom(getTable()).where(condition).fetch(mapper()), resultHandler);
     }
 
     /**
@@ -239,6 +261,29 @@ public interface VertxDAO<R extends UpdatableRecord<R>, P, T> extends DAO<R, P, 
             condition = row(pk).equal((Record) id);
         }
         executeAsync(dslContext -> dslContext.deleteFrom(getTable()).where(condition).execute(),resultHandler);
+    }
+
+    /**
+     * Performs an async <code>DELETE</code> statement for a given condition and passes the number of affected rows
+     * to the <code>resultHandler</code>.
+     * @param condition The condition for the delete query
+     * @param resultHandler the resultHandler which succeeds when the blocking method of this type succeeds or fails
+     *                      with an <code>DataAccessException</code> if the blocking method of this type throws an exception
+     */
+    default <Z> void deleteExecAsync(Condition condition, Handler<AsyncResult<Integer>> resultHandler ){
+        executeAsync(dslContext -> dslContext.deleteFrom(getTable()).where(condition).execute(),resultHandler);
+    }
+
+    /**
+     * Performs an async <code>DELETE</code> statement for a given condition and passes the number of affected rows
+     * to the <code>resultHandler</code>.
+     * @param field the field
+     * @param value the value
+     * @param resultHandler the resultHandler which succeeds when the blocking method of this type succeeds or fails
+     *                      with an <code>DataAccessException</code> if the blocking method of this type throws an exception
+     */
+    default <Z> void deleteExecAsync(Field<Z> field, Z value, Handler<AsyncResult<Integer>> resultHandler){
+        deleteExecAsync(field.eq(value),resultHandler);
     }
 
     /**
@@ -287,4 +332,5 @@ public interface VertxDAO<R extends UpdatableRecord<R>, P, T> extends DAO<R, P, 
             return (T) key1;
         }, resultHandler);
     }
+
 }

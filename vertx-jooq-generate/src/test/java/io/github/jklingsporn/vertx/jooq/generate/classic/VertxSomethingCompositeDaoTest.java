@@ -17,7 +17,7 @@ public class VertxSomethingCompositeDaoTest extends VertxDaoTestBase {
     public void asyncCRUDShouldSucceed() throws InterruptedException {
         CountDownLatch latch = new CountDownLatch(1);
         Somethingcomposite something = createSomething(0, 0);
-        compositeDao.insertAsync(something,awaitLatchHandler(latch));
+        compositeDao.insertAsync(something, countdownLatchHandler(latch));
         await(latch);
         final CountDownLatch latch2 = new CountDownLatch(1);
         SomethingcompositeRecord somethingcompositeRecord = new SomethingcompositeRecord();
@@ -26,7 +26,7 @@ public class VertxSomethingCompositeDaoTest extends VertxDaoTestBase {
                 consumeOrFailHandler(fetchHandler -> {
                     something.getSomejsonobject().put("foo","bar");
                     compositeDao.updateAsync(something,
-                            consumeOrFailHandler(updateHandler -> compositeDao.deleteByIdAsync(somethingcompositeRecord.key(), awaitLatchHandler(latch2)))
+                            consumeOrFailHandler(updateHandler -> compositeDao.deleteByIdAsync(somethingcompositeRecord.key(), countdownLatchHandler(latch2)))
                     );
                 }));
         await(latch2);
