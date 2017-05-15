@@ -23,7 +23,7 @@ public class VertxGuiceGeneratorTest {
     public void generateCodeShouldSucceed() throws Exception {
 
         Configuration configuration = TestTool.createGeneratorConfig(
-                FutureVertxGuiceGenerator.class.getName(),"future.guice", "vertx-jooq-generate", FutureGeneratorStrategy.class);
+                FutureVertxGuiceGenerator.class.getName(),"future.guice",  FutureGeneratorStrategy.class);
 
         try {
             GenerationTool.generate(configuration);

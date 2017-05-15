@@ -17,7 +17,7 @@ import java.util.Arrays;
  */
 public class TestTool {
 
-    private static final String TARGET_FOLDER = "%s/src/test/java";
+    private static final String TARGET_FOLDER = "src/test/java";
 
     public static void setupDB() throws SQLException {
         Connection connection = DriverManager.getConnection("jdbc:hsqldb:mem:test", "test", "");
@@ -46,7 +46,7 @@ public class TestTool {
                 ");").execute();
     }
 
-    public static Configuration createGeneratorConfig(String generatorName, String packageName, String moduleName, Class<? extends VertxGeneratorStrategy> generatorStrategy){
+    public static Configuration createGeneratorConfig(String generatorName, String packageName, Class<? extends VertxGeneratorStrategy> generatorStrategy){
         /*
          * We convert the field someJsonObject to a JsonObject by using the JsonObjectConverter
          */
@@ -78,7 +78,7 @@ public class TestTool {
 
         Target targetConfig = new Target();
         targetConfig.setPackageName("generated."+packageName);
-        targetConfig.setDirectory(String.format(TARGET_FOLDER,moduleName));
+        targetConfig.setDirectory(TARGET_FOLDER);
 
         Generate generateConfig = new Generate();
         /*

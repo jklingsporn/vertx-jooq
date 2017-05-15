@@ -22,7 +22,7 @@ public class VertxGeneratorTest {
     @Test
     public void generateCodeShouldSucceed() throws Exception {
         Configuration configuration = TestTool.createGeneratorConfig(
-                FutureVertxGenerator.class.getName(),"future.vertx", "vertx-jooq-generate", FutureGeneratorStrategy.class);
+                FutureVertxGenerator.class.getName(),"future.vertx",  FutureGeneratorStrategy.class);
         try {
             GenerationTool.generate(configuration);
             Assert.assertTrue(true);
