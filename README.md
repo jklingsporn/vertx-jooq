@@ -3,6 +3,42 @@ A [jOOQ](http://www.jooq.org/)-CodeGenerator to create [vertx](http://vertx.io/)
 Perform all CRUD-operations asynchronously and convert your POJOs
 from/into a `io.vertx.core.JsonObject`.
 
+## new in 2.2
+
+We just added a third flavor: RX. Now, your DAO can expose a RX Java based API ! To use it, you need the Vert.x RX 
+Java binding, and use:
+ 
+* the `io.github.jklingsporn.vertx.jooq.generate.rx.RXGeneratorStrategy` strategy.
+* the `io.github.jklingsporn.vertx.jooq.generate.rx.RXVertxGenerator` generator (name)
+
+Here is an example:
+
+```xml
+<generator>
+    <name>io.github.jklingsporn.vertx.jooq.generate.rx.RXVertxGenerator</name>
+    <target>
+      <!-- This is where jOOQ will put your files -->
+      <packageName>me.escoffier.fruits.entities</packageName>
+      <directory>target/generated-sources/jooq</directory>
+    </target>
+    <database>
+      <name>org.jooq.util.h2.H2Database</name>
+      <includes>.*</includes>
+      <inputSchema>PUBLIC</inputSchema>
+      <outputSchema>PUBLIC</outputSchema>
+      <unsignedTypes>false</unsignedTypes>
+    </database>
+    <generate>
+      <interfaces>true</interfaces>
+      <daos>true</daos>
+      <fluentSetters>true</fluentSetters>
+    </generate>
+    <strategy>
+      <name>io.github.jklingsporn.vertx.jooq.generate.rx.RXGeneratorStrategy</name>
+    </strategy>
+</generator>
+```
+
 ## new in 2.0
 Starting with version 2, this library comes in two different flavors:
 - the classic callback-handler style known from versions < 2.
