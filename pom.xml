@@ -9,6 +9,7 @@
         <module>vertx-jooq-future</module>
         <module>vertx-jooq-generate</module>
         <module>vertx-jooq-shared</module>
+        <module>vertx-jooq-rx</module>
     </modules>
     <properties>
         <jooq.version>3.9.2</jooq.version>

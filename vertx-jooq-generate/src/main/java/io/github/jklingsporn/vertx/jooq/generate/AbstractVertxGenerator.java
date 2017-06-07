@@ -93,7 +93,7 @@ public abstract class AbstractVertxGenerator extends JavaGenerator {
      */
     protected void generateSetVertxAnnotation(JavaWriter out){};
 
-    private void generateVertxGetterAndSetterConfigurationMethod(JavaWriter out) {
+    protected void generateVertxGetterAndSetterConfigurationMethod(JavaWriter out) {
         out.println();
         out.tab(1).println("private io.vertx.core.Vertx vertx;");
         out.println();

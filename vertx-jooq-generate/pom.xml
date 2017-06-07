@@ -26,6 +26,18 @@
         </dependency>
         <dependency>
             <groupId>io.github.jklingsporn</groupId>
+            <artifactId>vertx-jooq-rx</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.reactivex</groupId>
+            <artifactId>rxjava</artifactId>
+            <version>1.2.9</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.github.jklingsporn</groupId>
             <artifactId>vertx-jooq-shared</artifactId>
             <version>${project.version}</version>
         </dependency>
