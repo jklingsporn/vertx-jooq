@@ -3,7 +3,7 @@ A [jOOQ](http://www.jooq.org/)-CodeGenerator to create [vertx](http://vertx.io/)
 Perform all CRUD-operations asynchronously and convert your POJOs
 from/into a `io.vertx.core.JsonObject`.
 
-## new in 2.2
+## new in 2.3
 
 We just added a third flavor: RX. Now, your DAO can expose a RX Java based API ! To use it, you need the Vert.x RX 
 Java binding, and use:
@@ -108,7 +108,7 @@ Guice `Module` is created which binds all created VertxDAOs to their implementat
 <dependency>
   <groupId>io.github.jklingsporn</groupId>
   <artifactId>vertx-jooq-future</artifactId>
-  <version>2.2.1</version>
+  <version>2.3.0</version>
 </dependency>
 ```
 # maven code generator configuration example for mysql
@@ -136,7 +136,7 @@ If you are new to jOOQ, I recommend to read the awesome [jOOQ documentation](htt
     <dependency>
       <groupId>io.github.jklingsporn</groupId>
       <artifactId>vertx-jooq-future</artifactId>
-      <version>2.2.1</version>
+      <version>2.3.0</version>
     </dependency>
   </dependencies>
   <build>
@@ -165,7 +165,7 @@ If you are new to jOOQ, I recommend to read the awesome [jOOQ documentation](htt
               <dependency>
                   <groupId>io.github.jklingsporn</groupId>
                   <artifactId>vertx-jooq-generate</artifactId>
-                  <version>2.2.1</version>
+                  <version>2.3.0</version>
               </dependency>
           </dependencies>
 
