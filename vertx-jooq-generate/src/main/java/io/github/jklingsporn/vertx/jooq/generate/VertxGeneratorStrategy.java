@@ -1,5 +1,6 @@
 package io.github.jklingsporn.vertx.jooq.generate;
 
+import io.github.jklingsporn.vertx.jooq.shared.VertxPojo;
 import org.jooq.util.DefaultGeneratorStrategy;
 import org.jooq.util.Definition;
 
@@ -27,6 +28,8 @@ public class VertxGeneratorStrategy extends DefaultGeneratorStrategy {
             final String tableRecord = getFullJavaClassName(definition, Mode.RECORD);
             final String pType = getFullJavaClassName(definition, Mode.POJO);
             javaClassImplements.add(String.format("%s<%s,%s,%s>",daoClassName,tableRecord,pType, VertxJavaWriter.PLACEHOLDER_DAO_TYPE));
+        }else if(mode.equals(Mode.INTERFACE)){
+            javaClassImplements.add(VertxPojo.class.getName());
         }
         return javaClassImplements;
     }

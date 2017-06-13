@@ -10,6 +10,7 @@
         <module>vertx-jooq-generate</module>
         <module>vertx-jooq-shared</module>
         <module>vertx-jooq-rx</module>
+        <module>vertx-jooq-future-async</module>
     </modules>
     <properties>
         <jooq.version>3.9.2</jooq.version>

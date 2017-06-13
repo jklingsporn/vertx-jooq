@@ -6,6 +6,7 @@ import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import org.jooq.util.hsqldb.HSQLDBDatabase;
 import org.jooq.util.jaxb.*;
+import org.jooq.util.mysql.MySQLDatabase;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -24,7 +25,7 @@ public class TestTool {
         connection.prepareStatement("DROP SCHEMA IF EXISTS vertx CASCADE").execute();
         connection.prepareStatement("CREATE SCHEMA vertx").execute();
         connection.prepareStatement("SET SCHEMA vertx").execute();
-        connection.prepareStatement("DROP TABLE IF EXISTS something");
+        connection.prepareStatement("DROP TABLE IF EXISTS something").execute();
         connection.prepareStatement("\n" +
                 "CREATE TABLE something (\n" +
                 "  someId INTEGER IDENTITY PRIMARY KEY,\n" +
@@ -46,7 +47,31 @@ public class TestTool {
                 ");").execute();
     }
 
-    public static Configuration createGeneratorConfig(String generatorName, String packageName, Class<? extends VertxGeneratorStrategy> generatorStrategy){
+    public static void setupMysqlDB() throws SQLException {
+        Connection connection = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/", "vertx", "");
+        connection.prepareStatement("DROP DATABASE IF EXISTS `vertx`;").execute();
+        connection.prepareStatement("CREATE SCHEMA `vertx` DEFAULT CHARACTER SET utf8 COLLATE utf8_bin ;").execute();
+        connection.prepareStatement("USE vertx;").execute();
+        connection.prepareStatement("DROP TABLE IF EXISTS something;").execute();
+        connection.prepareStatement("CREATE TABLE `vertx`.`something` (\n" +
+                "  `someId` INT NOT NULL AUTO_INCREMENT,\n" +
+                "  `someString` VARCHAR(45) NULL,\n" +
+                "  `someHugeNumber` BIGINT(20) NULL,\n" +
+                "  `someSmallNumber` SMALLINT(5) NULL,\n" +
+                "  `someRegularNumber` INT(10) NULL,\n" +
+                "  `someDouble` DOUBLE NULL,\n" +
+                "  `someJsonObject` VARCHAR(45) NULL,\n" +
+                "  `someJsonArray` VARCHAR(45) NULL,\n" +
+                "  PRIMARY KEY (`someId`));").execute();
+        connection.prepareStatement("DROP TABLE IF EXISTS somethingComposite;");
+        connection.prepareStatement("CREATE TABLE `somethingComposite` (\n" +
+                "  `someId` INT NOT NULL,\n" +
+                "  `someSecondId` INT NOT NULL,\n" +
+                "  `someJsonObject` VARCHAR(45) NULL,\n" +
+                "  PRIMARY KEY (`someId`, `someSecondId`));\n").execute();
+    }
+
+    private static Configuration createGeneratorConfig(String generatorName, String packageName, Class<? extends VertxGeneratorStrategy> generatorStrategy, Jdbc config, String dbType){
         /*
          * We convert the field someJsonObject to a JsonObject by using the JsonObjectConverter
          */
@@ -70,7 +95,7 @@ public class TestTool {
          */
         Configuration configuration = new Configuration();
         Database databaseConfig = new Database();
-        databaseConfig.setName(HSQLDBDatabase.class.getName());
+        databaseConfig.setName(dbType);
         databaseConfig.setInputSchema("");
         databaseConfig.setOutputSchema("");
         databaseConfig.setIncludes("something|somethingComposite");
@@ -105,14 +130,28 @@ public class TestTool {
         generatorConfig.setStrategy(strategy);
         configuration.setGenerator(generatorConfig);
 
+        configuration.setJdbc(config);
+
+        return configuration;
+    }
+
+    public static Configuration createGeneratorConfig(String generatorName, String packageName, Class<? extends VertxGeneratorStrategy> generatorStrategy){
         Jdbc jdbcConfig = new Jdbc();
         jdbcConfig.setDriver("org.hsqldb.jdbcDriver");
         jdbcConfig.setUrl("jdbc:hsqldb:mem:test");
         jdbcConfig.setUser("test");
         jdbcConfig.setPassword("");
-        configuration.setJdbc(jdbcConfig);
+        return createGeneratorConfig(generatorName,packageName,generatorStrategy,jdbcConfig,HSQLDBDatabase.class.getName());
+    }
 
-        return configuration;
+    public static Configuration createGeneratorConfigMysql(String generatorName, String packageName, Class<? extends VertxGeneratorStrategy> generatorStrategy){
+        Jdbc jdbcConfig = new Jdbc();
+        jdbcConfig.setDriver("com.mysql.jdbc.Driver");
+        jdbcConfig.setUrl("jdbc:mysql://127.0.0.1:3306/");
+        jdbcConfig.setUser("vertx");
+        jdbcConfig.setPassword("");
+        jdbcConfig.setSchema("vertx");
+        return createGeneratorConfig(generatorName,packageName,generatorStrategy,jdbcConfig,MySQLDatabase.class.getName());
     }
 
 }

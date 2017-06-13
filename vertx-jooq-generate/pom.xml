@@ -26,6 +26,12 @@
         </dependency>
         <dependency>
             <groupId>io.github.jklingsporn</groupId>
+            <artifactId>vertx-jooq-future-async</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.github.jklingsporn</groupId>
             <artifactId>vertx-jooq-rx</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
@@ -34,6 +40,12 @@
             <groupId>io.reactivex</groupId>
             <artifactId>rxjava</artifactId>
             <version>${rx.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.37</version>
             <scope>test</scope>
         </dependency>
         <dependency>
