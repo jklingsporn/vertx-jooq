@@ -1,6 +1,7 @@
 package io.github.jklingsporn.vertx.jooq.future.async;
 
 import io.github.jklingsporn.vertx.jooq.future.async.util.AsyncJooqSQLClientImpl;
+import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.asyncsql.AsyncSQLClient;
 import org.jooq.Query;
@@ -14,8 +15,8 @@ import java.util.function.Function;
  */
 public interface AsyncJooqSQLClient {
 
-    public static AsyncJooqSQLClient create(AsyncSQLClient delegate){
-        return new AsyncJooqSQLClientImpl(delegate);
+    public static AsyncJooqSQLClient create(Vertx vertx,AsyncSQLClient delegate){
+        return new AsyncJooqSQLClientImpl(vertx, delegate);
     }
 
     <P> CompletableFuture<List<P>> fetch(Query query, Function<JsonObject, P> cunstructor);

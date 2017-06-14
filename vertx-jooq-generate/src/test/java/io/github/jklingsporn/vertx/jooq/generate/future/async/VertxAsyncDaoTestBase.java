@@ -12,6 +12,8 @@ import org.jooq.SQLDialect;
 import org.jooq.impl.DefaultConfiguration;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -25,6 +27,8 @@ import java.util.function.BiConsumer;
  */
 public class VertxAsyncDaoTestBase {
 
+    private static final Logger logger = LoggerFactory.getLogger(VertxAsyncDaoTestBase.class);
+
     protected static SomethingDao dao;
     protected static SomethingcompositeDao compositeDao;
 
@@ -35,16 +39,15 @@ public class VertxAsyncDaoTestBase {
         configuration.set(SQLDialect.MYSQL);
         configuration.set(DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/vertx", "vertx", ""));
 
-        JsonObject config = new JsonObject().put("host", "127.0.0.1:3306").put("user", "vertx").put("password", "").put("database","vertx");
+        JsonObject config = new JsonObject().put("host", "127.0.0.1").put("username", "vertx").putNull("password").put("database","vertx");
         dao = new SomethingDao(configuration);
         Vertx vertx1 = Vertx.vertx();
         dao.setVertx(vertx1);
-        dao.setClient(AsyncJooqSQLClient.create(MySQLClient.createNonShared(vertx1, config)));
+        dao.setClient(AsyncJooqSQLClient.create(vertx1,MySQLClient.createNonShared(vertx1, config)));
 
         compositeDao = new SomethingcompositeDao(configuration);
-        Vertx vertx2 = Vertx.vertx();
-        compositeDao.setVertx(vertx2);
-        compositeDao.setClient(AsyncJooqSQLClient.create(MySQLClient.createNonShared(vertx2, config)));
+        compositeDao.setVertx(vertx1);
+        compositeDao.setClient(AsyncJooqSQLClient.create(vertx1,MySQLClient.createNonShared(vertx1, config)));
     }
 
     protected void await(CountDownLatch latch)  {
@@ -74,6 +77,7 @@ public class VertxAsyncDaoTestBase {
     protected <T> BiConsumer<? super T, ? super Throwable> failOrCountDown(CountDownLatch latch){
         return (t,x)->{
             if(x!=null){
+                logger.error(x.getMessage(),x);
                 Assert.fail(x.getMessage());
             }else{
                 latch.countDown();

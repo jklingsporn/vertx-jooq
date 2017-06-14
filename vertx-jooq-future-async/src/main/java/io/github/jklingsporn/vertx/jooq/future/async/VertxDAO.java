@@ -95,7 +95,20 @@ public interface VertxDAO<R extends UpdatableRecord<R>, P extends VertxPojo, T> 
      * @see #findById(Object)
      */
     default CompletableFuture<P> findByIdAsync(T id){
-        return FutureTool.executeBlocking(h->h.complete(findById(id)),vertx());
+        UniqueKey<?> uk = getTable().getPrimaryKey();
+        Objects.requireNonNull(uk, () -> "No primary key");
+        /**
+         * Copied from jOOQs DAOImpl#equal-method
+         */
+        TableField<? extends Record, ?>[] pk = uk.getFieldsArray();
+        Condition condition;
+        if (pk.length == 1) {
+            condition = ((Field<Object>) pk[0]).equal(pk[0].getDataType().convert(id));
+        }
+        else {
+            condition = row(pk).equal((Record) id);
+        }
+        return fetchOneAsync(condition);
     }
 
     /**
@@ -120,7 +133,7 @@ public interface VertxDAO<R extends UpdatableRecord<R>, P extends VertxPojo, T> 
      *                      e.g. when more than one result is returned.
      */
     default <Z> CompletableFuture<P> fetchOneAsync(Condition condition){
-        return executeAsync(dslContext -> dslContext.selectFrom(getTable()).where(condition).fetchOne(mapper()));
+        return client().fetchOne(DSL.using(configuration()).selectFrom(getTable()).where(condition), jsonMapper());
     }
 
     /**
@@ -181,7 +194,7 @@ public interface VertxDAO<R extends UpdatableRecord<R>, P extends VertxPojo, T> 
         else {
             condition = row(pk).equal((Record) id);
         }
-        return executeAsync(dslContext -> dslContext.deleteFrom(getTable()).where(condition).execute());
+        return deleteExecAsync(condition);
     }
 
     /**
@@ -192,7 +205,7 @@ public interface VertxDAO<R extends UpdatableRecord<R>, P extends VertxPojo, T> 
      *                      with an <code>DataAccessException</code> if the blocking method of this type throws an exception
      */
     default <Z> CompletableFuture<Integer> deleteExecAsync(Condition condition){
-        return executeAsync(dslContext -> dslContext.deleteFrom(getTable()).where(condition).execute());
+        return client().execute(DSL.using(configuration()).deleteFrom(getTable()).where(condition));
     }
 
     /**
@@ -216,7 +229,8 @@ public interface VertxDAO<R extends UpdatableRecord<R>, P extends VertxPojo, T> 
      *                      with an <code>DataAccessException</code> if the blocking method of this type throws an exception
      */
     default CompletableFuture<Integer> updateExecAsync(P object){
-        return executeAsync(dslContext -> dslContext.executeUpdate(dslContext.newRecord(getTable(), object)));
+        DSLContext dslContext = DSL.using(configuration());
+        return client().execute(dslContext.update(getTable()).set(dslContext.newRecord(getTable(), object)));
     }
 
     /**
