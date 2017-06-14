@@ -35,7 +35,7 @@ public class VertxAsyncDaoTestBase {
         configuration.set(SQLDialect.MYSQL);
         configuration.set(DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/vertx", "vertx", ""));
 
-        JsonObject config = new JsonObject().put("host", "jdbc:mysql://127.0.0.1:3306/vertx").put("user", "vertx").put("password", "");
+        JsonObject config = new JsonObject().put("host", "127.0.0.1:3306").put("user", "vertx").put("password", "").put("database","vertx");
         dao = new SomethingDao(configuration);
         Vertx vertx1 = Vertx.vertx();
         dao.setVertx(vertx1);
