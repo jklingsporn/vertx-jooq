@@ -140,7 +140,7 @@ public abstract class AbstractVertxGenerator extends JavaGenerator {
                 out.tab(2).println("%s(json.getBinary(\"%s\"));", setter, javaMemberName);
             }else if(isType(columnType,Instant.class)){
                 out.tab(2).println("%s(json.getInstant(\"%s\"));", setter, javaMemberName);
-            }else if(table.getDatabase().getEnum(table.getSchema(), column.getType().getUserType()) != null) {
+            }else if(isEnum(table, column)) {
                 out.tab(2).println("%s(Enum.valueOf(%s.class,json.getString(\"%s\")));", setter, columnType, javaMemberName);
             }else if(column.getType().getConverter() != null && (isType(column.getType().getConverter(),JsonObjectConverter.class) || isType(column.getType().getConverter(),JsonArrayConverter.class))) {
                 out.tab(2).println("%s(new %s().from(json.getString(\"%s\")));", setter, column.getType().getConverter(), javaMemberName);
@@ -152,6 +152,10 @@ public abstract class AbstractVertxGenerator extends JavaGenerator {
         out.tab(2).println("return this;");
         out.tab(1).println("}");
         out.println();
+    }
+
+    private boolean isEnum(TableDefinition table, TypedElementDefinition<?> column) {
+        return table.getDatabase().getEnum(table.getSchema(), column.getType().getUserType()) != null;
     }
 
     private boolean isType(String columnType, Class<?> clazz) {
@@ -181,6 +185,8 @@ public abstract class AbstractVertxGenerator extends JavaGenerator {
             String columnType = getJavaType(column.getType());
             if(handleCustomTypeToJson(column,getter,getJavaType(column.getType()),getStrategy().getJavaMemberName(column, GeneratorStrategy.Mode.POJO),out)){
                 //handled by user
+            }else if(isEnum(table,column)){
+                out.tab(2).println("json.put(\"%s\",%s().getLiteral());", getStrategy().getJavaMemberName(column, GeneratorStrategy.Mode.POJO),getter);
             }else if(isAllowedJsonType(column, columnType)){
                 out.tab(2).println("json.put(\"%s\",%s());", getStrategy().getJavaMemberName(column, GeneratorStrategy.Mode.POJO),getter);
             }else{
