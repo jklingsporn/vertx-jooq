@@ -25,7 +25,7 @@ import javax.annotation.Generated;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Something implements ISomething {
 
-    private static final long serialVersionUID = 1934128683;
+    private static final long serialVersionUID = 1716516244;
 
     private Integer    someid;
     private String     somestring;
@@ -33,6 +33,7 @@ public class Something implements ISomething {
     private Short      somesmallnumber;
     private Integer    someregularnumber;
     private Double     somedouble;
+    private String     someenum;
     private JsonObject somejsonobject;
     private JsonArray  somejsonarray;
 
@@ -45,6 +46,7 @@ public class Something implements ISomething {
         this.somesmallnumber = value.somesmallnumber;
         this.someregularnumber = value.someregularnumber;
         this.somedouble = value.somedouble;
+        this.someenum = value.someenum;
         this.somejsonobject = value.somejsonobject;
         this.somejsonarray = value.somejsonarray;
     }
@@ -56,6 +58,7 @@ public class Something implements ISomething {
         Short      somesmallnumber,
         Integer    someregularnumber,
         Double     somedouble,
+        String     someenum,
         JsonObject somejsonobject,
         JsonArray  somejsonarray
     ) {
@@ -65,6 +68,7 @@ public class Something implements ISomething {
         this.somesmallnumber = somesmallnumber;
         this.someregularnumber = someregularnumber;
         this.somedouble = somedouble;
+        this.someenum = someenum;
         this.somejsonobject = somejsonobject;
         this.somejsonarray = somejsonarray;
     }
@@ -136,6 +140,17 @@ public class Something implements ISomething {
     }
 
     @Override
+    public String getSomeenum() {
+        return this.someenum;
+    }
+
+    @Override
+    public Something setSomeenum(String someenum) {
+        this.someenum = someenum;
+        return this;
+    }
+
+    @Override
     public JsonObject getSomejsonobject() {
         return this.somejsonobject;
     }
@@ -167,6 +182,7 @@ public class Something implements ISomething {
         sb.append(", ").append(somesmallnumber);
         sb.append(", ").append(someregularnumber);
         sb.append(", ").append(somedouble);
+        sb.append(", ").append(someenum);
         sb.append(", ").append(somejsonobject);
         sb.append(", ").append(somejsonarray);
 
@@ -189,6 +205,7 @@ public class Something implements ISomething {
         setSomesmallnumber(from.getSomesmallnumber());
         setSomeregularnumber(from.getSomeregularnumber());
         setSomedouble(from.getSomedouble());
+        setSomeenum(from.getSomeenum());
         setSomejsonobject(from.getSomejsonobject());
         setSomejsonarray(from.getSomejsonarray());
     }

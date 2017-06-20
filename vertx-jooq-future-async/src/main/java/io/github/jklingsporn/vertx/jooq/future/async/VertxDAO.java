@@ -1,6 +1,5 @@
 package io.github.jklingsporn.vertx.jooq.future.async;
 
-import io.github.jklingsporn.vertx.jooq.future.async.util.FutureTool;
 import io.github.jklingsporn.vertx.jooq.shared.VertxPojo;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
@@ -29,30 +28,10 @@ public interface VertxDAO<R extends UpdatableRecord<R>, P extends VertxPojo, T> 
 
     void setVertx(Vertx vertx);
 
+    /**
+     * @return a function that maps a <code>JsonObject</code> to a Pojo. Usually just the constructor.
+     */
     Function<JsonObject, P> jsonMapper();
-
-    /**
-     * Convenience method to execute any <code>DSLContext</code>-aware Function asynchronously
-     * using this DAO's <code>configuration</code>.
-     * @param function
-     * @param <X>
-     * @return CompletableFuture
-     */
-    default <X> CompletableFuture<X> executeAsync(Function<DSLContext, X> function){
-        return FutureTool.executeBlocking(h -> h.complete(function.apply(DSL.using(configuration()))), vertx());
-    }
-
-    /**
-     * Checks if a given POJO exists asynchronously
-     *
-     * @param object The POJO whose existence is checked
-     * @return CompletableFuture which succeeds when the blocking method of this type succeeds or fails
-     *                      with an <code>DataAccessException</code> if the blocking method of this type throws an exception
-     * @see #exists(Object)
-     */
-    default CompletableFuture<Boolean> existsAsync(P object){
-        return FutureTool.executeBlocking(h-> h.complete(exists(object)),vertx());
-    }
 
     /**
      * Checks if a given ID exists asynchronously
@@ -63,7 +42,7 @@ public interface VertxDAO<R extends UpdatableRecord<R>, P extends VertxPojo, T> 
      * @see #existsById(Object)
      */
     default CompletableFuture<Boolean> existsByIdAsync(T id){
-        return FutureTool.executeBlocking(h->h.complete(existsById(id)),vertx());
+        return findByIdAsync(id).thenApply(p->p!=null);
     }
 
     /**
@@ -73,7 +52,9 @@ public interface VertxDAO<R extends UpdatableRecord<R>, P extends VertxPojo, T> 
      * @see #count()
      */
     default CompletableFuture<Long> countAsync(){
-        return FutureTool.executeBlocking(h->h.complete(count()),vertx());
+        return client().fetchOne(DSL.using(configuration()).selectCount().from(getTable()),
+                json -> json.getMap().values().stream().findFirst()).
+                thenApply(opt -> (Long) opt.get());
     }
 
     /**
@@ -83,7 +64,7 @@ public interface VertxDAO<R extends UpdatableRecord<R>, P extends VertxPojo, T> 
      * @see #findAll()
      */
     default CompletableFuture<List<P>> findAllAsync(){
-        return FutureTool.executeBlocking(h->h.complete(findAll()),vertx());
+        return fetchAsync(DSL.trueCondition());
     }
 
     /**
@@ -146,7 +127,7 @@ public interface VertxDAO<R extends UpdatableRecord<R>, P extends VertxPojo, T> 
      * @see #fetchOptional(Field, Object)
      */
     default <Z> CompletableFuture<Optional<P>> fetchOptionalAsync(Field<Z> field, Z value){
-        return FutureTool.executeBlocking(h->h.complete(fetchOptional(field,value)),vertx());
+        return fetchOneAsync(field,value).thenApply(Optional::ofNullable);
     }
 
     /**
@@ -169,7 +150,7 @@ public interface VertxDAO<R extends UpdatableRecord<R>, P extends VertxPojo, T> 
      *                      with an <code>DataAccessException</code> if the blocking method of this type throws an exception
      */
     default CompletableFuture<List<P>> fetchAsync(Condition condition){
-        return executeAsync(dslContext -> dslContext.selectFrom(getTable()).where(condition).fetch(mapper()));
+        return client().fetch(DSL.using(configuration()).selectFrom(getTable()).where(condition), jsonMapper());
     }
 
     /**
@@ -253,18 +234,19 @@ public interface VertxDAO<R extends UpdatableRecord<R>, P extends VertxPojo, T> 
      */
     @SuppressWarnings("unchecked")
     default CompletableFuture<T> insertReturningPrimaryAsync(P object){
-        UniqueKey<?> key = getTable().getPrimaryKey();
-        //usually key shouldn't be null because DAO generation is omitted in such cases
-        Objects.requireNonNull(key,()->"No primary key");
-        return executeAsync(dslContext -> {
-            R record = dslContext.insertInto(getTable()).set(dslContext.newRecord(getTable(), object)).returning(key.getFields()).fetchOne();
-            Objects.requireNonNull(record, () -> "Failed inserting record or no key");
-            Record key1 = record.key();
-            if(key1.size() == 1){
-                return ((Record1<T>)key1).value1();
-            }
-            return (T) key1;
-        });
+        throw new UnsupportedOperationException(":(");
+//        UniqueKey<?> key = getTable().getPrimaryKey();
+//        //usually key shouldn't be null because DAO generation is omitted in such cases
+//        Objects.requireNonNull(key,()->"No primary key");
+//        Function<JsonObject,T> keyMapper=null;
+//        if(key.getFieldsArray().length==1){
+//            //this will throw exception in case no value was added
+//            keyMapper = json -> (T)json.getMap().values().stream().findFirst().get();
+//        }else{
+//            //
+//        }
+//        DSLContext dslContext = DSL.using(configuration());
+//        return client().fetchOne(dslContext.insertInto(getTable()).set(dslContext.newRecord(getTable(), object)).returning(key.getFields()),keyMapper);
     }
 
 }

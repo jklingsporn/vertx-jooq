@@ -30,7 +30,7 @@ public class AsyncJooqSQLClientImpl implements io.github.jklingsporn.vertx.jooq.
 
     @Override
     public <P> CompletableFuture<List<P>> fetch(Query query, Function<JsonObject, P> mapper){
-        return getConnection().thenCompose(sqlConnection -> {
+        return getConnection().thenCompose(executeAndClose(sqlConnection -> {
             CompletableFuture<List<P>> cf = new VertxCompletableFuture<>(vertx);
             sqlConnection.queryWithParams(query.getSQL(), getBindValues(query), rs -> {
                 if (rs.succeeded()) {
@@ -40,12 +40,12 @@ public class AsyncJooqSQLClientImpl implements io.github.jklingsporn.vertx.jooq.
                 }
             });
             return cf;
-        });
+        }));
     }
 
     @Override
     public <P> CompletableFuture<P> fetchOne(Query query, Function<JsonObject, P> mapper){
-        return getConnection().thenCompose(sqlConnection -> {
+        return getConnection().thenCompose(executeAndClose(sqlConnection -> {
             CompletableFuture<P> cf = new VertxCompletableFuture<P>(vertx);
             sqlConnection.queryWithParams(query.getSQL(), getBindValues(query), rs -> {
                 if (rs.succeeded()) {
@@ -56,12 +56,12 @@ public class AsyncJooqSQLClientImpl implements io.github.jklingsporn.vertx.jooq.
                 }
             });
             return cf;
-        });
+        }));
     }
 
     @Override
     public CompletableFuture<Integer> execute(Query query){
-        return getConnection().thenCompose(sqlConnection -> {
+        return getConnection().thenCompose(executeAndClose(sqlConnection -> {
             CompletableFuture<Integer> cf = new VertxCompletableFuture<>(vertx);
             JsonArray bindValues = getBindValues(query);
             sqlConnection.updateWithParams(query.getSQL(), bindValues, rs -> {
@@ -72,7 +72,17 @@ public class AsyncJooqSQLClientImpl implements io.github.jklingsporn.vertx.jooq.
                 }
             });
             return cf;
-        });
+        }));
+    }
+
+    protected <T> Function<SQLConnection,CompletableFuture<T>> executeAndClose(Function<SQLConnection,CompletableFuture<T>> unsafeFunction){
+        return sqlConnection -> {
+            try{
+                return unsafeFunction.apply(sqlConnection);
+            }finally {
+                sqlConnection.close();
+            }
+        };
     }
 
     private JsonArray getBindValues(Query query) {

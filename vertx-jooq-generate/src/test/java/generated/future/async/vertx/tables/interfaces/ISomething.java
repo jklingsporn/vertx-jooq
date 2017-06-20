@@ -87,6 +87,16 @@ public interface ISomething extends VertxPojo, Serializable {
     public Double getSomedouble();
 
     /**
+     * Setter for <code>something.someEnum</code>.
+     */
+    public ISomething setSomeenum(String value);
+
+    /**
+     * Getter for <code>something.someEnum</code>.
+     */
+    public String getSomeenum();
+
+    /**
      * Setter for <code>something.someJsonObject</code>.
      */
     public ISomething setSomejsonobject(JsonObject value);
@@ -128,6 +138,7 @@ public interface ISomething extends VertxPojo, Serializable {
         setSomesmallnumber(json.getInteger("someSmallNumber").shortValue());
         setSomeregularnumber(json.getInteger("someRegularNumber"));
         setSomedouble(json.getDouble("someDouble"));
+        setSomeenum(json.getString("someEnum"));
         setSomejsonobject(new io.github.jklingsporn.vertx.jooq.shared.JsonObjectConverter().from(json.getString("someJsonObject")));
         setSomejsonarray(new io.github.jklingsporn.vertx.jooq.shared.JsonArrayConverter().from(json.getString("someJsonArray")));
         return this;
@@ -143,6 +154,7 @@ public interface ISomething extends VertxPojo, Serializable {
         json.put("someSmallNumber",getSomesmallnumber());
         json.put("someRegularNumber",getSomeregularnumber());
         json.put("someDouble",getSomedouble());
+        json.put("someEnum",getSomeenum());
         json.put("someJsonObject",getSomejsonobject());
         json.put("someJsonArray",getSomejsonarray());
         return json;

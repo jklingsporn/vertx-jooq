@@ -40,7 +40,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Something extends TableImpl<SomethingRecord> {
 
-    private static final long serialVersionUID = -1570256253;
+    private static final long serialVersionUID = 1101472448;
 
     /**
      * The reference instance of <code>something</code>
@@ -84,6 +84,11 @@ public class Something extends TableImpl<SomethingRecord> {
      * The column <code>something.someDouble</code>.
      */
     public final TableField<SomethingRecord, Double> SOMEDOUBLE = createField("someDouble", org.jooq.impl.SQLDataType.DOUBLE, this, "");
+
+    /**
+     * The column <code>something.someEnum</code>.
+     */
+    public final TableField<SomethingRecord, String> SOMEENUM = createField("someEnum", org.jooq.impl.SQLDataType.VARCHAR.length(3), this, "");
 
     /**
      * The column <code>something.someJsonObject</code>.
