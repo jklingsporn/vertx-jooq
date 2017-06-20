@@ -60,6 +60,7 @@ public class TestTool {
                 "  `someSmallNumber` SMALLINT(5) NULL,\n" +
                 "  `someRegularNumber` INT(10) NULL,\n" +
                 "  `someDouble` DOUBLE NULL,\n" +
+                "  `someEnum` ENUM('FOO', 'BAR', 'BAZ') NULL,\n" +
                 "  `someJsonObject` VARCHAR(45) NULL,\n" +
                 "  `someJsonArray` VARCHAR(45) NULL,\n" +
                 "  PRIMARY KEY (`someId`));").execute();

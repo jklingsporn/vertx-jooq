@@ -58,7 +58,7 @@ Checkout [vertx-auth-jooq](https://github.com/jklingsporn/vertx-auth-jooq) that 
 <dependency>
   <groupId>io.github.jklingsporn</groupId>
   <artifactId>vertx-jooq-classic</artifactId>
-  <version>2.3.0</version>
+  <version>2.4.0-SNAPSHOT</version>
 </dependency>
 ```
 # maven code generator configuration example for mysql
@@ -101,7 +101,7 @@ If you are new to jOOQ, I recommend to read the awesome [jOOQ documentation](htt
               <dependency>
                   <groupId>io.github.jklingsporn</groupId>
                   <artifactId>vertx-jooq-generate</artifactId>
-                  <version>2.3.0</version>
+                  <version>2.4.0-SNAPSHOT</version>
               </dependency>
           </dependencies>
 
