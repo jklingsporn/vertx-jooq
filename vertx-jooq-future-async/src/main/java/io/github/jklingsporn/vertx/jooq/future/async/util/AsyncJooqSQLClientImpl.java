@@ -75,6 +75,12 @@ public class AsyncJooqSQLClientImpl implements io.github.jklingsporn.vertx.jooq.
         }));
     }
 
+    /**
+     * Wraps the unsafeFunction and closes SQLConnection when done.
+     * @param unsafeFunction
+     * @param <T>
+     * @return
+     */
     protected <T> Function<SQLConnection,CompletableFuture<T>> executeAndClose(Function<SQLConnection,CompletableFuture<T>> unsafeFunction){
         return sqlConnection -> {
             try{
@@ -102,6 +108,9 @@ public class AsyncJooqSQLClientImpl implements io.github.jklingsporn.vertx.jooq.
         return param.getBinding().converter().to(param.getValue());
     }
 
+    /**
+     * @return a CompletableFuture that returns a SQLConnection or an Exception.
+     */
     private CompletableFuture<SQLConnection> getConnection(){
         CompletableFuture<SQLConnection> cf = new VertxCompletableFuture<>(vertx);
         delegate.getConnection(h -> {
