@@ -269,14 +269,14 @@ public abstract class AbstractVertxGenerator extends JavaGenerator {
 
                 // If column is part of a single-column unique key...
                 if (uk.getKeyColumns().size() == 1 && uk.getKeyColumns().get(0).equals(column)) {
-                    generateFetchOneByMethods(out, pType, colName, colClass, colType);
+                    generateFetchOneByMethods(out, pType, colName, colClass, colType, colIdentifier);
                     break ukLoop;
                 }
             }
         }
     }
 
-    protected abstract void generateFetchOneByMethods(JavaWriter out, String pType, String colName, String colClass, String colType) ;
+    protected abstract void generateFetchOneByMethods(JavaWriter out, String pType, String colName, String colClass, String colType, String colIdentifier) ;
 
     protected abstract void generateFetchByMethods(JavaWriter out, String pType, String colName, String colClass, String colType, String colIdentifier) ;
 

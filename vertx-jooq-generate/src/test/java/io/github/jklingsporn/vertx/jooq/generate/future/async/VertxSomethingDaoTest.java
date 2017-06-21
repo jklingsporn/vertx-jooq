@@ -48,6 +48,31 @@ public class VertxSomethingDaoTest extends VertxAsyncDaoTestBase {
         await(latch);
     }
 
+//    @Test
+//    public void testReturning(){
+//        CountDownLatch latch = new CountDownLatch(1);
+//        dao.client().delegate().getConnection(sqlConnection->{
+//            if(sqlConnection.failed()){
+//                sqlConnection.cause().printStackTrace();
+//            }
+//            sqlConnection.result().execute("insert into something values(null,null,null,null,null,null,null,null,null)", ex -> {
+//                if (ex.failed()) {
+//                    ex.cause().printStackTrace();
+//                }
+//                sqlConnection.result().query("select LAST_INSERT_ID()", lastId -> {
+//                    if (lastId.failed()) {
+//                        lastId.cause().printStackTrace();
+//                    } else {
+//                        Assert.assertEquals(1L, lastId.result().getResults().size());
+//                        System.out.println(lastId.result().toJson());
+//                        latch.countDown();
+//                    }
+//                });
+//            });
+//        });
+//        await(latch);
+//    }
+
 
 
     private Something createSomething(){

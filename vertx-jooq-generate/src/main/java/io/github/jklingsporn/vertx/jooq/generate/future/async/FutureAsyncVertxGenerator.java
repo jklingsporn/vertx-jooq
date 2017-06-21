@@ -17,16 +17,15 @@ public class FutureAsyncVertxGenerator extends AbstractVertxGenerator {
     @Override
     protected void generateDAOImports(JavaWriter out) {
         out.println("import java.util.concurrent.CompletableFuture;");
-        out.println("import io.github.jklingsporn.vertx.jooq.future.async.util.FutureTool;");
         out.println("import io.github.jklingsporn.vertx.jooq.future.async.AsyncJooqSQLClient;");
     }
 
     @Override
-    protected void generateFetchOneByMethods(JavaWriter out, String pType, String colName, String colClass, String colType) {
+    protected void generateFetchOneByMethods(JavaWriter out, String pType, String colName, String colClass, String colType, String colIdentifier) {
         out.tab(1).javadoc("Fetch a unique record that has <code>%s = value</code> asynchronously", colName);
 
         out.tab(1).println("public CompletableFuture<%s> fetchOneBy%sAsync(%s value) {", pType,colClass, colType);
-        out.tab(2).println("return FutureTool.executeBlocking(h->h.complete(fetchOneBy%s(value)),vertx());", colClass);
+        out.tab(2).println("return fetchOneAsync(%s,value);", colIdentifier);
         out.tab(1).println("}");
     }
 

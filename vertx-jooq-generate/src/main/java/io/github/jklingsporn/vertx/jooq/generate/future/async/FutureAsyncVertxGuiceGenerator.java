@@ -25,7 +25,7 @@ public class FutureAsyncVertxGuiceGenerator extends AbstractVertxGuiceGenerator 
     }
 
     @Override
-    protected void generateFetchOneByMethods(JavaWriter out, String pType, String colName, String colClass, String colType) {
+    protected void generateFetchOneByMethods(JavaWriter out, String pType, String colName, String colClass, String colType, String colIdentifier) {
         out.tab(1).javadoc("Fetch a unique record that has <code>%s = value</code> asynchronously", colName);
 
         out.tab(1).println("public CompletableFuture<%s> fetchOneBy%sAsync(%s value) {", pType,colClass, colType);

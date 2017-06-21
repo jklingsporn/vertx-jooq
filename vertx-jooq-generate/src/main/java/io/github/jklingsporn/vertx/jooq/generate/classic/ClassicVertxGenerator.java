@@ -19,7 +19,7 @@ public class ClassicVertxGenerator extends AbstractVertxGenerator {
     }
 
     @Override
-    protected void generateFetchOneByMethods(JavaWriter out, String pType, String colName, String colClass, String colType) {
+    protected void generateFetchOneByMethods(JavaWriter out, String pType, String colName, String colClass, String colType, String colIdentifier) {
         out.tab(1).javadoc("Fetch a unique record that has <code>%s = value</code> asynchronously", colName);
 
         out.tab(1).println("public void fetchOneBy%sAsync(%s value,Handler<AsyncResult<%s>> resultHandler) {", colClass, colType,pType);

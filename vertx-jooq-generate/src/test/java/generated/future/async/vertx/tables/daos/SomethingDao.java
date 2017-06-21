@@ -8,7 +8,6 @@ import generated.future.async.vertx.tables.Something;
 import generated.future.async.vertx.tables.records.SomethingRecord;
 import io.github.jklingsporn.vertx.jooq.future.async.AsyncJooqSQLClient;
 import io.github.jklingsporn.vertx.jooq.future.async.VertxDAO;
-import io.github.jklingsporn.vertx.jooq.future.async.util.FutureTool;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import org.jooq.Configuration;
@@ -133,7 +132,7 @@ public class SomethingDao extends DAOImpl<SomethingRecord, generated.future.asyn
      * Fetch a unique record that has <code>someId = value</code> asynchronously
      */
     public CompletableFuture<generated.future.async.vertx.tables.pojos.Something> fetchOneBySomeidAsync(Integer value) {
-        return FutureTool.executeBlocking(h->h.complete(fetchOneBySomeid(value)),vertx());
+        return fetchOneAsync(Something.SOMETHING.SOMEID,value);
     }
 
     /**
