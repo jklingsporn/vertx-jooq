@@ -151,7 +151,7 @@ public abstract class AbstractVertxGenerator extends JavaGenerator {
             }else if(isType(columnType,Instant.class)){
                 out.tab(2).println("%s(json.getInstant(\"%s\"));", setter, jsonName);
             }else if(isEnum(table, column)) {
-                out.tab(2).println("%s(Enum.valueOf(%s.class,json.getString(\"%s\")));", setter, columnType, jsonName);
+                out.tab(2).println("%s(java.util.Arrays.stream(%s.values()).filter(td -> td.getLiteral().equals(json.getString(\"%s\"))).findFirst().orElse(null));", setter, columnType, jsonName);
             }else if(column.getType().getConverter() != null && (isType(column.getType().getConverter(),JsonObjectConverter.class) || isType(column.getType().getConverter(),JsonArrayConverter.class))) {
                 out.tab(2).println("%s(new %s().from(json.getString(\"%s\")));", setter, column.getType().getConverter(), jsonName);
             }else{
@@ -194,7 +194,7 @@ public abstract class AbstractVertxGenerator extends JavaGenerator {
         for (ColumnDefinition column : table.getColumns()) {
             String getter = getStrategy().getJavaGetterName(column, GeneratorStrategy.Mode.INTERFACE);
             String columnType = getJavaType(column.getType());
-            if(handleCustomTypeToJson(column,getter,getJavaType(column.getType()),getStrategy().getJavaMemberName(column, GeneratorStrategy.Mode.POJO),out)){
+            if(handleCustomTypeToJson(column,getter,getJavaType(column.getType()),getStrategy().getJavaMemberName(column, GeneratorStrategy.Mode.POJO), out)) {
                 //handled by user
             }else if(isEnum(table, column)){
                 out.tab(2).println("json.put(\"%s\",%s().getLiteral());", getJsonName(column),getter);
