@@ -3,6 +3,10 @@ A [jOOQ](http://www.jooq.org/)-CodeGenerator to create [vertx](http://vertx.io/)
 Perform all CRUD-operations asynchronously and convert your POJOs
 from/into a `io.vertx.core.JsonObject`.
 
+---
+>Also check out the beta of [vertx-jooq-async](https://github.com/jklingsporn/vertx-jooq-async): vertx-jooq without JDBC!
+---
+
 ## new in 2.3
 
 We just added a third flavor: RX. Now, your DAO can expose a RX Java based API ! To use it, you need the Vert.x RX 
