@@ -7,6 +7,7 @@ import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import org.jooq.exception.DataAccessException;
 import org.jooq.exception.TooManyRowsException;
+import org.jooq.impl.DSL;
 import org.junit.Assert;
 import org.junit.Test;
 import rx.Single;
@@ -17,13 +18,14 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
-import static org.junit.Assert.assertThat;
 
 
 /**
  * @author <a href="http://escoffier.me">Clement Escoffier</a>
+ * @author <a href="https://jensonjava.wordpress.com">Jens Klingsporn</a>
  */
 public class VertxSomethingDaoTest extends RXVertxDaoTestBase {
 
@@ -148,13 +150,10 @@ public class VertxSomethingDaoTest extends RXVertxDaoTestBase {
         Something something = createSomething();
         dao.insertReturningPrimaryAsync(something)
             .flatMap(id -> dao.insertReturningPrimaryAsync(something.setSomeid(id)))
-            .subscribe(
-                i -> Assert.fail("Should not happen"),
-                err -> {
-                    Assert.assertEquals(DataAccessException.class, err.getClass());
-                    latch.countDown();
-                }
-            );
+            .onErrorResumeNext(err -> {
+                Assert.assertEquals(DataAccessException.class, err.getClass());
+                return dao.deleteExecAsync(DSL.trueCondition());
+            }).subscribe(failOrCountDownSubscriber(latch));
         await(latch);
     }
 
@@ -163,7 +162,7 @@ public class VertxSomethingDaoTest extends RXVertxDaoTestBase {
         CountDownLatch latch = new CountDownLatch(1);
         dao.insertReturningPrimaryAsync(createSomething())
             .flatMap(i ->
-                dao.fetchOneAsync(Tables.SOMETHING.SOMEID.eq(i))
+                dao.fetchOneAsync(Tables.SOMETHING.SOMEID,i)
                     .doOnSuccess(Assert::assertNotNull)
                     .flatMap(s -> dao.deleteExecAsync(Tables.SOMETHING.SOMEID.eq(i)))
             )
@@ -220,6 +219,90 @@ public class VertxSomethingDaoTest extends RXVertxDaoTestBase {
             .subscribe(failOrCountDownSubscriber(latch));
         await(latch);
         assertThat(count.get(), is(2));
+    }
+
+    @Test
+    public void nonExistingValueShouldNotExist() throws InterruptedException {
+        Something something = createSomething();
+        Single<Boolean> existsFuture = dao.existsAsync(something);
+        Single<Boolean> existsByIdFuture = dao.existsByIdAsync(-1);
+        CountDownLatch latch = new CountDownLatch(1);
+        Single.zip(existsFuture, existsByIdFuture, (i1, i2) -> Arrays.asList(i1,i2)).
+                doOnSuccess(v->{
+                    Assert.assertFalse(v.get(0));
+                    Assert.assertFalse(v.get(1));
+                }).
+                subscribe(failOrCountDownSubscriber(latch));
+        await(latch);
+    }
+
+    @Test
+    public void existingValueShouldExist() throws InterruptedException {
+        Something something = createSomething();
+        CountDownLatch latch = new CountDownLatch(1);
+        dao.insertReturningPrimaryAsync(something).flatMapCompletable(pk -> {
+            something.setSomeid(pk);
+            Single<Boolean> existsFuture = dao.existsAsync(something);
+            Single<Boolean> existsByIdFuture = dao.existsByIdAsync(pk);
+            return Single.zip(existsFuture, existsByIdFuture, (i1, i2) -> Arrays.asList(i1, i2)).
+                    doOnSuccess(v -> {
+                        System.out.println("suc "+v.toString());
+                        Assert.assertTrue(v.get(0));
+                        Assert.assertTrue(v.get(1));
+                    }).
+                    flatMapCompletable(v -> dao.deleteByIdAsync(pk));
+        }).subscribe(failOrCountDownSubscriber(latch));
+        await(latch);
+    }
+
+    @Test
+    public void countShouldReturnNumberOfEntries() throws InterruptedException{
+        CountDownLatch latch = new CountDownLatch(1);
+        dao.countAsync().
+                doOnSuccess(zero -> Assert.assertEquals(0L, zero.longValue())).
+                flatMap(v->dao.insertReturningPrimaryAsync(createSomething())).
+                flatMap(pk->dao.countAsync()).
+                doOnSuccess(one -> Assert.assertEquals(1L, one.longValue())).
+                flatMap(v->dao.deleteExecAsync(DSL.trueCondition())).
+                subscribe(failOrCountDownSubscriber(latch));
+        await(latch);
+    }
+
+    @Test
+    public void fetchOptionalShouldNotBePresentOnNoResult() throws InterruptedException{
+        CountDownLatch latch = new CountDownLatch(1);
+        dao.fetchOptionalAsync(Tables.SOMETHING.SOMEID,-1).
+                doOnSuccess(opt -> Assert.assertFalse(opt.isPresent())).
+                subscribe(failOrCountDownSubscriber(latch));
+        await(latch);
+    }
+
+    @Test
+    public void fetchOptionalShouldReturnResultWhenPresent() throws InterruptedException{
+        CountDownLatch latch = new CountDownLatch(1);
+        dao.insertReturningPrimaryAsync(createSomething()).flatMapCompletable(pk ->
+                dao.fetchOptionalAsync(Tables.SOMETHING.SOMEID, pk).flatMapCompletable(opt -> {
+                    Assert.assertTrue(opt.isPresent());
+                    Assert.assertEquals(pk.longValue(), opt.get().getSomeid().longValue());
+                    return dao.deleteByIdAsync(pk);
+                })).subscribe(failOrCountDownSubscriber(latch));
+        await(latch);
+    }
+
+    @Test
+    public void fetchAllShouldReturnValues() throws InterruptedException{
+        CountDownLatch latch = new CountDownLatch(1);
+        Single<Integer> insertFuture1 = dao.insertReturningPrimaryAsync(createSomething());
+        Single<Integer> insertFuture2 = dao.insertReturningPrimaryAsync(createSomething());
+        Single.zip(insertFuture1, insertFuture2,(i1,i2)->i1).
+                flatMap(v->dao.findAllAsync()).
+                doOnSuccess(list -> {
+                    Assert.assertNotNull(list);
+                    Assert.assertEquals(2, list.size());
+                }).
+                flatMap(v -> dao.deleteExecAsync(DSL.trueCondition())).
+                subscribe(failOrCountDownSubscriber(latch));
+        await(latch);
     }
 
     private Something createSomething() {
