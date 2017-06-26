@@ -198,6 +198,7 @@ public class VertxSomethingDaoTest extends VertxDaoTestBase {
                 thenCompose(v->dao.insertReturningPrimaryAsync(createSomething())).
                 thenCompose(pk->dao.countAsync()).
                 thenAccept(one -> Assert.assertEquals(1L, one.longValue())).
+                thenCompose(v->dao.deleteExecAsync(DSL.trueCondition())).
                 whenComplete(failOrCountDown(latch));
         await(latch);
     }
