@@ -12,7 +12,7 @@
         <module>vertx-jooq-rx</module>
     </modules>
     <properties>
-        <jooq.version>3.9.2</jooq.version>
+        <jooq.version>3.9.3</jooq.version>
         <vertx.version>3.4.1</vertx.version>
         <hsqldb.version>2.3.2</hsqldb.version>
         <junit.version>4.12</junit.version>
