@@ -186,7 +186,7 @@ public abstract class AbstractVertxGenerator extends JavaGenerator {
             if(handleCustomTypeToJson(column,getter,getJavaType(column.getType()),getStrategy().getJavaMemberName(column, GeneratorStrategy.Mode.POJO), out)) {
                 //handled by user
             }else if(isEnum(table,column)){
-                out.tab(2).println("json.put(\"%s\",%s().getLiteral());", getStrategy().getJavaMemberName(column, GeneratorStrategy.Mode.POJO),getter);
+                out.tab(2).println("json.put(\"%s\",%s()==null?null:%s().getLiteral());", getStrategy().getJavaMemberName(column, GeneratorStrategy.Mode.POJO),getter,getter);
             }else if(isAllowedJsonType(column, columnType)){
                 out.tab(2).println("json.put(\"%s\",%s());", getStrategy().getJavaMemberName(column, GeneratorStrategy.Mode.POJO),getter);
             }else{
