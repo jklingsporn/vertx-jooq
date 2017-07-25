@@ -26,6 +26,13 @@ public class FutureTool {
         return future;
     }
 
+
+    /**
+     * A handler which completes the given future.
+     * @param future
+     * @param <T>
+     * @return
+     */
     private static <T> Handler<AsyncResult<T>> createCompletionHandler(VertxCompletableFuture<T> future) {
         return h->{
             if(h.succeeded()){
