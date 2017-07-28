@@ -11,12 +11,12 @@ public class JsonObjectConverter implements Converter<String,JsonObject> {
 
     @Override
     public JsonObject from(String databaseObject) {
-        return new JsonObject(databaseObject);
+        return databaseObject == null?null:new JsonObject(databaseObject);
     }
 
     @Override
     public String to(JsonObject userObject) {
-        return userObject.encode();
+        return userObject==null?null:userObject.encode();
     }
 
     @Override

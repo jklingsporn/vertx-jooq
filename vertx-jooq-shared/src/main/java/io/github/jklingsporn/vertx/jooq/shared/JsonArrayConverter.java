@@ -11,12 +11,12 @@ public class JsonArrayConverter implements Converter<String,JsonArray> {
 
     @Override
     public JsonArray from(String databaseObject) {
-        return new JsonArray(databaseObject);
+        return databaseObject==null?null:new JsonArray(databaseObject);
     }
 
     @Override
     public String to(JsonArray userObject) {
-        return userObject.encode();
+        return userObject==null?null:userObject.encode();
     }
 
     @Override
