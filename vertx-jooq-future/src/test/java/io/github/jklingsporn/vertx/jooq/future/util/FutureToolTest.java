@@ -16,7 +16,7 @@ public class FutureToolTest {
     public void executeBlockingShouldCompleteFuture() throws InterruptedException {
         CountDownLatch countDownLatch = new CountDownLatch(1);
         FutureTool.executeBlocking(h -> countDownLatch.countDown(), Vertx.vertx());
-        countDownLatch.await(1, TimeUnit.SECONDS);
+        Assert.assertTrue(countDownLatch.await(1, TimeUnit.SECONDS));
     }
 
     @Test
@@ -24,9 +24,20 @@ public class FutureToolTest {
         CountDownLatch countDownLatch = new CountDownLatch(1);
         CompletableFuture<Void> failedFuture = FutureTool.failedFuture(new RuntimeException(), Vertx.vertx());
         failedFuture.whenComplete((v,ex)->{
-            Assert.assertEquals(RuntimeException.class, ex.getCause().getClass());
+            Assert.assertEquals(RuntimeException.class, ex.getClass());
             countDownLatch.countDown();
         });
-        countDownLatch.await(1, TimeUnit.SECONDS);
+        Assert.assertTrue(countDownLatch.await(1, TimeUnit.SECONDS));
+    }
+
+    @Test
+    public void executeBlockingThrowingExceptionShouldCompleteWithException() throws InterruptedException {
+        CountDownLatch countDownLatch = new CountDownLatch(1);
+        CompletableFuture<?> future = FutureTool.executeBlocking(f -> {throw new RuntimeException();}, Vertx.vertx());
+        future.whenComplete((v, ex) -> {
+            Assert.assertEquals(RuntimeException.class, ex.getClass());
+            countDownLatch.countDown();
+        });
+        Assert.assertTrue(countDownLatch.await(1, TimeUnit.SECONDS));
     }
 }
