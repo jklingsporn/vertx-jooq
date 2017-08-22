@@ -133,7 +133,7 @@ public interface ISomething extends Serializable {
         setSomeid(json.getInteger("someid"));
         setSomestring(json.getString("somestring"));
         setSomehugenumber(json.getLong("somehugenumber"));
-        setSomesmallnumber(json.getInteger("somesmallnumber").shortValue());
+        setSomesmallnumber(json.getInteger("somesmallnumber")==null?null:json.getInteger("somesmallnumber").shortValue());
         setSomeregularnumber(json.getInteger("someregularnumber"));
         setSomeboolean(json.getBoolean("someboolean"));
         setSomedouble(json.getDouble("somedouble"));

@@ -123,9 +123,9 @@ public abstract class AbstractVertxGenerator extends JavaGenerator {
             }else if(isType(columnType, Integer.class)){
                 out.tab(2).println("%s(json.getInteger(\"%s\"));", setter, javaMemberName);
             }else if(isType(columnType, Short.class)){
-                out.tab(2).println("%s(json.getInteger(\"%s\").shortValue());", setter, javaMemberName);
+                out.tab(2).println("%s(json.getInteger(\"%s\")==null?null:json.getInteger(\"%s\").shortValue());", setter, javaMemberName, javaMemberName);
             }else if(isType(columnType, Byte.class)){
-                out.tab(2).println("%s(json.getInteger(\"%s\").byteValue());", setter, javaMemberName);
+                out.tab(2).println("%s(json.getInteger(\"%s\")==null?null:json.getInteger(\"%s\").byteValue());", setter, javaMemberName, javaMemberName);
             }else if(isType(columnType, Long.class)){
                 out.tab(2).println("%s(json.getLong(\"%s\"));", setter, javaMemberName);
             }else if(isType(columnType, Float.class)){
