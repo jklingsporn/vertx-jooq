@@ -26,6 +26,12 @@ public abstract class AbstractVertxGenerator extends JavaGenerator {
 
     private final boolean generateJson;
 
+    /**
+     * jOOQ by default wraps all strategies into package-local class GeneratorStrategyWrapper. Because we need
+     * instances of VertxGeneratorStrategy to render json key names we have to store this class too.
+     */
+    private VertxGeneratorStrategy unwrappedStrategy;
+
     public AbstractVertxGenerator() {
         this(true);
     }
@@ -117,7 +123,7 @@ public abstract class AbstractVertxGenerator extends JavaGenerator {
         for (TypedElementDefinition<?> column : table.getColumns()) {
             String setter = getStrategy().getJavaSetterName(column, GeneratorStrategy.Mode.INTERFACE);
             String columnType = getJavaType(column.getType());
-            String javaMemberName = getStrategy().getJavaMemberName(column, GeneratorStrategy.Mode.POJO);
+            String javaMemberName = getJsonKeyName(column);
             if(handleCustomTypeFromJson(column, setter, columnType, javaMemberName, out)) {
                 //handled by user
             }else if(isType(columnType, Integer.class)){
@@ -183,12 +189,12 @@ public abstract class AbstractVertxGenerator extends JavaGenerator {
         for (TypedElementDefinition<?> column : table.getColumns()) {
             String getter = getStrategy().getJavaGetterName(column, GeneratorStrategy.Mode.INTERFACE);
             String columnType = getJavaType(column.getType());
-            if(handleCustomTypeToJson(column,getter,getJavaType(column.getType()),getStrategy().getJavaMemberName(column, GeneratorStrategy.Mode.POJO), out)) {
+            if(handleCustomTypeToJson(column,getter,getJavaType(column.getType()), getJsonKeyName(column), out)) {
                 //handled by user
             }else if(isEnum(table,column)){
-                out.tab(2).println("json.put(\"%s\",%s()==null?null:%s().getLiteral());", getStrategy().getJavaMemberName(column, GeneratorStrategy.Mode.POJO),getter,getter);
+                out.tab(2).println("json.put(\"%s\",%s()==null?null:%s().getLiteral());", getJsonKeyName(column),getter,getter);
             }else if(isAllowedJsonType(column, columnType)){
-                out.tab(2).println("json.put(\"%s\",%s());", getStrategy().getJavaMemberName(column, GeneratorStrategy.Mode.POJO),getter);
+                out.tab(2).println("json.put(\"%s\",%s());", getJsonKeyName(column),getter);
             }else{
                 logger.warn(String.format("Omitting unrecognized type %s for column %s in table %s!",columnType,column.getName(),table.getName()));
                 out.tab(2).println(String.format("// Omitting unrecognized type %s for column %s!",columnType,column.getName()));
@@ -197,6 +203,19 @@ public abstract class AbstractVertxGenerator extends JavaGenerator {
         out.tab(2).println("return json;");
         out.tab(1).println("}");
         out.println();
+    }
+
+    /**
+     * @param column
+     * @return the JSON-key name of this column. By default this is the same as the POJO's member name representation
+     * of this column. There are different ways to change this behaviour:<br>
+     * - subclass and override this method<br>
+     * - subclass and override <code>VertxGeneratorStrategy#getJsonKeyName</code><br>
+     * - plug-in a custom GeneratorStrategy into the <code>VertxGeneratorStrategy</code> that returns a strategy of
+     * your choice for <code>GeneratorStrategy#getJavaMemberName(column, DefaultGeneratorStrategy.Mode.POJO)</code>
+     */
+    protected String getJsonKeyName(TypedElementDefinition<?> column) {
+        return getUnwrappedStrategy().getJsonKeyName(column);
     }
 
     private boolean isAllowedJsonType(TypedElementDefinition<?> column, String columnType){
@@ -208,6 +227,20 @@ public abstract class AbstractVertxGenerator extends JavaGenerator {
                 ;
     }
 
+    @Override
+    public void setStrategy(GeneratorStrategy strategy) {
+        if(! (strategy instanceof VertxGeneratorStrategy)){
+            throw new IllegalArgumentException(String.format("%s is not an instance of %s",
+                    strategy.getClass().getName(),
+                    VertxGeneratorStrategy.class.getName()));
+        }
+        this.unwrappedStrategy = (VertxGeneratorStrategy) strategy;
+        super.setStrategy(strategy);
+    }
+
+    public VertxGeneratorStrategy getUnwrappedStrategy() {
+        return this.unwrappedStrategy;
+    }
 
     /**
      * Overwrite this method to handle your custom type. This is needed especially when you have custom converters.
