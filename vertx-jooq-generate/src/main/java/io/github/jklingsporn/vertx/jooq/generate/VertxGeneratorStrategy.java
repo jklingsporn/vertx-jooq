@@ -2,6 +2,7 @@ package io.github.jklingsporn.vertx.jooq.generate;
 
 import org.jooq.util.DefaultGeneratorStrategy;
 import org.jooq.util.Definition;
+import org.jooq.util.TypedElementDefinition;
 
 import java.util.List;
 
@@ -29,5 +30,9 @@ public class VertxGeneratorStrategy extends DefaultGeneratorStrategy {
             javaClassImplements.add(String.format("%s<%s,%s,%s>",daoClassName,tableRecord,pType, VertxJavaWriter.PLACEHOLDER_DAO_TYPE));
         }
         return javaClassImplements;
+    }
+
+    public String getJsonKeyName(TypedElementDefinition<?> column){
+        return getJavaMemberName(column, Mode.POJO);
     }
 }
