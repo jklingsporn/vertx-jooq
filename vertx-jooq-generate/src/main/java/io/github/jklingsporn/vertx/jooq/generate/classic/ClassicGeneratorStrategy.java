@@ -1,6 +1,8 @@
 package io.github.jklingsporn.vertx.jooq.generate.classic;
 
 import io.github.jklingsporn.vertx.jooq.generate.VertxGeneratorStrategy;
+import org.jooq.util.DefaultGeneratorStrategy;
+import org.jooq.util.GeneratorStrategy;
 
 /**
  * Created by jensklingsporn on 25.10.16.
@@ -12,6 +14,10 @@ import io.github.jklingsporn.vertx.jooq.generate.VertxGeneratorStrategy;
 public class ClassicGeneratorStrategy extends VertxGeneratorStrategy {
 
     public ClassicGeneratorStrategy() {
-        super(ClassicVertxGenerator.VERTX_DAO_NAME);
+        super(ClassicVertxGenerator.VERTX_DAO_NAME, new DefaultGeneratorStrategy());
+    }
+
+    public ClassicGeneratorStrategy(String daoClassName, GeneratorStrategy delegate) {
+        super(daoClassName, delegate);
     }
 }

@@ -123,7 +123,7 @@ public abstract class AbstractVertxGenerator extends JavaGenerator {
         for (TypedElementDefinition<?> column : table.getColumns()) {
             String setter = getStrategy().getJavaSetterName(column, GeneratorStrategy.Mode.INTERFACE);
             String columnType = getJavaType(column.getType());
-            String javaMemberName = getJsonKey(column);
+            String javaMemberName = getJsonKeyName(column);
             if(handleCustomTypeFromJson(column, setter, columnType, javaMemberName, out)) {
                 //handled by user
             }else if(isType(columnType, Integer.class)){
@@ -189,12 +189,12 @@ public abstract class AbstractVertxGenerator extends JavaGenerator {
         for (TypedElementDefinition<?> column : table.getColumns()) {
             String getter = getStrategy().getJavaGetterName(column, GeneratorStrategy.Mode.INTERFACE);
             String columnType = getJavaType(column.getType());
-            if(handleCustomTypeToJson(column,getter,getJavaType(column.getType()), getJsonKey(column), out)) {
+            if(handleCustomTypeToJson(column,getter,getJavaType(column.getType()), getJsonKeyName(column), out)) {
                 //handled by user
             }else if(isEnum(table,column)){
-                out.tab(2).println("json.put(\"%s\",%s()==null?null:%s().getLiteral());", getJsonKey(column),getter,getter);
+                out.tab(2).println("json.put(\"%s\",%s()==null?null:%s().getLiteral());", getJsonKeyName(column),getter,getter);
             }else if(isAllowedJsonType(column, columnType)){
-                out.tab(2).println("json.put(\"%s\",%s());", getJsonKey(column),getter);
+                out.tab(2).println("json.put(\"%s\",%s());", getJsonKeyName(column),getter);
             }else{
                 logger.warn(String.format("Omitting unrecognized type %s for column %s in table %s!",columnType,column.getName(),table.getName()));
                 out.tab(2).println(String.format("// Omitting unrecognized type %s for column %s!",columnType,column.getName()));
@@ -208,9 +208,13 @@ public abstract class AbstractVertxGenerator extends JavaGenerator {
     /**
      * @param column
      * @return the JSON-key name of this column. By default this is the same as the POJO's member name representation
-     * of this column.
+     * of this column. There are different ways to change this behaviour:<br>
+     * - subclass and override this method<br>
+     * - subclass and override <code>VertxGeneratorStrategy#getJsonKeyName</code><br>
+     * - plug-in a custom GeneratorStrategy into the <code>VertxGeneratorStrategy</code> that returns a strategy of
+     * your choice for <code>GeneratorStrategy#getJavaMemberName(column, DefaultGeneratorStrategy.Mode.POJO)</code>
      */
-    protected String getJsonKey(TypedElementDefinition<?> column) {
+    protected String getJsonKeyName(TypedElementDefinition<?> column) {
         return getUnwrappedStrategy().getJsonKeyName(column);
     }
 
