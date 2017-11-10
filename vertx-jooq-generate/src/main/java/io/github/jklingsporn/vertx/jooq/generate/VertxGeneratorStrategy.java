@@ -1,6 +1,5 @@
 package io.github.jklingsporn.vertx.jooq.generate;
 
-import org.jooq.util.DefaultGeneratorStrategy;
 import org.jooq.util.Definition;
 import org.jooq.util.GeneratorStrategy;
 import org.jooq.util.TypedElementDefinition;
@@ -29,15 +28,16 @@ public class VertxGeneratorStrategy implements GeneratorStrategy {
     /**
      *
      * @param column
-     * @return the JSON-key name of this column. By default this is the same as the POJO's member name representation
-     * of this column. There are different ways to change this behaviour:<br>
+     * @return the JSON-key name of this column. Starting from version 2.4.0
+     * this defaults to the name of that database column.
+     * There are different ways to change this behaviour:<br>
      * - subclass and override <code>AbstractVertxGenerator#getJsonKeyName</code><br>
      * - subclass and override this method<br>
      * - change the delegation GeneratorStrategy that returns a strategy of
      * your choice for <code>GeneratorStrategy#getJavaMemberName(column, DefaultGeneratorStrategy.Mode.POJO)</code>
      */
     public String getJsonKeyName(TypedElementDefinition<?> column){
-        return getJavaMemberName(column, DefaultGeneratorStrategy.Mode.POJO);
+        return column.getName();
     }
 
     @Override
@@ -239,5 +239,15 @@ public class VertxGeneratorStrategy implements GeneratorStrategy {
     @Override
     public String getOverloadSuffix(Definition definition, Mode mode, String overloadIndex) {
         return delegate.getOverloadSuffix(definition, mode, overloadIndex);
+    }
+
+    @Override
+    public void setJavaBeansGettersAndSetters(boolean b) {
+        delegate.setJavaBeansGettersAndSetters(b);
+    }
+
+    @Override
+    public boolean getJavaBeansGettersAndSetters() {
+        return delegate.getJavaBeansGettersAndSetters();
     }
 }
