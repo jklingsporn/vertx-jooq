@@ -89,6 +89,7 @@ public class TestTool {
         generateConfig.setPojos(true);
         generateConfig.setFluentSetters(true);
         generateConfig.setDaos(true);
+        generateConfig.setPojosEqualsAndHashCode(true);
 
         /*
          * We need to do a small hack to let jOOQ's DAOImpl implement our interface. That's why

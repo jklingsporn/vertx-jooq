@@ -137,8 +137,8 @@ public interface ISomething extends Serializable {
         setSomeregularnumber(json.getInteger("someregularnumber"));
         setSomeboolean(json.getBoolean("someboolean"));
         setSomedouble(json.getDouble("somedouble"));
-        setSomejsonobject(new io.github.jklingsporn.vertx.jooq.shared.JsonObjectConverter().from(json.getString("somejsonobject")));
-        setSomejsonarray(new io.github.jklingsporn.vertx.jooq.shared.JsonArrayConverter().from(json.getString("somejsonarray")));
+        setSomejsonobject(json.getJsonObject("somejsonobject"));
+        setSomejsonarray(json.getJsonArray("somejsonarray"));
         return this;
     }
 

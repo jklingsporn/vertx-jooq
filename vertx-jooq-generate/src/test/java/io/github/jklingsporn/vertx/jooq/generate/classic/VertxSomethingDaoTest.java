@@ -272,17 +272,5 @@ public class VertxSomethingDaoTest extends VertxDaoTestBase {
     }
 
 
-    private Something createSomething(){
-        Random random = new Random();
-        Something something = new Something();
-        something.setSomedouble(random.nextDouble());
-        something.setSomehugenumber(random.nextLong());
-        something.setSomejsonarray(new JsonArray().add(1).add(2).add(3));
-        something.setSomejsonobject(new JsonObject().put("key", "value"));
-        something.setSomesmallnumber((short) random.nextInt(Short.MAX_VALUE));
-        something.setSomeboolean(random.nextBoolean());
-        return something;
-    }
-
 
 }

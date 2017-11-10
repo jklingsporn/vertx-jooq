@@ -25,7 +25,7 @@ import javax.annotation.Generated;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Something implements ISomething {
 
-    private static final long serialVersionUID = 768571222;
+    private static final long serialVersionUID = 1840168588;
 
     private Integer    someid;
     private String     somestring;
@@ -170,6 +170,88 @@ public class Something implements ISomething {
     public Something setSomejsonarray(JsonArray somejsonarray) {
         this.somejsonarray = somejsonarray;
         return this;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        final Something other = (Something) obj;
+        if (someid == null) {
+            if (other.someid != null)
+                return false;
+        }
+        else if (!someid.equals(other.someid))
+            return false;
+        if (somestring == null) {
+            if (other.somestring != null)
+                return false;
+        }
+        else if (!somestring.equals(other.somestring))
+            return false;
+        if (somehugenumber == null) {
+            if (other.somehugenumber != null)
+                return false;
+        }
+        else if (!somehugenumber.equals(other.somehugenumber))
+            return false;
+        if (somesmallnumber == null) {
+            if (other.somesmallnumber != null)
+                return false;
+        }
+        else if (!somesmallnumber.equals(other.somesmallnumber))
+            return false;
+        if (someregularnumber == null) {
+            if (other.someregularnumber != null)
+                return false;
+        }
+        else if (!someregularnumber.equals(other.someregularnumber))
+            return false;
+        if (someboolean == null) {
+            if (other.someboolean != null)
+                return false;
+        }
+        else if (!someboolean.equals(other.someboolean))
+            return false;
+        if (somedouble == null) {
+            if (other.somedouble != null)
+                return false;
+        }
+        else if (!somedouble.equals(other.somedouble))
+            return false;
+        if (somejsonobject == null) {
+            if (other.somejsonobject != null)
+                return false;
+        }
+        else if (!somejsonobject.equals(other.somejsonobject))
+            return false;
+        if (somejsonarray == null) {
+            if (other.somejsonarray != null)
+                return false;
+        }
+        else if (!somejsonarray.equals(other.somejsonarray))
+            return false;
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((this.someid == null) ? 0 : this.someid.hashCode());
+        result = prime * result + ((this.somestring == null) ? 0 : this.somestring.hashCode());
+        result = prime * result + ((this.somehugenumber == null) ? 0 : this.somehugenumber.hashCode());
+        result = prime * result + ((this.somesmallnumber == null) ? 0 : this.somesmallnumber.hashCode());
+        result = prime * result + ((this.someregularnumber == null) ? 0 : this.someregularnumber.hashCode());
+        result = prime * result + ((this.someboolean == null) ? 0 : this.someboolean.hashCode());
+        result = prime * result + ((this.somedouble == null) ? 0 : this.somedouble.hashCode());
+        result = prime * result + ((this.somejsonobject == null) ? 0 : this.somejsonobject.hashCode());
+        result = prime * result + ((this.somejsonarray == null) ? 0 : this.somejsonarray.hashCode());
+        return result;
     }
 
     @Override

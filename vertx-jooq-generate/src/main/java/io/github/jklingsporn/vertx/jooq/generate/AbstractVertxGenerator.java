@@ -148,8 +148,10 @@ public abstract class AbstractVertxGenerator extends JavaGenerator {
                 out.tab(2).println("%s(json.getInstant(\"%s\"));", setter, javaMemberName);
             }else if(isEnum(table, column)) {
                 out.tab(2).println("%s(java.util.Arrays.stream(%s.values()).filter(td -> td.getLiteral().equals(json.getString(\"%s\"))).findFirst().orElse(null));", setter, columnType, javaMemberName);
-            }else if(column.getType().getConverter() != null && (isType(column.getType().getConverter(),JsonObjectConverter.class) || isType(column.getType().getConverter(),JsonArrayConverter.class))) {
-                out.tab(2).println("%s(new %s().from(json.getString(\"%s\")));", setter, column.getType().getConverter(), javaMemberName);
+            }else if(column.getType().getConverter() != null && isType(column.getType().getConverter(),JsonObjectConverter.class)){
+                out.tab(2).println("%s(json.getJsonObject(\"%s\"));", setter, javaMemberName);
+            }else if(column.getType().getConverter() != null && isType(column.getType().getConverter(),JsonArrayConverter.class)){
+                out.tab(2).println("%s(json.getJsonArray(\"%s\"));", setter, javaMemberName);
             }else{
                 logger.warn(String.format("Omitting unrecognized type %s for column %s in table %s!",columnType,column.getName(),table.getName()));
                 out.tab(2).println(String.format("// Omitting unrecognized type %s for column %s!",columnType,column.getName()));

@@ -24,7 +24,7 @@ import javax.annotation.Generated;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Somethingcomposite implements ISomethingcomposite {
 
-    private static final long serialVersionUID = -1155120392;
+    private static final long serialVersionUID = 2147082352;
 
     private Integer    someid;
     private Integer    somesecondid;
@@ -79,6 +79,46 @@ public class Somethingcomposite implements ISomethingcomposite {
     public Somethingcomposite setSomejsonobject(JsonObject somejsonobject) {
         this.somejsonobject = somejsonobject;
         return this;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        final Somethingcomposite other = (Somethingcomposite) obj;
+        if (someid == null) {
+            if (other.someid != null)
+                return false;
+        }
+        else if (!someid.equals(other.someid))
+            return false;
+        if (somesecondid == null) {
+            if (other.somesecondid != null)
+                return false;
+        }
+        else if (!somesecondid.equals(other.somesecondid))
+            return false;
+        if (somejsonobject == null) {
+            if (other.somejsonobject != null)
+                return false;
+        }
+        else if (!somejsonobject.equals(other.somejsonobject))
+            return false;
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((this.someid == null) ? 0 : this.someid.hashCode());
+        result = prime * result + ((this.somesecondid == null) ? 0 : this.somesecondid.hashCode());
+        result = prime * result + ((this.somejsonobject == null) ? 0 : this.somejsonobject.hashCode());
+        return result;
     }
 
     @Override

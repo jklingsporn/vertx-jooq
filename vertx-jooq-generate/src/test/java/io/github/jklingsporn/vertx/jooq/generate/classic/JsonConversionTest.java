@@ -28,4 +28,13 @@ public class JsonConversionTest {
         JsonObject jsonObject = something.toJson();
         Assert.assertNotNull(new Something(jsonObject));
     }
+
+    @Test
+    public void convertFromToJsonShouldReturnEqualPOJO(){
+        Something something = VertxDaoTestBase.createSomethingWithId();
+        JsonObject json = something.toJson();
+        Something somethingElse = new Something(json);
+        Assert.assertEquals(something,somethingElse);
+    }
+
 }

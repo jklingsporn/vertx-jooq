@@ -6,15 +6,17 @@ package generated.rx.guice.vertx.tables.records;
 
 import generated.rx.guice.vertx.tables.Something;
 import generated.rx.guice.vertx.tables.interfaces.ISomething;
+
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+
+import javax.annotation.Generated;
+
 import org.jooq.Field;
 import org.jooq.Record1;
 import org.jooq.Record9;
 import org.jooq.Row9;
 import org.jooq.impl.UpdatableRecordImpl;
-
-import javax.annotation.Generated;
 
 
 /**

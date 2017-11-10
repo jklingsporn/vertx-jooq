@@ -3,8 +3,6 @@ package io.github.jklingsporn.vertx.jooq.generate.rx;
 import generated.rx.vertx.vertx.Tables;
 import generated.rx.vertx.vertx.tables.pojos.Something;
 import generated.rx.vertx.vertx.tables.records.SomethingRecord;
-import io.vertx.core.json.JsonArray;
-import io.vertx.core.json.JsonObject;
 import org.jooq.exception.DataAccessException;
 import org.jooq.exception.TooManyRowsException;
 import org.jooq.impl.DSL;
@@ -13,7 +11,6 @@ import org.junit.Test;
 import rx.Single;
 
 import java.util.Arrays;
-import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
@@ -28,8 +25,6 @@ import static org.hamcrest.core.IsNull.notNullValue;
  * @author <a href="https://jensonjava.wordpress.com">Jens Klingsporn</a>
  */
 public class VertxSomethingDaoTest extends RXVertxDaoTestBase {
-
-    private Random random;
 
     @Test
     public void asyncCRUDShouldSucceed() throws InterruptedException {
@@ -304,18 +299,5 @@ public class VertxSomethingDaoTest extends RXVertxDaoTestBase {
                 subscribe(failOrCountDownSubscriber(latch));
         await(latch);
     }
-
-    private Something createSomething() {
-        random = new Random();
-        Something something = new Something();
-        something.setSomedouble(random.nextDouble());
-        something.setSomehugenumber(random.nextLong());
-        something.setSomejsonarray(new JsonArray().add(1).add(2).add(3));
-        something.setSomejsonobject(new JsonObject().put("key", "value"));
-        something.setSomesmallnumber((short) random.nextInt(Short.MAX_VALUE));
-        something.setSomeboolean(random.nextBoolean());
-        return something;
-    }
-
 
 }

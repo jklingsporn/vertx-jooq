@@ -71,7 +71,7 @@ public interface ISomethingcomposite extends Serializable {
     default ISomethingcomposite fromJson(io.vertx.core.json.JsonObject json) {
         setSomeid(json.getInteger("SOMEID"));
         setSomesecondid(json.getInteger("SOMESECONDID"));
-        setSomejsonobject(new io.github.jklingsporn.vertx.jooq.shared.JsonObjectConverter().from(json.getString("SOMEJSONOBJECT")));
+        setSomejsonobject(json.getJsonObject("SOMEJSONOBJECT"));
         return this;
     }
 
