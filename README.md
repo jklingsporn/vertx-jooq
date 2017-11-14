@@ -7,57 +7,19 @@ from/into a `io.vertx.core.JsonObject`.
 >Also check out the beta of [vertx-jooq-async](https://github.com/jklingsporn/vertx-jooq-async): vertx-jooq without JDBC!
 ---
 
-## new in 2.3
-
-We just added a third flavor: RX. Now, your DAO can expose a RX Java based API ! To use it, you need the Vert.x RX 
-Java binding, and use:
- 
-* the `io.github.jklingsporn.vertx.jooq.generate.rx.RXGeneratorStrategy` strategy.
-* the `io.github.jklingsporn.vertx.jooq.generate.rx.RXVertxGenerator` generator (name)
-
-Here is an example:
-
-```xml
-<generator>
-    <name>io.github.jklingsporn.vertx.jooq.generate.rx.RXVertxGenerator</name>
-    <target>
-      <!-- This is where jOOQ will put your files -->
-      <packageName>me.escoffier.fruits.entities</packageName>
-      <directory>target/generated-sources/jooq</directory>
-    </target>
-    <database>
-      <name>org.jooq.util.h2.H2Database</name>
-      <includes>.*</includes>
-      <inputSchema>PUBLIC</inputSchema>
-      <outputSchema>PUBLIC</outputSchema>
-      <unsignedTypes>false</unsignedTypes>
-    </database>
-    <generate>
-      <interfaces>true</interfaces>
-      <daos>true</daos>
-      <fluentSetters>true</fluentSetters>
-    </generate>
-    <strategy>
-      <name>io.github.jklingsporn.vertx.jooq.generate.rx.RXGeneratorStrategy</name>
-    </strategy>
-</generator>
-```
-
-## new in 2.0
-Starting with version 2, this library comes in two different flavors:
+## different needs, different apis
+This library comes in three different flavors:
 - the classic callback-handler style known from versions < 2.
-- a new API that returns a [vertx-ified implementation](https://github.com/cescoffier/vertx-completable-future)
+- a [rxjava2](https://github.com/ReactiveX/RxJava) based API.
+- a API that returns a [vertx-ified implementation](https://github.com/cescoffier/vertx-completable-future)
 of `java.util.concurrent.CompletableFuture` for all async DAO operations and thus makes chaining your async operations easier.
 It has some limitations which you need to be aware about (see [known issues](https://github.com/jklingsporn/vertx-jooq#known-issues)).
 
-To separate the APIs, there are now three maven modules:
+To separate the APIs, there are now four maven modules:
 - [`vertx-jooq-classic`](https://github.com/jklingsporn/vertx-jooq/tree/master/vertx-jooq-classic) is the module containing the callback handler API.
+- [`vertx-jooq-rx`](https://github.com/jklingsporn/vertx-jooq/tree/master/vertx-jooq-rx) is the module containing the `rxjava` based API.
 - [`vertx-jooq-future`](https://github.com/jklingsporn/vertx-jooq/tree/master/vertx-jooq-future) is the module containing the `CompletableFuture` based API.
 - [`vertx-jooq-generate`](https://github.com/jklingsporn/vertx-jooq/tree/master/vertx-jooq-generate) is the module containing the code-generator.
-
-If you're updating from a previous version please also note, that there are breaking API-changes due to
-required package renaming, e.g. `io.github.jklingsporn.vertx.VertxDAO` became
-`io.github.jklingsporn.vertx.jooq.classic.VertxDAO`.
 
 ## example
 ```
@@ -135,7 +97,7 @@ If you are new to jOOQ, I recommend to read the awesome [jOOQ documentation](htt
     <dependency>
       <groupId>org.jooq</groupId>
       <artifactId>jooq</artifactId>
-      <version>3.9.2</version>
+      <version>3.10.1</version>
     </dependency>
     <dependency>
       <groupId>io.github.jklingsporn</groupId>
@@ -149,7 +111,7 @@ If you are new to jOOQ, I recommend to read the awesome [jOOQ documentation](htt
           <!-- Specify the maven code generator plugin -->
           <groupId>org.jooq</groupId>
           <artifactId>jooq-codegen-maven</artifactId>
-          <version>3.9.2</version>
+          <version>3.10.1</version>
 
           <!-- The plugin should hook into the generate goal -->
           <executions>
