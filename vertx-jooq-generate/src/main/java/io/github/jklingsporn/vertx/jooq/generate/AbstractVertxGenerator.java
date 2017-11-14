@@ -209,8 +209,8 @@ public abstract class AbstractVertxGenerator extends JavaGenerator {
 
     /**
      * @param column
-     * @return the JSON-key name of this column. By default this is the same as the POJO's member name representation
-     * of this column. There are different ways to change this behaviour:<br>
+     * @return the JSON-key name of this column. Starting from version 2.4.0
+     * this defaults to the name of that database column. There are different ways to change this behaviour:<br>
      * - subclass and override this method<br>
      * - subclass and override <code>VertxGeneratorStrategy#getJsonKeyName</code><br>
      * - plug-in a custom GeneratorStrategy into the <code>VertxGeneratorStrategy</code> that returns a strategy of
