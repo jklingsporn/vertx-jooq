@@ -26,7 +26,7 @@ public class VertxSomethingCompositeDaoTest extends RXVertxDaoTestBase {
                 return compositeDao.updateAsync(fetchSomething);
             })
             .andThen(compositeDao.deleteByIdAsync(somethingcompositeRecord.key()))
-            .subscribe(failOrCountDownSubscriber(latch));
+            .subscribe(failOrCountDownCompletableObserver(latch));
         await(latch);
     }
 
@@ -49,7 +49,7 @@ public class VertxSomethingCompositeDaoTest extends RXVertxDaoTestBase {
             })
             .doOnSuccess(updated -> Assert.assertEquals(1L, updated.longValue()))
             .flatMap(v -> compositeDao.deleteExecAsync(somethingcompositeRecord.key()))
-            .subscribe(failOrCountDownSubscriber(latch));
+            .subscribe(failOrCountDownSingleObserver(latch));
         await(latch);
     }
 

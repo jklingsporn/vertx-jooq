@@ -1,12 +1,12 @@
 package io.github.jklingsporn.vertx.jooq.rx;
 
 import io.github.jklingsporn.vertx.jooq.rx.util.RXTool;
-import io.vertx.core.Vertx;
+import io.vertx.reactivex.core.Vertx;
 import org.jooq.*;
 import org.jooq.impl.DSL;
-import rx.Completable;
-import rx.Observable;
-import rx.Single;
+import io.reactivex.Completable;
+import io.reactivex.Observable;
+import io.reactivex.Single;
 
 import java.util.Collection;
 import java.util.List;
@@ -21,16 +21,14 @@ import static org.jooq.impl.DSL.row;
  */
 public interface VertxDAO<R extends UpdatableRecord<R>, P, T> extends DAO<R, P, T> {
 
-    io.vertx.rxjava.core.Vertx vertx();
+    Vertx vertx();
 
-    void setVertx(Vertx vertx);
+//    void setVertx(Vertx vertx);
 
     /**
-     * Same as {@link #setVertx(io.vertx.core.Vertx)} but with the RX Java Vert.x
-     *
      * @param vertx the RX Java vert.x instance, must not be {@code null}
      */
-    void setVertx(io.vertx.rxjava.core.Vertx vertx);
+    void setVertx(Vertx vertx);
 
     /**
      * Convenience method to execute any <code>DSLContext</code>-aware Function asynchronously
@@ -286,7 +284,7 @@ public interface VertxDAO<R extends UpdatableRecord<R>, P, T> extends DAO<R, P, 
 
     default Observable<P> fetchObservable(Condition condition) {
         return executeAsync(dslContext -> dslContext.selectFrom(getTable()).where(condition).fetch(mapper()))
-            .flatMapObservable(Observable::from);
+            .flatMapObservable(Observable::fromIterable);
     }
 
     /**

@@ -1,10 +1,10 @@
 package io.github.jklingsporn.vertx.jooq.rx.util;
 
 import io.vertx.core.Handler;
-import io.vertx.rxjava.core.Future;
-import io.vertx.rxjava.core.Vertx;
-import rx.Observable;
-import rx.Single;
+import io.vertx.reactivex.core.Future;
+import io.vertx.reactivex.core.Vertx;
+import io.reactivex.Observable;
+import io.reactivex.Single;
 
 import java.util.List;
 
@@ -23,8 +23,8 @@ public class RXTool {
 
     public static <T> Observable<T> executeBlockingObservable(Handler<Future<List<T>>> blockingCodeHandler, Vertx
         vertx) {
-        return vertx.rxExecuteBlocking(blockingCodeHandler)
-            .flatMapObservable(Observable::from);
+        return executeBlocking(blockingCodeHandler,vertx)
+                .flatMapObservable(Observable::fromIterable);
     }
 
 

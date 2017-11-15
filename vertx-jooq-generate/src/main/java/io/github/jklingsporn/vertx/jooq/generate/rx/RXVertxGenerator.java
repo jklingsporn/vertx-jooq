@@ -14,9 +14,9 @@ public class RXVertxGenerator extends AbstractVertxGenerator {
 
     @Override
     protected void generateDAOImports(JavaWriter out) {
-        out.println("import rx.Completable;");
-        out.println("import rx.Observable;");
-        out.println("import rx.Single;");
+        out.println("import io.reactivex.Completable;");
+        out.println("import io.reactivex.Observable;");
+        out.println("import io.reactivex.Single;");
         out.println("import io.github.jklingsporn.vertx.jooq.rx.util.RXTool;");
     }
 
@@ -46,21 +46,16 @@ public class RXVertxGenerator extends AbstractVertxGenerator {
     @Override
     protected void generateVertxGetterAndSetterConfigurationMethod(JavaWriter out) {
         out.println();
-        out.tab(1).println("private io.vertx.rxjava.core.Vertx vertx;");
+        out.tab(1).println("private io.vertx.reactivex.core.Vertx vertx;");
         out.println();
         generateSetVertxAnnotation(out);
         out.tab(1).println("@Override");
-        out.tab(1).println("public void setVertx(io.vertx.core.Vertx vertx) {");
-        out.tab(2).println("this.vertx = new io.vertx.rxjava.core.Vertx(vertx);");
-        out.tab(1).println("}");
-        out.println();
-        out.tab(1).println("@Override");
-        out.tab(1).println("public void setVertx(io.vertx.rxjava.core.Vertx vertx) {");
+        out.tab(1).println("public void setVertx(io.vertx.reactivex.core.Vertx vertx) {");
         out.tab(2).println("this.vertx = vertx;");
         out.tab(1).println("}");
         out.println();
         out.tab(1).println("@Override");
-        out.tab(1).println("public io.vertx.rxjava.core.Vertx vertx() {");
+        out.tab(1).println("public io.vertx.reactivex.core.Vertx vertx() {");
         out.tab(2).println("return this.vertx;");
         out.tab(1).println("}");
         out.println();

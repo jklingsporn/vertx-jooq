@@ -2,7 +2,7 @@ package io.github.jklingsporn.vertx.jooq.generate.rx;
 
 import generated.rx.guice.vertx.tables.daos.SomethingDao;
 import generated.rx.guice.vertx.tables.daos.SomethingcompositeDao;
-import io.vertx.core.Vertx;
+import io.vertx.reactivex.core.Vertx;
 import org.jooq.Configuration;
 import org.junit.Assert;
 import org.junit.Test;

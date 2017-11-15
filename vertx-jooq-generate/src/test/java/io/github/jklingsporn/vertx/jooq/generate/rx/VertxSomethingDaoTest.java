@@ -3,12 +3,11 @@ package io.github.jklingsporn.vertx.jooq.generate.rx;
 import generated.rx.vertx.vertx.Tables;
 import generated.rx.vertx.vertx.tables.pojos.Something;
 import generated.rx.vertx.vertx.tables.records.SomethingRecord;
+import io.reactivex.Single;
 import org.jooq.exception.DataAccessException;
 import org.jooq.exception.TooManyRowsException;
-import org.jooq.impl.DSL;
 import org.junit.Assert;
 import org.junit.Test;
-import rx.Single;
 
 import java.util.Arrays;
 import java.util.concurrent.CountDownLatch;
@@ -51,7 +50,7 @@ public class VertxSomethingDaoTest extends RXVertxDaoTestBase {
         dao.fetchOneBySomeidAsync(ref.get().getSomeid())
             .flatMapCompletable(something -> dao.updateAsync(createSomething().setSomeid(something.getSomeid()))
                 .andThen(dao.deleteByIdAsync(ref.get().getSomeid())))
-            .subscribe(failOrCountDownSubscriber(latch2));
+            .subscribe(failOrCountDownCompletableObserver(latch2));
         await(latch2);
     }
 
@@ -59,7 +58,7 @@ public class VertxSomethingDaoTest extends RXVertxDaoTestBase {
     public void asyncCRUDMultipleShouldSucceed() throws InterruptedException {
         CountDownLatch latch = new CountDownLatch(1);
         dao.insertAsync(Arrays.asList(createSomething(), createSomething()))
-            .subscribe(failOrCountDownSubscriber(latch));
+            .subscribe(failOrCountDownCompletableObserver(latch));
 
 
         await(latch);
@@ -78,7 +77,7 @@ public class VertxSomethingDaoTest extends RXVertxDaoTestBase {
                         createSomething().setSomeid(list.get(1).getSomeid())))
                         .andThen(dao.deleteByIdAsync(l)))
             )
-            .subscribe(failOrCountDownSubscriber(latch2));
+            .subscribe(failOrCountDownCompletableObserver(latch2));
 
 
         await(latch2);
@@ -88,7 +87,7 @@ public class VertxSomethingDaoTest extends RXVertxDaoTestBase {
     public void asyncCRUDMultipleShouldSucceedWithObservable() throws InterruptedException {
         CountDownLatch latch = new CountDownLatch(1);
         dao.insertAsync(Arrays.asList(createSomething(), createSomething()))
-            .subscribe(failOrCountDownSubscriber(latch));
+            .subscribe(failOrCountDownCompletableObserver(latch));
 
         await(latch);
         final CountDownLatch latch2 = new CountDownLatch(1);
@@ -102,10 +101,9 @@ public class VertxSomethingDaoTest extends RXVertxDaoTestBase {
             .flatMapCompletable(l ->
                 dao.fetchBySomeidObservable(l)
                     .flatMapCompletable(s -> dao.updateAsync(createSomething().setSomeid(s.getSomeid())))
-                    .doOnCompleted(() -> dao.deleteByIdAsync(l))
-                    .toCompletable()
+                    .doOnComplete(() -> dao.deleteByIdAsync(l))
             )
-            .subscribe(failOrCountDownSubscriber(latch2));
+            .subscribe(failOrCountDownCompletableObserver(latch2));
 
         await(latch2);
     }
@@ -119,7 +117,7 @@ public class VertxSomethingDaoTest extends RXVertxDaoTestBase {
                     .doOnSuccess(updated -> Assert.assertEquals(1L, updated.longValue()))
                     .flatMap(r -> dao.deleteExecAsync(key))
                     .doOnSuccess(deleted -> Assert.assertEquals(1L, deleted.longValue())))
-            .subscribe(failOrCountDownSubscriber(latch));
+            .subscribe(failOrCountDownSingleObserver(latch));
         await(latch);
     }
 
@@ -135,7 +133,7 @@ public class VertxSomethingDaoTest extends RXVertxDaoTestBase {
                 return dao.deleteExecAsync(id.getSomeid());
             })
             .doOnSuccess(deletedRows -> Assert.assertEquals(1L, deletedRows.longValue()))
-            .subscribe(failOrCountDownSubscriber(latch));
+            .subscribe(failOrCountDownSingleObserver(latch));
         await(latch);
     }
 
@@ -147,8 +145,8 @@ public class VertxSomethingDaoTest extends RXVertxDaoTestBase {
             .flatMap(id -> dao.insertReturningPrimaryAsync(something.setSomeid(id)))
             .onErrorResumeNext(err -> {
                 Assert.assertEquals(DataAccessException.class, err.getClass());
-                return dao.deleteExecAsync(DSL.trueCondition());
-            }).subscribe(failOrCountDownSubscriber(latch));
+                return dao.deleteExecAsync(Tables.SOMETHING.SOMEID.eq(something.getSomeid()));
+            }).subscribe(failOrCountDownSingleObserver(latch));
         await(latch);
     }
 
@@ -161,26 +159,28 @@ public class VertxSomethingDaoTest extends RXVertxDaoTestBase {
                     .doOnSuccess(Assert::assertNotNull)
                     .flatMap(s -> dao.deleteExecAsync(Tables.SOMETHING.SOMEID.eq(i)))
             )
-            .subscribe(failOrCountDownSubscriber(latch));
+            .subscribe(failOrCountDownSingleObserver(latch));
         await(latch);
     }
 
     @Test
     public void fetchOneByConditionWithMultipleMatchesShouldFail() throws InterruptedException {
         CountDownLatch latch = new CountDownLatch(1);
-        Single<Integer> insert1 = dao.insertReturningPrimaryAsync(createSomething().setSomehugenumber(1L));
-        Single<Integer> insert2 = dao.insertReturningPrimaryAsync(createSomething().setSomehugenumber(1L));
+        long num = NUMBERS.incrementAndGet();
+        Single<Integer> insert1 = dao.insertReturningPrimaryAsync(createSomething().setSomehugenumber(num));
+        Single<Integer> insert2 = dao.insertReturningPrimaryAsync(createSomething().setSomehugenumber(num));
 
 
         Single.zip(insert1, insert2, (i1, i2) -> i1)
-            .flatMap(i -> dao.fetchOneAsync(Tables.SOMETHING.SOMEHUGENUMBER.eq(1L)))
+            .flatMap(i -> dao.fetchOneAsync(Tables.SOMETHING.SOMEHUGENUMBER.eq(num)))
             .onErrorReturn(x -> {
                 Assert.assertNotNull(x);
                 Assert.assertEquals(TooManyRowsException.class, x.getClass());
-                return null;
+                //must return a non-null value...
+                return createSomething();
             })
-            .flatMap(n -> dao.deleteExecAsync(Tables.SOMETHING.SOMEHUGENUMBER.eq(1L)))
-            .subscribe(failOrCountDownSubscriber(latch));
+            .flatMap(n -> dao.deleteExecAsync(Tables.SOMETHING.SOMEHUGENUMBER.eq(num)))
+            .subscribe(failOrCountDownSingleObserver(latch));
 
         await(latch);
     }
@@ -188,14 +188,15 @@ public class VertxSomethingDaoTest extends RXVertxDaoTestBase {
     @Test
     public void fetchByConditionWithMultipleMatchesShouldSucceed() throws InterruptedException {
         CountDownLatch latch = new CountDownLatch(1);
-        Single<Integer> insert1 = dao.insertReturningPrimaryAsync(createSomething().setSomehugenumber(1L));
-        Single<Integer> insert2 = dao.insertReturningPrimaryAsync(createSomething().setSomehugenumber(1L));
+        long num = NUMBERS.incrementAndGet();
+        Single<Integer> insert1 = dao.insertReturningPrimaryAsync(createSomething().setSomehugenumber(num));
+        Single<Integer> insert2 = dao.insertReturningPrimaryAsync(createSomething().setSomehugenumber(num));
 
         Single.zip(insert1, insert2, (i1, i2) -> i1)
-            .flatMap(i -> dao.fetchAsync(Tables.SOMETHING.SOMEHUGENUMBER.eq(1L)))
+            .flatMap(i -> dao.fetchAsync(Tables.SOMETHING.SOMEHUGENUMBER.eq(num)))
             .doOnSuccess(values -> Assert.assertEquals(2, values.size()))
-            .flatMap(list -> dao.deleteExecAsync(Tables.SOMETHING.SOMEHUGENUMBER.eq(1L)))
-            .subscribe(failOrCountDownSubscriber(latch));
+            .flatMap(list -> dao.deleteExecAsync(Tables.SOMETHING.SOMEHUGENUMBER.eq(num)))
+            .subscribe(failOrCountDownSingleObserver(latch));
 
         await(latch);
     }
@@ -203,15 +204,16 @@ public class VertxSomethingDaoTest extends RXVertxDaoTestBase {
     @Test
     public void fetchByConditionWithMultipleMatchesWithObservableShouldSucceed() throws InterruptedException {
         CountDownLatch latch = new CountDownLatch(1);
-        Single<Integer> insert1 = dao.insertReturningPrimaryAsync(createSomething().setSomehugenumber(1L));
-        Single<Integer> insert2 = dao.insertReturningPrimaryAsync(createSomething().setSomehugenumber(1L));
+        long num = NUMBERS.incrementAndGet();
+        Single<Integer> insert1 = dao.insertReturningPrimaryAsync(createSomething().setSomehugenumber(num));
+        Single<Integer> insert2 = dao.insertReturningPrimaryAsync(createSomething().setSomehugenumber(num));
 
         AtomicInteger count = new AtomicInteger();
         Single.zip(insert1, insert2, (i1, i2) -> i1)
-            .flatMapObservable(i -> dao.fetchObservable(Tables.SOMETHING.SOMEHUGENUMBER.eq(1L)))
+            .flatMapObservable(i -> dao.fetchObservable(Tables.SOMETHING.SOMEHUGENUMBER.eq(num)))
             .doOnNext(s -> count.getAndIncrement())
-            .doOnCompleted(() -> dao.deleteExecAsync(Tables.SOMETHING.SOMEHUGENUMBER.eq(1L)))
-            .subscribe(failOrCountDownSubscriber(latch));
+            .doOnComplete(() -> dao.deleteExecAsync(Tables.SOMETHING.SOMEHUGENUMBER.eq(num)))
+            .subscribe(failOrCountDownPlainObserver(latch));
         await(latch);
         assertThat(count.get(), is(2));
     }
@@ -227,7 +229,7 @@ public class VertxSomethingDaoTest extends RXVertxDaoTestBase {
                     Assert.assertFalse(v.get(0));
                     Assert.assertFalse(v.get(1));
                 }).
-                subscribe(failOrCountDownSubscriber(latch));
+                subscribe(failOrCountDownSingleObserver(latch));
         await(latch);
     }
 
@@ -246,20 +248,21 @@ public class VertxSomethingDaoTest extends RXVertxDaoTestBase {
                         Assert.assertTrue(v.get(1));
                     }).
                     flatMapCompletable(v -> dao.deleteByIdAsync(pk));
-        }).subscribe(failOrCountDownSubscriber(latch));
+        }).subscribe(failOrCountDownCompletableObserver(latch));
         await(latch);
     }
 
     @Test
     public void countShouldReturnNumberOfEntries() throws InterruptedException{
         CountDownLatch latch = new CountDownLatch(1);
+        long num = NUMBERS.incrementAndGet();
         dao.countAsync().
                 doOnSuccess(zero -> Assert.assertEquals(0L, zero.longValue())).
-                flatMap(v->dao.insertReturningPrimaryAsync(createSomething())).
+                flatMap(v->dao.insertReturningPrimaryAsync(createSomething().setSomehugenumber(num))).
                 flatMap(pk->dao.countAsync()).
                 doOnSuccess(one -> Assert.assertEquals(1L, one.longValue())).
-                flatMap(v->dao.deleteExecAsync(DSL.trueCondition())).
-                subscribe(failOrCountDownSubscriber(latch));
+                flatMap(v->dao.deleteExecAsync(Tables.SOMETHING.SOMEHUGENUMBER.eq(num))).
+                subscribe(failOrCountDownSingleObserver(latch));
         await(latch);
     }
 
@@ -268,7 +271,7 @@ public class VertxSomethingDaoTest extends RXVertxDaoTestBase {
         CountDownLatch latch = new CountDownLatch(1);
         dao.fetchOptionalAsync(Tables.SOMETHING.SOMEID,-1).
                 doOnSuccess(opt -> Assert.assertFalse(opt.isPresent())).
-                subscribe(failOrCountDownSubscriber(latch));
+                subscribe(failOrCountDownSingleObserver(latch));
         await(latch);
     }
 
@@ -280,23 +283,24 @@ public class VertxSomethingDaoTest extends RXVertxDaoTestBase {
                     Assert.assertTrue(opt.isPresent());
                     Assert.assertEquals(pk.longValue(), opt.get().getSomeid().longValue());
                     return dao.deleteByIdAsync(pk);
-                })).subscribe(failOrCountDownSubscriber(latch));
+                })).subscribe(failOrCountDownCompletableObserver(latch));
         await(latch);
     }
 
     @Test
     public void fetchAllShouldReturnValues() throws InterruptedException{
         CountDownLatch latch = new CountDownLatch(1);
-        Single<Integer> insertFuture1 = dao.insertReturningPrimaryAsync(createSomething());
-        Single<Integer> insertFuture2 = dao.insertReturningPrimaryAsync(createSomething());
-        Single.zip(insertFuture1, insertFuture2,(i1,i2)->i1).
+        long num = NUMBERS.incrementAndGet();
+        Single<Integer> insert1 = dao.insertReturningPrimaryAsync(createSomething().setSomehugenumber(num));
+        Single<Integer> insert2 = dao.insertReturningPrimaryAsync(createSomething().setSomehugenumber(num));
+        Single.zip(insert1, insert2,(i1,i2)->i1).
                 flatMap(v->dao.findAllAsync()).
                 doOnSuccess(list -> {
                     Assert.assertNotNull(list);
-                    Assert.assertEquals(2, list.size());
+                    Assert.assertFalse(list.isEmpty());
                 }).
-                flatMap(v -> dao.deleteExecAsync(DSL.trueCondition())).
-                subscribe(failOrCountDownSubscriber(latch));
+                flatMap(v -> dao.deleteExecAsync(Tables.SOMETHING.SOMEHUGENUMBER.eq(num)))
+                .subscribe(failOrCountDownSingleObserver(latch));
         await(latch);
     }
 

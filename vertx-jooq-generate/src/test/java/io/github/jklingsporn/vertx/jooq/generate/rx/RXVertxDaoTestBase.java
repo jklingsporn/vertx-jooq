@@ -1,30 +1,35 @@
 package io.github.jklingsporn.vertx.jooq.generate.rx;
 
-import generated.rx.vertx.vertx.tables.pojos.Something;
 import generated.rx.vertx.vertx.tables.daos.SomethingDao;
 import generated.rx.vertx.vertx.tables.daos.SomethingcompositeDao;
+import generated.rx.vertx.vertx.tables.pojos.Something;
 import io.github.jklingsporn.vertx.jooq.generate.TestTool;
-import io.vertx.core.Vertx;
+import io.reactivex.CompletableObserver;
+import io.reactivex.Observer;
+import io.reactivex.SingleObserver;
+import io.reactivex.disposables.Disposable;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+import io.vertx.reactivex.core.Vertx;
 import org.jooq.Configuration;
 import org.jooq.SQLDialect;
 import org.jooq.impl.DefaultConfiguration;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import rx.Subscriber;
 
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * @author <a href="http://escoffier.me">Clement Escoffier</a>
  */
 public class RXVertxDaoTestBase {
 
+    protected static final AtomicLong NUMBERS = new AtomicLong(0);
     protected static SomethingDao dao;
     protected static SomethingcompositeDao compositeDao;
 
@@ -48,11 +53,16 @@ public class RXVertxDaoTestBase {
         }
     }
 
-    protected  <T> Subscriber<T> failOrCountDownSubscriber(CountDownLatch latch) {
-        return new Subscriber<T>() {
+    protected <T> Observer<T> failOrCountDownPlainObserver(CountDownLatch latch) {
+        return new Observer<T>() {
             @Override
-            public void onCompleted() {
-                latch.countDown();
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onNext(T t) {
+
             }
 
             @Override
@@ -61,9 +71,51 @@ public class RXVertxDaoTestBase {
             }
 
             @Override
-            public void onNext(T o) {
-                // Ignored.
+            public void onComplete() {
+                latch.countDown();
             }
+
+        };
+    }
+
+    protected <T> SingleObserver<T> failOrCountDownSingleObserver(CountDownLatch latch) {
+        return new SingleObserver<T>() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onSuccess(T t) {
+                latch.countDown();
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                fail(e);
+            }
+
+        };
+    }
+
+    protected  CompletableObserver failOrCountDownCompletableObserver(CountDownLatch latch) {
+        return new CompletableObserver() {
+
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onComplete() {
+                latch.countDown();
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                fail(e);
+            }
+
         };
     }
 

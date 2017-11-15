@@ -1,6 +1,6 @@
 package io.github.jklingsporn.vertx.jooq.rx.util;
 
-import io.vertx.rxjava.core.Vertx;
+import io.vertx.reactivex.core.Vertx;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
