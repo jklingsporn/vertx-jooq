@@ -200,6 +200,89 @@ If you are new to jOOQ, I recommend to read the awesome [jOOQ documentation](htt
   </build>
 </project>
 ```
+# gradle
+
+The following code-snippet can be copy-pasted into your `build.gradle` to generate code from your postgresql database schema.
+
+```gradle
+buildscript {
+    ext {
+        vertx_jooq_version = '2.4.1'
+        postgresql_version = '42.1.4'
+    }
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+    dependencies {
+        classpath "io.github.jklingsporn:vertx-jooq-generate:$vertx_jooq_version"
+        classpath "org.postgresql:postgresql:$postgresql_version"
+    }
+}
+
+import groovy.xml.MarkupBuilder
+import org.jooq.util.GenerationTool
+
+import javax.xml.bind.JAXB
+
+group 'your group id'
+version 'your project version'
+
+apply plugin: 'java'
+
+dependencies {
+    compile "io.github.jklingsporn:vertx-jooq-classic:$vertx_jooq_version"
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+task jooqGenerate {
+    doLast() {
+        def writer = new StringWriter()
+        new MarkupBuilder(writer)
+                .configuration('xmlns': 'http://www.jooq.org/xsd/jooq-codegen-3.10.0.xsd') {
+            jdbc {
+                driver('org.postgresql.Driver')
+                url('jdbc:postgresql://IP:PORT/DATABASE')
+                user('YOUR_USER')
+                password('YOUR_PASSWORD')
+            }
+            generator {
+                name('io.github.jklingsporn.vertx.jooq.generate.classic.ClassicVertxGenerator')
+                database {
+                    name('org.jooq.util.postgres.PostgresDatabase')
+                    include('.*')
+                    excludes('schema_version')
+                    inputSchema('public')
+                    includeTables(true)
+                    includeRoutines(true)
+                    includePackages(false)
+                    includeUDTs(true)
+                    includeSequences(true)
+                }
+                generate([:]) {
+                    deprecated(false)
+                    records(false)
+                    interfaces(true)
+                    fluentSetters(true)
+                    pojos(true)
+                    daos(true)
+                }
+                target() {
+                    packageName('io.one.sys.db')
+                    directory("$projectDir/src/main/java")
+                }
+                strategy {
+                    name('io.github.jklingsporn.vertx.jooq.generate.classic.ClassicGeneratorStrategy')
+                }
+            }
+        }
+        GenerationTool.generate(
+                JAXB.unmarshal(new StringReader(writer.toString()), org.jooq.util.jaxb.Configuration.class)
+        )
+    }
+}
+```
+
 # programmatic configuration of the code generator
 See the [TestTool](https://github.com/jklingsporn/vertx-jooq/blob/master/vertx-jooq-generate/src/test/java/io/github/jklingsporn/vertx/jooq/generate/TestTool.java)
 of how to setup the generator programmatically.
