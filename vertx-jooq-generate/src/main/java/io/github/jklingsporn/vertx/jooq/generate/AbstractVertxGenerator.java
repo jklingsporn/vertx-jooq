@@ -52,10 +52,10 @@ public abstract class AbstractVertxGenerator extends JavaGenerator {
     protected void generatePojoClassFooter(TableDefinition table, JavaWriter out) {
         super.generatePojoClassFooter(table, out);
         if(generateJson){
-            generateFromJsonConstructor(table,out);
+            generateFromJsonConstructor(table,out, GeneratorStrategy.Mode.POJO);
             if(!generateInterfaces()){
-                generateFromJson(table,out);
-                generateToJson(table, out);
+                generateFromJson(table,out, GeneratorStrategy.Mode.POJO);
+                generateToJson(table, out, GeneratorStrategy.Mode.POJO);
             }
         }
     }
@@ -64,8 +64,20 @@ public abstract class AbstractVertxGenerator extends JavaGenerator {
     protected void generateInterfaceClassFooter(TableDefinition table, JavaWriter out) {
         super.generateInterfaceClassFooter(table, out);
         if(generateJson && generateInterfaces()){
-            generateFromJson(table, out);
-            generateToJson(table, out);
+            generateFromJson(table, out, GeneratorStrategy.Mode.INTERFACE);
+            generateToJson(table, out, GeneratorStrategy.Mode.INTERFACE);
+        }
+    }
+
+    @Override
+    protected void generateRecordClassFooter(TableDefinition table, JavaWriter out) {
+        super.generateRecordClassFooter(table, out);
+        if(generateJson){
+            generateFromJsonConstructor(table, out, GeneratorStrategy.Mode.RECORD);
+            if(!generateInterfaces()){
+                generateFromJson(table,out, GeneratorStrategy.Mode.RECORD);
+                generateToJson(table, out, GeneratorStrategy.Mode.RECORD);
+            }
         }
     }
 
@@ -116,10 +128,10 @@ public abstract class AbstractVertxGenerator extends JavaGenerator {
         out.println();
     }
 
-    private void generateFromJson(TableDefinition table, JavaWriter out){
+    private void generateFromJson(TableDefinition table, JavaWriter out, GeneratorStrategy.Mode mode){
         out.println();
-        String className = getStrategy().getJavaClassName(table, GeneratorStrategy.Mode.INTERFACE);
-        out.tab(1).println("default %s fromJson(io.vertx.core.json.JsonObject json) {",className);
+        String className = getStrategy().getJavaClassName(table, mode);
+        out.tab(1).println("public %s%s fromJson(io.vertx.core.json.JsonObject json) {", mode == GeneratorStrategy.Mode.INTERFACE?"default ":"",className);
         for (TypedElementDefinition<?> column : table.getColumns()) {
             String setter = getStrategy().getJavaSetterName(column, GeneratorStrategy.Mode.INTERFACE);
             String columnType = getJavaType(column.getType());
@@ -178,15 +190,15 @@ public abstract class AbstractVertxGenerator extends JavaGenerator {
      * @param javaMemberName the java member name
      * @param out the writer
      * @return <code>true</code> if the column was handled.
-     * @see #generateFromJson(TableDefinition, JavaWriter)
+     * @see #generateFromJson(TableDefinition, JavaWriter, org.jooq.util.GeneratorStrategy.Mode)
      */
     protected boolean handleCustomTypeFromJson(TypedElementDefinition<?> column, String setter, String columnType, String javaMemberName, JavaWriter out){
         return false;
     }
 
-    private void generateToJson(TableDefinition table, JavaWriter out){
+    private void generateToJson(TableDefinition table, JavaWriter out, GeneratorStrategy.Mode mode){
         out.println();
-        out.tab(1).println("default io.vertx.core.json.JsonObject toJson() {");
+        out.tab(1).println("public %sio.vertx.core.json.JsonObject toJson() {",mode== GeneratorStrategy.Mode.INTERFACE?"default ":"");
         out.tab(2).println("io.vertx.core.json.JsonObject json = new io.vertx.core.json.JsonObject();");
         for (TypedElementDefinition<?> column : table.getColumns()) {
             String getter = getStrategy().getJavaGetterName(column, GeneratorStrategy.Mode.INTERFACE);
@@ -252,16 +264,17 @@ public abstract class AbstractVertxGenerator extends JavaGenerator {
      * @param javaMemberName the java member name
      * @param out the writer
      * @return <code>true</code> if the column was handled.
-     * @see #generateToJson(TableDefinition, JavaWriter)
+     * @see #generateToJson(TableDefinition, JavaWriter, org.jooq.util.GeneratorStrategy.Mode)
      */
     protected boolean handleCustomTypeToJson(TypedElementDefinition<?> column, String getter, String columnType, String javaMemberName, JavaWriter out) {
         return false;
     }
 
-    private void generateFromJsonConstructor(TableDefinition table, JavaWriter out){
-        final String className = getStrategy().getJavaClassName(table, GeneratorStrategy.Mode.POJO);
+    private void generateFromJsonConstructor(TableDefinition table, JavaWriter out, GeneratorStrategy.Mode mode){
+        final String className = getStrategy().getJavaClassName(table, mode);
         out.println();
         out.tab(1).println("public %s(io.vertx.core.json.JsonObject json) {", className);
+        out.tab(2).println("this();"); //call default constructor
         out.tab(2).println("fromJson(json);");
         out.tab(1).println("}");
     }

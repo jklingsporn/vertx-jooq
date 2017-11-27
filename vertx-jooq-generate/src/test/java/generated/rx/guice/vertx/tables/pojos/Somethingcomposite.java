@@ -24,7 +24,7 @@ import javax.annotation.Generated;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Somethingcomposite implements ISomethingcomposite {
 
-    private static final long serialVersionUID = -696154306;
+    private static final long serialVersionUID = 76573388;
 
     private Integer    someid;
     private Integer    somesecondid;
@@ -157,6 +157,7 @@ public class Somethingcomposite implements ISomethingcomposite {
     }
 
     public Somethingcomposite(io.vertx.core.json.JsonObject json) {
+        this();
         fromJson(json);
     }
 }

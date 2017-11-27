@@ -25,7 +25,7 @@ import javax.annotation.Generated;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Something implements ISomething {
 
-    private static final long serialVersionUID = 1368750484;
+    private static final long serialVersionUID = -1500450526;
 
     private Integer    someid;
     private String     somestring;
@@ -302,6 +302,7 @@ public class Something implements ISomething {
     }
 
     public Something(io.vertx.core.json.JsonObject json) {
+        this();
         fromJson(json);
     }
 }

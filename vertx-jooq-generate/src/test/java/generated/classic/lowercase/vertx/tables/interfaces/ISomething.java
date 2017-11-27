@@ -129,7 +129,7 @@ public interface ISomething extends Serializable {
      */
     public <E extends generated.classic.lowercase.vertx.tables.interfaces.ISomething> E into(E into);
 
-    default ISomething fromJson(io.vertx.core.json.JsonObject json) {
+    public default ISomething fromJson(io.vertx.core.json.JsonObject json) {
         setSomeid(json.getInteger("someid"));
         setSomestring(json.getString("somestring"));
         setSomehugenumber(json.getLong("somehugenumber"));
@@ -143,7 +143,7 @@ public interface ISomething extends Serializable {
     }
 
 
-    default io.vertx.core.json.JsonObject toJson() {
+    public default io.vertx.core.json.JsonObject toJson() {
         io.vertx.core.json.JsonObject json = new io.vertx.core.json.JsonObject();
         json.put("someid",getSomeid());
         json.put("somestring",getSomestring());

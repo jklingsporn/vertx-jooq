@@ -68,7 +68,7 @@ public interface ISomethingcomposite extends Serializable {
      */
     public <E extends generated.classic.vertx.vertx.tables.interfaces.ISomethingcomposite> E into(E into);
 
-    default ISomethingcomposite fromJson(io.vertx.core.json.JsonObject json) {
+    public default ISomethingcomposite fromJson(io.vertx.core.json.JsonObject json) {
         setSomeid(json.getInteger("SOMEID"));
         setSomesecondid(json.getInteger("SOMESECONDID"));
         setSomejsonobject(json.getJsonObject("SOMEJSONOBJECT"));
@@ -76,7 +76,7 @@ public interface ISomethingcomposite extends Serializable {
     }
 
 
-    default io.vertx.core.json.JsonObject toJson() {
+    public default io.vertx.core.json.JsonObject toJson() {
         io.vertx.core.json.JsonObject json = new io.vertx.core.json.JsonObject();
         json.put("SOMEID",getSomeid());
         json.put("SOMESECONDID",getSomesecondid());

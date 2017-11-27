@@ -32,7 +32,7 @@ import org.jooq.impl.UpdatableRecordImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class SomethingRecord extends UpdatableRecordImpl<SomethingRecord> implements Record9<Integer, String, Long, Short, Integer, Boolean, Double, JsonObject, JsonArray>, ISomething {
 
-    private static final long serialVersionUID = -26274183;
+    private static final long serialVersionUID = 965635097;
 
     /**
      * Setter for <code>VERTX.SOMETHING.SOMEID</code>.
@@ -588,5 +588,10 @@ public class SomethingRecord extends UpdatableRecordImpl<SomethingRecord> implem
         set(6, somedouble);
         set(7, somejsonobject);
         set(8, somejsonarray);
+    }
+
+    public SomethingRecord(io.vertx.core.json.JsonObject json) {
+        this();
+        fromJson(json);
     }
 }
