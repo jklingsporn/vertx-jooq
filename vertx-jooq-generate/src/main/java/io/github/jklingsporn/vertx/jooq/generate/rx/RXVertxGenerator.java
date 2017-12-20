@@ -18,6 +18,7 @@ public class RXVertxGenerator extends AbstractVertxGenerator {
         out.println("import io.reactivex.Observable;");
         out.println("import io.reactivex.Single;");
         out.println("import io.github.jklingsporn.vertx.jooq.rx.util.RXTool;");
+        out.println("import io.github.jklingsporn.vertx.jooq.rx.util.RXQueryExecutor;");
     }
 
     @Override

@@ -20,4 +20,9 @@ public class ClassicGeneratorStrategy extends VertxGeneratorStrategy {
     public ClassicGeneratorStrategy(String daoClassName, GeneratorStrategy delegate) {
         super(daoClassName, delegate);
     }
+
+    @Override
+    public String renderQueryExecutor(String rType, String pType, String tType) {
+        return String.format("ClassicQueryExecutor<%s,%s,%s>",rType,pType,tType);
+    }
 }

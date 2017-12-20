@@ -20,4 +20,9 @@ public class FutureGeneratorStrategy extends VertxGeneratorStrategy {
     public FutureGeneratorStrategy(String daoClassName, GeneratorStrategy delegate) {
         super(daoClassName, delegate);
     }
+
+    @Override
+    public String renderQueryExecutor(String rType, String pType, String tType) {
+        return String.format("FutureQueryExecutor<%s,%s,%s>",rType,pType,tType);
+    }
 }

@@ -1,6 +1,7 @@
 package io.github.jklingsporn.vertx.jooq.rx;
 
 import io.github.jklingsporn.vertx.jooq.rx.util.RXTool;
+import io.github.jklingsporn.vertx.jooq.shared.internal.VertxDAOHelper;
 import io.vertx.reactivex.core.Vertx;
 import org.jooq.*;
 import org.jooq.impl.DSL;
@@ -239,7 +240,7 @@ public interface VertxDAO<R extends UpdatableRecord<R>, P, T> extends DAO<R, P, 
      * e.g. when more than one result is returned.
      */
     default <Z> Single<P> fetchOneAsync(Condition condition) {
-        return executeAsync(dslContext -> dslContext.selectFrom(getTable()).where(condition).fetchOne(mapper()));
+        return VertxDAOHelper.fetchOneAsync(condition, this, mapper(), this::executeAsync);
     }
 
     /**

@@ -46,6 +46,7 @@ public abstract class AbstractVertxGenerator extends JavaGenerator {
         super.generateDaoClassFooter(table, out);
         generateFetchMethods(table,out);
         generateVertxGetterAndSetterConfigurationMethod(out);
+        generateQueryExecutor(table,out);
     }
 
     @Override
@@ -363,5 +364,23 @@ public abstract class AbstractVertxGenerator extends JavaGenerator {
         return 3;
     }
 
+    protected void generateQueryExecutor(TableDefinition table, JavaWriter out) {
+        String rType = out.ref(getStrategy().getFullJavaClassName(table, GeneratorStrategy.Mode.RECORD));
+        String pType = out.ref(getStrategy().getFullJavaClassName(table, GeneratorStrategy.Mode.POJO));
+        String tType = getKeyType(table.getPrimaryKey());
+        String queryExecutorType = getUnwrappedStrategy().renderQueryExecutor(rType, pType, tType);
+        out.println();
+        out.tab(1).println("private %s queryExecutor;", queryExecutorType);
+        out.println();
+        generateSetVertxAnnotation(out);
+        out.tab(1).println("@Override");
+        out.tab(1).println("protected %s queryExecutor() {", queryExecutorType);
+        out.tab(2).println("if(this.queryExecutor==null){");
+        out.tab(3).println("this.queryExecutor = new %s(this);", queryExecutorType);
+        out.tab(2).println("}");
+        out.tab(2).println("return this.queryExecutor;");
+        out.tab(1).println("}");
+        out.println();
+    }
 
 }

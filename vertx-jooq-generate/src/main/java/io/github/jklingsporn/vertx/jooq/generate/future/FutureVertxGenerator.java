@@ -16,6 +16,7 @@ public class FutureVertxGenerator extends AbstractVertxGenerator {
     protected void generateDAOImports(JavaWriter out) {
         out.println("import java.util.concurrent.CompletableFuture;");
         out.println("import io.github.jklingsporn.vertx.jooq.future.util.FutureTool;");
+        out.println("import io.github.jklingsporn.vertx.jooq.future.util.FutureQueryExecutor;");
     }
 
     @Override

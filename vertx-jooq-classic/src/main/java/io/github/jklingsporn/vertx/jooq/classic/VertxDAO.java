@@ -1,6 +1,9 @@
 package io.github.jklingsporn.vertx.jooq.classic;
 
+import io.github.jklingsporn.vertx.jooq.classic.util.ClassicTool;
+import io.github.jklingsporn.vertx.jooq.shared.internal.VertxDAOHelper;
 import io.vertx.core.AsyncResult;
+import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import org.jooq.*;
@@ -8,11 +11,8 @@ import org.jooq.impl.DSL;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
-
-import static org.jooq.impl.DSL.row;
 
 /**
  * Created by jensklingsporn on 21.10.16.
@@ -33,6 +33,20 @@ public interface VertxDAO<R extends UpdatableRecord<R>, P, T> extends DAO<R, P, 
      */
     default <X> void executeAsync(Function<DSLContext, X> function, Handler<AsyncResult<X>> resultHandler){
         vertx().executeBlocking(h->h.complete(function.apply(DSL.using(configuration()))),resultHandler);
+    }
+
+    /**
+     * Convenience method to execute any <code>DSLContext</code>-aware Function asynchronously
+     * using this DAO's <code>configuration</code>.
+     * @param function
+     * @param <X>
+     * @return A Vertx-future holding the result.
+     * @since 2.4.2
+     */
+    default <X> Future<X> executeAsync(Function<DSLContext, X> function){
+        Future<X> future = Future.future();
+        vertx().executeBlocking(h->h.complete(function.apply(DSL.using(configuration()))),future);
+        return future;
     }
 
     /**
@@ -105,7 +119,9 @@ public interface VertxDAO<R extends UpdatableRecord<R>, P, T> extends DAO<R, P, 
      * @see #delete(Object...)
      */
     default void deleteByIdAsync(T id, Handler<AsyncResult<Void>> resultHandler){
-        vertx().executeBlocking(h->{deleteById(id);h.complete();},resultHandler);
+        VertxDAOHelper
+                .deleteExecAsync(VertxDAOHelper.getCondition(id, getTable()), this, this::executeAsync)
+                .setHandler(ClassicTool.toHandler(resultHandler));
     }
 
     /**
@@ -117,6 +133,7 @@ public interface VertxDAO<R extends UpdatableRecord<R>, P, T> extends DAO<R, P, 
      * @see #delete(Object...)
      */
     default void deleteByIdAsync(Collection<T> ids, Handler<AsyncResult<Void>> resultHandler){
+        //currently no easy way to rewrite as it would involve a lot of copy-pasting from DAOImpl
         vertx().executeBlocking(h->{deleteById(ids);h.complete();},resultHandler);
     }
 
@@ -141,7 +158,7 @@ public interface VertxDAO<R extends UpdatableRecord<R>, P, T> extends DAO<R, P, 
      * @see #existsById(Object)
      */
     default void existsByIdAsync(T id, Handler<AsyncResult<Boolean>> resultHandler){
-        vertx().executeBlocking(h->h.complete(existsById(id)),resultHandler);
+        VertxDAOHelper.existsByIdAsync(id,this,this::executeAsync).setHandler(resultHandler);
     }
 
     /**
@@ -151,7 +168,7 @@ public interface VertxDAO<R extends UpdatableRecord<R>, P, T> extends DAO<R, P, 
      * @see #count()
      */
     default void countAsync(Handler<AsyncResult<Long>> resultHandler){
-        vertx().executeBlocking(h->h.complete(count()),resultHandler);
+        VertxDAOHelper.countAsync(this,this::executeAsync).setHandler(resultHandler);
     }
 
     /**
@@ -161,7 +178,7 @@ public interface VertxDAO<R extends UpdatableRecord<R>, P, T> extends DAO<R, P, 
      * @see #findAll()
      */
     default void findAllAsync(Handler<AsyncResult<List<P>>> resultHandler){
-        vertx().executeBlocking(h->h.complete(findAll()),resultHandler);
+        this.fetchAsync(DSL.trueCondition(),resultHandler);
     }
 
     /**
@@ -173,7 +190,7 @@ public interface VertxDAO<R extends UpdatableRecord<R>, P, T> extends DAO<R, P, 
      * @see #findById(Object)
      */
     default void findByIdAsync(T id, Handler<AsyncResult<P>> resultHandler){
-        vertx().executeBlocking(h->h.complete(findById(id)),resultHandler);
+        VertxDAOHelper.fetchOneAsync(VertxDAOHelper.getCondition(id, getTable()),this,mapper(),this::executeAsync).setHandler(resultHandler);
     }
 
     /**
@@ -197,7 +214,7 @@ public interface VertxDAO<R extends UpdatableRecord<R>, P, T> extends DAO<R, P, 
      *                      with an <code>DataAccessException</code> if the blocking method of this type throws an exception
      */
     default <Z> void fetchOneAsync(Condition condition, Handler<AsyncResult<P>> resultHandler){
-        executeAsync(dslContext -> dslContext.selectFrom(getTable()).where(condition).fetchOne(mapper()), resultHandler);
+        VertxDAOHelper.fetchOneAsync(condition, this, mapper(), this::executeAsync).setHandler(resultHandler);
     }
 
 
@@ -234,7 +251,7 @@ public interface VertxDAO<R extends UpdatableRecord<R>, P, T> extends DAO<R, P, 
      *                      with an <code>DataAccessException</code> if the blocking method of this type throws an exception
      */
     default void fetchAsync(Condition condition, Handler<AsyncResult<List<P>>> resultHandler){
-        executeAsync(dslContext -> dslContext.selectFrom(getTable()).where(condition).fetch(mapper()), resultHandler);
+        VertxDAOHelper.fetchAsync(condition,this,mapper(),this::executeAsync).setHandler(resultHandler);
     }
 
     /**
@@ -247,20 +264,7 @@ public interface VertxDAO<R extends UpdatableRecord<R>, P, T> extends DAO<R, P, 
      */
     @SuppressWarnings("unchecked")
     default void deleteExecAsync(T id, Handler<AsyncResult<Integer>> resultHandler){
-        UniqueKey<?> uk = getTable().getPrimaryKey();
-        Objects.requireNonNull(uk,()->"No primary key");
-        /**
-         * Copied from jOOQs DAOImpl#equal-method
-         */
-        TableField<? extends Record, ?>[] pk = uk.getFieldsArray();
-        Condition condition;
-        if (pk.length == 1) {
-            condition = ((Field<Object>) pk[0]).equal(pk[0].getDataType().convert(id));
-        }
-        else {
-            condition = row(pk).equal((Record) id);
-        }
-        executeAsync(dslContext -> dslContext.deleteFrom(getTable()).where(condition).execute(),resultHandler);
+        deleteExecAsync(VertxDAOHelper.getCondition(id, getTable()),resultHandler);
     }
 
     /**
@@ -271,7 +275,7 @@ public interface VertxDAO<R extends UpdatableRecord<R>, P, T> extends DAO<R, P, 
      *                      with an <code>DataAccessException</code> if the blocking method of this type throws an exception
      */
     default <Z> void deleteExecAsync(Condition condition, Handler<AsyncResult<Integer>> resultHandler ){
-        executeAsync(dslContext -> dslContext.deleteFrom(getTable()).where(condition).execute(),resultHandler);
+        VertxDAOHelper.deleteExecAsync(condition,this,this::executeAsync).setHandler(resultHandler);
     }
 
     /**
@@ -295,7 +299,7 @@ public interface VertxDAO<R extends UpdatableRecord<R>, P, T> extends DAO<R, P, 
      * @see #updateAsync(Object, Handler)
      */
     default void updateExecAsync(P object, Handler<AsyncResult<Integer>> resultHandler){
-        executeAsync(dslContext -> dslContext.executeUpdate(dslContext.newRecord(getTable(), object)),resultHandler);
+        VertxDAOHelper.updateExecAsync(object,this,this::executeAsync).setHandler(resultHandler);
     }
 
     /**
@@ -307,7 +311,7 @@ public interface VertxDAO<R extends UpdatableRecord<R>, P, T> extends DAO<R, P, 
      * @see #insertAsync(Object, Handler)
      */
     default void insertExecAsync(P object, Handler<AsyncResult<Integer>> resultHandler){
-        executeAsync(dslContext -> dslContext.executeInsert(dslContext.newRecord(getTable(), object)),resultHandler);
+        VertxDAOHelper.insertExecAsync(object,this,this::executeAsync).setHandler(resultHandler);
     }
 
     /**
@@ -319,18 +323,7 @@ public interface VertxDAO<R extends UpdatableRecord<R>, P, T> extends DAO<R, P, 
      */
     @SuppressWarnings("unchecked")
     default void insertReturningPrimaryAsync(P object, Handler<AsyncResult<T>> resultHandler){
-        UniqueKey<?> key = getTable().getPrimaryKey();
-        //usually key shouldn't be null because DAO generation is omitted in such cases
-        Objects.requireNonNull(key,()->"No primary key");
-        executeAsync(dslContext -> {
-            R record = dslContext.insertInto(getTable()).set(dslContext.newRecord(getTable(), object)).returning(key.getFields()).fetchOne();
-            Objects.requireNonNull(record, () -> "Failed inserting record or no key");
-            Record key1 = record.key();
-            if(key1.size() == 1){
-                return ((Record1<T>)key1).value1();
-            }
-            return (T) key1;
-        }, resultHandler);
+        VertxDAOHelper.insertReturningPrimaryAsync(object, this,this::executeAsync).setHandler(resultHandler);
     }
 
 }

@@ -1,18 +1,16 @@
 package io.github.jklingsporn.vertx.jooq.future;
 
 import io.github.jklingsporn.vertx.jooq.future.util.FutureTool;
+import io.github.jklingsporn.vertx.jooq.shared.internal.VertxDAOHelper;
 import io.vertx.core.Vertx;
 import org.jooq.*;
 import org.jooq.impl.DSL;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
-
-import static org.jooq.impl.DSL.row;
 
 /**
  * Created by jensklingsporn on 18.04.17.
@@ -197,7 +195,7 @@ public interface VertxDAO<R extends UpdatableRecord<R>, P, T> extends DAO<R, P, 
      *                      e.g. when more than one result is returned.
      */
     default <Z> CompletableFuture<P> fetchOneAsync(Condition condition){
-        return executeAsync(dslContext -> dslContext.selectFrom(getTable()).where(condition).fetchOne(mapper()));
+        return VertxDAOHelper.fetchOneAsync(condition,this,mapper(),this::executeAsync);
     }
 
     /**
@@ -245,20 +243,7 @@ public interface VertxDAO<R extends UpdatableRecord<R>, P, T> extends DAO<R, P, 
      */
     @SuppressWarnings("unchecked")
     default CompletableFuture<Integer> deleteExecAsync(T id){
-        UniqueKey<?> uk = getTable().getPrimaryKey();
-        Objects.requireNonNull(uk, () -> "No primary key");
-        /**
-         * Copied from jOOQs DAOImpl#equal-method
-         */
-        TableField<? extends Record, ?>[] pk = uk.getFieldsArray();
-        Condition condition;
-        if (pk.length == 1) {
-            condition = ((Field<Object>) pk[0]).equal(pk[0].getDataType().convert(id));
-        }
-        else {
-            condition = row(pk).equal((Record) id);
-        }
-        return executeAsync(dslContext -> dslContext.deleteFrom(getTable()).where(condition).execute());
+        return deleteExecAsync(VertxDAOHelper.getCondition(id,getTable()));
     }
 
     /**
@@ -318,18 +303,7 @@ public interface VertxDAO<R extends UpdatableRecord<R>, P, T> extends DAO<R, P, 
      */
     @SuppressWarnings("unchecked")
     default CompletableFuture<T> insertReturningPrimaryAsync(P object){
-        UniqueKey<?> key = getTable().getPrimaryKey();
-        //usually key shouldn't be null because DAO generation is omitted in such cases
-        Objects.requireNonNull(key,()->"No primary key");
-        return executeAsync(dslContext -> {
-            R record = dslContext.insertInto(getTable()).set(dslContext.newRecord(getTable(), object)).returning(key.getFields()).fetchOne();
-            Objects.requireNonNull(record, () -> "Failed inserting record or no key");
-            Record key1 = record.key();
-            if(key1.size() == 1){
-                return ((Record1<T>)key1).value1();
-            }
-            return (T) key1;
-        });
+        return VertxDAOHelper.insertReturningPrimaryAsync(object, this,this::executeAsync);
     }
 
 }

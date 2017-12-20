@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Created by jensklingsporn on 25.10.16.
  *
- * We need this class to let the DAOs implements <code>VertxDAO</code>.
+ * We need this class to let the DAOs implement <code>VertxDAO</code>.
  * Unfortunately we can not get the type easily, that's why we have to
  * set the placeholder.
  */
@@ -38,6 +38,10 @@ public class VertxGeneratorStrategy implements GeneratorStrategy {
      */
     public String getJsonKeyName(TypedElementDefinition<?> column){
         return column.getName();
+    }
+
+    public String renderQueryExecutor(String rType, String pType, String tType){
+        throw new UnsupportedOperationException();
     }
 
     @Override

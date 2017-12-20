@@ -16,6 +16,8 @@ public class ClassicVertxGenerator extends AbstractVertxGenerator {
     protected void generateDAOImports(JavaWriter out) {
         out.println("import io.vertx.core.Handler;");
         out.println("import io.vertx.core.AsyncResult;");
+        out.println("import io.vertx.core.Future;");
+        out.println("import io.github.jklingsporn.vertx.jooq.classic.util.ClassicQueryExecutor;");
     }
 
     @Override
