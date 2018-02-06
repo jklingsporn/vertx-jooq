@@ -36,4 +36,5 @@ public class FutureVertxGenerator extends AbstractVertxGenerator {
         out.tab(2).println("return fetchAsync(%s,values);", colIdentifier);
         out.tab(1).println("}");
     }
+
 }

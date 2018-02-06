@@ -1,8 +1,8 @@
 package io.github.jklingsporn.vertx.jooq.future;
 
 import io.github.jklingsporn.vertx.jooq.future.util.FutureTool;
+import io.github.jklingsporn.vertx.jooq.shared.internal.SharedVertxDAO;
 import io.github.jklingsporn.vertx.jooq.shared.internal.VertxDAOHelper;
-import io.vertx.core.Vertx;
 import org.jooq.*;
 import org.jooq.impl.DSL;
 
@@ -15,11 +15,7 @@ import java.util.function.Function;
 /**
  * Created by jensklingsporn on 18.04.17.
  */
-public interface VertxDAO<R extends UpdatableRecord<R>, P, T> extends DAO<R, P, T> {
-
-    Vertx vertx();
-
-    void setVertx(Vertx vertx);
+public interface VertxDAO<R extends UpdatableRecord<R>, P, T> extends DAO<R, P, T> , SharedVertxDAO {
 
     /**
      * Convenience method to execute any <code>DSLContext</code>-aware Function asynchronously

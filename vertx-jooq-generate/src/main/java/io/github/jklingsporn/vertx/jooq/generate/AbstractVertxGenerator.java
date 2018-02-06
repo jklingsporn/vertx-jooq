@@ -318,6 +318,12 @@ public abstract class AbstractVertxGenerator extends JavaGenerator {
 
     protected abstract void generateFetchByMethods(JavaWriter out, String pType, String colName, String colClass, String colType, String colIdentifier) ;
 
+    protected void generateInterfaceMethodImplementations(JavaWriter out, String pType, String colName, String colClass, String colType, String colIdentifier){
+        generateDeleteByIdAsync(out, pType, colName, colClass, colType, colIdentifier);
+    }
+
+    protected void generateDeleteByIdAsync(JavaWriter out, String pType, String colName, String colClass, String colType, String colIdentifier){}
+
     /**
      * Copied from JavaGenerator
      * @param key

@@ -1,13 +1,11 @@
 package io.github.jklingsporn.vertx.jooq.shared.internal;
 
+import io.vertx.core.Vertx;
 import org.jooq.*;
 import org.jooq.impl.DAOImpl;
 import org.jooq.impl.DSL;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 import static org.jooq.impl.DSL.row;
 import static org.jooq.impl.DSL.using;
@@ -17,21 +15,28 @@ import static org.jooq.impl.DSL.using;
  * Utility class to reduce duplicate code in the different VertxDAO implementations.
  * Only meant to be used by vertx-jooq.
  */
-public abstract class AbstractVertxDAO<R extends UpdatableRecord<R>, P, T,FETCH,FETCHONE,EXECUTE,INSERT> extends DAOImpl<R,P,T>{
+public abstract class AbstractVertxDAO<R extends UpdatableRecord<R>, P, T,FETCH,FETCHONE,EXECUTE,INSERT> extends DAOImpl<R,P,T> implements SharedVertxDAO
+{
 
+    private final QueryExecutor<R, T, FETCH, FETCHONE, EXECUTE, INSERT> queryExecutor;
+    private final Vertx vertx;
 
-    protected AbstractVertxDAO(Table<R> table, Class<P> type) {
-        super(table, type);
-    }
-
-    protected AbstractVertxDAO(Table<R> table, Class<P> type, Configuration configuration) {
+    protected AbstractVertxDAO(Table<R> table, Class<P> type, Configuration configuration, QueryExecutor<R, T, FETCH, FETCHONE, EXECUTE, INSERT> queryExecutor, Vertx vertx) {
         super(table, type, configuration);
+        this.queryExecutor = queryExecutor;
+        this.vertx = vertx;
     }
 
-    protected abstract QueryExecutor<R, T, FETCH, FETCHONE, EXECUTE, INSERT> queryExecutor() ;
+    public Vertx vertx() {
+        return vertx;
+    }
+
+    protected QueryExecutor<R, T, FETCH, FETCHONE, EXECUTE, INSERT> queryExecutor(){
+        return this.queryExecutor;
+    }
 
     @SuppressWarnings("unchecked")
-    protected Condition getConditionInternal(T id){
+    protected Condition equalKey(T id){
         UniqueKey<?> uk = getTable().getPrimaryKey();
         Objects.requireNonNull(uk,()->"No primary key");
         /**
@@ -44,6 +49,27 @@ public abstract class AbstractVertxDAO<R extends UpdatableRecord<R>, P, T,FETCH,
         }
         else {
             condition = row(pk).equal((Record) id);
+        }
+        return condition;
+    }
+
+    @SuppressWarnings("unchecked")
+    protected Condition equalKeys(Collection<T> ids){
+        UniqueKey<?> uk = getTable().getPrimaryKey();
+        Objects.requireNonNull(uk,()->"No primary key");
+        /**
+         * Copied from jOOQs DAOImpl#equal-method
+         */
+        TableField<? extends Record, ?>[] pk = uk.getFieldsArray();
+        Condition condition;
+        if (pk.length == 1) {
+            if (ids.size() == 1) {
+                condition = equalKey(ids.iterator().next());
+            }else {
+                condition = pk[0].in(pk[0].getDataType().convert(ids));
+            }
+        }else {
+            condition = row(pk).in(ids.toArray(new Record[ids.size()]));
         }
         return condition;
     }
@@ -79,7 +105,7 @@ public abstract class AbstractVertxDAO<R extends UpdatableRecord<R>, P, T,FETCH,
     }
 
 //    protected EXECUTE existsByIdAsyncInternal(T id){
-//        return this.<Boolean,X>executor().apply(dslContext -> dslContext.fetchExists(getTable(), getConditionInternal(id)));
+//        return queryExecutor().execute(using(configuration()).fetchExists(getTable()).where(equalKey(id)));
 //    }
 
     protected EXECUTE insertExecAsyncInternal(P object){

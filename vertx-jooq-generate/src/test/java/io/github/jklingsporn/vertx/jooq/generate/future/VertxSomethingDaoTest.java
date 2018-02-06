@@ -237,4 +237,30 @@ public class VertxSomethingDaoTest extends VertxDaoTestBase {
         await(latch);
     }
 
+    @Test
+    public void transactionShouldRollBack() throws InterruptedException {
+        Something something = createSomethingWithId();
+        CountDownLatch latch = new CountDownLatch(1);
+        dao
+                .executeAsync(dslContext -> {
+                    dslContext.transaction(configuration -> {
+                        DSL.using(configuration).insertInto(Tables.SOMETHING).set(something.into(new SomethingRecord())).execute();
+                        throw new Exception();
+                    });
+                    return null;
+                })
+                .handle((res,x)->{
+                    if(x==null){
+                        Assert.fail();
+                    }
+                    Assert.assertEquals(DataAccessException.class,x.getClass());
+                    return null;
+                }).
+                thenCompose(n->dao.fetchOneBySomeidAsync(something.getSomeid()))
+                .thenAccept(Assert::assertNull)
+                .whenComplete(failOrCountDown(latch))
+        ;
+        await(latch);
+    }
+
 }
