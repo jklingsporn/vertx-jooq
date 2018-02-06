@@ -1,6 +1,6 @@
 package io.github.jklingsporn.vertx.jooq.shared.internal;
 
-import io.vertx.core.Vertx;
+import io.github.jklingsporn.vertx.jooq.shared.GenericVertxDAO;
 import io.vertx.core.impl.Arguments;
 import org.jooq.*;
 import org.jooq.impl.DSL;
@@ -20,20 +20,23 @@ public abstract class AbstractVertxDAO<R extends UpdatableRecord<R>, P, T, FIND_
 
     private final Class<P> type;
     private final Table<R> table;
-    private final Configuration configuration;
     private final QueryExecutor<R, T, FIND_MANY, FIND_ONE, EXECUTE, INSERT> queryExecutor;
-    private final Vertx vertx;
+    private Configuration configuration;
 
-    protected AbstractVertxDAO(Table<R> table, Class<P> type, Configuration configuration,QueryExecutor<R, T, FIND_MANY, FIND_ONE, EXECUTE, INSERT> queryExecutor, Vertx vertx) {
+    protected AbstractVertxDAO(Table<R> table, Class<P> type, QueryExecutor<R, T, FIND_MANY, FIND_ONE, EXECUTE, INSERT> queryExecutor){
         this.type = type;
         this.table = table;
-        this.configuration = configuration;
         this.queryExecutor = queryExecutor;
-        this.vertx = vertx;
     }
 
-    public Vertx vertx() {
-        return vertx;
+    protected AbstractVertxDAO(Table<R> table, Class<P> type, QueryExecutor<R, T, FIND_MANY, FIND_ONE, EXECUTE, INSERT> queryExecutor, Configuration configuration) {
+        this(table,type,queryExecutor);
+        setConfiguration(configuration);
+    }
+
+    public AbstractVertxDAO setConfiguration(Configuration configuration) {
+        this.configuration = configuration;
+        return this;
     }
 
     public Table<R> getTable() {
@@ -44,6 +47,9 @@ public abstract class AbstractVertxDAO<R extends UpdatableRecord<R>, P, T, FIND_
         return configuration;
     }
 
+    protected QueryExecutor<R, T, FIND_MANY, FIND_ONE, EXECUTE, INSERT> queryExecutor(){
+        return this.queryExecutor;
+    }
 
     @SuppressWarnings("unchecked")
     @Override
@@ -144,10 +150,6 @@ public abstract class AbstractVertxDAO<R extends UpdatableRecord<R>, P, T, FIND_
                 });
     }
 
-    protected QueryExecutor<R, T, FIND_MANY, FIND_ONE, EXECUTE, INSERT> queryExecutor(){
-        return this.queryExecutor;
-    }
-
     @SuppressWarnings("unchecked")
     protected Condition equalKey(T id){
         UniqueKey<?> uk = getTable().getPrimaryKey();
@@ -186,4 +188,22 @@ public abstract class AbstractVertxDAO<R extends UpdatableRecord<R>, P, T, FIND_
         }
         return condition;
     }
+
+    @SuppressWarnings("unchecked")
+    protected /* non-final */ T compositeKeyRecord(Object... values) {
+        UniqueKey<R> key = table.getPrimaryKey();
+        if (key == null)
+            return null;
+
+        TableField<R, Object>[] fields = (TableField<R, Object>[]) key.getFieldsArray();
+        Record result = DSL.using(configuration)
+                .newRecord(fields);
+
+        for (int i = 0; i < values.length; i++)
+            result.set(fields[i], fields[i].getDataType().convert(values[i]));
+
+        return (T) result;
+    }
+
+    protected abstract T getId(P object);
 }

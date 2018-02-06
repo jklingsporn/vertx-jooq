@@ -1,4 +1,4 @@
-package io.github.jklingsporn.vertx.jooq.generate;
+package io.github.jklingsporn.vertx.jooq.generate.jdbc;
 
 import org.jooq.tools.JooqLogger;
 import org.jooq.util.*;
@@ -32,14 +32,6 @@ public abstract class AbstractVertxGuiceGenerator extends AbstractVertxGenerator
     }
 
     @Override
-    protected void generateDaoClassFooter(TableDefinition table, JavaWriter out) {
-        super.generateDaoClassFooter(table, out);
-        if(generateInjectAnnotations){
-            generateSetConfigurationMethod(out);
-        }
-    }
-
-    @Override
     protected void generateSetVertxAnnotation(JavaWriter out) {
         out.tab(1).println("@javax.inject.Inject");
     }
@@ -52,16 +44,21 @@ public abstract class AbstractVertxGuiceGenerator extends AbstractVertxGenerator
         }
     }
 
-    private void generateSetConfigurationMethod(JavaWriter out) {
-        out.println();
+    @Override
+    protected void generateConstructorAnnotation(JavaWriter out) {
         out.tab(1).println("@javax.inject.Inject");
-        generateSetConfigurationAnnotation(out);
-        out.tab(1).println("@Override");
-        out.tab(1).println("public void setConfiguration(Configuration configuration) {");
-        out.tab(2).println("super.setConfiguration(configuration);");
-        out.tab(1).println("}");
-        out.println();
     }
+
+//    private void generateSetConfigurationMethod(JavaWriter out) {
+//        out.println();
+//        out.tab(1).println("@javax.inject.Inject");
+//        generateSetConfigurationAnnotation(out);
+//        out.tab(1).println("@Override");
+//        out.tab(1).println("public void setConfiguration(Configuration configuration) {");
+//        out.tab(2).println("super.setConfiguration(configuration);");
+//        out.tab(1).println("}");
+//        out.println();
+//    }
 
     /**
      * You might want to override this class in order to perform named injection

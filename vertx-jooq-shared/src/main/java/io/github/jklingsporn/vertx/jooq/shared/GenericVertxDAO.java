@@ -1,4 +1,4 @@
-package io.github.jklingsporn.vertx.jooq.shared.internal;
+package io.github.jklingsporn.vertx.jooq.shared;
 
 import org.jooq.Condition;
 

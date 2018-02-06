@@ -1,4 +1,4 @@
-package io.github.jklingsporn.vertx.jooq.generate;
+package io.github.jklingsporn.vertx.jooq.generate.jdbc;
 
 import io.github.jklingsporn.vertx.jooq.shared.internal.AbstractVertxDAO;
 import org.jooq.impl.DAOImpl;
@@ -30,7 +30,7 @@ public class VertxJavaWriter extends JavaWriter {
 
     @Override
     protected String beforeClose(String string) {
-        return replaceDAOImpl(replacePlaceholderDAOType(super.beforeClose(string)));
+        return super.beforeClose(string);
     }
 
     private String replacePlaceholderDAOType(String string) {

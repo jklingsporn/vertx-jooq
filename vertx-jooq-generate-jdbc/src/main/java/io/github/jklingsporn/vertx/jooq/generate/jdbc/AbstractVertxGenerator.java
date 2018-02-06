@@ -1,7 +1,9 @@
-package io.github.jklingsporn.vertx.jooq.generate;
+package io.github.jklingsporn.vertx.jooq.generate.jdbc;
 
 import io.github.jklingsporn.vertx.jooq.shared.JsonArrayConverter;
 import io.github.jklingsporn.vertx.jooq.shared.JsonObjectConverter;
+import io.github.jklingsporn.vertx.jooq.shared.internal.AbstractVertxDAO;
+import org.jooq.Configuration;
 import org.jooq.Constants;
 import org.jooq.Record;
 import org.jooq.tools.JooqLogger;
@@ -26,12 +28,6 @@ public abstract class AbstractVertxGenerator extends JavaGenerator {
 
     private final boolean generateJson;
 
-    /**
-     * jOOQ by default wraps all strategies into package-local class GeneratorStrategyWrapper. Because we need
-     * instances of VertxGeneratorStrategy to render json key names we have to store this class too.
-     */
-    private VertxGeneratorStrategy unwrappedStrategy;
-
     public AbstractVertxGenerator() {
         this(true);
     }
@@ -39,14 +35,6 @@ public abstract class AbstractVertxGenerator extends JavaGenerator {
     public AbstractVertxGenerator(boolean generateJson) {
         this.generateJson = generateJson;
         this.setGeneratePojos(true);
-    }
-
-    @Override
-    protected void generateDaoClassFooter(TableDefinition table, JavaWriter out) {
-        super.generateDaoClassFooter(table, out);
-        generateFetchMethods(table,out);
-        generateVertxGetterAndSetterConfigurationMethod(out);
-        generateQueryExecutor(table,out);
     }
 
     @Override
@@ -83,14 +71,6 @@ public abstract class AbstractVertxGenerator extends JavaGenerator {
     }
 
     @Override
-    protected void generateDao(TableDefinition table, JavaWriter out) {
-        if(table.getPrimaryKey() != null){
-            ((VertxJavaWriter)out).setDaoTypeReplacement(getKeyType(table.getPrimaryKey()));
-        }
-        super.generateDao(table, out);
-    }
-
-    @Override
     protected JavaWriter newJavaWriter(File file) {
         return new VertxJavaWriter(file, generateFullyQualifiedTypes(), targetEncoding);
     }
@@ -104,6 +84,23 @@ public abstract class AbstractVertxGenerator extends JavaGenerator {
         }
     }
 
+    protected String getFQVertxName(){
+        return "io.vertx.core.Vertx";
+    }
+
+    protected abstract String renderFindOneType(String pType);
+
+    protected abstract String renderFindManyType(String pType);
+
+    protected abstract String renderExecType();
+
+    protected abstract String renderInsertReturningType(String tType);
+
+    protected abstract String renderQueryExecutor(String rType, String pType, String tType);
+
+    protected abstract String renderDAOInterface(String rType, String pType, String tType);
+
+
     protected abstract void generateDAOImports(JavaWriter out);
 
     /**
@@ -111,6 +108,12 @@ public abstract class AbstractVertxGenerator extends JavaGenerator {
      * @param out
      */
     protected void generateSetVertxAnnotation(JavaWriter out){};
+
+    /**
+     * You might want to override this class in order to add injection methods.
+     * @param out
+     */
+    protected void generateConstructorAnnotation(JavaWriter out){};
 
     protected void generateVertxGetterAndSetterConfigurationMethod(JavaWriter out) {
         out.println();
@@ -230,7 +233,7 @@ public abstract class AbstractVertxGenerator extends JavaGenerator {
      * your choice for <code>GeneratorStrategy#getJavaMemberName(column, DefaultGeneratorStrategy.Mode.POJO)</code>
      */
     protected String getJsonKeyName(TypedElementDefinition<?> column) {
-        return getUnwrappedStrategy().getJsonKeyName(column);
+        return column.getName();
     }
 
     private boolean isAllowedJsonType(TypedElementDefinition<?> column, String columnType){
@@ -240,21 +243,6 @@ public abstract class AbstractVertxGenerator extends JavaGenerator {
                 columnType.equals(byte.class.getName()+"[]") || (column.getType().getConverter() != null &&
                 (isType(column.getType().getConverter(),JsonObjectConverter.class) || isType(column.getType().getConverter(),JsonArrayConverter.class)))
                 ;
-    }
-
-    @Override
-    public void setStrategy(GeneratorStrategy strategy) {
-        if(! (strategy instanceof VertxGeneratorStrategy)){
-            throw new IllegalArgumentException(String.format("%s is not an instance of %s",
-                    strategy.getClass().getName(),
-                    VertxGeneratorStrategy.class.getName()));
-        }
-        this.unwrappedStrategy = (VertxGeneratorStrategy) strategy;
-        super.setStrategy(strategy);
-    }
-
-    public VertxGeneratorStrategy getUnwrappedStrategy() {
-        return this.unwrappedStrategy;
     }
 
     /**
@@ -289,34 +277,54 @@ public abstract class AbstractVertxGenerator extends JavaGenerator {
     protected void generateFetchMethods(TableDefinition table, JavaWriter out){
         VertxJavaWriter vOut = (VertxJavaWriter) out;
         String pType = vOut.ref(getStrategy().getFullJavaClassName(table, GeneratorStrategy.Mode.POJO));
+        UniqueKeyDefinition primaryKey = table.getPrimaryKey();
+        ColumnDefinition firstPrimaryKeyColumn = primaryKey.getKeyColumns().get(0);
         for (ColumnDefinition column : table.getColumns()) {
             final String colName = column.getOutputName();
             final String colClass = getStrategy().getJavaClassName(column);
             final String colType = vOut.ref(getJavaType(column.getType()));
             final String colIdentifier = vOut.ref(getStrategy().getFullJavaIdentifier(column), colRefSegments(column));
 
-            // fetchBy[Column]([T]...)
-            // -----------------------
 
-            generateFetchByMethods(out, pType, colName, colClass, colType, colIdentifier);
+            //fetchById is already defined in VertxDAO
+            if(!firstPrimaryKeyColumn.equals(column)){
 
-            // fetchOneBy[Column]([T])
-            // -----------------------
+
+                // fetchBy[Column]([T]...)
+                // -----------------------
+
+                generateFindManyByMethods(out, pType, colName, colClass, colType, colIdentifier);
+            }
+
+
             ukLoop:
             for (UniqueKeyDefinition uk : column.getUniqueKeys()) {
 
                 // If column is part of a single-column unique key...
-                if (uk.getKeyColumns().size() == 1 && uk.getKeyColumns().get(0).equals(column)) {
-                    generateFetchOneByMethods(out, pType, colName, colClass, colType);
+                if (uk.getKeyColumns().size() == 1 && uk.getKeyColumns().get(0).equals(column) && !uk.isPrimaryKey()) {
+                    // fetchOneBy[Column]([T])
+                    // -----------------------
+                    generateFindOneByMethods(out, pType, colName, colClass, colType, colIdentifier);
                     break ukLoop;
                 }
             }
         }
     }
 
-    protected abstract void generateFetchOneByMethods(JavaWriter out, String pType, String colName, String colClass, String colType) ;
+    protected void generateFindOneByMethods(JavaWriter out, String pType, String colName, String colClass, String colType, String colIdentifier) {
+        out.tab(1).javadoc("Find a unique record that has <code>%s = value</code> asynchronously", colName);
+        out.tab(1).println("public %s findOneBy%sAsync(%s value) {", renderFindOneType(pType),colClass, colType);
+        out.tab(2).println("return findOneByConditionAsync(%s.eq(value));", colIdentifier);
+        out.tab(1).println("}");
+    }
 
-    protected abstract void generateFetchByMethods(JavaWriter out, String pType, String colName, String colClass, String colType, String colIdentifier) ;
+    protected void generateFindManyByMethods(JavaWriter out, String pType, String colName, String colClass, String colType, String colIdentifier) {
+        out.tab(1).javadoc("Find records that have <code>%s IN (values)</code> asynchronously", colName);
+        out.tab(1).println("public %s findManyBy%sAsync(%s<%s> values) {", renderFindManyType(pType), colClass, List.class, colType);
+        //out.tab(2).println("return findMany(%s, values);", colIdentifier);
+        out.tab(2).println("return findManyByConditionAsync(%s.in(values));", colIdentifier);
+        out.tab(1).println("}");
+    }
 
     protected void generateInterfaceMethodImplementations(JavaWriter out, String pType, String colName, String colClass, String colType, String colIdentifier){
         generateDeleteByIdAsync(out, pType, colName, colClass, colType, colIdentifier);
@@ -370,23 +378,108 @@ public abstract class AbstractVertxGenerator extends JavaGenerator {
         return 3;
     }
 
-    protected void generateQueryExecutor(TableDefinition table, JavaWriter out) {
-        String rType = out.ref(getStrategy().getFullJavaClassName(table, GeneratorStrategy.Mode.RECORD));
+    /**
+     * copied from jOOQ's JavaGenerator
+     * @param table
+     * @param out1
+     */
+    @Override
+    protected void generateDao(TableDefinition table, JavaWriter out1) {
+        UniqueKeyDefinition key = table.getPrimaryKey();
+        if (key == null) {
+            logger.info("Skipping DAO generation", out1.file().getName());
+            return;
+        }
+        VertxJavaWriter out = (VertxJavaWriter) out1;
+        out.setDaoTypeReplacement(getKeyType(table.getPrimaryKey()));
+        generateDAO(key, table, out);
+    }
+
+    private void generateDAO(UniqueKeyDefinition key, TableDefinition table, VertxJavaWriter out) {
+
+
+        final String className = getStrategy().getJavaClassName(table, GeneratorStrategy.Mode.DAO);
+        final List<String> interfaces = out.ref(getStrategy().getJavaClassImplements(table, GeneratorStrategy.Mode.DAO));
+        final String tableRecord = out.ref(getStrategy().getFullJavaClassName(table, GeneratorStrategy.Mode.RECORD));
+        final String daoImpl = out.ref(AbstractVertxDAO.class);
+        final String tableIdentifier = out.ref(getStrategy().getFullJavaIdentifier(table), 2);
+
+        String tType = "Void";
         String pType = out.ref(getStrategy().getFullJavaClassName(table, GeneratorStrategy.Mode.POJO));
-        String tType = getKeyType(table.getPrimaryKey());
-        String queryExecutorType = getUnwrappedStrategy().renderQueryExecutor(rType, pType, tType);
-        out.println();
-        out.tab(1).println("private %s queryExecutor;", queryExecutorType);
-        out.println();
-        generateSetVertxAnnotation(out);
-        out.tab(1).println("@Override");
-        out.tab(1).println("protected %s queryExecutor() {", queryExecutorType);
-        out.tab(2).println("if(this.queryExecutor==null){");
-        out.tab(3).println("this.queryExecutor = new %s(this);", queryExecutorType);
-        out.tab(2).println("}");
-        out.tab(2).println("return this.queryExecutor;");
+
+        List<ColumnDefinition> keyColumns = key.getKeyColumns();
+
+        if (keyColumns.size() == 1) {
+            tType = getJavaType(keyColumns.get(0).getType());
+        }
+        else if (keyColumns.size() <= Constants.MAX_ROW_DEGREE) {
+            String generics = "";
+            String separator = "";
+
+            for (ColumnDefinition column : keyColumns) {
+                generics += separator + out.ref(getJavaType(column.getType()));
+                separator = ", ";
+            }
+
+            tType = Record.class.getName() + keyColumns.size() + "<" + generics + ">";
+        }
+        else {
+            tType = Record.class.getName();
+        }
+
+        tType = out.ref(tType);
+        interfaces.add(renderDAOInterface(tableRecord, pType, tType)); //let DAO implement the right DAO-interface
+
+        printPackage(out, table, GeneratorStrategy.Mode.DAO);
+        generateDaoClassJavadoc(table, out);
+        printClassAnnotations(out, table.getSchema());
+
+        if (generateSpringAnnotations())
+            out.println("@%s", out.ref("org.springframework.stereotype.Repository"));
+
+        out.println("public class %s extends %s<%s, %s, %s, %s, %s, %s, %s>[[before= implements ][%s]] {", className, daoImpl, tableRecord, pType, tType, renderFindManyType(pType), renderFindOneType(pType), renderExecType(), renderInsertReturningType(tType), interfaces);
+
+        // Only one constructor
+        // ------------------------
+
+        out.tab(1).javadoc("Create a new %s with an attached configuration", className);
+
+        if (generateSpringAnnotations()){
+            out.tab(1).println("@%s", out.ref("org.springframework.beans.factory.annotation.Autowired"));
+        }
+        generateConstructorAnnotation(out);
+
+        out.tab(1).println("public %s(%s configuration, %s vertx) {", className, Configuration.class, getFQVertxName());
+        out.tab(2).println("super(%s, %s.class, new %s(%s.class,vertx), configuration);", tableIdentifier, pType, renderQueryExecutor(tableRecord, pType, tType),pType);
         out.tab(1).println("}");
-        out.println();
+
+        // Template method implementations
+        // -------------------------------
+        out.tab(1).overrideInherit();
+        out.tab(1).println("protected %s getId(%s object) {", tType, pType);
+
+        if (keyColumns.size() == 1) {
+            out.tab(2).println("return object.%s();", getStrategy().getJavaGetterName(keyColumns.get(0), GeneratorStrategy.Mode.POJO));
+        }
+
+        // [#2574] This should be replaced by a call to a method on the target table's Key type
+        else {
+            String params = "";
+            String separator = "";
+
+            for (ColumnDefinition column : keyColumns) {
+                params += separator + "object." + getStrategy().getJavaGetterName(column, GeneratorStrategy.Mode.POJO) + "()";
+
+                separator = ", ";
+            }
+
+            out.tab(2).println("return compositeKeyRecord(%s);", params);
+        }
+
+        out.tab(1).println("}");
+        generateFetchMethods(table,out);
+        generateDaoClassFooter(table, out);
+        out.println("}");
     }
 
 }
