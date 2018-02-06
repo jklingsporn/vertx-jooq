@@ -1,8 +1,8 @@
 package io.github.jklingsporn.vertx.jooq.shared.internal;
 
 import io.vertx.core.Vertx;
+import io.vertx.core.impl.Arguments;
 import org.jooq.*;
-import org.jooq.impl.DAOImpl;
 import org.jooq.impl.DSL;
 
 import java.util.*;
@@ -15,14 +15,19 @@ import static org.jooq.impl.DSL.using;
  * Utility class to reduce duplicate code in the different VertxDAO implementations.
  * Only meant to be used by vertx-jooq.
  */
-public abstract class AbstractVertxDAO<R extends UpdatableRecord<R>, P, T,FETCH,FETCHONE,EXECUTE,INSERT> extends DAOImpl<R,P,T> implements SharedVertxDAO
+public abstract class AbstractVertxDAO<R extends UpdatableRecord<R>, P, T, FIND_MANY, FIND_ONE,EXECUTE,INSERT> implements GenericVertxDAO<P,T, FIND_MANY, FIND_ONE,EXECUTE,INSERT>
 {
 
-    private final QueryExecutor<R, T, FETCH, FETCHONE, EXECUTE, INSERT> queryExecutor;
+    private final Class<P> type;
+    private final Table<R> table;
+    private final Configuration configuration;
+    private final QueryExecutor<R, T, FIND_MANY, FIND_ONE, EXECUTE, INSERT> queryExecutor;
     private final Vertx vertx;
 
-    protected AbstractVertxDAO(Table<R> table, Class<P> type, Configuration configuration, QueryExecutor<R, T, FETCH, FETCHONE, EXECUTE, INSERT> queryExecutor, Vertx vertx) {
-        super(table, type, configuration);
+    protected AbstractVertxDAO(Table<R> table, Class<P> type, Configuration configuration,QueryExecutor<R, T, FIND_MANY, FIND_ONE, EXECUTE, INSERT> queryExecutor, Vertx vertx) {
+        this.type = type;
+        this.table = table;
+        this.configuration = configuration;
         this.queryExecutor = queryExecutor;
         this.vertx = vertx;
     }
@@ -31,7 +36,115 @@ public abstract class AbstractVertxDAO<R extends UpdatableRecord<R>, P, T,FETCH,
         return vertx;
     }
 
-    protected QueryExecutor<R, T, FETCH, FETCHONE, EXECUTE, INSERT> queryExecutor(){
+    public Table<R> getTable() {
+        return table;
+    }
+
+    public Configuration configuration() {
+        return configuration;
+    }
+
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public EXECUTE updateAsync(P object){
+        Objects.requireNonNull(object);
+        DSLContext dslContext = using(configuration());
+        UniqueKey<R> pk = getTable().getPrimaryKey();
+        R record = dslContext.newRecord(getTable(), object);
+        Condition where = DSL.trueCondition();
+        for (TableField<R,?> tableField : pk.getFields()) {
+            //exclude primary keys from update
+            record.changed(tableField,false);
+            where = where.and(((TableField<R,Object>)tableField).eq(record.get(tableField)));
+        }
+        Map<String, Object> valuesToUpdate =
+                Arrays.stream(record.fields())
+                        .collect(HashMap::new, (m, f) -> m.put(f.getName(), f.getValue(record)), HashMap::putAll);
+        return queryExecutor().execute(dslContext.update(getTable()).set(valuesToUpdate).where(where));
+    }
+
+    @Override
+    public FIND_MANY findManyByConditionAsync(Condition condition){
+        return queryExecutor().findMany(using(configuration()).selectFrom(getTable()).where(condition));
+    }
+
+    @Override
+    public FIND_MANY findManyByIdsAsync(Collection<T> ids){
+        return findManyByConditionAsync(equalKeys(ids));
+    }
+
+    @Override
+    public FIND_ONE findOneByIdAsync(T id){
+        return findOneByConditionAsync(equalKey(id));
+    }
+
+    @Override
+    public FIND_ONE findOneByConditionAsync(Condition condition){
+        return queryExecutor().findOne(using(configuration()).selectFrom(getTable()).where(condition));
+    }
+
+    @Override
+    public EXECUTE deleteByConditionAsync(Condition condition){
+        return queryExecutor().execute(using(configuration()).deleteFrom(getTable()).where(condition));
+    }
+
+    @Override
+    public EXECUTE deleteByIdAsync(T id){
+        return deleteByConditionAsync(equalKey(id));
+    }
+
+    @Override
+    public EXECUTE deleteByIdsAsync(Collection<T> ids){
+        return deleteByConditionAsync(equalKeys(ids));
+    }
+
+//    protected EXECUTE existsByIdAsyncInternal(T id){
+//        return queryExecutor().execute(using(configuration()).fetchExists(getTable()).where(equalKey(id)));
+//    }
+
+    @Override
+    public EXECUTE insertAsync(P pojo){
+        Objects.requireNonNull(pojo);
+        DSLContext dslContext = using(configuration());
+        return queryExecutor().execute(dslContext.insertInto(getTable()).set(dslContext.newRecord(getTable(), pojo)));
+    }
+
+    @Override
+    public EXECUTE insertAsync(Collection<P> pojos){
+        Arguments.require(!pojos.isEmpty(), "No elements");
+        DSLContext dslContext = using(configuration());
+        InsertSetStep<R> insertSetStep = dslContext.insertInto(getTable());
+        InsertValuesStepN<R> insertValuesStepN = null;
+        for (P pojo : pojos) {
+            insertValuesStepN = insertSetStep.values(dslContext.newRecord(getTable(), pojo).fields());
+        }
+        return queryExecutor().execute(insertValuesStepN);
+    }
+
+//    protected <X> X countAsyncInternal(){
+//        return this.<Long,X>executor().apply(dslContext -> dslContext.selectCount().from(getTable()).fetchOne(0, Long.class));
+//    }
+
+    @SuppressWarnings("unchecked")
+    public INSERT insertReturningPrimaryAsync(P object){
+        UniqueKey<?> key = getTable().getPrimaryKey();
+        //usually key shouldn't be null because DAO generation is omitted in such cases
+        Objects.requireNonNull(key,()->"No primary key");
+        DSLContext dslContext = using(configuration());
+        return queryExecutor().insertReturning(
+                dslContext.insertInto(getTable()).set(dslContext.newRecord(getTable(), object)).returning(key.getFields()),
+                record->{
+                    Objects.requireNonNull(record, () -> "Failed inserting record or no key");
+                    Record key1 = record.key();
+                    if(key1.size() == 1){
+                        return ((Record1<T>)key1).value1();
+                    }
+                    return (T) key1;
+                });
+    }
+
+    protected QueryExecutor<R, T, FIND_MANY, FIND_ONE, EXECUTE, INSERT> queryExecutor(){
         return this.queryExecutor;
     }
 
@@ -72,66 +185,5 @@ public abstract class AbstractVertxDAO<R extends UpdatableRecord<R>, P, T,FETCH,
             condition = row(pk).in(ids.toArray(new Record[ids.size()]));
         }
         return condition;
-    }
-
-
-    @SuppressWarnings("unchecked")
-    protected EXECUTE updateExecAsyncInternal(P object){
-        DSLContext dslContext = using(configuration());
-        UniqueKey<R> pk = getTable().getPrimaryKey();
-        R record = dslContext.newRecord(getTable(), object);
-        Condition where = DSL.trueCondition();
-        for (TableField<R,?> tableField : pk.getFields()) {
-            //exclude primary keys from update
-            record.changed(tableField,false);
-            where = where.and(((TableField<R,Object>)tableField).eq(record.get(tableField)));
-        }
-        Map<String, Object> valuesToUpdate =
-                Arrays.stream(record.fields())
-                        .collect(HashMap::new, (m, f) -> m.put(f.getName(), f.getValue(record)), HashMap::putAll);
-        return queryExecutor().execute(dslContext.update(getTable()).set(valuesToUpdate).where(where));
-    }
-
-    protected FETCHONE fetchOneAsyncInternal(Condition condition){
-        return queryExecutor().fetchOne(using(configuration()).selectFrom(getTable()).where(condition));
-    }
-
-    protected FETCH fetchAsyncInternal(Condition condition){
-        return queryExecutor().fetch(using(configuration()).selectFrom(getTable()).where(condition));
-    }
-
-    protected EXECUTE deleteExecAsyncInternal(Condition condition){
-        return queryExecutor().execute(using(configuration()).deleteFrom(getTable()).where(condition));
-    }
-
-//    protected EXECUTE existsByIdAsyncInternal(T id){
-//        return queryExecutor().execute(using(configuration()).fetchExists(getTable()).where(equalKey(id)));
-//    }
-
-    protected EXECUTE insertExecAsyncInternal(P object){
-        DSLContext dslContext = using(configuration());
-        return queryExecutor().execute(dslContext.insertInto(getTable()).set(dslContext.newRecord(getTable(), object)));
-    }
-
-//    protected <X> X countAsyncInternal(){
-//        return this.<Long,X>executor().apply(dslContext -> dslContext.selectCount().from(getTable()).fetchOne(0, Long.class));
-//    }
-
-    @SuppressWarnings("unchecked")
-    protected INSERT insertReturningPrimaryAsyncInternal(P object){
-        UniqueKey<?> key = getTable().getPrimaryKey();
-        //usually key shouldn't be null because DAO generation is omitted in such cases
-        Objects.requireNonNull(key,()->"No primary key");
-        DSLContext dslContext = using(configuration());
-        return queryExecutor().insertReturning(
-                dslContext.insertInto(getTable()).set(dslContext.newRecord(getTable(), object)).returning(key.getFields()),
-                record->{
-                    Objects.requireNonNull(record, () -> "Failed inserting record or no key");
-                    Record key1 = record.key();
-                    if(key1.size() == 1){
-                        return ((Record1<T>)key1).value1();
-                    }
-                    return (T) key1;
-                });
     }
 }

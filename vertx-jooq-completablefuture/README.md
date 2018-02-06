@@ -1,8 +1,25 @@
-# vertx-jooq-classic
-A [jOOQ](http://www.jooq.org/)-CodeGenerator to create [vertx](http://vertx.io/)-ified DAOs and POJOs! Perform all CRUD-operations asynchronously and convert your POJOs
+# vertx-jooq-future
+A [jOOQ](http://www.jooq.org/)-CodeGenerator to create [vertx](http://vertx.io/)-ified DAOs and POJOs!
+Perform all CRUD-operations asynchronously and convert your POJOs
 from/into a `io.vertx.core.JsonObject`.
 
-#### example
+## new in 2.0
+Starting with version 2, this library comes in two different flavors:
+- the classic callback-handler style known from versions < 2.
+- a new API that returns a [vertx-ified implementation](https://github.com/cescoffier/vertx-completable-future)
+of `java.util.concurrent.CompletableFuture` for all async DAO operations and thus makes chaining your async operations easier.
+It has some limitations which you need to be aware about (see [known issues](https://github.com/jklingsporn/vertx-jooq#known-issues)).
+
+To separate the APIs, there are now three maven modules:
+- [`vertx-jooq-classic`](https://github.com/jklingsporn/vertx-jooq/tree/master/vertx-jooq-classic) is the module containing the callback handler API.
+- [`vertx-jooq-future`](https://github.com/jklingsporn/vertx-jooq/tree/master/vertx-jooq-future) is the module containing the `CompletableFuture` based API.
+- [`vertx-jooq-generate`](https://github.com/jklingsporn/vertx-jooq/tree/master/vertx-jooq-generate) is the module containing the code-generator.
+
+If you're updating from a previous version please also note, that there are breaking API-changes due to
+required package renaming, e.g. `io.github.jklingsporn.vertx.VertxDAO` became
+`io.github.jklingsporn.vertx.jooq.classic.VertxDAO`.
+
+## example
 ```
 //Setup your jOOQ configuration
 Configuration configuration = ...
@@ -15,12 +32,11 @@ SomethingDao somethingDao = new SomethingDao(configuration);
 somethingDao.setVertx(vertx);
 
 //fetch something with ID 123...
-somethingDao.findByIdAsync(123,fetchHandler->{
-    if(fetchHandler.succeeded()){
-        //...convert it into a JsonObject and send it over the eventbus
-        vertx.eventBus().send("sendSomething",fetchHandler.result().toJson());
-    }
-});
+CompletableFuture<Void> sendFuture =
+    somethingDao.findByIdAsync(123).
+    thenAccept(something->
+        vertx.eventBus().send("sendSomething",something.toJson())
+    );
 
 //maybe consume it in another verticle
 vertx.eventBus().<JsonObject>consumer("sendSomething", jsonEvent->{
@@ -30,35 +46,33 @@ vertx.eventBus().<JsonObject>consumer("sendSomething", jsonEvent->{
     //... change some values
     something.setSomeregularnumber(456);
     //... and update it into the DB
-    somethingDao.updateAsync(something, dbEvent-> {
-        if (dbEvent.succeeded()) {
-            //omg it was updated
-        }
-    });
+    CompletableFuture<Void> updatedFuture = somethingDao.updateAsync(something);
+
     //or do you prefer writing your own typesafe SQL?
-    somethingDao.executeAsync(dslContext ->
+    CompletableFuture<Integer> updatedCustomFuture = somethingDao.executeAsync(dslContext ->
             dslContext.update(Tables.SOMETHING).set(Tables.SOMETHING.SOMEREGULARNUMBER,456).where(Tables.SOMETHING.SOMEID.eq(something.getSomeid())).execute()
-            , dbEvent ->{
-        if(dbEvent.succeeded()){
-            //omg it was updated
+    );
+    //check for completion
+    updatedCustomFuture.whenComplete((rows,ex)->{
+        if(ex==null){
+            System.out.println("Rows updated: "+rows);
+        }else{
+            System.err.println("Something failed badly: "+ex.getMessage());
         }
     });
 });
 ```
 
-Do you use dependency injection? In addition to the `ClassicVertxGenerator`, there is also a generator with [Guice](https://github.com/google/guice) support. If you're using the `ClassicVertxGuiceGenerator`,
+Do you use dependency injection? In addition to the `FutureVertxGenerator`, there is also a generator with [Guice](https://github.com/google/guice) support. If you're using the `FutureVertxGuiceGenerator`,
 the `setConfiguration(org.jooq.Configuration)` and `setVertx(io.core.Vertx)` methods are annotated with `@javax.inject.Inject` and a
 Guice `Module` is created which binds all created VertxDAOs to their implementation. It plays nicely together with the [vertx-guice](https://github.com/ef-labs/vertx-guice) module that enables dependency injection for vertx.
-
-#### integration example
-Checkout [vertx-auth-jooq](https://github.com/jklingsporn/vertx-auth-jooq) that uses vertx-jooq and vertx-auth to authorize and authenticate users from your database.
 
 # maven
 ```
 <dependency>
   <groupId>io.github.jklingsporn</groupId>
-  <artifactId>vertx-jooq-classic</artifactId>
-  <version>3.0.0-BETA</version>
+  <artifactId>vertx-jooq-future</artifactId>
+  <version>2.0.0</version>
 </dependency>
 ```
 # maven code generator configuration example for mysql
@@ -75,6 +89,20 @@ If you are new to jOOQ, I recommend to read the awesome [jOOQ documentation](htt
 ```
 <project>
 ...your project configuration here...
+
+  <dependencies>
+    ...your other dependencies...
+    <dependency>
+      <groupId>org.jooq</groupId>
+      <artifactId>jooq</artifactId>
+      <version>3.9.2</version>
+    </dependency>
+    <dependency>
+      <groupId>io.github.jklingsporn</groupId>
+      <artifactId>vertx-jooq-future</artifactId>
+      <version>3.0.0-BETA</version>
+    </dependency>
+  </dependencies>
   <build>
     <plugins>
       <plugin>
@@ -118,7 +146,7 @@ If you are new to jOOQ, I recommend to read the awesome [jOOQ documentation](htt
 
               <!-- Generator parameters -->
               <generator>
-                  <name>io.github.jklingsporn.vertx.jooq.generate.classic.ClassicVertxGenerator</name>
+                  <name>io.github.jklingsporn.vertx.jooq.generate.future.FutureVertxGenerator</name>
                   <database>
                       <name>org.jooq.util.mysql.MySQLDatabase</name>
                       <includes>.*</includes>
@@ -160,7 +188,7 @@ If you are new to jOOQ, I recommend to read the awesome [jOOQ documentation](htt
 
 
                   <strategy>
-                      <name>io.github.jklingsporn.vertx.jooq.generate.classic.ClassicGeneratorStrategy</name>
+                      <name>io.github.jklingsporn.vertx.jooq.generate.future.FutureGeneratorStrategy</name>
                   </strategy>
               </generator>
 
@@ -175,6 +203,10 @@ See the [TestTool](https://github.com/jklingsporn/vertx-jooq/blob/master/vertx-j
 of how to setup the generator programmatically.
 
 # known issues
-- The generator will omit datatypes that he does not know, e.g. `java.sql.Timestamp`. To fix this, you can easily subclass the generator, handle these types and generate the code using your generator.
- See the `handleCustomTypeFromJson` and `handleCustomTypeToJson` methods in the `VertxGenerator`.
+- The [`VertxCompletableFuture`](https://github.com/cescoffier/vertx-completable-future) is not part of the vertx-core package.
+The reason behind this is that it violates the contract of `CompletableFuture#XXXAsync` methods which states that those methods should
+run on the ForkJoin-Pool if no Executor is provided. This can not be done, because it would break the threading model of Vertx. Please
+keep that in mind. If you can not tolerate this, please use the [`vertx-jooq-classic`](https://github.com/jklingsporn/vertx-jooq/tree/master/vertx-jooq-classic) dependency.
+- The generator will omit datatypes that it does not know, e.g. `java.sql.Timestamp`. To fix this, you can easily subclass the generator, handle these types and generate the code using your generator.
+ See the `handleCustomTypeFromJson` and `handleCustomTypeToJson` methods in the `AbstractVertxGenerator`.
 - Since jOOQ is using JDBC under the hood, the non-blocking fashion is achieved by using the `Vertx.executeBlocking` method.

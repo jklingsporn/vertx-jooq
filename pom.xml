@@ -5,11 +5,14 @@
     <modelVersion>4.0.0</modelVersion>
     <packaging>pom</packaging>
     <modules>
-        <module>vertx-jooq-classic</module>
-        <module>vertx-jooq-future</module>
-        <module>vertx-jooq-generate</module>
         <module>vertx-jooq-shared</module>
+        <module>vertx-jooq-classic</module>
+        <module>vertx-jooq-classic-jdbc</module>
+        <module>vertx-jooq-completablefuture</module>
+        <module>vertx-jooq-completablefuture-jdbc</module>
         <module>vertx-jooq-rx</module>
+        <module>vertx-jooq-rx-jdbc</module>
+        <module>vertx-jooq-generate-jdbc</module>
     </modules>
     <properties>
         <jooq.version>3.10.1</jooq.version>
@@ -23,7 +26,7 @@
         <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
     <groupId>io.github.jklingsporn</groupId>
-    <version>2.4.2</version>
+    <version>3.0.0-BETA</version>
     <artifactId>vertx-jooq</artifactId>
     <name>${project.groupId}:${project.artifactId}</name>
     <description>A jOOQ-CodeGenerator to create vertxified DAOs and POJOs</description>

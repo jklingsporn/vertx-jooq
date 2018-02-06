@@ -10,11 +10,11 @@ import java.util.function.Function;
 /**
  * Created by jensklingsporn on 20.12.17.
  */
-public interface QueryExecutor<R extends UpdatableRecord<R>,T,FETCH,FETCHONE,EXECUTE,INSERT> {
+public interface QueryExecutor<R extends UpdatableRecord<R>,T, FINDMANY, FINDONE,EXECUTE,INSERT> {
 
-    FETCH fetch(ResultQuery<R> query);
+    FINDMANY findMany(ResultQuery<R> query);
 
-    FETCHONE fetchOne(ResultQuery<R> query);
+    FINDONE findOne(ResultQuery<R> query);
 
     EXECUTE execute(Query query);
 
