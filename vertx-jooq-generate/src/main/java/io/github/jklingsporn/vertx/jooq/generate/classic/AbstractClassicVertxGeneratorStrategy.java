@@ -13,7 +13,6 @@ abstract class AbstractClassicVertxGeneratorStrategy extends VertxGeneratorStrat
         out.println("import io.vertx.core.Handler;");
         out.println("import io.vertx.core.AsyncResult;");
         out.println("import io.vertx.core.Future;");
-        out.println("import io.github.jklingsporn.vertx.jooq.classic.jdbc.JDBCQueryExecutor;");
     }
 
     @Override

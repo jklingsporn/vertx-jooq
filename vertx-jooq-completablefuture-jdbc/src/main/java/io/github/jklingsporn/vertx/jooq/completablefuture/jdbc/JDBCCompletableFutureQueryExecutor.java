@@ -14,12 +14,12 @@ import java.util.function.Function;
 /**
  * Created by jensklingsporn on 20.12.17.
  */
-public class FutureQueryExecutor<R extends UpdatableRecord<R>,P,T> implements QueryExecutor<R,T,CompletableFuture<List<P>>,CompletableFuture<P>,CompletableFuture<Integer>,CompletableFuture<T>> {
+public class JDBCCompletableFutureQueryExecutor<R extends UpdatableRecord<R>,P,T> implements QueryExecutor<R,T,CompletableFuture<List<P>>,CompletableFuture<P>,CompletableFuture<Integer>,CompletableFuture<T>> {
 
     private final Class<P> daoType;
     private final Vertx vertx;
 
-    public FutureQueryExecutor(Class<P> daoType, Vertx vertx) {
+    public JDBCCompletableFutureQueryExecutor(Class<P> daoType, Vertx vertx) {
         this.daoType = daoType;
         this.vertx = vertx;
     }

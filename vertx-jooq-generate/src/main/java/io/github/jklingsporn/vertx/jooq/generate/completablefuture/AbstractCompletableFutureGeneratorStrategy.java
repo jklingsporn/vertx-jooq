@@ -11,7 +11,6 @@ abstract class AbstractCompletableFutureGeneratorStrategy extends VertxGenerator
     @Override
     public void generateDAOImports(JavaWriter out) {
         out.println("import java.util.concurrent.CompletableFuture;");
-        out.println("import io.github.jklingsporn.vertx.jooq.completablefuture.jdbc.FutureQueryExecutor;");
         out.println("import io.github.jklingsporn.vertx.jooq.completablefuture.VertxDAO;");
     }
 

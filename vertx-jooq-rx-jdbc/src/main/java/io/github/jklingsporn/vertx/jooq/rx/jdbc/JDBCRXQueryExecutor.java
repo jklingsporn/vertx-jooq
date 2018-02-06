@@ -14,12 +14,12 @@ import java.util.function.Function;
 /**
  * Created by jensklingsporn on 20.12.17.
  */
-public class RXQueryExecutor<R extends UpdatableRecord<R>,P,T> implements QueryExecutor<R,T,Single<List<P>>,Single<P>,Single<Integer>,Single<T>> {
+public class JDBCRXQueryExecutor<R extends UpdatableRecord<R>,P,T> implements QueryExecutor<R,T,Single<List<P>>,Single<P>,Single<Integer>,Single<T>> {
 
     private final Class<P> daoType;
     private final Vertx vertx;
 
-    public RXQueryExecutor(Class<P> daoType, Vertx vertx) {
+    public JDBCRXQueryExecutor(Class<P> daoType, Vertx vertx) {
         this.daoType = daoType;
         this.vertx = vertx;
     }

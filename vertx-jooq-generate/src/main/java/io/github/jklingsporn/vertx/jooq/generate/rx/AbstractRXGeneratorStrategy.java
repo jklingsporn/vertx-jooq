@@ -14,7 +14,6 @@ abstract class AbstractRXGeneratorStrategy extends VertxGeneratorStrategy {
         out.println("import io.reactivex.Completable;");
         out.println("import io.reactivex.Observable;");
         out.println("import io.reactivex.Single;");
-        out.println("import io.github.jklingsporn.vertx.jooq.rx.jdbc.RXQueryExecutor;");
     }
 
     @Override

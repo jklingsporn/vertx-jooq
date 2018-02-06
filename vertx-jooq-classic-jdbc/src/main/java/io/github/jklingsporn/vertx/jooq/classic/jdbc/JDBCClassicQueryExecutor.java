@@ -15,12 +15,12 @@ import java.util.function.Function;
 /**
  * Created by jensklingsporn on 20.12.17.
  */
-public class JDBCQueryExecutor<R extends UpdatableRecord<R>,P,T> implements QueryExecutor<R,T,Future<List<P>>,Future<P>,Future<Integer>,Future<T>> {
+public class JDBCClassicQueryExecutor<R extends UpdatableRecord<R>,P,T> implements QueryExecutor<R,T,Future<List<P>>,Future<P>,Future<Integer>,Future<T>> {
 
     private final Class<P> daoType;
     private final Vertx vertx;
 
-    public JDBCQueryExecutor(Class<P> daoType, Vertx vertx) {
+    public JDBCClassicQueryExecutor(Class<P> daoType, Vertx vertx) {
         this.daoType = daoType;
         this.vertx = vertx;
     }
