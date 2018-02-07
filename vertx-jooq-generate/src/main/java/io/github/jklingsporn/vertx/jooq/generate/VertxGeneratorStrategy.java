@@ -1,14 +1,14 @@
 package io.github.jklingsporn.vertx.jooq.generate;
 
-import org.jooq.util.DefaultGeneratorStrategy;
+import org.jooq.util.GeneratorStrategy;
 import org.jooq.util.JavaWriter;
 
 /**
  * Created by jensklingsporn on 06.02.18.
  */
-public abstract class VertxGeneratorStrategy extends DefaultGeneratorStrategy{
+public interface VertxGeneratorStrategy extends GeneratorStrategy{
 
-    public String getFQVertxName(){
+    public default String getFQVertxName(){
         return "io.vertx.core.Vertx";
     }
 
@@ -24,5 +24,7 @@ public abstract class VertxGeneratorStrategy extends DefaultGeneratorStrategy{
 
     public abstract String renderDAOInterface(String rType, String pType, String tType);
 
-    public abstract void generateDAOImports(JavaWriter out);
+    public abstract void writeDAOImports(JavaWriter out);
+
+    public void writeConstructor(JavaWriter out, String className, String tableIdentifier, String tableRecord, String pType, String tType);
 }

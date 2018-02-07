@@ -4,7 +4,6 @@ import io.github.jklingsporn.vertx.jooq.shared.JsonArrayConverter;
 import io.github.jklingsporn.vertx.jooq.shared.JsonObjectConverter;
 import io.github.jklingsporn.vertx.jooq.shared.internal.AbstractVertxDAO;
 import io.vertx.core.impl.Arguments;
-import org.jooq.Configuration;
 import org.jooq.Constants;
 import org.jooq.Record;
 import org.jooq.tools.JooqLogger;
@@ -82,7 +81,7 @@ public class VertxGenerator extends JavaGenerator {
     protected void printPackage(JavaWriter out, Definition definition, GeneratorStrategy.Mode mode) {
         super.printPackage(out, definition, mode);
         if(mode.equals(GeneratorStrategy.Mode.DAO)){
-            getUnwrappedStrategy().generateDAOImports(out);
+            getUnwrappedStrategy().writeDAOImports(out);
         }
     }
 
@@ -436,9 +435,7 @@ public class VertxGenerator extends JavaGenerator {
         }
         generateConstructorAnnotation(out);
 
-        out.tab(1).println("public %s(%s configuration, %s vertx) {", className, Configuration.class, getUnwrappedStrategy().getFQVertxName());
-        out.tab(2).println("super(%s, %s.class, new %s(%s.class,vertx), configuration);", tableIdentifier, pType, getUnwrappedStrategy().renderQueryExecutor(tableRecord, pType, tType),pType);
-        out.tab(1).println("}");
+        getUnwrappedStrategy().writeConstructor(out, className, tableIdentifier, tableRecord, pType, tType);
 
         // Template method implementations
         // -------------------------------

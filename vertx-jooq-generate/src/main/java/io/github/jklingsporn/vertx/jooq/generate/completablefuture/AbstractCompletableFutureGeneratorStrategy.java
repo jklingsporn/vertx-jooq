@@ -1,15 +1,16 @@
 package io.github.jklingsporn.vertx.jooq.generate.completablefuture;
 
 import io.github.jklingsporn.vertx.jooq.generate.VertxGeneratorStrategy;
+import org.jooq.util.DefaultGeneratorStrategy;
 import org.jooq.util.JavaWriter;
 
 /**
  * Created by jensklingsporn on 06.02.18.
  */
-abstract class AbstractCompletableFutureGeneratorStrategy extends VertxGeneratorStrategy{
+abstract class AbstractCompletableFutureGeneratorStrategy extends DefaultGeneratorStrategy implements VertxGeneratorStrategy{
 
     @Override
-    public void generateDAOImports(JavaWriter out) {
+    public void writeDAOImports(JavaWriter out) {
         out.println("import java.util.concurrent.CompletableFuture;");
         out.println("import io.github.jklingsporn.vertx.jooq.completablefuture.VertxDAO;");
     }
@@ -39,5 +40,5 @@ abstract class AbstractCompletableFutureGeneratorStrategy extends VertxGenerator
     public String renderDAOInterface(String rType, String pType, String tType) {
         return String.format("io.github.jklingsporn.vertx.jooq.completablefuture.VertxDAO<%s,%s,%s>",rType,pType,tType);
     }
-    
+
 }

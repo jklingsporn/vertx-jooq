@@ -1,16 +1,17 @@
 package io.github.jklingsporn.vertx.jooq.generate.rx;
 
 import io.github.jklingsporn.vertx.jooq.generate.VertxGeneratorStrategy;
+import org.jooq.util.DefaultGeneratorStrategy;
 import org.jooq.util.JavaWriter;
 
 /**
  * Created by jensklingsporn on 06.02.18.
  */
-abstract class AbstractRXGeneratorStrategy extends VertxGeneratorStrategy {
+abstract class AbstractRXGeneratorStrategy extends DefaultGeneratorStrategy implements VertxGeneratorStrategy {
 
 
     @Override
-    public void generateDAOImports(JavaWriter out) {
+    public void writeDAOImports(JavaWriter out) {
         out.println("import io.reactivex.Completable;");
         out.println("import io.reactivex.Observable;");
         out.println("import io.reactivex.Single;");
@@ -45,4 +46,5 @@ abstract class AbstractRXGeneratorStrategy extends VertxGeneratorStrategy {
     public String renderDAOInterface(String rType, String pType, String tType) {
         return String.format("io.github.jklingsporn.vertx.jooq.rx.VertxDAO<%s,%s,%s>",rType,pType,tType);
     }
+
 }
