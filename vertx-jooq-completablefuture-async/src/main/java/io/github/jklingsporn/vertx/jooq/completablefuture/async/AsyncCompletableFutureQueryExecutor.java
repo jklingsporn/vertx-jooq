@@ -42,8 +42,7 @@ public class AsyncCompletableFutureQueryExecutor <R extends UpdatableRecord<R>,P
             sqlConnection.queryWithParams(
                     query.getSQL(),
                     getBindValues(query),
-                    executeAndClose(rs ->
-                                    rs.getRows().stream().map(pojoMapper).collect(Collectors.toList()),
+                    executeAndClose(rs -> rs.getRows().stream().map(pojoMapper).collect(Collectors.toList()),
                             sqlConnection,
                             cf)
             );

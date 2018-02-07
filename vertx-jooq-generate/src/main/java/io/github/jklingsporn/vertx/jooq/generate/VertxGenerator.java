@@ -428,8 +428,6 @@ public class VertxGenerator extends JavaGenerator {
         // Only one constructor
         // ------------------------
 
-        out.tab(1).javadoc("Create a new %s with an attached configuration", className);
-
         if (generateSpringAnnotations()){
             out.tab(1).println("@%s", out.ref("org.springframework.beans.factory.annotation.Autowired"));
         }

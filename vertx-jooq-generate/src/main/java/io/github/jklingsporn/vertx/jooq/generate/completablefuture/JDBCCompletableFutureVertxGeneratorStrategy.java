@@ -21,6 +21,8 @@ public class JDBCCompletableFutureVertxGeneratorStrategy extends AbstractComplet
 
     @Override
     public void writeConstructor(JavaWriter out, String className, String tableIdentifier, String tableRecord, String pType, String tType){
+        out.tab(1).javadoc("@param configuration The Configuration used for rendering and query execution.\n" +
+                "     * @param vertx the vertx instance");
         out.tab(1).println("public %s(%s configuration, %s vertx) {", className, Configuration.class, getFQVertxName());
         out.tab(2).println("super(%s, %s.class, new %s(%s.class,vertx), configuration);", tableIdentifier, pType, renderQueryExecutor(tableRecord, pType, tType),pType);
         out.tab(1).println("}");
