@@ -74,6 +74,7 @@ public class AsyncCompletableFutureQueryExecutor <R extends UpdatableRecord<R>,P
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public CompletableFuture<T> insertReturning(InsertResultStep<R> query, Function<R, T> keyMapper) {
         return getConnection().thenCompose(sqlConnection -> {
             CompletableFuture<Long> cf = new VertxCompletableFuture<>(vertx);

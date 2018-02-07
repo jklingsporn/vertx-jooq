@@ -1,6 +1,6 @@
 package io.github.jklingsporn.vertx.jooq.generate;
 
-import io.github.jklingsporn.vertx.jooq.generate.completablefuture.AsyncCompletableFutureVertxGeneratorStrategy;
+import io.github.jklingsporn.vertx.jooq.generate.classic.AsyncClassicVertxGeneratorStrategy;
 import org.jooq.util.GenerationTool;
 import org.jooq.util.jaxb.Configuration;
 import org.junit.Assert;
@@ -22,7 +22,7 @@ public class TestMain {
     @Test
     public void generateCodeShouldSucceed() throws Exception {
         Configuration configuration = TestTool.createGeneratorConfig(
-                VertxGenerator.class.getName(),"rx.async",  AsyncCompletableFutureVertxGeneratorStrategy.class);
+                VertxGenerator.class.getName(),"classic.async",  AsyncClassicVertxGeneratorStrategy.class);
         try {
             GenerationTool.generate(configuration);
             Assert.assertTrue(true);
