@@ -1,5 +1,6 @@
 package io.github.jklingsporn.vertx.jooq.completablefuture.async;
 
+import io.github.jklingsporn.vertx.jooq.shared.async.AsyncQueryExecutor;
 import io.github.jklingsporn.vertx.jooq.shared.internal.QueryExecutor;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
@@ -7,6 +8,7 @@ import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.asyncsql.AsyncSQLClient;
+import io.vertx.ext.sql.ResultSet;
 import io.vertx.ext.sql.SQLConnection;
 import io.vertx.ext.sql.UpdateResult;
 import me.escoffier.vertx.completablefuture.VertxCompletableFuture;
@@ -22,7 +24,7 @@ import java.util.stream.Collectors;
 /**
  * Created by jensklingsporn on 07.02.18.
  */
-public class AsyncCompletableFutureQueryExecutor <R extends UpdatableRecord<R>,P,T> implements QueryExecutor<R,T,CompletableFuture<List<P>>,CompletableFuture<P>,CompletableFuture<Integer>,CompletableFuture<T>> {
+public class AsyncCompletableFutureQueryExecutor <R extends UpdatableRecord<R>,P,T> implements QueryExecutor<R,T,CompletableFuture<List<P>>,CompletableFuture<P>,CompletableFuture<Integer>,CompletableFuture<T>>, AsyncQueryExecutor<R, CompletableFuture<List<JsonObject>>, CompletableFuture<JsonObject>> {
 
     private final Vertx vertx;
     private final AsyncSQLClient delegate;
@@ -37,29 +39,12 @@ public class AsyncCompletableFutureQueryExecutor <R extends UpdatableRecord<R>,P
 
     @Override
     public CompletableFuture<List<P>> findMany(ResultQuery<R> query) {
-        return getConnection().thenCompose(sqlConnection -> {
-            CompletableFuture<List<P>> cf = new VertxCompletableFuture<>(vertx);
-            sqlConnection.queryWithParams(
-                    query.getSQL(),
-                    getBindValues(query),
-                    executeAndClose(rs -> rs.getRows().stream().map(pojoMapper).collect(Collectors.toList()),
-                            sqlConnection,
-                            cf)
-            );
-            return cf;
-        });
+        return findManyJson(query).thenApply(ls -> ls.stream().map(pojoMapper).collect(Collectors.toList()));
     }
 
     @Override
     public CompletableFuture<P> findOne(ResultQuery<R> query) {
-        return getConnection().thenCompose(sqlConnection -> {
-            CompletableFuture<P> cf = new VertxCompletableFuture<P>(vertx);
-            sqlConnection.queryWithParams(query.getSQL(), getBindValues(query), executeAndClose(rs -> {
-                Optional<P> optional = rs.getRows().stream().findFirst().map(pojoMapper);
-                return optional.orElseGet(() -> null);
-            }, sqlConnection, cf));
-            return cf;
-        });
+        return findOneJson(query).thenApply(val -> val == null?null:pojoMapper.apply(val));
     }
 
     @Override
@@ -74,29 +59,12 @@ public class AsyncCompletableFutureQueryExecutor <R extends UpdatableRecord<R>,P
 
     @Override
     @SuppressWarnings("unchecked")
-    public CompletableFuture<T> insertReturning(InsertResultStep<R> query, Function<R, T> keyMapper) {
+    public CompletableFuture<T> insertReturning(InsertResultStep<R> query, Function<Object, T> keyMapper) {
         return getConnection().thenCompose(sqlConnection -> {
-            CompletableFuture<Long> cf = new VertxCompletableFuture<>(vertx);
+            CompletableFuture<Object> cf = new VertxCompletableFuture<>(vertx);
             sqlConnection.update(query.getSQL(ParamType.INLINED), executeAndClose(updateResult->updateResult.getKeys().getLong(0), sqlConnection, cf));
-            return (CompletableFuture<T>)cf;
+            return cf.thenApply(keyMapper);
         });
-    }
-
-    private JsonArray getBindValues(Query query) {
-        JsonArray bindValues = new JsonArray();
-        for (Param<?> param : query.getParams().values()) {
-            Object value = convertToDatabaseType(param);
-            if(value==null){
-                bindValues.addNull();
-            }else{
-                bindValues.add(value);
-            }
-        }
-        return bindValues;
-    }
-
-    static <T> Object convertToDatabaseType(Param<T> param) {
-        return param.getBinding().converter().to(param.getValue());
     }
 
     /**
@@ -126,5 +94,32 @@ public class AsyncCompletableFutureQueryExecutor <R extends UpdatableRecord<R>,P
                 sqlConnection.close();
             }
         };
+    }
+
+    @Override
+    public CompletableFuture<List<JsonObject>> findManyJson(ResultQuery<R> query) {
+        return getConnection().thenCompose(sqlConnection -> {
+            CompletableFuture<List<JsonObject>> cf = new VertxCompletableFuture<>(vertx);
+            sqlConnection.queryWithParams(
+                    query.getSQL(),
+                    getBindValues(query),
+                    executeAndClose(ResultSet::getRows,
+                            sqlConnection,
+                            cf)
+            );
+            return cf;
+        });
+    }
+
+    @Override
+    public CompletableFuture<JsonObject> findOneJson(ResultQuery<R> query) {
+        return getConnection().thenCompose(sqlConnection -> {
+            CompletableFuture<JsonObject> cf = new VertxCompletableFuture<>(vertx);
+            sqlConnection.queryWithParams(query.getSQL(), getBindValues(query), executeAndClose(rs -> {
+                Optional<JsonObject> optional = rs.getRows().stream().findFirst();
+                return optional.orElseGet(() -> null);
+            }, sqlConnection, cf));
+            return cf;
+        });
     }
 }

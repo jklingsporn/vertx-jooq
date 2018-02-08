@@ -1,13 +1,12 @@
 package io.github.jklingsporn.vertx.jooq.generate.rx;
 
-import io.github.jklingsporn.vertx.jooq.generate.VertxGeneratorStrategy;
-import org.jooq.util.DefaultGeneratorStrategy;
+import io.github.jklingsporn.vertx.jooq.generate.AbstractVertxGeneratorStrategy;
 import org.jooq.util.JavaWriter;
 
 /**
  * Created by jensklingsporn on 06.02.18.
  */
-abstract class AbstractRXGeneratorStrategy extends DefaultGeneratorStrategy implements VertxGeneratorStrategy {
+abstract class AbstractRXGeneratorStrategy extends AbstractVertxGeneratorStrategy {
 
 
     @Override

@@ -142,7 +142,7 @@ public abstract class AbstractVertxDAO<R extends UpdatableRecord<R>, P, T, FIND_
                 dslContext.insertInto(getTable()).set(dslContext.newRecord(getTable(), object)).returning(key.getFields()),
                 record->{
                     Objects.requireNonNull(record, () -> "Failed inserting record or no key");
-                    Record key1 = record.key();
+                    Record key1 = ((R)record).key();
                     if(key1.size() == 1){
                         return ((Record1<T>)key1).value1();
                     }

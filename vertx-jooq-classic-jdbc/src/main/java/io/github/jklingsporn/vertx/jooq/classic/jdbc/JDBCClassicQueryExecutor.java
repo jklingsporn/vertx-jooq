@@ -41,7 +41,7 @@ public class JDBCClassicQueryExecutor<R extends UpdatableRecord<R>,P,T> implemen
     }
 
     @Override
-    public Future<T> insertReturning(InsertResultStep<R> query,Function<R,T> keyMapper) {
+    public Future<T> insertReturning(InsertResultStep<R> query,Function<Object,T> keyMapper) {
         return executeBlocking(h->h.complete(keyMapper.apply(query.fetchOne())),vertx);
     }
 

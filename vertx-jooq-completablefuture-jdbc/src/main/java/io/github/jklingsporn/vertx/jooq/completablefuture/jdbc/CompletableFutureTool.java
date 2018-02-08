@@ -11,8 +11,8 @@ import java.util.concurrent.CompletableFuture;
 /**
  * Created by jensklingsporn on 18.04.17.
  */
-class FutureTool {
-    private FutureTool(){}
+public class CompletableFutureTool {
+    private CompletableFutureTool(){}
 
     /**
      * @param blockingCodeHandler
@@ -50,7 +50,7 @@ class FutureTool {
      * @param <T>
      * @return a CompletableFuture that is failed.
      */
-    static <T> CompletableFuture<T> failedFuture(Throwable e,Vertx vertx){
+    public static <T> CompletableFuture<T> failedFuture(Throwable e,Vertx vertx){
         CompletableFuture<T> future = new VertxCompletableFuture<>(vertx);
         future.completeExceptionally(e);
         return future;

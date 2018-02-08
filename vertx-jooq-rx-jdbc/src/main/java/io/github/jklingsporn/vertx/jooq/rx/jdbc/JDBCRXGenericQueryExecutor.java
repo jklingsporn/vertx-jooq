@@ -11,12 +11,12 @@ import java.util.function.Function;
 /**
  * Created by jensklingsporn on 05.02.18.
  */
-public class VertxGenericQueryExecutor {
+public class JDBCRXGenericQueryExecutor {
 
     private final Vertx vertx;
     private final Configuration configuration;
 
-    public VertxGenericQueryExecutor(Vertx vertx, Configuration configuration) {
+    public JDBCRXGenericQueryExecutor(Vertx vertx, Configuration configuration) {
         this.vertx = vertx;
         this.configuration = configuration;
     }

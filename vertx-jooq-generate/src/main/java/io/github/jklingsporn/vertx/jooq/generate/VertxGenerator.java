@@ -2,7 +2,6 @@ package io.github.jklingsporn.vertx.jooq.generate;
 
 import io.github.jklingsporn.vertx.jooq.shared.JsonArrayConverter;
 import io.github.jklingsporn.vertx.jooq.shared.JsonObjectConverter;
-import io.github.jklingsporn.vertx.jooq.shared.internal.AbstractVertxDAO;
 import io.vertx.core.impl.Arguments;
 import org.jooq.Constants;
 import org.jooq.Record;
@@ -92,6 +91,10 @@ public class VertxGenerator extends JavaGenerator {
         this.vertxGeneratorStrategy = (VertxGeneratorStrategy) strategy;
     }
 
+    /**
+     * @return the VertxGeneratorStrategy used. Unfortunately we cannot use #getStrategy()
+     * because it returns a wrapper instance.
+     */
     public VertxGeneratorStrategy getUnwrappedStrategy() {
         return vertxGeneratorStrategy;
     }
@@ -377,7 +380,7 @@ public class VertxGenerator extends JavaGenerator {
         final String className = getStrategy().getJavaClassName(table, GeneratorStrategy.Mode.DAO);
         final List<String> interfaces = out.ref(getStrategy().getJavaClassImplements(table, GeneratorStrategy.Mode.DAO));
         final String tableRecord = out.ref(getStrategy().getFullJavaClassName(table, GeneratorStrategy.Mode.RECORD));
-        final String daoImpl = out.ref(AbstractVertxDAO.class);
+        final String daoImpl = out.ref(getStrategy().getJavaClassExtends(table, GeneratorStrategy.Mode.DAO));
         final String tableIdentifier = out.ref(getStrategy().getFullJavaIdentifier(table), 2);
 
         String tType = "Void";
@@ -461,6 +464,7 @@ public class VertxGenerator extends JavaGenerator {
         out.tab(1).println("}");
         generateFetchMethods(table,out);
         generateDaoClassFooter(table, out);
+        getUnwrappedStrategy().overwrite(out,className, tableIdentifier, tableRecord, pType,tType);
         out.println("}");
     }
 

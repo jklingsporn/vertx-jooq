@@ -11,17 +11,17 @@ import java.util.function.Function;
 /**
  * Created by jensklingsporn on 05.02.18.
  */
-public class VertxGenericQueryExecutor {
+public class JDBCCompletableFutureGenericQueryExecutor {
 
     private final Vertx vertx;
     private final Configuration configuration;
 
-    public VertxGenericQueryExecutor(Vertx vertx, Configuration configuration) {
+    public JDBCCompletableFutureGenericQueryExecutor(Vertx vertx, Configuration configuration) {
         this.vertx = vertx;
         this.configuration = configuration;
     }
 
     public <X> CompletableFuture<X> executeAsync(Function<DSLContext, X> function){
-        return FutureTool.executeBlocking(h -> h.complete(function.apply(DSL.using(configuration))),vertx);
+        return CompletableFutureTool.executeBlocking(h -> h.complete(function.apply(DSL.using(configuration))), vertx);
     }
 }

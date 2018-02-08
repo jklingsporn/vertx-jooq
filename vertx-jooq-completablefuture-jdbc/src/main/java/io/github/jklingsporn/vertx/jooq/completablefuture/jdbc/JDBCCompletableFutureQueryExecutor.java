@@ -27,22 +27,22 @@ public class JDBCCompletableFutureQueryExecutor<R extends UpdatableRecord<R>,P,T
 
     @Override
     public CompletableFuture<List<P>> findMany(ResultQuery<R> query) {
-        return FutureTool.executeBlocking(h -> h.complete(query.fetchInto(daoType)), vertx);
+        return CompletableFutureTool.executeBlocking(h -> h.complete(query.fetchInto(daoType)), vertx);
     }
 
     @Override
     public CompletableFuture<P> findOne(ResultQuery<R> query) {
-        return FutureTool.executeBlocking(h -> h.complete(query.fetchOneInto(daoType)), vertx);
+        return CompletableFutureTool.executeBlocking(h -> h.complete(query.fetchOneInto(daoType)), vertx);
     }
 
     @Override
     public CompletableFuture<Integer> execute(Query query) {
-        return FutureTool.executeBlocking(h -> h.complete(query.execute()), vertx);
+        return CompletableFutureTool.executeBlocking(h -> h.complete(query.execute()), vertx);
     }
 
     @Override
-    public CompletableFuture<T> insertReturning(InsertResultStep<R> query,Function<R,T> keyMapper) {
-        return FutureTool.executeBlocking(h -> h.complete(keyMapper.apply(query.fetchOne())), vertx);
+    public CompletableFuture<T> insertReturning(InsertResultStep<R> query,Function<Object,T> keyMapper) {
+        return CompletableFutureTool.executeBlocking(h -> h.complete(keyMapper.apply(query.fetchOne())), vertx);
     }
 
 }
