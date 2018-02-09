@@ -1,6 +1,6 @@
 package io.github.jklingsporn.vertx.jooq.rx;
 
-import io.github.jklingsporn.vertx.jooq.shared.GenericVertxDAO;
+import io.github.jklingsporn.vertx.jooq.shared.internal.GenericVertxDAO;
 import io.reactivex.Single;
 import org.jooq.UpdatableRecord;
 

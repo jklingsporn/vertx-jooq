@@ -1,4 +1,4 @@
-package io.github.jklingsporn.vertx.jooq.shared;
+package io.github.jklingsporn.vertx.jooq.shared.internal;
 
 import org.jooq.Condition;
 
@@ -12,7 +12,7 @@ import java.util.Collection;
  * @param <EXECUTE> the result-type returned for all update and delete-operations. This varies on the VertxDAO-subtypes.
  * @param <INSERT> the result-type returned for the insertReturning-operation. This varies on the VertxDAO-subtypes.
  */
-public interface GenericVertxDAO<P, T, FIND_MANY, FIND_ONE,EXECUTE,INSERT> extends VertxAwareDAO {
+public interface GenericVertxDAO<P, T, FIND_MANY, FIND_ONE,EXECUTE,INSERT>  {
 
 
     /**

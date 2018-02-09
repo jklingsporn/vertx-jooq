@@ -78,9 +78,6 @@ public class AsyncRXQueryExecutor<R extends UpdatableRecord<R>,P,T> implements Q
                 })));
     }
 
-    /**
-     * @return a CompletableFuture that returns a SQLConnection or an Exception.
-     */
     private Single<io.vertx.reactivex.ext.sql.SQLConnection> getConnection(){
         return delegate.rxGetConnection();
     }

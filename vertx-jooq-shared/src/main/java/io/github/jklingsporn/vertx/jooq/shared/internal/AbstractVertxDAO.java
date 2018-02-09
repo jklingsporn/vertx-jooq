@@ -1,6 +1,5 @@
 package io.github.jklingsporn.vertx.jooq.shared.internal;
 
-import io.github.jklingsporn.vertx.jooq.shared.GenericVertxDAO;
 import io.vertx.core.impl.Arguments;
 import org.jooq.*;
 import org.jooq.impl.DSL;
