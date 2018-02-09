@@ -16,7 +16,6 @@
         <module>vertx-jooq-completablefuture-async</module>
         <module>vertx-jooq-classic-async</module>
         <module>vertx-jooq-rx-async</module>
-        <module>vertx-jooq-shared-async</module>
     </modules>
     <properties>
         <jooq.version>3.10.1</jooq.version>

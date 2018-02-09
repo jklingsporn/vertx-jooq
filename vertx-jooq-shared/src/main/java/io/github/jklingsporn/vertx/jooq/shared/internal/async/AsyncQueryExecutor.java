@@ -1,4 +1,4 @@
-package io.github.jklingsporn.vertx.jooq.shared.async;
+package io.github.jklingsporn.vertx.jooq.shared.internal.async;
 
 import io.vertx.core.json.JsonArray;
 import org.jooq.Param;

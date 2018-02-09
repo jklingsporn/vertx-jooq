@@ -1,6 +1,6 @@
 package io.github.jklingsporn.vertx.jooq.completablefuture;
 
-import io.github.jklingsporn.vertx.jooq.shared.GenericVertxDAO;
+import io.github.jklingsporn.vertx.jooq.shared.internal.GenericVertxDAO;
 import org.jooq.UpdatableRecord;
 
 import java.util.List;

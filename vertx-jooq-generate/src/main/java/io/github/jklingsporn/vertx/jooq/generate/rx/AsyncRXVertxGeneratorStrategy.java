@@ -52,7 +52,7 @@ public class AsyncRXVertxGeneratorStrategy extends AbstractRXGeneratorStrategy{
     @Override
     public String getJavaClassExtends(Definition definition, Mode mode){
         if(mode == Mode.DAO){
-            return "io.github.jklingsporn.vertx.jooq.shared.async.AbstractAsyncVertxDAO";
+            return "io.github.jklingsporn.vertx.jooq.shared.internal.async.AbstractAsyncVertxDAO";
         }
         return null;
     }
