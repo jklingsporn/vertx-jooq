@@ -10,6 +10,7 @@ import org.jooq.util.GenerationTool;
 import org.jooq.util.jaxb.Configuration;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Test;
 
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -25,14 +26,15 @@ public class TestMain {
         TestTool.setupDB();
     }
 
+    @Test
     public void generateCodeShouldSucceed() throws Exception {
         Map<String, Class<? extends VertxGeneratorStrategy>> generate = new HashMap<>();
-        generate.put("classic.jdbc", JDBCClassicVertxGeneratorStrategy.class);
-        generate.put("classic.async", AsyncClassicVertxGeneratorStrategy.class);
-        generate.put("cf.jdbc", JDBCCompletableFutureVertxGeneratorStrategy.class);
-        generate.put("cf.async", AsyncCompletableFutureVertxGeneratorStrategy.class);
-        generate.put("rx.jdbc", JDBCRXVertxGeneratorStrategy.class);
-        generate.put("rx.async", AsyncRXVertxGeneratorStrategy.class);
+        generate.put("classic.jdbc.regular", JDBCClassicVertxGeneratorStrategy.class);
+        generate.put("classic.async.regular", AsyncClassicVertxGeneratorStrategy.class);
+        generate.put("cf.jdbc.regular", JDBCCompletableFutureVertxGeneratorStrategy.class);
+        generate.put("cf.async.regular", AsyncCompletableFutureVertxGeneratorStrategy.class);
+        generate.put("rx.jdbc.regular", JDBCRXVertxGeneratorStrategy.class);
+        generate.put("rx.async.regular", AsyncRXVertxGeneratorStrategy.class);
         for (Map.Entry<String, Class<? extends VertxGeneratorStrategy>> entry : generate.entrySet()) {
             Configuration configuration = TestTool.createGeneratorConfig(
                     VertxGenerator.class.getName(),entry.getKey(),  entry.getValue());

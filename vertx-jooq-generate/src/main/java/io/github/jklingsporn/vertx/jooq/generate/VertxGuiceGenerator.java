@@ -32,8 +32,8 @@ public class VertxGuiceGenerator extends VertxGenerator {
     }
 
     @Override
-    protected void generateSetVertxAnnotation(JavaWriter out) {
-        out.tab(1).println("@javax.inject.Inject");
+    protected void generateSingletonAnnotation(JavaWriter out) {
+        out.println("@javax.inject.Singleton");
     }
 
     @Override

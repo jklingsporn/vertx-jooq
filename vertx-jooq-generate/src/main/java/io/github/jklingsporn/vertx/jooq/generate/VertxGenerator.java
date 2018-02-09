@@ -100,16 +100,16 @@ public class VertxGenerator extends JavaGenerator {
     }
 
     /**
-     * You might want to override this class in order to add injection methods.
      * @param out
      */
-    protected void generateSetVertxAnnotation(JavaWriter out){};
+    protected void generateSingletonAnnotation(JavaWriter out){};
 
     /**
      * You might want to override this class in order to add injection methods.
      * @param out
      */
     protected void generateConstructorAnnotation(JavaWriter out){};
+
 
     private void generateFromJson(TableDefinition table, JavaWriter out, GeneratorStrategy.Mode mode){
         out.println();
@@ -415,7 +415,7 @@ public class VertxGenerator extends JavaGenerator {
 
         if (generateSpringAnnotations())
             out.println("@%s", out.ref("org.springframework.stereotype.Repository"));
-
+        generateSingletonAnnotation(out);
         out.println("public class %s extends %s<%s, %s, %s, %s, %s, %s, %s>[[before= implements ][%s]] {",
                 className,
                 daoImpl,
