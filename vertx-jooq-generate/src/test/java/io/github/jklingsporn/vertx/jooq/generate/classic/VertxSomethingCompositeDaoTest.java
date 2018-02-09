@@ -1,66 +1,66 @@
 package io.github.jklingsporn.vertx.jooq.generate.classic;
 
+import generated.classic.jdbc.regular.vertx.Tables;
+import generated.classic.jdbc.regular.vertx.tables.daos.SomethingcompositeDao;
 import generated.classic.jdbc.regular.vertx.tables.pojos.Somethingcomposite;
 import generated.classic.jdbc.regular.vertx.tables.records.SomethingcompositeRecord;
+import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
-import org.junit.Assert;
-import org.junit.Test;
+import org.jooq.Condition;
+import org.jooq.Record2;
 
-import java.util.concurrent.CountDownLatch;
+import java.util.Random;
 
 /**
  * Created by jensklingsporn on 02.11.16.
  */
-public class VertxSomethingCompositeDaoTest extends VertxDaoTestBase {
+public class VertxSomethingCompositeDaoTest extends ClassicTestBase<Somethingcomposite, Record2<Integer,Integer>, JsonObject, SomethingcompositeDao> {
 
-    @Test
-    public void asyncCRUDExecShouldSucceed() throws InterruptedException {
-        CountDownLatch latch = new CountDownLatch(1);
-        Somethingcomposite something = createSomething(1, 1);
-        compositeDao
-                .insertAsync(something)
-                .compose(inserted -> {
-                            Assert.assertEquals(1l, inserted.longValue());
-                            something.getSomejsonobject().put("foo", "bar");
-                            return compositeDao.updateAsync(something);
-                })
-                .compose(updated -> {
-                    Assert.assertEquals(1l, updated.longValue());
-                    SomethingcompositeRecord somethingcompositeRecord = new SomethingcompositeRecord();
-                    somethingcompositeRecord.from(something);
-                    return compositeDao.deleteByIdAsync(somethingcompositeRecord.key());
-                })
-                .map(deletedRows -> {
-                    Assert.assertEquals(1l, deletedRows.longValue());
-                    latch.countDown();
-                    return null;
-                });
-        await(latch);
+
+    public VertxSomethingCompositeDaoTest() {
+        super(Tables.SOMETHINGCOMPOSITE.SOMEJSONOBJECT, new SomethingcompositeDao(configuration, Vertx.vertx()));
     }
 
-    @Test
-    public void insertReturningShouldReturn() throws InterruptedException {
-        CountDownLatch latch = new CountDownLatch(1);
-        compositeDao
-                .insertReturningPrimaryAsync(createSomething(2, 2))
-                .map(record -> {
-                    Assert.assertEquals(2L, record.component1().intValue());
-                    Assert.assertEquals(2L, record.component2().intValue());
-                    return null;
-                })
-                .setHandler(countdownLatchHandler(latch))
-        ;
-        await(latch);
+    @Override
+    protected Somethingcomposite create() {
+        return createWithId();
     }
 
-
-    private Somethingcomposite createSomething(Integer someId, Integer someSecondId){
+    @Override
+    protected Somethingcomposite createWithId() {
         Somethingcomposite something = new Somethingcomposite();
-        something.setSomeid(someId);
-        something.setSomesecondid(someSecondId);
+        something.setSomeid(new Random().nextInt());
+        something.setSomesecondid(new Random().nextInt());
         something.setSomejsonobject(new JsonObject().put("key", "value"));
         return something;
     }
 
+    @Override
+    protected Somethingcomposite setId(Somethingcomposite pojo, Record2<Integer, Integer> id) {
+        return pojo.setSomeid(id.component1()).setSomesecondid(id.component2());
+    }
+
+    @Override
+    protected Somethingcomposite setSomeO(Somethingcomposite pojo, JsonObject someO) {
+        return pojo.setSomejsonobject(someO);
+    }
+
+
+    @Override
+    protected Record2<Integer, Integer> getId(Somethingcomposite pojo) {
+        SomethingcompositeRecord record = new SomethingcompositeRecord();
+        record.from(pojo);
+        return record.key();
+    }
+
+    @Override
+    protected JsonObject createSomeO() {
+        return new JsonObject().put("foo","bar");
+    }
+
+    @Override
+    protected Condition eqPrimaryKey(Record2<Integer, Integer> id) {
+        return Tables.SOMETHINGCOMPOSITE.SOMEID.eq(id.component1()).and(Tables.SOMETHINGCOMPOSITE.SOMESECONDID.eq(id.component2()));
+    }
 
 }
