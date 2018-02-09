@@ -14,6 +14,8 @@ import org.jooq.SQLDialect;
 import org.jooq.impl.DefaultConfiguration;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -21,11 +23,14 @@ import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * Created by jensklingsporn on 07.11.16.
  */
 public class VertxDaoTestBase {
+
+    private static final Logger logger = LoggerFactory.getLogger(VertxDaoTestBase.class);
 
     protected static SomethingDao dao;
     protected static SomethingcompositeDao compositeDao;
@@ -52,19 +57,17 @@ public class VertxDaoTestBase {
     protected <T> Handler<AsyncResult<T>> countdownLatchHandler(final CountDownLatch latch){
         return h->{
             if(h.failed()){
+                logger.error(h.cause().getMessage(),h.cause());
                 Assert.fail(h.cause().getMessage());
             }
             latch.countDown();
         };
     }
 
-    protected <T> Handler<AsyncResult<T>> consumeOrFailHandler(Consumer<T> consumer){
-        return h->{
-            if(h.succeeded()){
-                consumer.accept(h.result());
-            }else{
-                Assert.fail(h.cause().getMessage());
-            }
+    protected <T> Function<T,Void> toVoid(Consumer<T> consumer){
+        return t->{
+            consumer.accept(t);
+            return null;
         };
     }
 

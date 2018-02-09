@@ -77,6 +77,11 @@ public abstract class AbstractVertxDAO<R extends UpdatableRecord<R>, P, T, FIND_
     }
 
     @Override
+    public FIND_MANY findAllAsync() {
+        return findManyByConditionAsync(DSL.trueCondition());
+    }
+
+    @Override
     public FIND_ONE findOneByIdAsync(T id){
         return findOneByConditionAsync(equalKey(id));
     }
@@ -119,7 +124,7 @@ public abstract class AbstractVertxDAO<R extends UpdatableRecord<R>, P, T, FIND_
         InsertSetStep<R> insertSetStep = dslContext.insertInto(getTable());
         InsertValuesStepN<R> insertValuesStepN = null;
         for (P pojo : pojos) {
-            insertValuesStepN = insertSetStep.values(dslContext.newRecord(getTable(), pojo).fields());
+            insertValuesStepN = insertSetStep.values(dslContext.newRecord(getTable(), pojo).intoArray());
         }
         return queryExecutor().execute(insertValuesStepN);
     }

@@ -47,4 +47,6 @@ public interface GenericVertxDAO<P, T, FIND_MANY, FIND_ONE,EXECUTE,INSERT>  {
 
     public FIND_MANY findManyByConditionAsync(Condition condition);
 
+    public FIND_MANY findAllAsync();
+
 }

@@ -49,17 +49,6 @@ public class VertxGuiceGenerator extends VertxGenerator {
         out.tab(1).println("@javax.inject.Inject");
     }
 
-//    private void generateSetConfigurationMethod(JavaWriter out) {
-//        out.println();
-//        out.tab(1).println("@javax.inject.Inject");
-//        generateSetConfigurationAnnotation(out);
-//        out.tab(1).println("@Override");
-//        out.tab(1).println("public void setConfiguration(Configuration configuration) {");
-//        out.tab(2).println("super.setConfiguration(configuration);");
-//        out.tab(1).println("}");
-//        out.println();
-//    }
-
     /**
      * You might want to override this class in order to perform named injection
      * in case your application needs to access different databases and therefore
