@@ -10,7 +10,6 @@ import org.jooq.util.GenerationTool;
 import org.jooq.util.jaxb.Configuration;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Test;
 
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -26,7 +25,6 @@ public class TestMain {
         TestTool.setupDB();
     }
 
-    @Test
     public void generateCodeShouldSucceed() throws Exception {
         Map<String, Class<? extends VertxGeneratorStrategy>> generate = new HashMap<>();
         generate.put("classic.jdbc", JDBCClassicVertxGeneratorStrategy.class);

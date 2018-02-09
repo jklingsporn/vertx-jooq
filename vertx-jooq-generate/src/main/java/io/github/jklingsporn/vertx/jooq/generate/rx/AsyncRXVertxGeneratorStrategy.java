@@ -44,7 +44,7 @@ public class AsyncRXVertxGeneratorStrategy extends AbstractRXGeneratorStrategy{
             out.println();
             out.tab(1).override();
             out.tab(1).println("public %s insertReturningPrimaryAsync(%s pojo){",renderInsertReturningType(tType),pType);
-            out.tab(2).println("return Single<%s>.error(new UnsupportedOperationException(\"PK not numeric\"));",tType);
+            out.tab(2).println("return Single.<%s>error(new UnsupportedOperationException(\"PK not numeric\"));",tType);
             out.tab(1).println("}");
         }
     }

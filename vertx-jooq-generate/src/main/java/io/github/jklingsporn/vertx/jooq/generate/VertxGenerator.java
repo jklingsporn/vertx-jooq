@@ -434,8 +434,8 @@ public class VertxGenerator extends JavaGenerator {
         if (generateSpringAnnotations()){
             out.tab(1).println("@%s", out.ref("org.springframework.beans.factory.annotation.Autowired"));
         }
-        generateConstructorAnnotation(out);
 
+        generateConstructorAnnotation(out);
         getUnwrappedStrategy().writeConstructor(out, className, tableIdentifier, tableRecord, pType, tType);
 
         // Template method implementations
