@@ -10,6 +10,7 @@ import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.asyncsql.MySQLClient;
 import org.jooq.Condition;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 
 import java.util.Random;
@@ -70,5 +71,10 @@ public class VertxSomethingDaoTest extends ClassicTestBase<Something, Integer, L
     @Override
     protected Condition eqPrimaryKey(Integer id) {
         return Tables.SOMETHING.SOMEID.eq(id);
+    }
+
+    @Override
+    protected void assertDuplicateKeyException(Throwable x) {
+        Assert.assertEquals(com.github.mauricio.async.db.mysql.exceptions.MySQLException.class, x.getClass());
     }
 }

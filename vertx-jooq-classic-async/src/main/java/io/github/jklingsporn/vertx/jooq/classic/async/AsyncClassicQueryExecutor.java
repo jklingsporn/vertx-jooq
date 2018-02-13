@@ -5,10 +5,7 @@ import io.vertx.core.Future;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.asyncsql.AsyncSQLClient;
 import io.vertx.ext.sql.UpdateResult;
-import org.jooq.InsertResultStep;
-import org.jooq.Query;
-import org.jooq.ResultQuery;
-import org.jooq.UpdatableRecord;
+import org.jooq.*;
 import org.jooq.conf.ParamType;
 
 import java.util.List;
@@ -22,9 +19,9 @@ public class AsyncClassicQueryExecutor<R extends UpdatableRecord<R>,P,T> extends
 
     private final Function<JsonObject,P> pojoMapper;
 
-    public AsyncClassicQueryExecutor(AsyncSQLClient delegate, Function<JsonObject, P> pojoMapper) {
+    public AsyncClassicQueryExecutor(AsyncSQLClient delegate, Function<JsonObject, P> pojoMapper, Table<R> table) {
         super(delegate);
-        this.pojoMapper = pojoMapper;
+        this.pojoMapper = convertFromSQL(table).andThen(pojoMapper);
     }
 
 

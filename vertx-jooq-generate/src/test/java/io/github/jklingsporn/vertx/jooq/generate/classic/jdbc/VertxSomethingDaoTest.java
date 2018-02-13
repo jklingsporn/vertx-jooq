@@ -9,8 +9,10 @@ import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import org.jooq.Condition;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.Random;
 
 /**
@@ -70,5 +72,10 @@ public class VertxSomethingDaoTest extends ClassicTestBase<Something, Integer, L
     @Override
     protected Condition eqPrimaryKey(Integer id) {
         return Tables.SOMETHING.SOMEID.eq(id);
+    }
+
+    @Override
+    protected void assertDuplicateKeyException(Throwable x) {
+        Assert.assertEquals(SQLIntegrityConstraintViolationException.class, x.getCause().getClass());
     }
 }

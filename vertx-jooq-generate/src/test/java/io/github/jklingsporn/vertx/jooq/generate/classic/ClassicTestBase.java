@@ -14,7 +14,6 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -46,6 +45,7 @@ public abstract class ClassicTestBase<P,T,O, DAO extends GenericVertxDAO<P, T, F
     protected abstract T getId(P pojo);
     protected abstract O createSomeO();
     protected abstract Condition eqPrimaryKey(T id);
+    protected abstract void assertDuplicateKeyException(Throwable x);
 
 
     protected void await(CountDownLatch latch) throws InterruptedException {
@@ -120,7 +120,7 @@ public abstract class ClassicTestBase<P,T,O, DAO extends GenericVertxDAO<P, T, F
                 .compose(id -> dao.insertReturningPrimaryAsync(setId(something,id)))
                 .otherwise(x -> {
                     Assert.assertNotNull(x);
-                    Assert.assertEquals(SQLIntegrityConstraintViolationException.class, x.getCause().getClass());
+                    assertDuplicateKeyException(x);
                     return null;
                 })
                 .compose(v -> dao.deleteByConditionAsync(DSL.trueCondition()))

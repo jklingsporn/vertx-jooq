@@ -1,10 +1,12 @@
 package io.github.jklingsporn.vertx.jooq.shared.internal.async;
 
 import io.vertx.core.json.JsonArray;
-import org.jooq.Param;
-import org.jooq.Query;
-import org.jooq.Record;
-import org.jooq.ResultQuery;
+import io.vertx.core.json.JsonObject;
+import org.jooq.*;
+
+import java.util.Map;
+import java.util.function.UnaryOperator;
+import java.util.stream.Collectors;
 
 /**
  * Created by jensklingsporn on 07.02.18.
@@ -43,5 +45,21 @@ public interface AsyncQueryExecutor<FIND_MANY_JSON, FIND_ONE_JSON> {
 
     public default <T> Object convertToDatabaseType(Param<T> param) {
         return param.getBinding().converter().to(param.getValue());
+    }
+
+    public default UnaryOperator<JsonObject> convertFromSQL(Table<?> table){
+        Map<String, Converter<Object, Object>> pojoConverters = table.fieldStream().filter(f -> f.getConverter() != null).collect(Collectors.toMap(Field::getName, v -> ((Converter<Object, Object>) v.getConverter())));
+        return json -> {
+            JsonObject theCopy = new JsonObject();
+            for (Map.Entry<String, Object> jsonMap : json.getMap().entrySet()) {
+                Converter<Object, Object> converter = pojoConverters.get(jsonMap.getKey());
+                if(converter!=null){
+                    theCopy.put(jsonMap.getKey(),converter.from(jsonMap.getValue()));
+                }else{
+                    theCopy.put(jsonMap.getKey(), jsonMap.getValue());
+                }
+            }
+            return theCopy;
+        };
     }
 }

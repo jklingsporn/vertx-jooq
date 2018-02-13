@@ -11,6 +11,7 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.ext.asyncsql.MySQLClient;
 import org.jooq.Condition;
 import org.jooq.Record2;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 
@@ -72,6 +73,11 @@ public class VertxSomethingCompositeDaoTest extends ClassicTestBase<Somethingcom
     @Override
     protected Condition eqPrimaryKey(Record2<Integer, Integer> id) {
         return Tables.SOMETHINGCOMPOSITE.SOMEID.eq(id.component1()).and(Tables.SOMETHINGCOMPOSITE.SOMESECONDID.eq(id.component2()));
+    }
+
+    @Override
+    protected void assertDuplicateKeyException(Throwable x) {
+        Assert.assertEquals(com.github.mauricio.async.db.mysql.exceptions.MySQLException.class, x.getClass());
     }
 
 }

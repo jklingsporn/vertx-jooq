@@ -10,8 +10,10 @@ import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
 import org.jooq.Condition;
 import org.jooq.Record2;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.Random;
 
 /**
@@ -69,6 +71,11 @@ public class VertxSomethingCompositeDaoTest extends ClassicTestBase<Somethingcom
     @Override
     protected Condition eqPrimaryKey(Record2<Integer, Integer> id) {
         return Tables.SOMETHINGCOMPOSITE.SOMEID.eq(id.component1()).and(Tables.SOMETHINGCOMPOSITE.SOMESECONDID.eq(id.component2()));
+    }
+
+    @Override
+    protected void assertDuplicateKeyException(Throwable x) {
+        Assert.assertEquals(SQLIntegrityConstraintViolationException.class, x.getCause().getClass());
     }
 
 }

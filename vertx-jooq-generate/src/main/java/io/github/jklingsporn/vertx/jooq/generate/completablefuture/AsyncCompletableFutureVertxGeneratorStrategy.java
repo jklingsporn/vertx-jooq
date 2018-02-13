@@ -25,7 +25,7 @@ public class AsyncCompletableFutureVertxGeneratorStrategy extends AbstractComple
         out.tab(1).javadoc("@param configuration Used for rendering, so only SQLDialect must be set and must be one of the MYSQL types or POSTGRES.\n" +
                 "     * @param vertx the vertx instance\n     * @param delegate A configured AsyncSQLClient that is used for query execution");
         out.tab(1).println("public %s(%s configuration, %s vertx, io.vertx.ext.asyncsql.AsyncSQLClient delegate) {", className, Configuration.class, getFQVertxName());
-        out.tab(2).println("super(%s, %s.class, new %s(vertx,delegate,%s::new), configuration);", tableIdentifier, pType, renderQueryExecutor(tableRecord, pType, tType),pType);
+        out.tab(2).println("super(%s, %s.class, new %s(vertx,delegate,%s::new, %s), configuration);", tableIdentifier, pType, renderQueryExecutor(tableRecord, pType, tType),pType,tableIdentifier);
         out.tab(1).println("}");
     }
 
