@@ -1,13 +1,14 @@
-package io.github.jklingsporn.vertx.jooq.generate.classic.jdbc;
+package io.github.jklingsporn.vertx.jooq.generate.classic.async;
 
-import generated.classic.jdbc.regular.vertx.Tables;
-import generated.classic.jdbc.regular.vertx.tables.daos.SomethingDao;
-import generated.classic.jdbc.regular.vertx.tables.pojos.Something;
-import io.github.jklingsporn.vertx.jooq.generate.JDBCDatabaseConfigurationProvider;
+import generated.classic.async.regular.Tables;
+import generated.classic.async.regular.tables.daos.SomethingDao;
+import generated.classic.async.regular.tables.pojos.Something;
+import io.github.jklingsporn.vertx.jooq.generate.AsyncDatabaseConfigurationProvider;
 import io.github.jklingsporn.vertx.jooq.generate.classic.ClassicTestBase;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+import io.vertx.ext.asyncsql.MySQLClient;
 import org.jooq.Condition;
 import org.junit.BeforeClass;
 
@@ -19,12 +20,12 @@ import java.util.Random;
 public class VertxSomethingDaoTest extends ClassicTestBase<Something, Integer, Long, SomethingDao> {
 
     public VertxSomethingDaoTest() {
-        super(Tables.SOMETHING.SOMEHUGENUMBER, new SomethingDao(JDBCDatabaseConfigurationProvider.getInstance().createDAOConfiguration(), Vertx.vertx()));
+        super(Tables.SOMETHING.SOMEHUGENUMBER, new SomethingDao(AsyncDatabaseConfigurationProvider.getInstance().createDAOConfiguration(), MySQLClient.createNonShared(Vertx.vertx(), AsyncDatabaseConfigurationProvider.getInstance().createMySQLClientConfig())));
     }
 
     @BeforeClass
     public static void beforeClass() throws Exception {
-        JDBCDatabaseConfigurationProvider.getInstance().setupDatabase();
+        AsyncDatabaseConfigurationProvider.getInstance().setupDatabase();
     }
 
     @Override
@@ -42,7 +43,6 @@ public class VertxSomethingDaoTest extends ClassicTestBase<Something, Integer, L
         something.setSomejsonarray(new JsonArray().add(1).add(2).add(3));
         something.setSomejsonobject(new JsonObject().put("key", "value"));
         something.setSomesmallnumber((short) random.nextInt(Short.MAX_VALUE));
-        something.setSomeboolean(random.nextBoolean());
         something.setSomestring("my_string");
         return something;
     }

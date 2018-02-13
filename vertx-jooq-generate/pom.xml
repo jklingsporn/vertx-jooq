@@ -14,6 +14,17 @@
     <dependencies>
         <dependency>
             <groupId>io.github.jklingsporn</groupId>
+            <artifactId>vertx-jooq-shared</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jooq</groupId>
+            <artifactId>jooq-codegen</artifactId>
+            <version>${jooq.version}</version>
+        </dependency>
+        <!-- Test-scope dependencies-->
+        <dependency>
+            <groupId>io.github.jklingsporn</groupId>
             <artifactId>vertx-jooq-classic-jdbc</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
@@ -47,22 +58,6 @@
             <artifactId>vertx-jooq-rx-async</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.reactivex.rxjava2</groupId>
-            <artifactId>rxjava</artifactId>
-            <version>${rx.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.github.jklingsporn</groupId>
-            <artifactId>vertx-jooq-shared</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jooq</groupId>
-            <artifactId>jooq-codegen</artifactId>
-            <version>${jooq.version}</version>
         </dependency>
     </dependencies>
 </project>

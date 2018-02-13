@@ -1,10 +1,8 @@
 package io.github.jklingsporn.vertx.jooq.rx.async;
 
-import io.github.jklingsporn.vertx.jooq.shared.internal.async.AsyncQueryExecutor;
 import io.github.jklingsporn.vertx.jooq.shared.internal.QueryExecutor;
 import io.reactivex.Single;
 import io.vertx.core.json.JsonObject;
-import io.vertx.ext.sql.ResultSet;
 import io.vertx.ext.sql.UpdateResult;
 import io.vertx.reactivex.ext.asyncsql.AsyncSQLClient;
 import org.jooq.InsertResultStep;
@@ -13,20 +11,18 @@ import org.jooq.ResultQuery;
 import org.jooq.UpdatableRecord;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
  * Created by jensklingsporn on 07.02.18.
  */
-public class AsyncRXQueryExecutor<R extends UpdatableRecord<R>,P,T> implements QueryExecutor<R,T,Single<List<P>>,Single<P>,Single<Integer>,Single<T>>, AsyncQueryExecutor<R,Single<List<JsonObject>>,Single<JsonObject>>{
+public class AsyncRXQueryExecutor<R extends UpdatableRecord<R>,P,T> extends AsyncRXGenericQueryExecutor implements QueryExecutor<R,T,Single<List<P>>,Single<P>,Single<Integer>,Single<T>>{
 
-    private final AsyncSQLClient delegate;
     private final Function<JsonObject,P> pojoMapper;
 
     public AsyncRXQueryExecutor(AsyncSQLClient delegate, Function<JsonObject, P> pojoMapper) {
-        this.delegate = delegate;
+        super(delegate);
         this.pojoMapper = pojoMapper;
     }
 
@@ -63,26 +59,4 @@ public class AsyncRXQueryExecutor<R extends UpdatableRecord<R>,P,T> implements Q
                 );
     }
 
-    @Override
-    public Single<List<JsonObject>> findManyJson(ResultQuery<R> query) {
-        return getConnection().flatMap(executeAndClose(sqlConnection ->
-                sqlConnection.rxQueryWithParams(query.getSQL(), getBindValues(query)).map(ResultSet::getRows)));
-    }
-
-    @Override
-    public Single<JsonObject> findOneJson(ResultQuery<R> query) {
-        return getConnection().flatMap(executeAndClose(sqlConnection ->
-                sqlConnection.rxQueryWithParams(query.getSQL(), getBindValues(query)).map(rs -> {
-                    Optional<JsonObject> optional = rs.getRows().stream().findFirst();
-                    return optional.orElseGet(() -> null);
-                })));
-    }
-
-    private Single<io.vertx.reactivex.ext.sql.SQLConnection> getConnection(){
-        return delegate.rxGetConnection();
-    }
-
-    private <R> io.reactivex.functions.Function<io.vertx.reactivex.ext.sql.SQLConnection, Single<? extends  R>> executeAndClose(Function<io.vertx.reactivex.ext.sql.SQLConnection, Single<? extends R>> func) {
-        return sqlConnection -> func.apply(sqlConnection).doAfterTerminate(sqlConnection::close);
-    }
 }

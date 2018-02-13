@@ -4,49 +4,24 @@ import io.github.jklingsporn.vertx.jooq.shared.JsonArrayConverter;
 import io.github.jklingsporn.vertx.jooq.shared.JsonObjectConverter;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
-import org.jooq.util.hsqldb.HSQLDBDatabase;
 import org.jooq.util.jaxb.*;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.util.Arrays;
 
 /**
- * Created by jensklingsporn on 02.11.16.
+ * Created by jensklingsporn on 13.02.18.
  */
-public class TestTool {
+abstract class AbstractDatabaseConfigurationProvider {
 
     private static final String TARGET_FOLDER = "src/test/java";
 
-    public static void setupDB() throws SQLException {
-        Connection connection = DriverManager.getConnection("jdbc:hsqldb:mem:test", "test", "");
-        connection.prepareStatement("DROP SCHEMA IF EXISTS vertx CASCADE").execute();
-        connection.prepareStatement("CREATE SCHEMA vertx").execute();
-        connection.prepareStatement("SET SCHEMA vertx").execute();
-        connection.prepareStatement("DROP TABLE IF EXISTS something");
-        connection.prepareStatement("\n" +
-                "CREATE TABLE something (\n" +
-                "  someId INTEGER IDENTITY PRIMARY KEY,\n" +
-                "  someString varchar(45),\n" +
-                "  someHugeNumber bigint ,\n" +
-                "  someSmallNumber smallint ,\n" +
-                "  someRegularNumber int ,\n" +
-                "  someBoolean boolean,\n" +
-                "  someDouble double ,\n" +
-                "  someJsonObject varchar(45) ,\n" +
-                "  someJsonArray varchar(45) \n" +
-                ");").execute();
-        connection.prepareStatement("DROP TABLE IF EXISTS somethingComposite");
-        connection.prepareStatement("\n" +
-                "CREATE TABLE somethingComposite (\n" +
-                "  someId INTEGER,\n" +
-                "  someSecondId INTEGER,\n" +
-                "  someJsonObject varchar(45), PRIMARY KEY (someId,someSecondId)\n" +
-                ");").execute();
-    }
+    public abstract void setupDatabase() throws Exception;
 
-    public static Configuration createGeneratorConfig(String generatorName, String packageName, Class<? extends VertxGeneratorStrategy> generatorStrategy){
+    public abstract Configuration createGeneratorConfig(String generatorName, String packageName, Class<? extends VertxGeneratorStrategy> generatorStrategy);
+
+    public abstract org.jooq.Configuration createDAOConfiguration();
+
+    Configuration createGeneratorConfig(String generatorName, String packageName, Class<? extends VertxGeneratorStrategy> generatorStrategy, Jdbc config, String dbType){
         /*
          * We convert the field someJsonObject to a JsonObject by using the JsonObjectConverter
          */
@@ -70,10 +45,10 @@ public class TestTool {
          */
         Configuration configuration = new Configuration();
         Database databaseConfig = new Database();
-        databaseConfig.setName(HSQLDBDatabase.class.getName());
+        databaseConfig.setName(dbType);
         databaseConfig.setInputSchema("");
         databaseConfig.setOutputSchema("");
-        databaseConfig.setIncludes("something|somethingComposite");
+        databaseConfig.setIncludes("something|somethingComposite|somethingWithoutJson");
         databaseConfig.setForcedTypes(Arrays.asList(jsonArrayType, jsonObjectType));
 
         Target targetConfig = new Target();
@@ -91,6 +66,10 @@ public class TestTool {
         generateConfig.setDaos(true);
         generateConfig.setPojosEqualsAndHashCode(true);
 
+        /*
+         * We need to do a small hack to let jOOQ's DAOImpl implement our interface. That's why
+         * we need a custom Strategy.
+         */
         Strategy strategy = new Strategy();
         strategy.setName(generatorStrategy.getName());
 
@@ -102,12 +81,7 @@ public class TestTool {
         generatorConfig.setStrategy(strategy);
         configuration.setGenerator(generatorConfig);
 
-        Jdbc jdbcConfig = new Jdbc();
-        jdbcConfig.setDriver("org.hsqldb.jdbcDriver");
-        jdbcConfig.setUrl("jdbc:hsqldb:mem:test");
-        jdbcConfig.setUser("test");
-        jdbcConfig.setPassword("");
-        configuration.setJdbc(jdbcConfig);
+        configuration.setJdbc(config);
 
         return configuration;
     }

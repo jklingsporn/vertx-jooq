@@ -1,6 +1,7 @@
 package io.github.jklingsporn.vertx.jooq.generate.classic.jdbc;
 
 import io.github.jklingsporn.vertx.jooq.generate.AbstractVertxGeneratorTest;
+import io.github.jklingsporn.vertx.jooq.generate.JDBCDatabaseConfigurationProvider;
 import io.github.jklingsporn.vertx.jooq.generate.classic.JDBCClassicVertxGeneratorStrategy;
 import io.github.jklingsporn.vertx.jooq.generate.classic.VertxGuiceClassicGenerator;
 
@@ -11,7 +12,7 @@ public class ClassicJDBCVertxGuiceGeneratorTest  extends AbstractVertxGeneratorT
 
 
     public ClassicJDBCVertxGuiceGeneratorTest() {
-        super(VertxGuiceClassicGenerator.class, JDBCClassicVertxGeneratorStrategy.class,"classic.jdbc.guice");
+        super(VertxGuiceClassicGenerator.class, JDBCClassicVertxGeneratorStrategy.class,"classic.jdbc.guice", JDBCDatabaseConfigurationProvider.getInstance());
     }
 
 }

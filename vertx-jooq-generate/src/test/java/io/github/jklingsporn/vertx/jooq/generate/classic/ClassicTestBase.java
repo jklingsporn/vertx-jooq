@@ -1,26 +1,19 @@
 package io.github.jklingsporn.vertx.jooq.generate.classic;
 
-import io.github.jklingsporn.vertx.jooq.generate.TestTool;
 import io.github.jklingsporn.vertx.jooq.shared.internal.GenericVertxDAO;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.CompositeFuture;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import org.jooq.Condition;
-import org.jooq.Configuration;
-import org.jooq.SQLDialect;
 import org.jooq.TableField;
 import org.jooq.exception.TooManyRowsException;
 import org.jooq.impl.DSL;
-import org.jooq.impl.DefaultConfiguration;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.Arrays;
 import java.util.List;
@@ -41,22 +34,10 @@ public abstract class ClassicTestBase<P,T,O, DAO extends GenericVertxDAO<P, T, F
     protected final DAO dao;
     
 
-    protected static Configuration configuration;
-
     protected ClassicTestBase(TableField<?, O> otherfield, DAO dao) {
         this.otherfield = otherfield;
         this.dao = dao;
     }
-
-
-    @BeforeClass
-    public static void beforeClass() throws SQLException {
-        TestTool.setupDB();
-        configuration = new DefaultConfiguration();
-        configuration.set(SQLDialect.HSQLDB);
-        configuration.set(DriverManager.getConnection("jdbc:hsqldb:mem:test", "test", ""));
-    }
-
 
     protected abstract P create();
     protected abstract P createWithId();

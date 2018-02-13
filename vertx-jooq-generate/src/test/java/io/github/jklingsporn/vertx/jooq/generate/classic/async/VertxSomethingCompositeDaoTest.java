@@ -1,32 +1,35 @@
-package io.github.jklingsporn.vertx.jooq.generate.classic.jdbc;
+package io.github.jklingsporn.vertx.jooq.generate.classic.async;
 
-import generated.classic.jdbc.regular.vertx.Tables;
-import generated.classic.jdbc.regular.vertx.tables.daos.SomethingcompositeDao;
-import generated.classic.jdbc.regular.vertx.tables.pojos.Somethingcomposite;
-import generated.classic.jdbc.regular.vertx.tables.records.SomethingcompositeRecord;
-import io.github.jklingsporn.vertx.jooq.generate.JDBCDatabaseConfigurationProvider;
+import generated.classic.async.regular.Tables;
+import generated.classic.async.regular.tables.daos.SomethingcompositeDao;
+import generated.classic.async.regular.tables.pojos.Somethingcomposite;
+import generated.classic.async.regular.tables.records.SomethingcompositeRecord;
+import io.github.jklingsporn.vertx.jooq.generate.AsyncDatabaseConfigurationProvider;
 import io.github.jklingsporn.vertx.jooq.generate.classic.ClassicTestBase;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
+import io.vertx.ext.asyncsql.MySQLClient;
 import org.jooq.Condition;
 import org.jooq.Record2;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 
 import java.util.Random;
 
 /**
  * Created by jensklingsporn on 02.11.16.
  */
+@Ignore
 public class VertxSomethingCompositeDaoTest extends ClassicTestBase<Somethingcomposite, Record2<Integer,Integer>, JsonObject, SomethingcompositeDao> {
 
 
     public VertxSomethingCompositeDaoTest() {
-        super(Tables.SOMETHINGCOMPOSITE.SOMEJSONOBJECT, new SomethingcompositeDao(JDBCDatabaseConfigurationProvider.getInstance().createDAOConfiguration(), Vertx.vertx()));
+        super(Tables.SOMETHINGCOMPOSITE.SOMEJSONOBJECT, new SomethingcompositeDao(AsyncDatabaseConfigurationProvider.getInstance().createDAOConfiguration(), MySQLClient.createNonShared(Vertx.vertx(), AsyncDatabaseConfigurationProvider.getInstance().createMySQLClientConfig())));
     }
 
     @BeforeClass
     public static void beforeClass() throws Exception {
-        JDBCDatabaseConfigurationProvider.getInstance().setupDatabase();
+        AsyncDatabaseConfigurationProvider.getInstance().setupDatabase();
     }
 
     @Override
