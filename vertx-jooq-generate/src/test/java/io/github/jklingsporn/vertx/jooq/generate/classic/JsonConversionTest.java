@@ -1,39 +1,25 @@
 package io.github.jklingsporn.vertx.jooq.generate.classic;
 
 import generated.classic.jdbc.regular.vertx.tables.pojos.Something;
+import io.github.jklingsporn.vertx.jooq.generate.AbstractJsonConversionTest;
+import io.github.jklingsporn.vertx.jooq.shared.internal.VertxPojo;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
-import org.junit.Assert;
-import org.junit.Test;
 
 import java.util.Random;
 
 /**
  * Created by jensklingsporn on 22.08.17.
  */
-public class JsonConversionTest {
+public class JsonConversionTest extends AbstractJsonConversionTest<VertxPojo>{
 
-    @Test
-    public void convertEmptyPojoToJsonShouldSucceed(){
-        Something something = new Something();
-        Assert.assertNotNull(something.toJson());
+    @Override
+    protected Something newPojo() {
+        return new Something();
     }
 
-    @Test
-    public void convertEmptyJsonToPojoShouldSucceed(){
-        Something something = new Something(new JsonObject());
-        Assert.assertNotNull(something);
-    }
-
-    @Test
-    public void convertJsonWithNullValuesToPojoShouldSucceed(){
-        Something something = new Something();
-        JsonObject jsonObject = something.toJson();
-        Assert.assertNotNull(new Something(jsonObject));
-    }
-
-    @Test
-    public void convertFromToJsonShouldReturnEqualPOJO(){
+    @Override
+    protected Something newPojoWithRandomValues() {
         Random random = new Random();
         Something something = new Something();
         something.setSomeid(random.nextInt());
@@ -44,9 +30,12 @@ public class JsonConversionTest {
         something.setSomesmallnumber((short) random.nextInt(Short.MAX_VALUE));
         something.setSomeboolean(random.nextBoolean());
         something.setSomestring("my_string");
-        JsonObject json = something.toJson();
-        Something somethingElse = new Something(json);
-        Assert.assertEquals(something,somethingElse);
+        return something;
+    }
+
+    @Override
+    protected Something newPojo(JsonObject json) {
+        return new Something(json);
     }
 
 }

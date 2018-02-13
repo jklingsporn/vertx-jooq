@@ -1,8 +1,9 @@
-package io.github.jklingsporn.vertx.jooq.generate.classic;
+package io.github.jklingsporn.vertx.jooq.generate.classic.jdbc;
 
 import generated.classic.jdbc.regular.vertx.Tables;
 import generated.classic.jdbc.regular.vertx.tables.daos.SomethingDao;
 import generated.classic.jdbc.regular.vertx.tables.pojos.Something;
+import io.github.jklingsporn.vertx.jooq.generate.classic.ClassicTestBase;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;

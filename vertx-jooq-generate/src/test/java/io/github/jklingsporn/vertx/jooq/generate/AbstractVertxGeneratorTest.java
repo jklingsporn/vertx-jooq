@@ -1,6 +1,5 @@
-package io.github.jklingsporn.vertx.jooq.generate.classic;
+package io.github.jklingsporn.vertx.jooq.generate;
 
-import io.github.jklingsporn.vertx.jooq.generate.TestTool;
 import org.jooq.util.GenerationTool;
 import org.jooq.util.jaxb.Configuration;
 import org.junit.Assert;
@@ -12,7 +11,17 @@ import java.sql.SQLException;
 /**
  * Created by jklingsporn on 17.09.16.
  */
-public class VertxGuiceGeneratorTest {
+public abstract class AbstractVertxGeneratorTest {
+
+    private final Class<? extends VertxGenerator> generator;
+    private final Class<? extends VertxGeneratorStrategy> strategy;
+    private final String packageLocation;
+
+    protected AbstractVertxGeneratorTest(Class<? extends VertxGenerator> generator, Class<? extends VertxGeneratorStrategy> strategy, String packageLocation) {
+        this.generator = generator;
+        this.strategy = strategy;
+        this.packageLocation = packageLocation;
+    }
 
     @BeforeClass
     public static void createTestSchema() throws SQLException {
@@ -21,10 +30,8 @@ public class VertxGuiceGeneratorTest {
 
     @Test
     public void generateCodeShouldSucceed() throws Exception {
-
         Configuration configuration = TestTool.createGeneratorConfig(
-                VertxGuiceClassicGenerator.class.getName(),"classic.jdbc.guice",  JDBCClassicVertxGeneratorStrategy.class);
-
+                generator.getName(),packageLocation, strategy);
         try {
             GenerationTool.generate(configuration);
             Assert.assertTrue(true);
@@ -33,5 +40,4 @@ public class VertxGuiceGeneratorTest {
             Assert.fail(e.getMessage());
         }
     }
-
 }

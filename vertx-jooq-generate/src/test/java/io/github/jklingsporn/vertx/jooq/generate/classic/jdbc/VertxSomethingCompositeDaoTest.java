@@ -1,9 +1,10 @@
-package io.github.jklingsporn.vertx.jooq.generate.classic;
+package io.github.jklingsporn.vertx.jooq.generate.classic.jdbc;
 
 import generated.classic.jdbc.regular.vertx.Tables;
 import generated.classic.jdbc.regular.vertx.tables.daos.SomethingcompositeDao;
 import generated.classic.jdbc.regular.vertx.tables.pojos.Somethingcomposite;
 import generated.classic.jdbc.regular.vertx.tables.records.SomethingcompositeRecord;
+import io.github.jklingsporn.vertx.jooq.generate.classic.ClassicTestBase;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
 import org.jooq.Condition;

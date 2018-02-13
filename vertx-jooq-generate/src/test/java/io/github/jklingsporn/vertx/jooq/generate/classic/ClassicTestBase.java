@@ -41,7 +41,7 @@ public abstract class ClassicTestBase<P,T,O, DAO extends GenericVertxDAO<P, T, F
     protected final DAO dao;
     
 
-    static Configuration configuration;
+    protected static Configuration configuration;
 
     protected ClassicTestBase(TableField<?, O> otherfield, DAO dao) {
         this.otherfield = otherfield;
@@ -95,7 +95,7 @@ public abstract class ClassicTestBase<P,T,O, DAO extends GenericVertxDAO<P, T, F
     public void asyncCRUDShouldSucceed() throws InterruptedException {
         CountDownLatch latch = new CountDownLatch(1);
         dao.insertReturningPrimaryAsync(create())
-                .compose(id -> dao.findOneByIdAsync(id))
+                .compose(dao::findOneByIdAsync)
                 .compose(something -> dao
                         .updateAsync(setId(create(),getId(something)))
                         .compose(updatedRows -> {

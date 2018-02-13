@@ -1,10 +1,12 @@
 package io.github.jklingsporn.vertx.jooq.generate;
 
 import io.github.jklingsporn.vertx.jooq.shared.internal.AbstractVertxDAO;
+import io.github.jklingsporn.vertx.jooq.shared.internal.VertxPojo;
 import org.jooq.util.DefaultGeneratorStrategy;
 import org.jooq.util.Definition;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -27,5 +29,14 @@ public abstract class AbstractVertxGeneratorStrategy extends DefaultGeneratorStr
             return AbstractVertxDAO.class.getName();
         }
         return null;
+    }
+
+    @Override
+    public List<String> getJavaClassImplements(Definition definition, Mode mode) {
+        List<String> javaClassImplements = super.getJavaClassImplements(definition, mode);
+        if(mode.equals(Mode.INTERFACE)){
+            javaClassImplements.add(VertxPojo.class.getName());
+        }
+        return javaClassImplements;
     }
 }
