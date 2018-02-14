@@ -1,4 +1,4 @@
-package io.github.jklingsporn.vertx.jooq.generate.classic.async;
+package io.github.jklingsporn.vertx.jooq.generate.classic.async.regular;
 
 import io.github.jklingsporn.vertx.jooq.generate.AbstractVertxGeneratorTest;
 import io.github.jklingsporn.vertx.jooq.generate.AsyncDatabaseConfigurationProvider;

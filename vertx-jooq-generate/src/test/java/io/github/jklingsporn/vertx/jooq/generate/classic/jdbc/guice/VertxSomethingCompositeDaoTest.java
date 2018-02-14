@@ -1,36 +1,34 @@
-package io.github.jklingsporn.vertx.jooq.generate.classic.async;
+package io.github.jklingsporn.vertx.jooq.generate.classic.jdbc.guice;
 
-import generated.classic.async.regular.Tables;
-import generated.classic.async.regular.tables.daos.SomethingcompositeDao;
-import generated.classic.async.regular.tables.pojos.Somethingcomposite;
-import generated.classic.async.regular.tables.records.SomethingcompositeRecord;
-import io.github.jklingsporn.vertx.jooq.generate.AsyncDatabaseConfigurationProvider;
+import generated.classic.jdbc.guice.vertx.Tables;
+import generated.classic.jdbc.guice.vertx.tables.daos.SomethingcompositeDao;
+import generated.classic.jdbc.guice.vertx.tables.pojos.Somethingcomposite;
+import generated.classic.jdbc.guice.vertx.tables.records.SomethingcompositeRecord;
+import io.github.jklingsporn.vertx.jooq.generate.JDBCDatabaseConfigurationProvider;
 import io.github.jklingsporn.vertx.jooq.generate.classic.ClassicTestBase;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
-import io.vertx.ext.asyncsql.MySQLClient;
 import org.jooq.Condition;
 import org.jooq.Record2;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.Random;
 
 /**
  * Created by jensklingsporn on 02.11.16.
  */
-@Ignore
 public class VertxSomethingCompositeDaoTest extends ClassicTestBase<Somethingcomposite, Record2<Integer,Integer>, JsonObject, SomethingcompositeDao> {
 
 
     public VertxSomethingCompositeDaoTest() {
-        super(Tables.SOMETHINGCOMPOSITE.SOMEJSONOBJECT, new SomethingcompositeDao(AsyncDatabaseConfigurationProvider.getInstance().createDAOConfiguration(), MySQLClient.createNonShared(Vertx.vertx(), AsyncDatabaseConfigurationProvider.getInstance().createMySQLClientConfig())));
+        super(Tables.SOMETHINGCOMPOSITE.SOMEJSONOBJECT, new SomethingcompositeDao(JDBCDatabaseConfigurationProvider.getInstance().createDAOConfiguration(), Vertx.vertx()));
     }
 
     @BeforeClass
     public static void beforeClass() throws Exception {
-        AsyncDatabaseConfigurationProvider.getInstance().setupDatabase();
+        JDBCDatabaseConfigurationProvider.getInstance().setupDatabase();
     }
 
     @Override
@@ -77,7 +75,7 @@ public class VertxSomethingCompositeDaoTest extends ClassicTestBase<Somethingcom
 
     @Override
     protected void assertDuplicateKeyException(Throwable x) {
-        Assert.assertEquals(com.github.mauricio.async.db.mysql.exceptions.MySQLException.class, x.getClass());
+        Assert.assertEquals(SQLIntegrityConstraintViolationException.class, x.getCause().getClass());
     }
 
 }

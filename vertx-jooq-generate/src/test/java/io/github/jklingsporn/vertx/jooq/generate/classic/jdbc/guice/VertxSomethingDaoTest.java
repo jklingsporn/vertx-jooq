@@ -1,8 +1,8 @@
-package io.github.jklingsporn.vertx.jooq.generate.classic.jdbc;
+package io.github.jklingsporn.vertx.jooq.generate.classic.jdbc.guice;
 
-import generated.classic.jdbc.regular.vertx.Tables;
-import generated.classic.jdbc.regular.vertx.tables.daos.SomethingDao;
-import generated.classic.jdbc.regular.vertx.tables.pojos.Something;
+import generated.classic.jdbc.guice.vertx.Tables;
+import generated.classic.jdbc.guice.vertx.tables.daos.SomethingDao;
+import generated.classic.jdbc.guice.vertx.tables.pojos.Something;
 import io.github.jklingsporn.vertx.jooq.generate.JDBCDatabaseConfigurationProvider;
 import io.github.jklingsporn.vertx.jooq.generate.classic.ClassicTestBase;
 import io.vertx.core.Vertx;

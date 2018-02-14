@@ -1,4 +1,4 @@
-package io.github.jklingsporn.vertx.jooq.generate.classic.jdbc;
+package io.github.jklingsporn.vertx.jooq.generate.classic.jdbc.regular;
 
 import generated.classic.jdbc.regular.vertx.Tables;
 import generated.classic.jdbc.regular.vertx.tables.daos.SomethingcompositeDao;

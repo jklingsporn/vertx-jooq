@@ -1,4 +1,4 @@
-package io.github.jklingsporn.vertx.jooq.generate.classic.jdbc;
+package io.github.jklingsporn.vertx.jooq.generate.classic.jdbc.guice;
 
 import io.github.jklingsporn.vertx.jooq.generate.AbstractVertxGeneratorTest;
 import io.github.jklingsporn.vertx.jooq.generate.JDBCDatabaseConfigurationProvider;

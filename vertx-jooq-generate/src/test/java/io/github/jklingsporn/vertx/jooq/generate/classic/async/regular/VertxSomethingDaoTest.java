@@ -1,4 +1,4 @@
-package io.github.jklingsporn.vertx.jooq.generate.classic.async;
+package io.github.jklingsporn.vertx.jooq.generate.classic.async.regular;
 
 import generated.classic.async.regular.Tables;
 import generated.classic.async.regular.tables.daos.SomethingDao;
