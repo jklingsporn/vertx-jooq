@@ -1,8 +1,7 @@
-package io.github.jklingsporn.vertx.jooq.generate.classic;
+package io.github.jklingsporn.vertx.jooq.generate.classic.jdbc.regular;
 
 import generated.classic.jdbc.regular.vertx.tables.pojos.Something;
 import io.github.jklingsporn.vertx.jooq.generate.AbstractJsonConversionTest;
-import io.github.jklingsporn.vertx.jooq.shared.internal.VertxPojo;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
@@ -11,7 +10,7 @@ import java.util.Random;
 /**
  * Created by jensklingsporn on 22.08.17.
  */
-public class JsonConversionTest extends AbstractJsonConversionTest<VertxPojo>{
+public class SomethingJsonConversionTest extends AbstractJsonConversionTest<Something>{
 
     @Override
     protected Something newPojo() {

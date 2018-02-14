@@ -113,7 +113,7 @@ public class VertxGenerator extends JavaGenerator {
 
     private void generateFromJson(TableDefinition table, JavaWriter out, GeneratorStrategy.Mode mode){
         out.println();
-        out.override();
+        out.tab(1).override();
         String className = getStrategy().getJavaClassName(table, mode);
         out.tab(1).println("public %s%s fromJson(io.vertx.core.json.JsonObject json) {", mode == GeneratorStrategy.Mode.INTERFACE?"default ":"",className);
         for (TypedElementDefinition<?> column : table.getColumns()) {
@@ -182,7 +182,7 @@ public class VertxGenerator extends JavaGenerator {
 
     private void generateToJson(TableDefinition table, JavaWriter out, GeneratorStrategy.Mode mode){
         out.println();
-        out.override();
+        out.tab(1).override();
         out.tab(1).println("public %sio.vertx.core.json.JsonObject toJson() {",mode== GeneratorStrategy.Mode.INTERFACE?"default ":"");
         out.tab(2).println("io.vertx.core.json.JsonObject json = new io.vertx.core.json.JsonObject();");
         for (TypedElementDefinition<?> column : table.getColumns()) {

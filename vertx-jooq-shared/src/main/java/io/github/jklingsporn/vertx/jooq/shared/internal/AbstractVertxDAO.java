@@ -52,9 +52,9 @@ public abstract class AbstractVertxDAO<R extends UpdatableRecord<R>, P, T, FIND_
     public EXECUTE updateAsync(P object){
         Objects.requireNonNull(object);
         DSLContext dslContext = using(configuration());
-        UniqueKey<R> pk = getTable().getPrimaryKey();
         R record = dslContext.newRecord(getTable(), object);
         Condition where = DSL.trueCondition();
+        UniqueKey<R> pk = getTable().getPrimaryKey();
         for (TableField<R,?> tableField : pk.getFields()) {
             //exclude primary keys from update
             record.changed(tableField,false);
