@@ -13,7 +13,7 @@ import java.util.Collection;
  * @param <INSERT_RETURNING> the result type returned for the insertReturning-operation. This varies on the VertxDAO-subtypes, e.g. {@code Future<T>}.
  * @see QueryExecutor
  */
-public interface GenericVertxDAO<P, T, FIND_MANY, FIND_ONE,EXECUTE, INSERT_RETURNING>  {
+public interface GenericVertxDAO<P, T, FIND_MANY, FIND_ONE, EXECUTE, INSERT_RETURNING>  {
 
 
     /**

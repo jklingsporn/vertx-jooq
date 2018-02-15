@@ -1,11 +1,24 @@
 # vertx-jooq
 A [jOOQ](http://www.jooq.org/)-CodeGenerator to create [vertx](http://vertx.io/)-ified DAOs and POJOs!
-Perform all CRUD-operations asynchronously and convert your POJOs
-from/into a `io.vertx.core.JsonObject`.
+Perform all CRUD-operations asynchronously and convert your POJOs from/into a `io.vertx.core.JsonObject`.
 
----
->Also check out the beta of [vertx-jooq-async](https://github.com/jklingsporn/vertx-jooq-async): vertx-jooq without JDBC!
----
+## new in version 3.0
+A lot has changed - not only under the hood.
+- Starting from this version on, `vertx-jooq` both includes the JDBC
+and the _real_ async variant (formerly known as [`vertx-jooq-async`](https://github.com/jklingsporn/vertx-jooq-async/)). This
+ avoids duplicate code and thus better stability.
+- Say good bye callback-API: everybody who has written code that is more complex than a simple `HelloWorld` application
+ hates callback-APIs. That is why I decided to let the classic-module now return Vertx `Futures` instead of accepting a
+ `Handler` to deal with the result.
+- `vertx-jooq-future` becomes `vertx-jooq-completablefuture`: that was more or less a consequence of the decision to let the
+classic API return `Futures` now.
+- Consistent naming: I decided to prefix any DAO-method that is based on a `SELECT` with `find`, followed by `One` if
+it returns one value, or `Many` if it is capable to return many values, followed by a condition to define how the value is
+obtained, eg `byId`. If you are upgrading from a previous version, you will have to run some search and replace sessions in your favorite IDE.
+- DAOs are no longer capable of executing arbitrary SQL. There were two main drivers for this decision: 1. joining the JDBC
+ and the async API did not allow it. 2. DAOs are bound to a POJO and should only operate on the POJO's type. With the option to execute any
+  SQL one could easily join on POJOs of other types and thus break boundaries. You can still execute typesafe SQL asynchronously
+  using one of the `QueryExecutors` though.
 
 ## different needs, different apis
 This library comes in three different flavors:
