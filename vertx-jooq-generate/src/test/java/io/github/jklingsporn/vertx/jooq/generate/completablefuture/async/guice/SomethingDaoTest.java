@@ -1,16 +1,14 @@
-package io.github.jklingsporn.vertx.jooq.generate.classic.async.guice;
+package io.github.jklingsporn.vertx.jooq.generate.completablefuture.async.guice;
 
-import generated.classic.async.guice.Tables;
-import generated.classic.async.guice.tables.daos.SomethingDao;
-import generated.classic.async.guice.tables.pojos.Something;
+import generated.cf.async.guice.Tables;
+import generated.cf.async.guice.tables.daos.SomethingDao;
+import generated.cf.async.guice.tables.pojos.Something;
+import io.github.jklingsporn.vertx.jooq.generate.AsyncDatabaseClientProvider;
 import io.github.jklingsporn.vertx.jooq.generate.AsyncDatabaseConfigurationProvider;
-import io.github.jklingsporn.vertx.jooq.generate.classic.ClassicTestBase;
-import io.vertx.core.Vertx;
+import io.github.jklingsporn.vertx.jooq.generate.completablefuture.CompletableFutureTestBase;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
-import io.vertx.ext.asyncsql.MySQLClient;
 import org.jooq.Condition;
-import org.junit.Assert;
 import org.junit.BeforeClass;
 
 import java.util.Random;
@@ -18,10 +16,11 @@ import java.util.Random;
 /**
  * Created by jensklingsporn on 02.11.16.
  */
-public class VertxSomethingDaoTest extends ClassicTestBase<Something, Integer, Long, SomethingDao> {
+public class SomethingDaoTest extends CompletableFutureTestBase<Something, Integer, Long, SomethingDao> {
 
-    public VertxSomethingDaoTest() {
-        super(Tables.SOMETHING.SOMEHUGENUMBER, new SomethingDao(AsyncDatabaseConfigurationProvider.getInstance().createDAOConfiguration(), MySQLClient.createNonShared(Vertx.vertx(), AsyncDatabaseConfigurationProvider.getInstance().createMySQLClientConfig())));
+
+    public SomethingDaoTest() {
+        super(Tables.SOMETHING.SOMEHUGENUMBER, new SomethingDao(AsyncDatabaseConfigurationProvider.getInstance().createDAOConfiguration(), AsyncDatabaseClientProvider.getInstance().getVertx(), AsyncDatabaseClientProvider.getInstance().getClient()));
     }
 
     @BeforeClass
@@ -75,6 +74,6 @@ public class VertxSomethingDaoTest extends ClassicTestBase<Something, Integer, L
 
     @Override
     protected void assertDuplicateKeyException(Throwable x) {
-        Assert.assertEquals(com.github.mauricio.async.db.mysql.exceptions.MySQLException.class, x.getClass());
+        assertException(com.github.mauricio.async.db.mysql.exceptions.MySQLException.class, x);
     }
 }

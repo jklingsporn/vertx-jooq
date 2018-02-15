@@ -75,10 +75,10 @@ public abstract class ClassicTestBase<P,T,O, DAO extends GenericVertxDAO<P, T, F
     @Test
     public void asyncCRUDShouldSucceed() throws InterruptedException {
         CountDownLatch latch = new CountDownLatch(1);
-        dao.insertReturningPrimaryAsync(create())
+        insertReturning(create())
                 .compose(dao::findOneByIdAsync)
                 .compose(something -> dao
-                        .updateAsync(setId(create(),getId(something)))
+                        .updateAsync(setSomeO(something,createSomeO()))
                         .compose(updatedRows -> {
                             Assert.assertEquals(1l, updatedRows.longValue());
                             return dao
@@ -116,8 +116,8 @@ public abstract class ClassicTestBase<P,T,O, DAO extends GenericVertxDAO<P, T, F
     public void insertReturningShouldFailOnDuplicateKey() throws InterruptedException {
         CountDownLatch latch = new CountDownLatch(1);
         P something = create();
-        dao.insertReturningPrimaryAsync(something)
-                .compose(id -> dao.insertReturningPrimaryAsync(setId(something,id)))
+        insertReturning(something)
+                .compose(id -> insertReturning(setId(something, id)))
                 .otherwise(x -> {
                     Assert.assertNotNull(x);
                     assertDuplicateKeyException(x);
@@ -128,10 +128,14 @@ public abstract class ClassicTestBase<P,T,O, DAO extends GenericVertxDAO<P, T, F
         await(latch);
     }
 
+    protected Future<T> insertReturning(P something) {
+        return dao.insertReturningPrimaryAsync(something);
+    }
+
     @Test
     public void asyncCRUDConditionShouldSucceed() throws InterruptedException {
         CountDownLatch latch = new CountDownLatch(1);
-        Future<T> insertFuture = dao.insertReturningPrimaryAsync(create());
+        Future<T> insertFuture = insertReturning(create());
         insertFuture.
                 compose(v -> dao.findOneByConditionAsync(eqPrimaryKey(insertFuture.result())))
                 .map(toVoid(Assert::assertNotNull))
@@ -144,8 +148,8 @@ public abstract class ClassicTestBase<P,T,O, DAO extends GenericVertxDAO<P, T, F
     public void findOneByConditionWithMultipleMatchesShouldFail() throws InterruptedException {
         CountDownLatch latch = new CountDownLatch(1);
         O someO = createSomeO();
-        Future<T> insertFuture1 = dao.insertReturningPrimaryAsync(setSomeO(create(), someO));
-        Future<T> insertFuture2 = dao.insertReturningPrimaryAsync(setSomeO(create(), someO));
+        Future<T> insertFuture1 = insertReturning(setSomeO(create(), someO));
+        Future<T> insertFuture2 = insertReturning(setSomeO(create(), someO));
         CompositeFuture.all(insertFuture1, insertFuture2).
                 compose(v -> dao.findOneByConditionAsync(otherfield.eq(someO))).
                 otherwise((x) -> {
@@ -163,8 +167,8 @@ public abstract class ClassicTestBase<P,T,O, DAO extends GenericVertxDAO<P, T, F
     public void findManyByConditionWithMultipleMatchesShouldSucceed() throws InterruptedException {
         CountDownLatch latch = new CountDownLatch(1);
         O someO = createSomeO();
-        Future<T> insertFuture1 = dao.insertReturningPrimaryAsync(setSomeO(create(), someO));
-        Future<T> insertFuture2 = dao.insertReturningPrimaryAsync(setSomeO(create(), someO));
+        Future<T> insertFuture1 = insertReturning(setSomeO(create(), someO));
+        Future<T> insertFuture2 = insertReturning(setSomeO(create(), someO));
         CompositeFuture.all(insertFuture1, insertFuture2).
                 compose(v -> dao.findManyByConditionAsync(otherfield.eq(someO))).
                 map(toVoid(values -> Assert.assertEquals(2, values.size()))).
@@ -177,8 +181,8 @@ public abstract class ClassicTestBase<P,T,O, DAO extends GenericVertxDAO<P, T, F
     @Test
     public void findAllShouldReturnValues() throws InterruptedException{
         CountDownLatch latch = new CountDownLatch(1);
-        Future<T> insertFuture1 = dao.insertReturningPrimaryAsync(create());
-        Future<T> insertFuture2 = dao.insertReturningPrimaryAsync(create());
+        Future<T> insertFuture1 = insertReturning(create());
+        Future<T> insertFuture2 = insertReturning(create());
         CompositeFuture.all(insertFuture1, insertFuture2).
                 compose(v -> dao.findAllAsync()).
                 map(toVoid(list -> {

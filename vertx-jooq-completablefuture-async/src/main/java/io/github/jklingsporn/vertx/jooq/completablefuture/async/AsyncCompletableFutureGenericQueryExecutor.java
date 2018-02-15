@@ -11,9 +11,9 @@ import io.vertx.ext.sql.SQLConnection;
 import me.escoffier.vertx.completablefuture.VertxCompletableFuture;
 import org.jooq.Record;
 import org.jooq.ResultQuery;
+import org.jooq.exception.TooManyRowsException;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
@@ -81,8 +81,12 @@ public class AsyncCompletableFutureGenericQueryExecutor implements AsyncQueryExe
         return getConnection().thenCompose(sqlConnection -> {
             CompletableFuture<JsonObject> cf = new VertxCompletableFuture<>(vertx);
             sqlConnection.queryWithParams(query.getSQL(), getBindValues(query), executeAndClose(rs -> {
-                Optional<JsonObject> optional = rs.getRows().stream().findFirst();
-                return optional.orElseGet(() -> null);
+                List<JsonObject> rows = rs.getRows();
+                switch (rows.size()) {
+                    case 0: return null;
+                    case 1: return rows.get(0);
+                    default: throw new TooManyRowsException(String.format("Found more than one row: %d", rows.size()));
+                }
             }, sqlConnection, cf));
             return cf;
         });

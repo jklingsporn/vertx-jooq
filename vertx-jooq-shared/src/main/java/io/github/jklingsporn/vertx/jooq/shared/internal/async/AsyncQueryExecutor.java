@@ -43,7 +43,7 @@ public interface AsyncQueryExecutor<FIND_MANY_JSON, FIND_ONE_JSON> {
         return bindValues;
     }
 
-    public default <T> Object convertToDatabaseType(Param<T> param) {
+    static <T> Object convertToDatabaseType(Param<T> param) {
         return param.getBinding().converter().to(param.getValue());
     }
 

@@ -1,8 +1,8 @@
-package io.github.jklingsporn.vertx.jooq.generate.classic.jdbc.regular;
+package io.github.jklingsporn.vertx.jooq.generate.classic.jdbc.guice;
 
-import generated.classic.jdbc.regular.vertx.Tables;
-import generated.classic.jdbc.regular.vertx.tables.daos.SomethingDao;
-import generated.classic.jdbc.regular.vertx.tables.pojos.Something;
+import generated.classic.jdbc.guice.vertx.Tables;
+import generated.classic.jdbc.guice.vertx.tables.daos.SomethingDao;
+import generated.classic.jdbc.guice.vertx.tables.pojos.Something;
 import io.github.jklingsporn.vertx.jooq.generate.JDBCDatabaseConfigurationProvider;
 import io.github.jklingsporn.vertx.jooq.generate.classic.ClassicTestBase;
 import io.vertx.core.Vertx;
@@ -18,9 +18,9 @@ import java.util.Random;
 /**
  * Created by jensklingsporn on 02.11.16.
  */
-public class VertxSomethingDaoTest extends ClassicTestBase<Something, Integer, Long, SomethingDao> {
+public class SomethingDaoTest extends ClassicTestBase<Something, Integer, Long, SomethingDao> {
 
-    public VertxSomethingDaoTest() {
+    public SomethingDaoTest() {
         super(Tables.SOMETHING.SOMEHUGENUMBER, new SomethingDao(JDBCDatabaseConfigurationProvider.getInstance().createDAOConfiguration(), Vertx.vertx()));
     }
 

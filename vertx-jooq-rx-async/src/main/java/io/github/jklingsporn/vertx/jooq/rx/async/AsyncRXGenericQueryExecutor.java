@@ -7,9 +7,9 @@ import io.vertx.ext.sql.ResultSet;
 import io.vertx.reactivex.ext.asyncsql.AsyncSQLClient;
 import org.jooq.Record;
 import org.jooq.ResultQuery;
+import org.jooq.exception.TooManyRowsException;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Function;
 
 /**
@@ -33,8 +33,12 @@ public class AsyncRXGenericQueryExecutor implements AsyncQueryExecutor<Single<Li
     public <Q extends Record> Single<JsonObject> findOneJson(ResultQuery<Q> query) {
         return getConnection().flatMap(executeAndClose(sqlConnection ->
                 sqlConnection.rxQueryWithParams(query.getSQL(), getBindValues(query)).map(rs -> {
-                    Optional<JsonObject> optional = rs.getRows().stream().findFirst();
-                    return optional.orElseGet(() -> null);
+                    List<JsonObject> rows = rs.getRows();
+                    switch (rows.size()) {
+                        case 0: return null;
+                        case 1: return rows.get(0);
+                        default: throw new TooManyRowsException(String.format("Found more than one row: %d", rows.size()));
+                    }
                 })));
     }
 

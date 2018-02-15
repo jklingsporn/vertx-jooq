@@ -46,17 +46,16 @@ public class JDBCDatabaseConfigurationProvider extends AbstractDatabaseConfigura
                 "  someSecondId INTEGER,\n" +
                 "  someJsonObject varchar(45), PRIMARY KEY (someId,someSecondId)\n" +
                 ");").execute();
+        connection.close();
     }
 
     @Override
     public Configuration createGeneratorConfig(String generatorName, String packageName, Class<? extends VertxGeneratorStrategy> generatorStrategy){
-
         Jdbc jdbcConfig = new Jdbc();
         jdbcConfig.setDriver("org.hsqldb.jdbcDriver");
         jdbcConfig.setUrl("jdbc:hsqldb:mem:test");
         jdbcConfig.setUser("test");
         jdbcConfig.setPassword("");
-
         return createGeneratorConfig(generatorName,packageName,generatorStrategy,jdbcConfig, HSQLDBDatabase.class.getName());
     }
 

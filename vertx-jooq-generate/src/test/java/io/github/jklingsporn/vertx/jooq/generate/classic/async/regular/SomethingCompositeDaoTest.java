@@ -1,34 +1,35 @@
-package io.github.jklingsporn.vertx.jooq.generate.classic.jdbc.guice;
+package io.github.jklingsporn.vertx.jooq.generate.classic.async.regular;
 
-import generated.classic.jdbc.guice.vertx.Tables;
-import generated.classic.jdbc.guice.vertx.tables.daos.SomethingcompositeDao;
-import generated.classic.jdbc.guice.vertx.tables.pojos.Somethingcomposite;
-import generated.classic.jdbc.guice.vertx.tables.records.SomethingcompositeRecord;
-import io.github.jklingsporn.vertx.jooq.generate.JDBCDatabaseConfigurationProvider;
+import generated.classic.async.regular.Tables;
+import generated.classic.async.regular.tables.daos.SomethingcompositeDao;
+import generated.classic.async.regular.tables.pojos.Somethingcomposite;
+import generated.classic.async.regular.tables.records.SomethingcompositeRecord;
+import io.github.jklingsporn.vertx.jooq.generate.AsyncDatabaseClientProvider;
+import io.github.jklingsporn.vertx.jooq.generate.AsyncDatabaseConfigurationProvider;
 import io.github.jklingsporn.vertx.jooq.generate.classic.ClassicTestBase;
-import io.vertx.core.Vertx;
+import io.vertx.core.Future;
 import io.vertx.core.json.JsonObject;
 import org.jooq.Condition;
 import org.jooq.Record2;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.Random;
 
 /**
  * Created by jensklingsporn on 02.11.16.
  */
-public class VertxSomethingCompositeDaoTest extends ClassicTestBase<Somethingcomposite, Record2<Integer,Integer>, JsonObject, SomethingcompositeDao> {
+@Ignore
+public class SomethingCompositeDaoTest extends ClassicTestBase<Somethingcomposite, Record2<Integer,Integer>, JsonObject, SomethingcompositeDao> {
 
-
-    public VertxSomethingCompositeDaoTest() {
-        super(Tables.SOMETHINGCOMPOSITE.SOMEJSONOBJECT, new SomethingcompositeDao(JDBCDatabaseConfigurationProvider.getInstance().createDAOConfiguration(), Vertx.vertx()));
+    public SomethingCompositeDaoTest() {
+        super(Tables.SOMETHINGCOMPOSITE.SOMEJSONOBJECT, new SomethingcompositeDao(AsyncDatabaseConfigurationProvider.getInstance().createDAOConfiguration(), AsyncDatabaseClientProvider.getInstance().getClient()));
     }
 
     @BeforeClass
     public static void beforeClass() throws Exception {
-        JDBCDatabaseConfigurationProvider.getInstance().setupDatabase();
+        AsyncDatabaseConfigurationProvider.getInstance().setupDatabase();
     }
 
     @Override
@@ -75,7 +76,15 @@ public class VertxSomethingCompositeDaoTest extends ClassicTestBase<Somethingcom
 
     @Override
     protected void assertDuplicateKeyException(Throwable x) {
-        Assert.assertEquals(SQLIntegrityConstraintViolationException.class, x.getCause().getClass());
+        Assert.assertEquals(com.github.mauricio.async.db.mysql.exceptions.MySQLException.class, x.getClass());
+    }
+
+    @Override
+    protected Future<Record2<Integer, Integer>> insertReturning(Somethingcomposite something) {
+        return dao
+                .insertAsync(something)
+                .map(toVoid(i->Assert.assertEquals(1L,i.longValue())))
+                .map(v->getId(something));
     }
 
 }

@@ -19,10 +19,10 @@ import java.util.Random;
 /**
  * Created by jensklingsporn on 02.11.16.
  */
-public class VertxSomethingCompositeDaoTest extends CompletableFutureTestBase<Somethingcomposite, Record2<Integer,Integer>, JsonObject, SomethingcompositeDao> {
+public class SomethingCompositeDaoTest extends CompletableFutureTestBase<Somethingcomposite, Record2<Integer,Integer>, JsonObject, SomethingcompositeDao> {
 
 
-    public VertxSomethingCompositeDaoTest() {
+    public SomethingCompositeDaoTest() {
         super(Tables.SOMETHINGCOMPOSITE.SOMEJSONOBJECT, new SomethingcompositeDao(JDBCDatabaseConfigurationProvider.getInstance().createDAOConfiguration(), Vertx.vertx()));
     }
 

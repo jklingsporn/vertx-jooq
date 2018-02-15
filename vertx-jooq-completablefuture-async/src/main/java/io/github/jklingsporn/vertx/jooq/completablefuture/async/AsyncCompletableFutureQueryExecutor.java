@@ -7,10 +7,7 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.ext.asyncsql.AsyncSQLClient;
 import io.vertx.ext.sql.UpdateResult;
 import me.escoffier.vertx.completablefuture.VertxCompletableFuture;
-import org.jooq.InsertResultStep;
-import org.jooq.Query;
-import org.jooq.ResultQuery;
-import org.jooq.UpdatableRecord;
+import org.jooq.*;
 import org.jooq.conf.ParamType;
 
 import java.util.List;
@@ -25,9 +22,9 @@ public class AsyncCompletableFutureQueryExecutor <R extends UpdatableRecord<R>,P
 
     private final Function<JsonObject,P> pojoMapper;
 
-    public AsyncCompletableFutureQueryExecutor(Vertx vertx, AsyncSQLClient delegate, Function<JsonObject, P> pojoMapper) {
+    public AsyncCompletableFutureQueryExecutor(Vertx vertx, AsyncSQLClient delegate, Function<JsonObject, P> pojoMapper, Table<R> table) {
         super(vertx,delegate);
-        this.pojoMapper = pojoMapper;
+        this.pojoMapper =  convertFromSQL(table).andThen(pojoMapper);
     }
 
 

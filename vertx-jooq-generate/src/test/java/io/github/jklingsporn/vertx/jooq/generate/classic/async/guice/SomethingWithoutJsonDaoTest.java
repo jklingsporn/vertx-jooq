@@ -3,10 +3,9 @@ package io.github.jklingsporn.vertx.jooq.generate.classic.async.guice;
 import generated.classic.async.guice.Tables;
 import generated.classic.async.guice.tables.daos.SomethingwithoutjsonDao;
 import generated.classic.async.guice.tables.pojos.Somethingwithoutjson;
+import io.github.jklingsporn.vertx.jooq.generate.AsyncDatabaseClientProvider;
 import io.github.jklingsporn.vertx.jooq.generate.AsyncDatabaseConfigurationProvider;
 import io.github.jklingsporn.vertx.jooq.generate.classic.ClassicTestBase;
-import io.vertx.core.Vertx;
-import io.vertx.ext.asyncsql.MySQLClient;
 import org.jooq.Condition;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -16,10 +15,10 @@ import java.util.Random;
 /**
  * Created by jensklingsporn on 02.11.16.
  */
-public class VertxSomethingWithoutJsonDaoTest extends ClassicTestBase<Somethingwithoutjson, Integer, String, SomethingwithoutjsonDao> {
+public class SomethingWithoutJsonDaoTest extends ClassicTestBase<Somethingwithoutjson, Integer, String, SomethingwithoutjsonDao> {
 
-    public VertxSomethingWithoutJsonDaoTest() {
-        super(Tables.SOMETHINGWITHOUTJSON.SOMESTRING, new SomethingwithoutjsonDao(AsyncDatabaseConfigurationProvider.getInstance().createDAOConfiguration(), MySQLClient.createNonShared(Vertx.vertx(), AsyncDatabaseConfigurationProvider.getInstance().createMySQLClientConfig())));
+    public SomethingWithoutJsonDaoTest() {
+        super(Tables.SOMETHINGWITHOUTJSON.SOMESTRING, new SomethingwithoutjsonDao(AsyncDatabaseConfigurationProvider.getInstance().createDAOConfiguration(), AsyncDatabaseClientProvider.getInstance().getClient()));
     }
 
     @BeforeClass

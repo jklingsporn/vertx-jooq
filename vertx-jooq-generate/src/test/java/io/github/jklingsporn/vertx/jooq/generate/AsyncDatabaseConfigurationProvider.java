@@ -1,6 +1,5 @@
 package io.github.jklingsporn.vertx.jooq.generate;
 
-import io.vertx.core.json.JsonObject;
 import org.jooq.SQLDialect;
 import org.jooq.impl.DefaultConfiguration;
 import org.jooq.util.jaxb.Configuration;
@@ -14,6 +13,7 @@ import java.sql.DriverManager;
  * Created by jensklingsporn on 02.11.16.
  */
 public class AsyncDatabaseConfigurationProvider extends AbstractDatabaseConfigurationProvider {
+
 
     private static AsyncDatabaseConfigurationProvider INSTANCE;
     public static AsyncDatabaseConfigurationProvider getInstance() {
@@ -49,6 +49,7 @@ public class AsyncDatabaseConfigurationProvider extends AbstractDatabaseConfigur
                 "  `someId` int(11) NOT NULL AUTO_INCREMENT,\n" +
                 "  `someString` varchar(45) COLLATE utf8_bin DEFAULT NULL,\n" +
                 "  PRIMARY KEY (`someId`));\n").execute();
+        connection.close();
     }
 
     @Override
@@ -60,10 +61,6 @@ public class AsyncDatabaseConfigurationProvider extends AbstractDatabaseConfigur
         jdbcConfig.setPassword("");
         jdbcConfig.setSchema("vertx");
         return createGeneratorConfig(generatorName,packageName,generatorStrategy,jdbcConfig, MySQLDatabase.class.getName());
-    }
-
-    public JsonObject createMySQLClientConfig(){
-        return new JsonObject().put("host", "127.0.0.1").put("username", "vertx").putNull("password").put("database","vertx");
     }
 
     @Override

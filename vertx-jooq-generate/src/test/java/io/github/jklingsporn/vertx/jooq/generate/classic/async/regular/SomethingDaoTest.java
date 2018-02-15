@@ -1,32 +1,31 @@
-package io.github.jklingsporn.vertx.jooq.generate.classic.jdbc.guice;
+package io.github.jklingsporn.vertx.jooq.generate.classic.async.regular;
 
-import generated.classic.jdbc.guice.vertx.Tables;
-import generated.classic.jdbc.guice.vertx.tables.daos.SomethingDao;
-import generated.classic.jdbc.guice.vertx.tables.pojos.Something;
-import io.github.jklingsporn.vertx.jooq.generate.JDBCDatabaseConfigurationProvider;
+import generated.classic.async.regular.Tables;
+import generated.classic.async.regular.tables.daos.SomethingDao;
+import generated.classic.async.regular.tables.pojos.Something;
+import io.github.jklingsporn.vertx.jooq.generate.AsyncDatabaseClientProvider;
+import io.github.jklingsporn.vertx.jooq.generate.AsyncDatabaseConfigurationProvider;
 import io.github.jklingsporn.vertx.jooq.generate.classic.ClassicTestBase;
-import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import org.jooq.Condition;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.Random;
 
 /**
  * Created by jensklingsporn on 02.11.16.
  */
-public class VertxSomethingDaoTest extends ClassicTestBase<Something, Integer, Long, SomethingDao> {
+public class SomethingDaoTest extends ClassicTestBase<Something, Integer, Long, SomethingDao> {
 
-    public VertxSomethingDaoTest() {
-        super(Tables.SOMETHING.SOMEHUGENUMBER, new SomethingDao(JDBCDatabaseConfigurationProvider.getInstance().createDAOConfiguration(), Vertx.vertx()));
+    public SomethingDaoTest() {
+        super(Tables.SOMETHING.SOMEHUGENUMBER, new SomethingDao(AsyncDatabaseConfigurationProvider.getInstance().createDAOConfiguration(), AsyncDatabaseClientProvider.getInstance().getClient()));
     }
 
     @BeforeClass
     public static void beforeClass() throws Exception {
-        JDBCDatabaseConfigurationProvider.getInstance().setupDatabase();
+        AsyncDatabaseConfigurationProvider.getInstance().setupDatabase();
     }
 
     @Override
@@ -44,7 +43,6 @@ public class VertxSomethingDaoTest extends ClassicTestBase<Something, Integer, L
         something.setSomejsonarray(new JsonArray().add(1).add(2).add(3));
         something.setSomejsonobject(new JsonObject().put("key", "value"));
         something.setSomesmallnumber((short) random.nextInt(Short.MAX_VALUE));
-        something.setSomeboolean(random.nextBoolean());
         something.setSomestring("my_string");
         return something;
     }
@@ -76,6 +74,6 @@ public class VertxSomethingDaoTest extends ClassicTestBase<Something, Integer, L
 
     @Override
     protected void assertDuplicateKeyException(Throwable x) {
-        Assert.assertEquals(SQLIntegrityConstraintViolationException.class, x.getCause().getClass());
+        Assert.assertEquals(com.github.mauricio.async.db.mysql.exceptions.MySQLException.class, x.getClass());
     }
 }

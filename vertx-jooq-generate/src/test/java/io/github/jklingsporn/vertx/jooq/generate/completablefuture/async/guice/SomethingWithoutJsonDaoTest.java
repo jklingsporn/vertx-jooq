@@ -1,14 +1,12 @@
-package io.github.jklingsporn.vertx.jooq.generate.classic.async.regular;
+package io.github.jklingsporn.vertx.jooq.generate.completablefuture.async.guice;
 
-import generated.classic.async.regular.Tables;
-import generated.classic.async.regular.tables.daos.SomethingwithoutjsonDao;
-import generated.classic.async.regular.tables.pojos.Somethingwithoutjson;
+import generated.cf.async.guice.Tables;
+import generated.cf.async.guice.tables.daos.SomethingwithoutjsonDao;
+import generated.cf.async.guice.tables.pojos.Somethingwithoutjson;
+import io.github.jklingsporn.vertx.jooq.generate.AsyncDatabaseClientProvider;
 import io.github.jklingsporn.vertx.jooq.generate.AsyncDatabaseConfigurationProvider;
-import io.github.jklingsporn.vertx.jooq.generate.classic.ClassicTestBase;
-import io.vertx.core.Vertx;
-import io.vertx.ext.asyncsql.MySQLClient;
+import io.github.jklingsporn.vertx.jooq.generate.completablefuture.CompletableFutureTestBase;
 import org.jooq.Condition;
-import org.junit.Assert;
 import org.junit.BeforeClass;
 
 import java.util.Random;
@@ -16,10 +14,10 @@ import java.util.Random;
 /**
  * Created by jensklingsporn on 02.11.16.
  */
-public class VertxSomethingWithoutJsonDaoTest extends ClassicTestBase<Somethingwithoutjson, Integer, String, SomethingwithoutjsonDao> {
+public class SomethingWithoutJsonDaoTest extends CompletableFutureTestBase<Somethingwithoutjson, Integer, String, SomethingwithoutjsonDao> {
 
-    public VertxSomethingWithoutJsonDaoTest() {
-        super(Tables.SOMETHINGWITHOUTJSON.SOMESTRING, new SomethingwithoutjsonDao(AsyncDatabaseConfigurationProvider.getInstance().createDAOConfiguration(), MySQLClient.createNonShared(Vertx.vertx(), AsyncDatabaseConfigurationProvider.getInstance().createMySQLClientConfig())));
+    public SomethingWithoutJsonDaoTest() {
+        super(Tables.SOMETHINGWITHOUTJSON.SOMESTRING, new SomethingwithoutjsonDao(AsyncDatabaseConfigurationProvider.getInstance().createDAOConfiguration(), AsyncDatabaseClientProvider.getInstance().getVertx(), AsyncDatabaseClientProvider.getInstance().getClient()));
     }
 
     @BeforeClass
@@ -68,6 +66,6 @@ public class VertxSomethingWithoutJsonDaoTest extends ClassicTestBase<Somethingw
 
     @Override
     protected void assertDuplicateKeyException(Throwable x) {
-        Assert.assertEquals(com.github.mauricio.async.db.mysql.exceptions.MySQLException.class, x.getClass());
+        assertException(com.github.mauricio.async.db.mysql.exceptions.MySQLException.class, x);
     }
 }
