@@ -1,6 +1,6 @@
 package io.github.jklingsporn.vertx.jooq.classic.async;
 
-import io.github.jklingsporn.vertx.jooq.shared.internal.async.AsyncQueryExecutor;
+import io.github.jklingsporn.vertx.jooq.shared.internal.async.AbstractAsyncQueryExecutor;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
@@ -22,7 +22,7 @@ import java.util.function.Supplier;
 /**
  * Created by jensklingsporn on 07.02.18.
  */
-public class AsyncClassicGenericQueryExecutor implements AsyncQueryExecutor<Future<List<JsonObject>>, Future<JsonObject>> {
+public class AsyncClassicGenericQueryExecutor extends AbstractAsyncQueryExecutor<Future<List<JsonObject>>, Future<JsonObject>> {
 
     private static final Logger logger = LoggerFactory.getLogger(AsyncClassicGenericQueryExecutor.class);
 

@@ -1,6 +1,6 @@
 package io.github.jklingsporn.vertx.jooq.rx.async;
 
-import io.github.jklingsporn.vertx.jooq.shared.internal.async.AsyncQueryExecutor;
+import io.github.jklingsporn.vertx.jooq.shared.internal.async.AbstractAsyncQueryExecutor;
 import io.reactivex.Single;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.sql.ResultSet;
@@ -15,7 +15,7 @@ import java.util.function.Function;
 /**
  * Created by jensklingsporn on 07.02.18.
  */
-public class AsyncRXGenericQueryExecutor implements AsyncQueryExecutor<Single<List<JsonObject>>,Single<JsonObject>>{
+public class AsyncRXGenericQueryExecutor extends AbstractAsyncQueryExecutor<Single<List<JsonObject>>,Single<JsonObject>> {
 
     protected final AsyncSQLClient delegate;
 

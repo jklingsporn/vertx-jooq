@@ -10,13 +10,20 @@ import java.util.EnumSet;
 import java.util.function.Function;
 
 /**
- * Created by jensklingsporn on 07.02.18.
+ * Abstract base class for all async DAOs.
+ * @param <R> the <code>Record</code> type.
+ * @param <P> the POJO-type
+ * @param <T> the Key-Type
+ * @param <FIND_MANY> the result type returned for all findManyXYZ-operations. This varies on the VertxDAO-subtypes, e.g. {@code Future<List<P>>}.
+ * @param <FIND_ONE> the result type returned for all findOneXYZ-operations. This varies on the VertxDAO-subtypes , e.g. {@code Future<P>}.
+ * @param <EXECUTE> the result type returned for all insert, update and delete-operations. This varies on the VertxDAO-subtypes, e.g. {@code Future<Integer>}.
+ * @param <INSERT_RETURNING> the result type returned for the insertReturning-operation. This varies on the VertxDAO-subtypes, e.g. {@code Future<T>}.
  */
-public abstract class AbstractAsyncVertxDAO<R extends UpdatableRecord<R>, P, T, FIND_MANY, FIND_ONE,EXECUTE,INSERT> extends AbstractVertxDAO<R,P,T,FIND_MANY,FIND_ONE, EXECUTE, INSERT>{
+public abstract class AbstractAsyncVertxDAO<R extends UpdatableRecord<R>, P, T, FIND_MANY, FIND_ONE,EXECUTE, INSERT_RETURNING> extends AbstractVertxDAO<R,P,T,FIND_MANY,FIND_ONE, EXECUTE, INSERT_RETURNING>{
 
     static EnumSet<SQLDialect> INSERT_RETURNING_SUPPORT = EnumSet.of(SQLDialect.MYSQL,SQLDialect.MYSQL_5_7,SQLDialect.MYSQL_8_0);
 
-    protected AbstractAsyncVertxDAO(Table<R> table, Class<P> type, QueryExecutor<R, T, FIND_MANY, FIND_ONE, EXECUTE, INSERT> queryExecutor, Configuration configuration) {
+    protected AbstractAsyncVertxDAO(Table<R> table, Class<P> type, QueryExecutor<R, T, FIND_MANY, FIND_ONE, EXECUTE, INSERT_RETURNING> queryExecutor, Configuration configuration) {
         super(table, type, queryExecutor, configuration);
     }
 
@@ -30,7 +37,7 @@ public abstract class AbstractAsyncVertxDAO<R extends UpdatableRecord<R>, P, T, 
     }
 
     @Override
-    public INSERT insertReturningPrimaryAsync(P object) {
+    public INSERT_RETURNING insertReturningPrimaryAsync(P object) {
         Arguments.require(INSERT_RETURNING_SUPPORT.contains(configuration().dialect()), "Only MySQL supported");
         DSLContext dslContext = DSL.using(configuration());
         return queryExecutor().insertReturning(dslContext.insertInto(getTable()).set(dslContext.newRecord(getTable(), object)).returning(), keyConverter());

@@ -10,20 +10,25 @@ import static org.jooq.impl.DSL.row;
 import static org.jooq.impl.DSL.using;
 
 /**
- * Created by jensklingsporn on 12.12.17.
- * Utility class to reduce duplicate code in the different VertxDAO implementations.
- * Only meant to be used by vertx-jooq.
+ * Abstract base class to reduce duplicate code in the different VertxDAO implementations.
+ * @param <R> the <code>Record</code> type.
+ * @param <P> the POJO-type
+ * @param <T> the Key-Type
+ * @param <FIND_MANY> the result type returned for all findManyXYZ-operations. This varies on the VertxDAO-subtypes, e.g. {@code Future<List<P>>}.
+ * @param <FIND_ONE> the result type returned for all findOneXYZ-operations. This varies on the VertxDAO-subtypes , e.g. {@code Future<P>}.
+ * @param <EXECUTE> the result type returned for all insert, update and delete-operations. This varies on the VertxDAO-subtypes, e.g. {@code Future<Integer>}.
+ * @param <INSERT_RETURNING> the result type returned for the insertReturning-operation. This varies on the VertxDAO-subtypes, e.g. {@code Future<T>}.
  */
-public abstract class AbstractVertxDAO<R extends UpdatableRecord<R>, P, T, FIND_MANY, FIND_ONE,EXECUTE,INSERT> implements GenericVertxDAO<P,T, FIND_MANY, FIND_ONE,EXECUTE,INSERT>
+public abstract class AbstractVertxDAO<R extends UpdatableRecord<R>, P, T, FIND_MANY, FIND_ONE,EXECUTE, INSERT_RETURNING> implements GenericVertxDAO<P,T, FIND_MANY, FIND_ONE,EXECUTE, INSERT_RETURNING>
 {
 
     private final Class<P> type;
     private final Table<R> table;
-    private final QueryExecutor<R, T, FIND_MANY, FIND_ONE, EXECUTE, INSERT> queryExecutor;
+    private final QueryExecutor<R, T, FIND_MANY, FIND_ONE, EXECUTE, INSERT_RETURNING> queryExecutor;
     private Configuration configuration;
 
 
-    protected AbstractVertxDAO(Table<R> table, Class<P> type, QueryExecutor<R, T, FIND_MANY, FIND_ONE, EXECUTE, INSERT> queryExecutor, Configuration configuration) {
+    protected AbstractVertxDAO(Table<R> table, Class<P> type, QueryExecutor<R, T, FIND_MANY, FIND_ONE, EXECUTE, INSERT_RETURNING> queryExecutor, Configuration configuration) {
         this.type = type;
         this.table = table;
         this.queryExecutor = queryExecutor;
@@ -43,7 +48,7 @@ public abstract class AbstractVertxDAO<R extends UpdatableRecord<R>, P, T, FIND_
         return configuration;
     }
 
-    protected QueryExecutor<R, T, FIND_MANY, FIND_ONE, EXECUTE, INSERT> queryExecutor(){
+    protected QueryExecutor<R, T, FIND_MANY, FIND_ONE, EXECUTE, INSERT_RETURNING> queryExecutor(){
         return this.queryExecutor;
     }
 
@@ -126,7 +131,7 @@ public abstract class AbstractVertxDAO<R extends UpdatableRecord<R>, P, T, FIND_
     }
 
     @SuppressWarnings("unchecked")
-    public INSERT insertReturningPrimaryAsync(P object){
+    public INSERT_RETURNING insertReturningPrimaryAsync(P object){
         UniqueKey<?> key = getTable().getPrimaryKey();
         //usually key shouldn't be null because DAO generation is omitted in such cases
         Objects.requireNonNull(key,()->"No primary key");

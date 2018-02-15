@@ -1,6 +1,6 @@
 package io.github.jklingsporn.vertx.jooq.completablefuture.async;
 
-import io.github.jklingsporn.vertx.jooq.shared.internal.async.AsyncQueryExecutor;
+import io.github.jklingsporn.vertx.jooq.shared.internal.async.AbstractAsyncQueryExecutor;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
@@ -20,7 +20,7 @@ import java.util.function.Function;
 /**
  * Created by jensklingsporn on 07.02.18.
  */
-public class AsyncCompletableFutureGenericQueryExecutor implements AsyncQueryExecutor<CompletableFuture<List<JsonObject>>, CompletableFuture<JsonObject>> {
+public class AsyncCompletableFutureGenericQueryExecutor extends AbstractAsyncQueryExecutor<CompletableFuture<List<JsonObject>>, CompletableFuture<JsonObject>> {
 
     protected final Vertx vertx;
     protected final AsyncSQLClient delegate;
