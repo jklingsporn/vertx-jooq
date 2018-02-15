@@ -78,10 +78,14 @@ public abstract class CompletableFutureTestBase<P,T,O, DAO extends GenericVertxD
         };
     }
 
+    protected CompletableFuture<T> insertAndReturn(P something) {
+        return dao.insertReturningPrimaryAsync(something);
+    }
+
     @Test
     public void asyncCRUDShouldSucceed() throws InterruptedException {
         CountDownLatch latch = new CountDownLatch(1);
-        insertReturning(create())
+        insertAndReturn(create())
                 .thenCompose(dao::findOneByIdAsync)
                 .thenCompose(something -> dao
                         .updateAsync(setSomeO(something, createSomeO()))
@@ -119,8 +123,8 @@ public abstract class CompletableFutureTestBase<P,T,O, DAO extends GenericVertxD
     public void insertReturningShouldFailOnDuplicateKey() throws InterruptedException {
         CountDownLatch latch = new CountDownLatch(1);
         P something = create();
-        insertReturning(something)
-                .thenCompose(id -> insertReturning(setId(something, id)))
+        insertAndReturn(something)
+                .thenCompose(id -> insertAndReturn(setId(something, id)))
                 .exceptionally(x -> {
                     Assert.assertNotNull(x);
                     assertDuplicateKeyException(x);
@@ -131,14 +135,10 @@ public abstract class CompletableFutureTestBase<P,T,O, DAO extends GenericVertxD
         await(latch);
     }
 
-    protected CompletableFuture<T> insertReturning(P something) {
-        return dao.insertReturningPrimaryAsync(something);
-    }
-
     @Test
     public void asyncCRUDConditionShouldSucceed() throws InterruptedException {
         CountDownLatch latch = new CountDownLatch(1);
-        CompletableFuture<T> insertFuture = insertReturning(create());
+        CompletableFuture<T> insertFuture = insertAndReturn(create());
         insertFuture.
                 thenCompose(v -> dao.findOneByConditionAsync(eqPrimaryKey(insertFuture.join())))
                 .thenAccept(Assert::assertNotNull)
@@ -151,8 +151,8 @@ public abstract class CompletableFutureTestBase<P,T,O, DAO extends GenericVertxD
     public void findOneByConditionWithMultipleMatchesShouldFail() throws InterruptedException {
         CountDownLatch latch = new CountDownLatch(1);
         O someO = createSomeO();
-        CompletableFuture<T> insertFuture1 = insertReturning(setSomeO(create(), someO));
-        CompletableFuture<T> insertFuture2 = insertReturning(setSomeO(create(), someO));
+        CompletableFuture<T> insertFuture1 = insertAndReturn(setSomeO(create(), someO));
+        CompletableFuture<T> insertFuture2 = insertAndReturn(setSomeO(create(), someO));
         VertxCompletableFuture.allOf(insertFuture1, insertFuture2).
                 thenCompose(v -> dao.findOneByConditionAsync(otherfield.eq(someO))).
                 handle((res, x) -> {
@@ -170,8 +170,8 @@ public abstract class CompletableFutureTestBase<P,T,O, DAO extends GenericVertxD
     public void findManyByConditionWithMultipleMatchesShouldSucceed() throws InterruptedException {
         CountDownLatch latch = new CountDownLatch(1);
         O someO = createSomeO();
-        CompletableFuture<T> insertFuture1 = insertReturning(setSomeO(create(), someO));
-        CompletableFuture<T> insertFuture2 = insertReturning(setSomeO(create(), someO));
+        CompletableFuture<T> insertFuture1 = insertAndReturn(setSomeO(create(), someO));
+        CompletableFuture<T> insertFuture2 = insertAndReturn(setSomeO(create(), someO));
         VertxCompletableFuture.allOf(insertFuture1, insertFuture2).
                 thenCompose(v -> dao.findManyByConditionAsync(otherfield.eq(someO))).
                 thenAccept(values -> Assert.assertEquals(2, values.size())).
@@ -184,8 +184,8 @@ public abstract class CompletableFutureTestBase<P,T,O, DAO extends GenericVertxD
     @Test
     public void findAllShouldReturnValues() throws InterruptedException{
         CountDownLatch latch = new CountDownLatch(1);
-        CompletableFuture<T> insertFuture1 = insertReturning(create());
-        CompletableFuture<T> insertFuture2 = insertReturning(create());
+        CompletableFuture<T> insertFuture1 = insertAndReturn(create());
+        CompletableFuture<T> insertFuture2 = insertAndReturn(create());
         VertxCompletableFuture.allOf(insertFuture1, insertFuture2).
                 thenCompose(v -> dao.findAllAsync()).
                 thenAccept(list -> {

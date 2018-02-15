@@ -12,9 +12,11 @@ import org.jooq.Condition;
 import org.jooq.Record2;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Test;
 
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * Created by jensklingsporn on 02.11.16.
@@ -76,10 +78,23 @@ public class SomethingCompositeDaoTest extends CompletableFutureTestBase<Somethi
     }
 
     @Override
-    protected CompletableFuture<Record2<Integer, Integer>> insertReturning(Somethingcomposite something) {
+    protected CompletableFuture<Record2<Integer, Integer>> insertAndReturn(Somethingcomposite something) {
         return dao
                 .insertAsync(something)
                 .thenAccept(i->Assert.assertEquals(1L,i.longValue()))
                 .thenApply(v->getId(something));
+    }
+
+    @Test
+    public void insertReturningShouldThrowUnsupportedOperationException() throws InterruptedException {
+        CountDownLatch latch = new CountDownLatch(1);
+        dao.insertReturningPrimaryAsync(new Somethingcomposite())
+                .whenComplete((res, x) -> {
+                            Assert.assertNotNull(x);
+                            assertException(UnsupportedOperationException.class,x);
+                            latch.countDown();
+                        }
+                );
+        await(latch);
     }
 }

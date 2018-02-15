@@ -13,8 +13,10 @@ import org.jooq.Condition;
 import org.jooq.Record2;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Test;
 
 import java.util.Random;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * Created by jensklingsporn on 02.11.16.
@@ -77,12 +79,24 @@ public class SomethingCompositeDaoTest extends ClassicTestBase<Somethingcomposit
     }
 
     @Override
-    protected Future<Record2<Integer, Integer>> insertReturning(Somethingcomposite something) {
+    protected Future<Record2<Integer, Integer>> insertAndReturn(Somethingcomposite something) {
         return dao
                 .insertAsync(something)
                 .map(toVoid(i -> Assert.assertEquals(1L, i.longValue())))
                 .map(v -> getId(something));
     }
 
+    @Test
+    public void insertReturningShouldThrowUnsupportedOperationException() throws InterruptedException {
+        CountDownLatch latch = new CountDownLatch(1);
+        dao.insertReturningPrimaryAsync(new Somethingcomposite())
+                .setHandler(h -> {
+                            Assert.assertTrue(h.failed());
+                            Assert.assertEquals(UnsupportedOperationException.class, h.cause().getClass());
+                            latch.countDown();
+                        }
+                );
+        await(latch);
+    }
 
 }
