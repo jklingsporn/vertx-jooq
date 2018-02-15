@@ -5,10 +5,7 @@ import io.reactivex.Single;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.sql.UpdateResult;
 import io.vertx.reactivex.ext.asyncsql.AsyncSQLClient;
-import org.jooq.InsertResultStep;
-import org.jooq.Query;
-import org.jooq.ResultQuery;
-import org.jooq.UpdatableRecord;
+import org.jooq.*;
 
 import java.util.List;
 import java.util.function.Function;
@@ -21,9 +18,9 @@ public class AsyncRXQueryExecutor<R extends UpdatableRecord<R>,P,T> extends Asyn
 
     private final Function<JsonObject,P> pojoMapper;
 
-    public AsyncRXQueryExecutor(AsyncSQLClient delegate, Function<JsonObject, P> pojoMapper) {
+    public AsyncRXQueryExecutor(AsyncSQLClient delegate, Function<JsonObject, P> pojoMapper, Table<R> table) {
         super(delegate);
-        this.pojoMapper = pojoMapper;
+        this.pojoMapper = convertFromSQL(table).andThen(pojoMapper);
     }
 
 

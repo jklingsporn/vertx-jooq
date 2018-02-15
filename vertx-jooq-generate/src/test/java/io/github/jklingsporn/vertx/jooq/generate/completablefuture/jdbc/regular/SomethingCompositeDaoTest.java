@@ -1,9 +1,9 @@
-package io.github.jklingsporn.vertx.jooq.generate.completablefuture.jdbc.guice;
+package io.github.jklingsporn.vertx.jooq.generate.completablefuture.jdbc.regular;
 
-import generated.cf.jdbc.guice.vertx.Tables;
-import generated.cf.jdbc.guice.vertx.tables.daos.SomethingcompositeDao;
-import generated.cf.jdbc.guice.vertx.tables.pojos.Somethingcomposite;
-import generated.cf.jdbc.guice.vertx.tables.records.SomethingcompositeRecord;
+import generated.cf.jdbc.regular.vertx.Tables;
+import generated.cf.jdbc.regular.vertx.tables.daos.SomethingcompositeDao;
+import generated.cf.jdbc.regular.vertx.tables.pojos.Somethingcomposite;
+import generated.cf.jdbc.regular.vertx.tables.records.SomethingcompositeRecord;
 import io.github.jklingsporn.vertx.jooq.generate.JDBCDatabaseConfigurationProvider;
 import io.github.jklingsporn.vertx.jooq.generate.completablefuture.CompletableFutureTestBase;
 import io.vertx.core.Vertx;
@@ -75,7 +75,7 @@ public class SomethingCompositeDaoTest extends CompletableFutureTestBase<Somethi
     @Override
     protected void assertDuplicateKeyException(Throwable x) {
         //CompletionException -> DataAccessException -> SQLIntegrityConstraintViolationException
-        assertException(SQLIntegrityConstraintViolationException.class, x);
+        assertException(SQLIntegrityConstraintViolationException.class,x);
     }
 
 }

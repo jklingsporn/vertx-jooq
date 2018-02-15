@@ -1,19 +1,18 @@
-package io.github.jklingsporn.vertx.jooq.generate.classic.async.regular;
+package io.github.jklingsporn.vertx.jooq.generate.rx.async.guice;
 
-import generated.classic.async.regular.Tables;
-import generated.classic.async.regular.tables.daos.SomethingcompositeDao;
-import generated.classic.async.regular.tables.pojos.Somethingcomposite;
-import generated.classic.async.regular.tables.records.SomethingcompositeRecord;
-import io.github.jklingsporn.vertx.jooq.generate.AsyncDatabaseClientProvider;
+import generated.rx.async.guice.Tables;
+import generated.rx.async.guice.tables.daos.SomethingcompositeDao;
+import generated.rx.async.guice.tables.pojos.Somethingcomposite;
+import generated.rx.async.guice.tables.records.SomethingcompositeRecord;
 import io.github.jklingsporn.vertx.jooq.generate.AsyncDatabaseConfigurationProvider;
-import io.github.jklingsporn.vertx.jooq.generate.classic.ClassicTestBase;
-import io.vertx.core.Future;
+import io.github.jklingsporn.vertx.jooq.generate.rx.RXTestBase;
+import io.github.jklingsporn.vertx.jooq.generate.rx.async.AsyncRXDatabaseClientProvider;
+import io.reactivex.Single;
 import io.vertx.core.json.JsonObject;
 import org.jooq.Condition;
 import org.jooq.Record2;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Random;
@@ -22,10 +21,10 @@ import java.util.concurrent.CountDownLatch;
 /**
  * Created by jensklingsporn on 02.11.16.
  */
-public class SomethingCompositeDaoTest extends ClassicTestBase<Somethingcomposite, Record2<Integer,Integer>, JsonObject, SomethingcompositeDao> {
+public class SomethingCompositeDaoTest extends RXTestBase<Somethingcomposite, Record2<Integer,Integer>, JsonObject, SomethingcompositeDao> {
 
     public SomethingCompositeDaoTest() {
-        super(Tables.SOMETHINGCOMPOSITE.SOMEJSONOBJECT, new SomethingcompositeDao(AsyncDatabaseConfigurationProvider.getInstance().createDAOConfiguration(), AsyncDatabaseClientProvider.getInstance().getClient()));
+        super(Tables.SOMETHINGCOMPOSITE.SOMEJSONOBJECT, new SomethingcompositeDao(AsyncDatabaseConfigurationProvider.getInstance().createDAOConfiguration(), AsyncRXDatabaseClientProvider.getInstance().getClient()));
     }
 
     @BeforeClass
@@ -77,24 +76,24 @@ public class SomethingCompositeDaoTest extends ClassicTestBase<Somethingcomposit
 
     @Override
     protected void assertDuplicateKeyException(Throwable x) {
-        Assert.assertEquals(com.github.mauricio.async.db.mysql.exceptions.MySQLException.class, x.getClass());
+        assertException(com.github.mauricio.async.db.mysql.exceptions.MySQLException.class, x);
     }
 
     @Override
-    protected Future<Record2<Integer, Integer>> insertAndReturn(Somethingcomposite something) {
+    protected Single<Record2<Integer, Integer>> insertAndReturn(Somethingcomposite something) {
         return dao
                 .insertAsync(something)
-                .map(toVoid(i->Assert.assertEquals(1L,i.longValue())))
-                .map(v->getId(something));
+                .doOnEvent((i, x) -> Assert.assertEquals(1L, i.longValue()))
+                .map(v -> getId(something));
     }
 
     @Test
     public void insertReturningShouldThrowUnsupportedOperationException() throws InterruptedException {
         CountDownLatch latch = new CountDownLatch(1);
         dao.insertReturningPrimaryAsync(new Somethingcomposite())
-                .setHandler(h -> {
-                            Assert.assertTrue(h.failed());
-                            Assert.assertEquals(UnsupportedOperationException.class, h.cause().getClass());
+                .subscribe((res, x) -> {
+                            Assert.assertNotNull(x);
+                            assertException(UnsupportedOperationException.class, x);
                             latch.countDown();
                         }
                 );

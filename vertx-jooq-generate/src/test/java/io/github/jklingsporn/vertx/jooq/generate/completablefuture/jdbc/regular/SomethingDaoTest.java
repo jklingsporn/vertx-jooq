@@ -1,8 +1,8 @@
-package io.github.jklingsporn.vertx.jooq.generate.completablefuture.jdbc.guice;
+package io.github.jklingsporn.vertx.jooq.generate.completablefuture.jdbc.regular;
 
-import generated.cf.jdbc.guice.vertx.Tables;
-import generated.cf.jdbc.guice.vertx.tables.daos.SomethingDao;
-import generated.cf.jdbc.guice.vertx.tables.pojos.Something;
+import generated.cf.jdbc.regular.vertx.Tables;
+import generated.cf.jdbc.regular.vertx.tables.daos.SomethingDao;
+import generated.cf.jdbc.regular.vertx.tables.pojos.Something;
 import io.github.jklingsporn.vertx.jooq.generate.JDBCDatabaseConfigurationProvider;
 import io.github.jklingsporn.vertx.jooq.generate.completablefuture.CompletableFutureTestBase;
 import io.vertx.core.Vertx;

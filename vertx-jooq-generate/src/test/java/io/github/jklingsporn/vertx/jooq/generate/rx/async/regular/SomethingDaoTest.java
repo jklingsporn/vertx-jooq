@@ -1,31 +1,30 @@
-package io.github.jklingsporn.vertx.jooq.generate.completablefuture.jdbc.guice;
+package io.github.jklingsporn.vertx.jooq.generate.rx.async.regular;
 
-import generated.cf.jdbc.guice.vertx.Tables;
-import generated.cf.jdbc.guice.vertx.tables.daos.SomethingDao;
-import generated.cf.jdbc.guice.vertx.tables.pojos.Something;
-import io.github.jklingsporn.vertx.jooq.generate.JDBCDatabaseConfigurationProvider;
-import io.github.jklingsporn.vertx.jooq.generate.completablefuture.CompletableFutureTestBase;
-import io.vertx.core.Vertx;
+import generated.rx.async.regular.Tables;
+import generated.rx.async.regular.tables.daos.SomethingDao;
+import generated.rx.async.regular.tables.pojos.Something;
+import io.github.jklingsporn.vertx.jooq.generate.AsyncDatabaseConfigurationProvider;
+import io.github.jklingsporn.vertx.jooq.generate.rx.RXTestBase;
+import io.github.jklingsporn.vertx.jooq.generate.rx.async.AsyncRXDatabaseClientProvider;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import org.jooq.Condition;
 import org.junit.BeforeClass;
 
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.Random;
 
 /**
  * Created by jensklingsporn on 02.11.16.
  */
-public class SomethingDaoTest extends CompletableFutureTestBase<Something, Integer, Long, SomethingDao> {
+public class SomethingDaoTest extends RXTestBase<Something, Integer, Long, SomethingDao> {
 
     public SomethingDaoTest() {
-        super(Tables.SOMETHING.SOMEHUGENUMBER, new SomethingDao(JDBCDatabaseConfigurationProvider.getInstance().createDAOConfiguration(), Vertx.vertx()));
+        super(Tables.SOMETHING.SOMEHUGENUMBER, new SomethingDao(AsyncDatabaseConfigurationProvider.getInstance().createDAOConfiguration(), AsyncRXDatabaseClientProvider.getInstance().getClient()));
     }
 
     @BeforeClass
     public static void beforeClass() throws Exception {
-        JDBCDatabaseConfigurationProvider.getInstance().setupDatabase();
+        AsyncDatabaseConfigurationProvider.getInstance().setupDatabase();
     }
 
     @Override
@@ -43,7 +42,6 @@ public class SomethingDaoTest extends CompletableFutureTestBase<Something, Integ
         something.setSomejsonarray(new JsonArray().add(1).add(2).add(3));
         something.setSomejsonobject(new JsonObject().put("key", "value"));
         something.setSomesmallnumber((short) random.nextInt(Short.MAX_VALUE));
-        something.setSomeboolean(random.nextBoolean());
         something.setSomestring("my_string");
         return something;
     }
@@ -75,7 +73,6 @@ public class SomethingDaoTest extends CompletableFutureTestBase<Something, Integ
 
     @Override
     protected void assertDuplicateKeyException(Throwable x) {
-        //CompletionException -> DataAccessException -> SQLIntegrityConstraintViolationException
-        assertException(SQLIntegrityConstraintViolationException.class, x);
+        assertException(com.github.mauricio.async.db.mysql.exceptions.MySQLException.class, x);
     }
 }

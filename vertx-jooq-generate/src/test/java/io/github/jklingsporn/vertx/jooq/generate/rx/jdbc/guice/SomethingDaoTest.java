@@ -1,13 +1,13 @@
-package io.github.jklingsporn.vertx.jooq.generate.completablefuture.jdbc.guice;
+package io.github.jklingsporn.vertx.jooq.generate.rx.jdbc.guice;
 
-import generated.cf.jdbc.guice.vertx.Tables;
-import generated.cf.jdbc.guice.vertx.tables.daos.SomethingDao;
-import generated.cf.jdbc.guice.vertx.tables.pojos.Something;
+import generated.rx.jdbc.guice.vertx.Tables;
+import generated.rx.jdbc.guice.vertx.tables.daos.SomethingDao;
+import generated.rx.jdbc.guice.vertx.tables.pojos.Something;
 import io.github.jklingsporn.vertx.jooq.generate.JDBCDatabaseConfigurationProvider;
-import io.github.jklingsporn.vertx.jooq.generate.completablefuture.CompletableFutureTestBase;
-import io.vertx.core.Vertx;
+import io.github.jklingsporn.vertx.jooq.generate.rx.RXTestBase;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+import io.vertx.reactivex.core.Vertx;
 import org.jooq.Condition;
 import org.junit.BeforeClass;
 
@@ -17,7 +17,7 @@ import java.util.Random;
 /**
  * Created by jensklingsporn on 02.11.16.
  */
-public class SomethingDaoTest extends CompletableFutureTestBase<Something, Integer, Long, SomethingDao> {
+public class SomethingDaoTest extends RXTestBase<Something, Integer, Long, SomethingDao> {
 
     public SomethingDaoTest() {
         super(Tables.SOMETHING.SOMEHUGENUMBER, new SomethingDao(JDBCDatabaseConfigurationProvider.getInstance().createDAOConfiguration(), Vertx.vertx()));

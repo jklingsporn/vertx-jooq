@@ -1,13 +1,13 @@
-package io.github.jklingsporn.vertx.jooq.generate.completablefuture.jdbc.guice;
+package io.github.jklingsporn.vertx.jooq.generate.rx.jdbc.regular;
 
-import generated.cf.jdbc.guice.vertx.Tables;
-import generated.cf.jdbc.guice.vertx.tables.daos.SomethingcompositeDao;
-import generated.cf.jdbc.guice.vertx.tables.pojos.Somethingcomposite;
-import generated.cf.jdbc.guice.vertx.tables.records.SomethingcompositeRecord;
+import generated.rx.jdbc.regular.vertx.Tables;
+import generated.rx.jdbc.regular.vertx.tables.daos.SomethingcompositeDao;
+import generated.rx.jdbc.regular.vertx.tables.pojos.Somethingcomposite;
+import generated.rx.jdbc.regular.vertx.tables.records.SomethingcompositeRecord;
 import io.github.jklingsporn.vertx.jooq.generate.JDBCDatabaseConfigurationProvider;
-import io.github.jklingsporn.vertx.jooq.generate.completablefuture.CompletableFutureTestBase;
-import io.vertx.core.Vertx;
+import io.github.jklingsporn.vertx.jooq.generate.rx.RXTestBase;
 import io.vertx.core.json.JsonObject;
+import io.vertx.reactivex.core.Vertx;
 import org.jooq.Condition;
 import org.jooq.Record2;
 import org.junit.BeforeClass;
@@ -18,7 +18,7 @@ import java.util.Random;
 /**
  * Created by jensklingsporn on 02.11.16.
  */
-public class SomethingCompositeDaoTest extends CompletableFutureTestBase<Somethingcomposite, Record2<Integer,Integer>, JsonObject, SomethingcompositeDao> {
+public class SomethingCompositeDaoTest extends RXTestBase<Somethingcomposite, Record2<Integer,Integer>, JsonObject, SomethingcompositeDao> {
 
 
     public SomethingCompositeDaoTest() {
@@ -74,7 +74,6 @@ public class SomethingCompositeDaoTest extends CompletableFutureTestBase<Somethi
 
     @Override
     protected void assertDuplicateKeyException(Throwable x) {
-        //CompletionException -> DataAccessException -> SQLIntegrityConstraintViolationException
         assertException(SQLIntegrityConstraintViolationException.class, x);
     }
 

@@ -106,10 +106,6 @@ public abstract class AbstractVertxDAO<R extends UpdatableRecord<R>, P, T, FIND_
         return deleteByConditionAsync(equalKeys(ids));
     }
 
-//    protected EXECUTE existsByIdAsyncInternal(T id){
-//        return queryExecutor().execute(using(configuration()).fetchExists(getTable()).where(equalKey(id)));
-//    }
-
     @Override
     public EXECUTE insertAsync(P pojo){
         Objects.requireNonNull(pojo);
@@ -128,10 +124,6 @@ public abstract class AbstractVertxDAO<R extends UpdatableRecord<R>, P, T, FIND_
         }
         return queryExecutor().execute(insertValuesStepN);
     }
-
-//    protected <X> X countAsyncInternal(){
-//        return this.<Long,X>executor().apply(dslContext -> dslContext.selectCount().from(getTable()).fetchOne(0, Long.class));
-//    }
 
     @SuppressWarnings("unchecked")
     public INSERT insertReturningPrimaryAsync(P object){

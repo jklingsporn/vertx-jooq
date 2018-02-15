@@ -1,16 +1,15 @@
-package io.github.jklingsporn.vertx.jooq.generate.completablefuture.jdbc.regular;
+package io.github.jklingsporn.vertx.jooq.generate.rx.jdbc.guice;
 
-import generated.cf.jdbc.regular.vertx.Tables;
-import generated.cf.jdbc.regular.vertx.tables.daos.SomethingcompositeDao;
-import generated.cf.jdbc.regular.vertx.tables.pojos.Somethingcomposite;
-import generated.cf.jdbc.regular.vertx.tables.records.SomethingcompositeRecord;
+import generated.rx.jdbc.guice.vertx.Tables;
+import generated.rx.jdbc.guice.vertx.tables.daos.SomethingcompositeDao;
+import generated.rx.jdbc.guice.vertx.tables.pojos.Somethingcomposite;
+import generated.rx.jdbc.guice.vertx.tables.records.SomethingcompositeRecord;
 import io.github.jklingsporn.vertx.jooq.generate.JDBCDatabaseConfigurationProvider;
-import io.github.jklingsporn.vertx.jooq.generate.completablefuture.CompletableFutureTestBase;
-import io.vertx.core.Vertx;
+import io.github.jklingsporn.vertx.jooq.generate.rx.RXTestBase;
 import io.vertx.core.json.JsonObject;
+import io.vertx.reactivex.core.Vertx;
 import org.jooq.Condition;
 import org.jooq.Record2;
-import org.junit.Assert;
 import org.junit.BeforeClass;
 
 import java.sql.SQLIntegrityConstraintViolationException;
@@ -19,10 +18,10 @@ import java.util.Random;
 /**
  * Created by jensklingsporn on 02.11.16.
  */
-public class VertxSomethingCompositeDaoTest extends CompletableFutureTestBase<Somethingcomposite, Record2<Integer,Integer>, JsonObject, SomethingcompositeDao> {
+public class SomethingCompositeDaoTest extends RXTestBase<Somethingcomposite, Record2<Integer,Integer>, JsonObject, SomethingcompositeDao> {
 
 
-    public VertxSomethingCompositeDaoTest() {
+    public SomethingCompositeDaoTest() {
         super(Tables.SOMETHINGCOMPOSITE.SOMEJSONOBJECT, new SomethingcompositeDao(JDBCDatabaseConfigurationProvider.getInstance().createDAOConfiguration(), Vertx.vertx()));
     }
 
@@ -75,8 +74,7 @@ public class VertxSomethingCompositeDaoTest extends CompletableFutureTestBase<So
 
     @Override
     protected void assertDuplicateKeyException(Throwable x) {
-        //CompletionException -> DataAccessException -> SQLIntegrityConstraintViolationException
-        Assert.assertEquals(SQLIntegrityConstraintViolationException.class, x.getCause().getCause().getClass());
+        assertException(SQLIntegrityConstraintViolationException.class, x);
     }
 
 }

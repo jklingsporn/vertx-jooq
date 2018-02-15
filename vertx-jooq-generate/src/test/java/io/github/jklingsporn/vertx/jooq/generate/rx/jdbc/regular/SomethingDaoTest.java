@@ -1,15 +1,14 @@
-package io.github.jklingsporn.vertx.jooq.generate.completablefuture.jdbc.regular;
+package io.github.jklingsporn.vertx.jooq.generate.rx.jdbc.regular;
 
-import generated.cf.jdbc.regular.vertx.Tables;
-import generated.cf.jdbc.regular.vertx.tables.daos.SomethingDao;
-import generated.cf.jdbc.regular.vertx.tables.pojos.Something;
+import generated.rx.jdbc.regular.vertx.Tables;
+import generated.rx.jdbc.regular.vertx.tables.daos.SomethingDao;
+import generated.rx.jdbc.regular.vertx.tables.pojos.Something;
 import io.github.jklingsporn.vertx.jooq.generate.JDBCDatabaseConfigurationProvider;
-import io.github.jklingsporn.vertx.jooq.generate.completablefuture.CompletableFutureTestBase;
-import io.vertx.core.Vertx;
+import io.github.jklingsporn.vertx.jooq.generate.rx.RXTestBase;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+import io.vertx.reactivex.core.Vertx;
 import org.jooq.Condition;
-import org.junit.Assert;
 import org.junit.BeforeClass;
 
 import java.sql.SQLIntegrityConstraintViolationException;
@@ -18,9 +17,9 @@ import java.util.Random;
 /**
  * Created by jensklingsporn on 02.11.16.
  */
-public class VertxSomethingDaoTest extends CompletableFutureTestBase<Something, Integer, Long, SomethingDao> {
+public class SomethingDaoTest extends RXTestBase<Something, Integer, Long, SomethingDao> {
 
-    public VertxSomethingDaoTest() {
+    public SomethingDaoTest() {
         super(Tables.SOMETHING.SOMEHUGENUMBER, new SomethingDao(JDBCDatabaseConfigurationProvider.getInstance().createDAOConfiguration(), Vertx.vertx()));
     }
 
@@ -77,6 +76,6 @@ public class VertxSomethingDaoTest extends CompletableFutureTestBase<Something, 
     @Override
     protected void assertDuplicateKeyException(Throwable x) {
         //CompletionException -> DataAccessException -> SQLIntegrityConstraintViolationException
-        Assert.assertEquals(SQLIntegrityConstraintViolationException.class, x.getCause().getCause().getClass());
+        assertException(SQLIntegrityConstraintViolationException.class, x);
     }
 }
