@@ -23,7 +23,6 @@ public class AsyncRXQueryExecutor<R extends UpdatableRecord<R>,P,T> extends Asyn
         this.pojoMapper = convertFromSQL(table).andThen(pojoMapper);
     }
 
-
     @Override
     public Single<List<P>> findMany(ResultQuery<R> query) {
         return findManyJson(query).map(rs -> rs.stream().map(pojoMapper).collect(Collectors.toList()));

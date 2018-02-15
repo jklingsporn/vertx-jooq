@@ -2,12 +2,13 @@ package io.github.jklingsporn.vertx.jooq.completablefuture.async;
 
 import io.github.jklingsporn.vertx.jooq.shared.internal.QueryExecutor;
 import io.vertx.core.Vertx;
-import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.asyncsql.AsyncSQLClient;
-import io.vertx.ext.sql.UpdateResult;
 import me.escoffier.vertx.completablefuture.VertxCompletableFuture;
-import org.jooq.*;
+import org.jooq.InsertResultStep;
+import org.jooq.ResultQuery;
+import org.jooq.Table;
+import org.jooq.UpdatableRecord;
 import org.jooq.conf.ParamType;
 
 import java.util.List;
@@ -36,16 +37,6 @@ public class AsyncCompletableFutureQueryExecutor <R extends UpdatableRecord<R>,P
     @Override
     public CompletableFuture<P> findOne(ResultQuery<R> query) {
         return findOneJson(query).thenApply(val -> val == null?null:pojoMapper.apply(val));
-    }
-
-    @Override
-    public CompletableFuture<Integer> execute(Query query) {
-        return getConnection().thenCompose(sqlConnection -> {
-            CompletableFuture<Integer> cf = new VertxCompletableFuture<>(vertx);
-            JsonArray bindValues = getBindValues(query);
-            sqlConnection.updateWithParams(query.getSQL(), bindValues, executeAndClose(UpdateResult::getUpdated,sqlConnection,cf));
-            return cf;
-        });
     }
 
     @Override

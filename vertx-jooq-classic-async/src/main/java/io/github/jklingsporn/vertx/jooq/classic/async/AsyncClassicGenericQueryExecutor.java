@@ -10,6 +10,8 @@ import io.vertx.core.logging.LoggerFactory;
 import io.vertx.ext.asyncsql.AsyncSQLClient;
 import io.vertx.ext.sql.ResultSet;
 import io.vertx.ext.sql.SQLConnection;
+import io.vertx.ext.sql.UpdateResult;
+import org.jooq.Query;
 import org.jooq.Record;
 import org.jooq.ResultQuery;
 import org.jooq.conf.ParamType;
@@ -22,7 +24,7 @@ import java.util.function.Supplier;
 /**
  * Created by jensklingsporn on 07.02.18.
  */
-public class AsyncClassicGenericQueryExecutor extends AbstractAsyncQueryExecutor<Future<List<JsonObject>>, Future<JsonObject>> {
+public class AsyncClassicGenericQueryExecutor extends AbstractAsyncQueryExecutor<Future<List<JsonObject>>, Future<JsonObject>, Future<Integer>> {
 
     private static final Logger logger = LoggerFactory.getLogger(AsyncClassicGenericQueryExecutor.class);
 
@@ -32,6 +34,21 @@ public class AsyncClassicGenericQueryExecutor extends AbstractAsyncQueryExecutor
         this.delegate = delegate;
     }
 
+    @Override
+    public Future<Integer> execute(Query query) {
+        return getConnection().compose(sqlConnection -> {
+            log("Execute", () -> query.getSQL(ParamType.INLINED));
+            Future<Integer> future = Future.future();
+            sqlConnection.updateWithParams(
+                    query.getSQL(),
+                    getBindValues(query),
+                    this.<UpdateResult,Integer>executeAndClose(UpdateResult::getUpdated,
+                            sqlConnection,
+                            future)
+            );
+            return future;
+        });
+    }
 
     @Override
     public <Q extends Record> Future<List<JsonObject>> findManyJson(ResultQuery<Q> query) {

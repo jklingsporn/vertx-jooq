@@ -11,8 +11,9 @@ import java.util.stream.Collectors;
 /**
  * @param <FIND_MANY_JSON> a type to represent many <code>JsonObject</code>s.
  * @param <FIND_ONE_JSON> a type to represent one <code>JsonObject</code>.
+ * @param <EXECUTE> the result type returned for all insert, update and delete-operations. This varies on the AsyncQueryExecutor-subtypes, e.g. {@code Future<Integer>}.
  */
-public abstract class AbstractAsyncQueryExecutor<FIND_MANY_JSON, FIND_ONE_JSON> implements AsyncQueryExecutor<FIND_MANY_JSON, FIND_ONE_JSON>{
+public abstract class AbstractAsyncQueryExecutor<FIND_MANY_JSON, FIND_ONE_JSON, EXECUTE> implements AsyncQueryExecutor<FIND_MANY_JSON, FIND_ONE_JSON, EXECUTE>{
 
     /**
      * The <code>AsyncSQLClient</code> does not know anything about converters you may have set for your entities,

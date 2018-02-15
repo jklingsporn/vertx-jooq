@@ -36,22 +36,6 @@ public class AsyncClassicQueryExecutor<R extends UpdatableRecord<R>,P,T> extends
     }
 
     @Override
-    public Future<Integer> execute(Query query) {
-        return getConnection().compose(sqlConnection -> {
-            log("Execute", () -> query.getSQL(ParamType.INLINED));
-            Future<Integer> future = Future.future();
-            sqlConnection.updateWithParams(
-                    query.getSQL(),
-                    getBindValues(query),
-                    this.<UpdateResult,Integer>executeAndClose(UpdateResult::getUpdated,
-                            sqlConnection,
-                            future)
-            );
-            return future;
-        });
-    }
-
-    @Override
     @SuppressWarnings("unchecked")
     public Future<T> insertReturning(InsertResultStep<R> query, Function<Object, T> keyMapper) {
         return getConnection().compose(sqlConnection->{

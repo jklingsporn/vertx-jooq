@@ -4,7 +4,9 @@ import io.github.jklingsporn.vertx.jooq.shared.internal.async.AbstractAsyncQuery
 import io.reactivex.Single;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.sql.ResultSet;
+import io.vertx.ext.sql.UpdateResult;
 import io.vertx.reactivex.ext.asyncsql.AsyncSQLClient;
+import org.jooq.Query;
 import org.jooq.Record;
 import org.jooq.ResultQuery;
 import org.jooq.exception.TooManyRowsException;
@@ -15,12 +17,22 @@ import java.util.function.Function;
 /**
  * Created by jensklingsporn on 07.02.18.
  */
-public class AsyncRXGenericQueryExecutor extends AbstractAsyncQueryExecutor<Single<List<JsonObject>>,Single<JsonObject>> {
+public class AsyncRXGenericQueryExecutor extends AbstractAsyncQueryExecutor<Single<List<JsonObject>>,Single<JsonObject>,Single<Integer>> {
 
     protected final AsyncSQLClient delegate;
 
     public AsyncRXGenericQueryExecutor(AsyncSQLClient delegate) {
         this.delegate = delegate;
+    }
+
+    @Override
+    public Single<Integer> execute(Query query) {
+        return getConnection()
+                .flatMap(executeAndClose(sqlConnection ->
+                                sqlConnection
+                                        .rxUpdateWithParams(query.getSQL(), getBindValues(query))
+                                        .map(UpdateResult::getUpdated))
+                );
     }
 
     @Override
