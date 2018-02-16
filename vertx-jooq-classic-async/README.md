@@ -7,62 +7,6 @@
 </dependency>
 ```
 
-## example
-Once the generator is set up, it will create DAOs like in the example below (using `vertx-jooq-classic-async`).
-```
-//Setup your jOOQ configuration
-Configuration configuration = new DefaultConfiguration();
-configuration.set(SQLDialect.MYSQL); //or SQLDialect.POSTGRES
-//no other DB-Configuration necessary because jOOQ is only used to render our statements - not for excecution
-
-//setup Vertx
-Vertx vertx = Vertx.vertx();
-//setup the client
-JsonObject config = new JsonObject().put("host", "127.0.0.1").put("username", "vertx").putNull("password").put("database","vertx");
-AsyncJooqSQLClient client = AsyncJooqSQLClient.create(vertx,MySQLClient.createNonShared(vertx, config))
-
-//instantiate a DAO (which is generated for you)
-SomethingDao dao = new SomethingDao(configuration, client);
-
-//fetch something with ID 123...
-dao.findOneById(123)
-    .setHandler(res->{
-        		if(res.succeeded()){
-            		vertx.eventBus().send("sendSomething",something.toJson())
-        		}else{
-        				System.err.println("Something failed badly: "+res.cause().getMessage());
-        		}
-        });
-
-//maybe consume it in another verticle
-vertx.eventBus().<JsonObject>consumer("sendSomething", jsonEvent->{
-    JsonObject message = jsonEvent.body();
-    //Convert it back into a POJO...
-    Something something = new Something(message);
-    //... change some values
-    something.setSomeregularnumber(456);
-    //... and update it into the DB
-    Future<Void> updatedFuture = dao.update(something);
-
-});
-
-//or do you prefer writing your own type-safe SQL?
-AsyncClassicGenericQueryExecutor queryExecutor = new AsyncClassicGenericQueryExecutor(client);
-Future<Integer> updatedCustomFuture = queryExecutor.execute(DSL.using(configuration)
-			.update(Tables.SOMETHING)
-			.set(Tables.SOMETHING.SOMEREGULARNUMBER,456)
-			.where(Tables.SOMETHING.SOMEID.eq(something.getSomeid())));
-
-//check for completion
-updatedCustomFuture.setHandler(res->{
-		if(res.succeeded()){
-				System.out.println("Rows updated: "+res.result());
-		}else{
-				System.err.println("Something failed badly: "+res.cause().getMessage());
-		}
-});
-```
-
 # maven code generator configuration example for mysql
 The following code-snippet can be copy-pasted into your pom.xml to generate code from your MySQL database schema.
 
@@ -271,5 +215,60 @@ task jooqGenerate {
 ```
 
 # programmatic configuration of the code generator
-See the [AbstractDatabaseConfigurationProvider](https://github.com/jklingsporn/vertx-jooq/blob/master/vertx-jooq-generate/src/test/java/io/github/jklingsporn/vertx/jooq/generate/AbstractDatabaseConfigurationProvider.java)
+See the [AbstractDatabaseConfigurationProvider](vertx-jooq-generate/src/test/java/io/github/jklingsporn/vertx/jooq/generate/AbstractDatabaseConfigurationProvider.java)
 of how to setup the generator programmatically.
+
+## usage
+```
+//Setup your jOOQ configuration
+Configuration configuration = new DefaultConfiguration();
+configuration.set(SQLDialect.MYSQL); //or SQLDialect.POSTGRES
+//no other DB-Configuration necessary because jOOQ is only used to render our statements - not for excecution
+
+//setup Vertx
+Vertx vertx = Vertx.vertx();
+//setup the client
+JsonObject config = new JsonObject().put("host", "127.0.0.1").put("username", "vertx").putNull("password").put("database","vertx");
+AsyncJooqSQLClient client = AsyncJooqSQLClient.create(vertx,MySQLClient.createNonShared(vertx, config))
+
+//instantiate a DAO (which is generated for you)
+SomethingDao dao = new SomethingDao(configuration, client);
+
+//fetch something with ID 123...
+dao.findOneById(123)
+    .setHandler(res->{
+        		if(res.succeeded()){
+            		vertx.eventBus().send("sendSomething",something.toJson())
+        		}else{
+        				System.err.println("Something failed badly: "+res.cause().getMessage());
+        		}
+        });
+
+//maybe consume it in another verticle
+vertx.eventBus().<JsonObject>consumer("sendSomething", jsonEvent->{
+    JsonObject message = jsonEvent.body();
+    //Convert it back into a POJO...
+    Something something = new Something(message);
+    //... change some values
+    something.setSomeregularnumber(456);
+    //... and update it into the DB
+    Future<Void> updatedFuture = dao.update(something);
+
+});
+
+//or do you prefer writing your own type-safe SQL?
+AsyncClassicGenericQueryExecutor queryExecutor = new AsyncClassicGenericQueryExecutor(client);
+Future<Integer> updatedCustomFuture = queryExecutor.execute(DSL.using(configuration)
+			.update(Tables.SOMETHING)
+			.set(Tables.SOMETHING.SOMEREGULARNUMBER,456)
+			.where(Tables.SOMETHING.SOMEID.eq(something.getSomeid())));
+
+//check for completion
+updatedCustomFuture.setHandler(res->{
+		if(res.succeeded()){
+				System.out.println("Rows updated: "+res.result());
+		}else{
+				System.err.println("Something failed badly: "+res.cause().getMessage());
+		}
+});
+```

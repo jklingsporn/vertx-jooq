@@ -7,59 +7,6 @@
 </dependency>
 ```
 
-## example
-Once the generator is set up, it will create DAOs like in the example below (using `vertx-jooq-classic-jdbc`).
-```
-//Setup your jOOQ configuration
-Configuration configuration = ...
-
-//setup Vertx
-Vertx vertx = Vertx.vertx();
-
-//instantiate a DAO (which is generated for you)
-SomethingDao dao = new SomethingDao(configuration,vertx);
-
-//fetch something with ID 123...
-dao.findOneById(123)
-    .setHandler(res->{
-    		if(res.succeeded()){
-        		vertx.eventBus().send("sendSomething",something.toJson())
-    		}else{
-    				System.err.println("Something failed badly: "+res.cause().getMessage());
-    		}
-    });
-
-//maybe consume it in another verticle
-vertx.eventBus().<JsonObject>consumer("sendSomething", jsonEvent->{
-    JsonObject message = jsonEvent.body();
-    //Convert it back into a POJO...
-    Something something = new Something(message);
-    //... change some values
-    something.setSomeregularnumber(456);
-    //... and update it into the DB
-    Future<Void> updatedFuture = dao.update(something);
-});
-
-//or do you prefer writing your own type-safe SQL?
-JDBCClassicGenericQueryExecutor queryExecutor = new JDBCClassicGenericQueryExecutor(configuration,vertx);
-Future<Integer> updatedCustomFuture = queryExecutor.execute(dslContext ->
-				dslContext
-				.update(Tables.SOMETHING)
-				.set(Tables.SOMETHING.SOMEREGULARNUMBER,456)
-				.where(Tables.SOMETHING.SOMEID.eq(something.getSomeid()))
-				.execute()
-);
-
-//check for completion
-updatedCustomFuture.setHandler(res->{
-		if(res.succeeded()){
-				System.out.println("Rows updated: "+res.result());
-		}else{
-				System.err.println("Something failed badly: "+res.cause().getMessage());
-		}
-});
-```
-
 # maven code generator configuration example for mysql
 The following code-snippet can be copy-pasted into your pom.xml to generate code from your MySQL database schema.
 
@@ -268,5 +215,66 @@ task jooqGenerate {
 ```
 
 # programmatic configuration of the code generator
-See the [AbstractDatabaseConfigurationProvider](https://github.com/jklingsporn/vertx-jooq/blob/master/vertx-jooq-generate/src/test/java/io/github/jklingsporn/vertx/jooq/generate/AbstractDatabaseConfigurationProvider.java)
+See the [AbstractDatabaseConfigurationProvider](vertx-jooq-generate/src/test/java/io/github/jklingsporn/vertx/jooq/generate/AbstractDatabaseConfigurationProvider.java)
 of how to setup the generator programmatically.
+
+## usage
+```
+//Setup your jOOQ configuration
+Configuration configuration = ...
+
+//setup Vertx
+Vertx vertx = Vertx.vertx();
+
+//instantiate a DAO (which is generated for you)
+SomethingDao dao = new SomethingDao(configuration,vertx);
+
+//fetch something with ID 123...
+dao.findOneById(123)
+    .setHandler(res->{
+    		if(res.succeeded()){
+        		vertx.eventBus().send("sendSomething",something.toJson())
+    		}else{
+    				System.err.println("Something failed badly: "+res.cause().getMessage());
+    		}
+    });
+
+//maybe consume it in another verticle
+vertx.eventBus().<JsonObject>consumer("sendSomething", jsonEvent->{
+    JsonObject message = jsonEvent.body();
+    //Convert it back into a POJO...
+    Something something = new Something(message);
+    //... change some values
+    something.setSomeregularnumber(456);
+    //... and update it into the DB
+    Future<Void> updatedFuture = dao.update(something);
+});
+
+//or do you prefer writing your own type-safe SQL?
+JDBCClassicGenericQueryExecutor queryExecutor = new JDBCClassicGenericQueryExecutor(configuration,vertx);
+Future<Integer> updatedCustomFuture = queryExecutor.execute(dslContext ->
+				dslContext
+				.update(Tables.SOMETHING)
+				.set(Tables.SOMETHING.SOMEREGULARNUMBER,456)
+				.where(Tables.SOMETHING.SOMEID.eq(something.getSomeid()))
+				.execute()
+);
+
+//check for completion
+updatedCustomFuture.setHandler(res->{
+		if(res.succeeded()){
+				System.out.println("Rows updated: "+res.result());
+		}else{
+				System.err.println("Something failed badly: "+res.cause().getMessage());
+		}
+});
+```
+
+# known issues
+- The [`VertxCompletableFuture`](https://github.com/cescoffier/vertx-completable-future) is not part of the vertx-core package.
+The reason behind this is that it violates the contract of `CompletableFuture#XXXAsync` methods which states that those methods should
+run on the ForkJoin-Pool if no Executor is provided. This can not be done, because it would break the threading model of Vertx. Please
+keep that in mind. If you can not tolerate this, please use the [`vertx-jooq-classic`](https://github.com/jklingsporn/vertx-jooq/tree/master/vertx-jooq-classic) dependency.
+- The generator will omit datatypes that it does not know, e.g. `java.sql.Timestamp`. To fix this, you can easily subclass the generator, handle these types and generate the code using your generator.
+ See the `handleCustomTypeFromJson` and `handleCustomTypeToJson` methods in the `AbstractVertxGenerator`.
+- Since jOOQ is using JDBC under the hood, the non-blocking fashion is achieved by using the `Vertx.executeBlocking` method.
