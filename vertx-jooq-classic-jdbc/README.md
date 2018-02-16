@@ -1,55 +1,11 @@
-# vertx-jooq
-A [jOOQ](http://www.jooq.org/)-CodeGenerator to create [vertx](http://vertx.io/)-ified DAOs and POJOs!
-Perform all CRUD-operations asynchronously and convert your POJOs from/into a `io.vertx.core.JsonObject`.
-
-## new in version 3.0
-A lot has changed - not only under the hood.
-- Starting from this version on, `vertx-jooq` both includes the JDBC
-and the async variant (formerly known as [`vertx-jooq-async`](https://github.com/jklingsporn/vertx-jooq-async/)). This
- avoids duplicate code and thus provides better stability.
-- Say good bye callback-API: everybody who has written code that is more complex than a simple `HelloWorld` application
- hates callback-APIs. That is why I decided to let the classic-module now return Vertx `Futures` instead of accepting a
- `Handler` to deal with the result.
-- `vertx-jooq-future` becomes `vertx-jooq-completablefuture`: that was more or less a consequence of the decision to let the
-classic API return `Futures` now.
-- Consistent naming: I decided to prefix any DAO-method that is based on a `SELECT` with `find`, followed by `One` if
-it returns one value, or `Many` if it is capable to return many values, followed by a condition to define how the value is
-obtained, eg `byId`. If you are upgrading from a previous version, you will have to run some search and replace sessions in your favorite IDE.
-- DAOs are no longer capable of executing arbitrary SQL. There were two main drivers for this decision: 1. joining the JDBC
- and the async API did not allow it. 2. DAOs are bound to a POJO and should only operate on the POJO's type. With the option to execute any
-  SQL one could easily join on POJOs of other types and thus break boundaries. You can still execute type-safe SQL asynchronously
-  using one of the `QueryExecutors` though.
-- Never again call blocking DAO-methods by accident: in previous vertx-jooq versions each `VertxDAO` extended from jOOQ's `DAOImpl` class.
-This made it easy to just wrap the blocking variant of a CRUD-operation in a `Vertx.executeBlocking` block to get the async variant
-  of it. The downside however was that the blocking CRUD-operations were still visible in the DAO-API and it was up to the user
-  to call the correct (async) method.
-
-## different needs, different apis
-![What do you want](https://media.giphy.com/media/E87jjnSCANThe/giphy.gif)
-
-Before you start generating code using vertx-jooq, you have to answer these questions:
-- What API do you want to use? There are three options:
-  - a `io.vertx.core.Future`-based API. This is `vertx-jooq-classic`.
-  - a [rxjava2](https://github.com/ReactiveX/RxJava) based API. This is `vertx-jooq-rx`.
-  - a API that returns a [vertx-ified implementation](https://github.com/cescoffier/vertx-completable-future)
-  of `java.util.concurrent.CompletableFuture` for all async DAO operations and thus makes chaining your async operations easier.
-  It has some limitations which you need to be aware about (see [known issues](https://github.com/jklingsporn/vertx-jooq#known-issues)).
-  This is `vertx-jooq-completablefuture`.
-- How do you want to communicate with the database? There are two options:
-  - Using good old JDBC.
-  - Using an [asynchronous driver](https://github.com/mauricio/postgresql-async) database driver.
-- Do you use [Guice](https://github.com/google/guice) for dependency injection or not.
-
-When you made your choice, you can start to configure the code-generator. This can be either done programmatically or
- using a maven- or gradle-plugin. Please check the documentation in one of the variants of how to set it up.
-
-- [`vertx-jooq-classic-async`](https://github.com/jklingsporn/vertx-jooq/tree/master/vertx-jooq-classic-async)
-- [`vertx-jooq-classic-jdbc`](https://github.com/jklingsporn/vertx-jooq/tree/master/vertx-jooq-classic-jdbc)
-- [`vertx-jooq-rx-async`](https://github.com/jklingsporn/vertx-jooq/tree/master/vertx-jooq-rx-async)
-- [`vertx-jooq-rx-jdbc`](https://github.com/jklingsporn/vertx-jooq/tree/master/vertx-jooq-rx-jdbc)
-- [`vertx-jooq-completablefuture-async`](https://github.com/jklingsporn/vertx-jooq/tree/master/vertx-jooq-completablefuture-async)
-- [`vertx-jooq-completablefuture-jdbc`](https://github.com/jklingsporn/vertx-jooq/tree/master/vertx-jooq-completablefuture-jdbc)
-
+# maven
+```
+<dependency>
+  <groupId>io.github.jklingsporn</groupId>
+  <artifactId>vertx-jooq-classic-jdbc</artifactId>
+  <version>3.0.0-BETA</version>
+</dependency>
+```
 
 ## example
 Once the generator is set up, it will create DAOs like in the example below (using `vertx-jooq-classic-jdbc`).
@@ -66,12 +22,12 @@ SomethingDao dao = new SomethingDao(configuration,vertx);
 //fetch something with ID 123...
 dao.findOneByIdAsync(123)
     .setHandler(res->{
-        		if(res.succeeded()){
-            		vertx.eventBus().send("sendSomething",something.toJson())
-        		}else{
-        				System.err.println("Something failed badly: "+res.cause().getMessage());
-        		}
-        });
+    		if(res.succeeded()){
+        		vertx.eventBus().send("sendSomething",something.toJson())
+    		}else{
+    				System.err.println("Something failed badly: "+res.cause().getMessage());
+    		}
+    });
 
 //maybe consume it in another verticle
 vertx.eventBus().<JsonObject>consumer("sendSomething", jsonEvent->{
@@ -104,18 +60,6 @@ updatedCustomFuture.setHandler(res->{
 });
 ```
 
-Do you use dependency injection? In addition to the `FutureVertxGenerator`, there is also a generator with [Guice](https://github.com/google/guice) support. If you're using the `FutureVertxGuiceGenerator`,
-the `setConfiguration(org.jooq.Configuration)` and `setVertx(io.core.Vertx)` methods are annotated with `@javax.inject.Inject` and a
-Guice `Module` is created which binds all created VertxDAOs to their implementation. It plays nicely together with the [vertx-guice](https://github.com/ef-labs/vertx-guice) module that enables dependency injection for vertx.
-
-# maven
-```
-<dependency>
-  <groupId>io.github.jklingsporn</groupId>
-  <artifactId>vertx-jooq-future</artifactId>
-  <version>3.0.0-BETA</version>
-</dependency>
-```
 # maven code generator configuration example for mysql
 The following code-snippet can be copy-pasted into your pom.xml to generate code from your MySQL database schema.
 
@@ -140,7 +84,7 @@ If you are new to jOOQ, I recommend to read the awesome [jOOQ documentation](htt
     </dependency>
     <dependency>
       <groupId>io.github.jklingsporn</groupId>
-      <artifactId>vertx-jooq-future</artifactId>
+      <artifactId>vertx-jooq-classic-jdbc</artifactId>
       <version>3.0.0-BETA</version>
     </dependency>
   </dependencies>
@@ -187,7 +131,8 @@ If you are new to jOOQ, I recommend to read the awesome [jOOQ documentation](htt
 
               <!-- Generator parameters -->
               <generator>
-                  <name>io.github.jklingsporn.vertx.jooq.generate.future.FutureVertxGenerator</name>
+                  <name>io.github.jklingsporn.vertx.jooq.generate.VertxGenerator</name>
+              		<!-- use 'io.github.jklingsporn.vertx.jooq.generate.classic.VertxGuiceClassicGenerator' to enable Guice DI -->
                   <database>
                       <name>org.jooq.util.mysql.MySQLDatabase</name>
                       <includes>.*</includes>
@@ -229,7 +174,7 @@ If you are new to jOOQ, I recommend to read the awesome [jOOQ documentation](htt
 
 
                   <strategy>
-                      <name>io.github.jklingsporn.vertx.jooq.generate.future.FutureGeneratorStrategy</name>
+                      <name>io.github.jklingsporn.vertx.jooq.generate.classic.JDBCClassicVertxGeneratorStrategy</name>
                   </strategy>
               </generator>
 
@@ -246,7 +191,7 @@ The following code-snippet can be copy-pasted into your `build.gradle` to genera
 ```gradle
 buildscript {
     ext {
-        vertx_jooq_version = '2.4.1'
+        vertx_jooq_version = '3.0.0-BETA'
         postgresql_version = '42.1.4'
     }
     repositories {
@@ -286,7 +231,7 @@ task jooqGenerate {
                 password('YOUR_PASSWORD')
             }
             generator {
-                name('io.github.jklingsporn.vertx.jooq.generate.classic.ClassicVertxGenerator')
+                name('io.github.jklingsporn.vertx.jooq.generate.VertxGenerator')
                 database {
                     name('org.jooq.util.postgres.PostgresDatabase')
                     include('.*')
@@ -311,7 +256,7 @@ task jooqGenerate {
                     directory("$projectDir/src/main/java")
                 }
                 strategy {
-                    name('io.github.jklingsporn.vertx.jooq.generate.classic.ClassicGeneratorStrategy')
+                    name('io.github.jklingsporn.vertx.jooq.generate.classic.JDBCClassicVertxGeneratorStrategy')
                 }
             }
         }
@@ -323,14 +268,5 @@ task jooqGenerate {
 ```
 
 # programmatic configuration of the code generator
-See the [TestTool](https://github.com/jklingsporn/vertx-jooq/blob/master/vertx-jooq-generate/src/test/java/io/github/jklingsporn/vertx/jooq/generate/TestTool.java)
+See the [AbstractDatabaseConfigurationProvider](https://github.com/jklingsporn/vertx-jooq/blob/master/vertx-jooq-generate/src/test/java/io/github/jklingsporn/vertx/jooq/generate/AbstractDatabaseConfigurationProvider.java)
 of how to setup the generator programmatically.
-
-# known issues
-- The [`VertxCompletableFuture`](https://github.com/cescoffier/vertx-completable-future) is not part of the vertx-core package.
-The reason behind this is that it violates the contract of `CompletableFuture#XXXAsync` methods which states that those methods should
-run on the ForkJoin-Pool if no Executor is provided. This can not be done, because it would break the threading model of Vertx. Please
-keep that in mind. If you can not tolerate this, please use the [`vertx-jooq-classic`](https://github.com/jklingsporn/vertx-jooq/tree/master/vertx-jooq-classic) dependency.
-- The generator will omit datatypes that it does not know, e.g. `java.sql.Timestamp`. To fix this, you can easily subclass the generator, handle these types and generate the code using your generator.
- See the `handleCustomTypeFromJson` and `handleCustomTypeToJson` methods in the `AbstractVertxGenerator`.
-- Since jOOQ is using JDBC under the hood, the non-blocking fashion is achieved by using the `Vertx.executeBlocking` method.
