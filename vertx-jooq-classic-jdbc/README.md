@@ -215,7 +215,7 @@ task jooqGenerate {
 ```
 
 # programmatic configuration of the code generator
-See the [AbstractDatabaseConfigurationProvider](vertx-jooq-generate/src/test/java/io/github/jklingsporn/vertx/jooq/generate/AbstractDatabaseConfigurationProvider.java)
+See the [AbstractDatabaseConfigurationProvider](../vertx-jooq-generate/src/test/java/io/github/jklingsporn/vertx/jooq/generate/AbstractDatabaseConfigurationProvider.java)
 of how to setup the generator programmatically.
 
 ## usage
