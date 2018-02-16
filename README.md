@@ -64,7 +64,7 @@ Vertx vertx = Vertx.vertx();
 SomethingDao dao = new SomethingDao(configuration,vertx);
 
 //fetch something with ID 123...
-dao.findOneByIdAsync(123)
+dao.findOneById(123)
     .setHandler(res->{
         		if(res.succeeded()){
             		vertx.eventBus().send("sendSomething",something.toJson())
@@ -81,7 +81,7 @@ vertx.eventBus().<JsonObject>consumer("sendSomething", jsonEvent->{
     //... change some values
     something.setSomeregularnumber(456);
     //... and update it into the DB
-    Future<Void> updatedFuture = dao.updateAsync(something);
+    Future<Void> updatedFuture = dao.update(something);
 });
 
 //or do you prefer writing your own type-safe SQL?
