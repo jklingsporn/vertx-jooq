@@ -81,7 +81,7 @@ public class SomethingCompositeDaoTest extends ClassicTestBase<Somethingcomposit
     @Override
     protected Future<Record2<Integer, Integer>> insertAndReturn(Somethingcomposite something) {
         return dao
-                .insertAsync(something)
+                .insert(something)
                 .map(toVoid(i -> Assert.assertEquals(1L, i.longValue())))
                 .map(v -> getId(something));
     }
@@ -89,7 +89,7 @@ public class SomethingCompositeDaoTest extends ClassicTestBase<Somethingcomposit
     @Test
     public void insertReturningShouldThrowUnsupportedOperationException() throws InterruptedException {
         CountDownLatch latch = new CountDownLatch(1);
-        dao.insertReturningPrimaryAsync(new Somethingcomposite())
+        dao.insertReturningPrimary(new Somethingcomposite())
                 .setHandler(h -> {
                             Assert.assertTrue(h.failed());
                             Assert.assertEquals(UnsupportedOperationException.class, h.cause().getClass());

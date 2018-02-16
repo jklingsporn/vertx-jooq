@@ -82,7 +82,7 @@ public class SomethingCompositeDaoTest extends CompletableFutureTestBase<Somethi
     @Override
     protected CompletableFuture<Record2<Integer, Integer>> insertAndReturn(Somethingcomposite something) {
         return dao
-                .insertAsync(something)
+                .insert(something)
                 .thenAccept(i->Assert.assertEquals(1L,i.longValue()))
                 .thenApply(v->getId(something));
     }
@@ -90,7 +90,7 @@ public class SomethingCompositeDaoTest extends CompletableFutureTestBase<Somethi
     @Test
     public void insertReturningShouldThrowUnsupportedOperationException() throws InterruptedException {
         CountDownLatch latch = new CountDownLatch(1);
-        dao.insertReturningPrimaryAsync(new Somethingcomposite())
+        dao.insertReturningPrimary(new Somethingcomposite())
                 .whenComplete((res, x) -> {
                             Assert.assertNotNull(x);
                             assertException(UnsupportedOperationException.class,x);

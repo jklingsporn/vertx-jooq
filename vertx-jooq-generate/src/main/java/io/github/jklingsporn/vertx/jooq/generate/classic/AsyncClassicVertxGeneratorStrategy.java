@@ -43,7 +43,7 @@ public class AsyncClassicVertxGeneratorStrategy extends AbstractClassicVertxGene
         }else{
             out.println();
             out.tab(1).override();
-            out.tab(1).println("public %s insertReturningPrimaryAsync(%s pojo){",renderInsertReturningType(tType),pType);
+            out.tab(1).println("public %s insertReturningPrimary(%s pojo){",renderInsertReturningType(tType),pType);
             out.tab(2).println("return Future.failedFuture(new UnsupportedOperationException(\"PK not numeric\"));");
             out.tab(1).println("}");
         }

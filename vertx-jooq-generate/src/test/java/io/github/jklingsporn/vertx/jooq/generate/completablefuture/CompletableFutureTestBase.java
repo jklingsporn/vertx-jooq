@@ -79,20 +79,20 @@ public abstract class CompletableFutureTestBase<P,T,O, DAO extends GenericVertxD
     }
 
     protected CompletableFuture<T> insertAndReturn(P something) {
-        return dao.insertReturningPrimaryAsync(something);
+        return dao.insertReturningPrimary(something);
     }
 
     @Test
     public void asyncCRUDShouldSucceed() throws InterruptedException {
         CountDownLatch latch = new CountDownLatch(1);
         insertAndReturn(create())
-                .thenCompose(dao::findOneByIdAsync)
+                .thenCompose(dao::findOneById)
                 .thenCompose(something -> dao
-                        .updateAsync(setSomeO(something, createSomeO()))
+                        .update(setSomeO(something, createSomeO()))
                         .thenCompose(updatedRows -> {
                             Assert.assertEquals(1l, updatedRows.longValue());
                             return dao
-                                    .deleteByIdAsync(getId(something))
+                                    .deleteById(getId(something))
                                     .thenAccept(deletedRows -> Assert.assertEquals(1l, deletedRows.longValue()));
                         }))
                 .whenComplete(countdownLatchHandler(latch))
@@ -105,12 +105,12 @@ public abstract class CompletableFutureTestBase<P,T,O, DAO extends GenericVertxD
         CountDownLatch latch = new CountDownLatch(1);
         P something1 = createWithId();
         P something2 = createWithId();
-        dao.insertAsync(Arrays.asList(something1, something2))
+        dao.insert(Arrays.asList(something1, something2))
                 .thenAccept(inserted -> Assert.assertEquals(2L, inserted.longValue()))
-                .thenCompose(v -> dao.findManyByIdsAsync(Arrays.asList(getId(something1), getId(something2))))
+                .thenCompose(v -> dao.findManyByIds(Arrays.asList(getId(something1), getId(something2))))
                 .thenCompose(values -> {
                     Assert.assertEquals(2L, values.size());
-                    return dao.deleteByIdsAsync(values.stream().map(this::getId).collect(Collectors.toList()));
+                    return dao.deleteByIds(values.stream().map(this::getId).collect(Collectors.toList()));
                 })
                 .thenAccept(deleted -> Assert.assertEquals(2L,deleted.longValue()))
                 .whenComplete(countdownLatchHandler(latch))
@@ -130,7 +130,7 @@ public abstract class CompletableFutureTestBase<P,T,O, DAO extends GenericVertxD
                     assertDuplicateKeyException(x);
                     return null;
                 })
-                .thenCompose(v -> dao.deleteByConditionAsync(DSL.trueCondition()))
+                .thenCompose(v -> dao.deleteByCondition(DSL.trueCondition()))
                 .whenComplete(countdownLatchHandler(latch));
         await(latch);
     }
@@ -140,9 +140,9 @@ public abstract class CompletableFutureTestBase<P,T,O, DAO extends GenericVertxD
         CountDownLatch latch = new CountDownLatch(1);
         CompletableFuture<T> insertFuture = insertAndReturn(create());
         insertFuture.
-                thenCompose(v -> dao.findOneByConditionAsync(eqPrimaryKey(insertFuture.join())))
+                thenCompose(v -> dao.findOneByCondition(eqPrimaryKey(insertFuture.join())))
                 .thenAccept(Assert::assertNotNull)
-                .thenCompose(v -> dao.deleteByConditionAsync(eqPrimaryKey(insertFuture.join())))
+                .thenCompose(v -> dao.deleteByCondition(eqPrimaryKey(insertFuture.join())))
                 .whenComplete(countdownLatchHandler(latch));
         await(latch);
     }
@@ -154,14 +154,14 @@ public abstract class CompletableFutureTestBase<P,T,O, DAO extends GenericVertxD
         CompletableFuture<T> insertFuture1 = insertAndReturn(setSomeO(create(), someO));
         CompletableFuture<T> insertFuture2 = insertAndReturn(setSomeO(create(), someO));
         VertxCompletableFuture.allOf(insertFuture1, insertFuture2).
-                thenCompose(v -> dao.findOneByConditionAsync(otherfield.eq(someO))).
+                thenCompose(v -> dao.findOneByCondition(otherfield.eq(someO))).
                 handle((res, x) -> {
                     Assert.assertNotNull(x);
                     //cursor found more than one row
                     Assert.assertEquals(TooManyRowsException.class, x.getCause().getClass());
                     return null;
                 }).
-                thenCompose(v -> dao.deleteByConditionAsync(otherfield.eq(someO))).
+                thenCompose(v -> dao.deleteByCondition(otherfield.eq(someO))).
                 whenComplete(countdownLatchHandler(latch));
         await(latch);
     }
@@ -173,9 +173,9 @@ public abstract class CompletableFutureTestBase<P,T,O, DAO extends GenericVertxD
         CompletableFuture<T> insertFuture1 = insertAndReturn(setSomeO(create(), someO));
         CompletableFuture<T> insertFuture2 = insertAndReturn(setSomeO(create(), someO));
         VertxCompletableFuture.allOf(insertFuture1, insertFuture2).
-                thenCompose(v -> dao.findManyByConditionAsync(otherfield.eq(someO))).
+                thenCompose(v -> dao.findManyByCondition(otherfield.eq(someO))).
                 thenAccept(values -> Assert.assertEquals(2, values.size())).
-                thenCompose(v -> dao.deleteByConditionAsync(otherfield.eq(someO))).
+                thenCompose(v -> dao.deleteByCondition(otherfield.eq(someO))).
                 whenComplete(countdownLatchHandler(latch));
         await(latch);
     }
@@ -187,12 +187,12 @@ public abstract class CompletableFutureTestBase<P,T,O, DAO extends GenericVertxD
         CompletableFuture<T> insertFuture1 = insertAndReturn(create());
         CompletableFuture<T> insertFuture2 = insertAndReturn(create());
         VertxCompletableFuture.allOf(insertFuture1, insertFuture2).
-                thenCompose(v -> dao.findAllAsync()).
+                thenCompose(v -> dao.findAll()).
                 thenAccept(list -> {
                     Assert.assertNotNull(list);
                     Assert.assertEquals(2, list.size());
                 }).
-                thenCompose(v -> dao.deleteByConditionAsync(DSL.trueCondition())).
+                thenCompose(v -> dao.deleteByCondition(DSL.trueCondition())).
                 whenComplete(countdownLatchHandler(latch));
         await(latch);
     }

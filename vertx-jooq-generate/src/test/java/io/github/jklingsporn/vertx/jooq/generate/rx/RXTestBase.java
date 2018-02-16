@@ -90,20 +90,20 @@ public abstract class RXTestBase<P,T,O, DAO extends GenericVertxDAO<P, T, Single
     }
 
     protected Single<T> insertAndReturn(P something) {
-        return dao.insertReturningPrimaryAsync(something);
+        return dao.insertReturningPrimary(something);
     }
 
     @Test
     public void asyncCRUDShouldSucceed() throws InterruptedException {
         CountDownLatch latch = new CountDownLatch(1);
         insertAndReturn(create())
-                .flatMap(dao::findOneByIdAsync)
+                .flatMap(dao::findOneById)
                 .flatMap(something -> dao
-                        .updateAsync(setSomeO(something, createSomeO()))
+                        .update(setSomeO(something, createSomeO()))
                         .flatMap(updatedRows -> {
                             Assert.assertEquals(1l, updatedRows.longValue());
                             return dao
-                                    .deleteByIdAsync(getId(something))
+                                    .deleteById(getId(something))
                                     .doOnSuccess(deletedRows -> Assert.assertEquals(1l, deletedRows.longValue()));
                         }))
                 .subscribe(countdownLatchHandler(latch))
@@ -116,12 +116,12 @@ public abstract class RXTestBase<P,T,O, DAO extends GenericVertxDAO<P, T, Single
         CountDownLatch latch = new CountDownLatch(1);
         P something1 = createWithId();
         P something2 = createWithId();
-        dao.insertAsync(Arrays.asList(something1, something2))
+        dao.insert(Arrays.asList(something1, something2))
                 .doOnSuccess(inserted -> Assert.assertEquals(2L, inserted.longValue()))
-                .flatMap(v -> dao.findManyByIdsAsync(Arrays.asList(getId(something1), getId(something2))))
+                .flatMap(v -> dao.findManyByIds(Arrays.asList(getId(something1), getId(something2))))
                 .flatMap(values -> {
                     Assert.assertEquals(2L, values.size());
-                    return dao.deleteByIdsAsync(values.stream().map(this::getId).collect(Collectors.toList()));
+                    return dao.deleteByIds(values.stream().map(this::getId).collect(Collectors.toList()));
                 })
                 .doOnSuccess(deleted -> Assert.assertEquals(2L, deleted.longValue()))
                 .subscribe(countdownLatchHandler(latch))
@@ -142,7 +142,7 @@ public abstract class RXTestBase<P,T,O, DAO extends GenericVertxDAO<P, T, Single
                     assertDuplicateKeyException(x);
                     return Single.just(getId(something));
                 })
-                .flatMap(v -> dao.deleteByConditionAsync(DSL.trueCondition()))
+                .flatMap(v -> dao.deleteByCondition(DSL.trueCondition()))
                 .subscribe(countdownLatchHandler(latch));
         await(latch);
     }
@@ -154,9 +154,9 @@ public abstract class RXTestBase<P,T,O, DAO extends GenericVertxDAO<P, T, Single
         Single<T> insertFuture = insertAndReturn(something);
         insertFuture
                 .doOnSuccess(t->setId(something,t))
-                .flatMap(v -> dao.findOneByConditionAsync(eqPrimaryKey(getId(something))))
+                .flatMap(v -> dao.findOneByCondition(eqPrimaryKey(getId(something))))
                 .doOnSuccess(Assert::assertNotNull)
-                .flatMap(v -> dao.deleteByConditionAsync(eqPrimaryKey(getId(something))))
+                .flatMap(v -> dao.deleteByCondition(eqPrimaryKey(getId(something))))
                 .subscribe(countdownLatchHandler(latch));
         await(latch);
     }
@@ -168,7 +168,7 @@ public abstract class RXTestBase<P,T,O, DAO extends GenericVertxDAO<P, T, Single
         Single<T> insertFuture1 = insertAndReturn(setSomeO(create(), someO));
         Single<T> insertFuture2 = insertAndReturn(setSomeO(create(), someO));
         Single.zip(insertFuture1, insertFuture2, (i1, i2) -> i1)
-                .flatMap(v -> dao.findOneByConditionAsync(otherfield.eq(someO)))
+                .flatMap(v -> dao.findOneByCondition(otherfield.eq(someO)))
                 .doOnSuccess(v -> Assert.fail("Expected TooManyRowsException"))
                 .onErrorResumeNext(x -> {
                     Assert.assertNotNull(x);
@@ -176,7 +176,7 @@ public abstract class RXTestBase<P,T,O, DAO extends GenericVertxDAO<P, T, Single
                     assertException(TooManyRowsException.class, x);
                     return Single.just(create());
                 })
-                .flatMap(v -> dao.deleteByConditionAsync(otherfield.eq(someO)))
+                .flatMap(v -> dao.deleteByCondition(otherfield.eq(someO)))
                 .subscribe(countdownLatchHandler(latch));
         await(latch);
     }
@@ -188,9 +188,9 @@ public abstract class RXTestBase<P,T,O, DAO extends GenericVertxDAO<P, T, Single
         Single<T> insertFuture1 = insertAndReturn(setSomeO(create(), someO));
         Single<T> insertFuture2 = insertAndReturn(setSomeO(create(), someO));
         Single.zip(insertFuture1, insertFuture2, (i1, i2) -> i1).
-                flatMap(v -> dao.findManyByConditionAsync(otherfield.eq(someO))).
+                flatMap(v -> dao.findManyByCondition(otherfield.eq(someO))).
                 doOnSuccess(values -> Assert.assertEquals(2, values.size())).
-                flatMap(v -> dao.deleteByConditionAsync(otherfield.eq(someO))).
+                flatMap(v -> dao.deleteByCondition(otherfield.eq(someO))).
                 subscribe(countdownLatchHandler(latch));
         await(latch);
     }
@@ -202,12 +202,12 @@ public abstract class RXTestBase<P,T,O, DAO extends GenericVertxDAO<P, T, Single
         Single<T> insertFuture1 = insertAndReturn(create());
         Single<T> insertFuture2 = insertAndReturn(create());
         Single.zip(insertFuture1, insertFuture2,(i1, i2) -> i1).
-                flatMap(v -> dao.findAllAsync()).
+                flatMap(v -> dao.findAll()).
                 doOnSuccess(list -> {
                     Assert.assertNotNull(list);
                     Assert.assertEquals(2, list.size());
                 }).
-                flatMap(v -> dao.deleteByConditionAsync(DSL.trueCondition())).
+                flatMap(v -> dao.deleteByCondition(DSL.trueCondition())).
                 subscribe(countdownLatchHandler(latch));
         await(latch);
     }

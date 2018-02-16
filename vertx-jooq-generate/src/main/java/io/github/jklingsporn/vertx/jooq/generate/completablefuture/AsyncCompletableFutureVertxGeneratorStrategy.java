@@ -44,7 +44,7 @@ public class AsyncCompletableFutureVertxGeneratorStrategy extends AbstractComple
         }else{
             out.println();
             out.tab(1).override();
-            out.tab(1).println("public %s insertReturningPrimaryAsync(%s pojo){",renderInsertReturningType(tType),pType);
+            out.tab(1).println("public %s insertReturningPrimary(%s pojo){",renderInsertReturningType(tType),pType);
             out.tab(2).println("CompletableFuture<%s> failed = new CompletableFuture<>();",tType);
             out.tab(2).println("failed.completeExceptionally(new UnsupportedOperationException(\"PK not numeric\"));",tType);
             out.tab(2).println("return failed;");

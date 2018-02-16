@@ -54,7 +54,7 @@ public abstract class AbstractVertxDAO<R extends UpdatableRecord<R>, P, T, FIND_
 
     @SuppressWarnings("unchecked")
     @Override
-    public EXECUTE updateAsync(P object){
+    public EXECUTE update(P object){
         Objects.requireNonNull(object);
         DSLContext dslContext = using(configuration());
         R record = dslContext.newRecord(getTable(), object);
@@ -72,54 +72,54 @@ public abstract class AbstractVertxDAO<R extends UpdatableRecord<R>, P, T, FIND_
     }
 
     @Override
-    public FIND_MANY findManyByConditionAsync(Condition condition){
+    public FIND_MANY findManyByCondition(Condition condition){
         return queryExecutor().findMany(using(configuration()).selectFrom(getTable()).where(condition));
     }
 
     @Override
-    public FIND_MANY findManyByIdsAsync(Collection<T> ids){
-        return findManyByConditionAsync(equalKeys(ids));
+    public FIND_MANY findManyByIds(Collection<T> ids){
+        return findManyByCondition(equalKeys(ids));
     }
 
     @Override
-    public FIND_MANY findAllAsync() {
-        return findManyByConditionAsync(DSL.trueCondition());
+    public FIND_MANY findAll() {
+        return findManyByCondition(DSL.trueCondition());
     }
 
     @Override
-    public FIND_ONE findOneByIdAsync(T id){
-        return findOneByConditionAsync(equalKey(id));
+    public FIND_ONE findOneById(T id){
+        return findOneByCondition(equalKey(id));
     }
 
     @Override
-    public FIND_ONE findOneByConditionAsync(Condition condition){
+    public FIND_ONE findOneByCondition(Condition condition){
         return queryExecutor().findOne(using(configuration()).selectFrom(getTable()).where(condition));
     }
 
     @Override
-    public EXECUTE deleteByConditionAsync(Condition condition){
+    public EXECUTE deleteByCondition(Condition condition){
         return queryExecutor().execute(using(configuration()).deleteFrom(getTable()).where(condition));
     }
 
     @Override
-    public EXECUTE deleteByIdAsync(T id){
-        return deleteByConditionAsync(equalKey(id));
+    public EXECUTE deleteById(T id){
+        return deleteByCondition(equalKey(id));
     }
 
     @Override
-    public EXECUTE deleteByIdsAsync(Collection<T> ids){
-        return deleteByConditionAsync(equalKeys(ids));
+    public EXECUTE deleteByIds(Collection<T> ids){
+        return deleteByCondition(equalKeys(ids));
     }
 
     @Override
-    public EXECUTE insertAsync(P pojo){
+    public EXECUTE insert(P pojo){
         Objects.requireNonNull(pojo);
         DSLContext dslContext = using(configuration());
         return queryExecutor().execute(dslContext.insertInto(getTable()).set(dslContext.newRecord(getTable(), pojo)));
     }
 
     @Override
-    public EXECUTE insertAsync(Collection<P> pojos){
+    public EXECUTE insert(Collection<P> pojos){
         Arguments.require(!pojos.isEmpty(), "No elements");
         DSLContext dslContext = using(configuration());
         InsertSetStep<R> insertSetStep = dslContext.insertInto(getTable());
@@ -131,7 +131,7 @@ public abstract class AbstractVertxDAO<R extends UpdatableRecord<R>, P, T, FIND_
     }
 
     @SuppressWarnings("unchecked")
-    public INSERT_RETURNING insertReturningPrimaryAsync(P object){
+    public INSERT_RETURNING insertReturningPrimary(P object){
         UniqueKey<?> key = getTable().getPrimaryKey();
         //usually key shouldn't be null because DAO generation is omitted in such cases
         Objects.requireNonNull(key,()->"No primary key");

@@ -251,7 +251,7 @@ public class VertxGenerator extends JavaGenerator {
 
     /**
      * Copied (more ore less) from JavaGenerator.
-     * Generates fetchByCYZAsync- and fetchOneByCYZAsync-methods
+     * Generates fetchByCYZ- and fetchOneByCYZ-methods
      * @param table
      * @param out
      */
@@ -294,24 +294,18 @@ public class VertxGenerator extends JavaGenerator {
 
     protected void generateFindOneByMethods(JavaWriter out, String pType, String colName, String colClass, String colType, String colIdentifier) {
         out.tab(1).javadoc("Find a unique record that has <code>%s = value</code> asynchronously", colName);
-        out.tab(1).println("public %s findOneBy%sAsync(%s value) {", getUnwrappedStrategy().renderFindOneType(pType),colClass, colType);
-        out.tab(2).println("return findOneByConditionAsync(%s.eq(value));", colIdentifier);
+        out.tab(1).println("public %s findOneBy%s(%s value) {", getUnwrappedStrategy().renderFindOneType(pType),colClass, colType);
+        out.tab(2).println("return findOneByCondition(%s.eq(value));", colIdentifier);
         out.tab(1).println("}");
     }
 
     protected void generateFindManyByMethods(JavaWriter out, String pType, String colName, String colClass, String colType, String colIdentifier) {
         out.tab(1).javadoc("Find records that have <code>%s IN (values)</code> asynchronously", colName);
-        out.tab(1).println("public %s findManyBy%sAsync(%s<%s> values) {", getUnwrappedStrategy().renderFindManyType(pType), colClass, List.class, colType);
+        out.tab(1).println("public %s findManyBy%s(%s<%s> values) {", getUnwrappedStrategy().renderFindManyType(pType), colClass, List.class, colType);
         //out.tab(2).println("return findMany(%s, values);", colIdentifier);
-        out.tab(2).println("return findManyByConditionAsync(%s.in(values));", colIdentifier);
+        out.tab(2).println("return findManyByCondition(%s.in(values));", colIdentifier);
         out.tab(1).println("}");
     }
-
-    protected void generateInterfaceMethodImplementations(JavaWriter out, String pType, String colName, String colClass, String colType, String colIdentifier){
-        generateDeleteByIdAsync(out, pType, colName, colClass, colType, colIdentifier);
-    }
-
-    protected void generateDeleteByIdAsync(JavaWriter out, String pType, String colName, String colClass, String colType, String colIdentifier){}
 
     /**
      * Copied from JavaGenerator

@@ -82,7 +82,7 @@ public class SomethingCompositeDaoTest extends RXTestBase<Somethingcomposite, Re
     @Override
     protected Single<Record2<Integer, Integer>> insertAndReturn(Somethingcomposite something) {
         return dao
-                .insertAsync(something)
+                .insert(something)
                 .doOnEvent((i, x) -> Assert.assertEquals(1L, i.longValue()))
                 .map(v -> getId(something));
     }
@@ -90,7 +90,7 @@ public class SomethingCompositeDaoTest extends RXTestBase<Somethingcomposite, Re
     @Test
     public void insertReturningShouldThrowUnsupportedOperationException() throws InterruptedException {
         CountDownLatch latch = new CountDownLatch(1);
-        dao.insertReturningPrimaryAsync(new Somethingcomposite())
+        dao.insertReturningPrimary(new Somethingcomposite())
                 .subscribe((res, x) -> {
                             Assert.assertNotNull(x);
                             assertException(UnsupportedOperationException.class, x);

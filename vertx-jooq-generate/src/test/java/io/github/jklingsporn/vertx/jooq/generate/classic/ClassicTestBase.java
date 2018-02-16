@@ -73,20 +73,20 @@ public abstract class ClassicTestBase<P,T,O, DAO extends GenericVertxDAO<P, T, F
     }
 
     protected Future<T> insertAndReturn(P something) {
-        return dao.insertReturningPrimaryAsync(something);
+        return dao.insertReturningPrimary(something);
     }
 
     @Test
     public void asyncCRUDShouldSucceed() throws InterruptedException {
         CountDownLatch latch = new CountDownLatch(1);
         insertAndReturn(create())
-                .compose(dao::findOneByIdAsync)
+                .compose(dao::findOneById)
                 .compose(something -> dao
-                        .updateAsync(setSomeO(something,createSomeO()))
+                        .update(setSomeO(something, createSomeO()))
                         .compose(updatedRows -> {
                             Assert.assertEquals(1l, updatedRows.longValue());
                             return dao
-                                    .deleteByIdAsync(getId(something))
+                                    .deleteById(getId(something))
                                     .map(deletedRows -> {
                                         Assert.assertEquals(1l, deletedRows.longValue());
                                         return null;
@@ -102,12 +102,12 @@ public abstract class ClassicTestBase<P,T,O, DAO extends GenericVertxDAO<P, T, F
         CountDownLatch latch = new CountDownLatch(1);
         P something1 = createWithId();
         P something2 = createWithId();
-        dao.insertAsync(Arrays.asList(something1, something2))
+        dao.insert(Arrays.asList(something1, something2))
                 .map(toVoid(inserted -> Assert.assertEquals(2L, inserted.longValue())))
-                .compose(v -> dao.findManyByIdsAsync(Arrays.asList(getId(something1),getId(something2))))
+                .compose(v -> dao.findManyByIds(Arrays.asList(getId(something1), getId(something2))))
                 .compose(values -> {
                     Assert.assertEquals(2L, values.size());
-                    return dao.deleteByIdsAsync(values.stream().map(this::getId).collect(Collectors.toList()));
+                    return dao.deleteByIds(values.stream().map(this::getId).collect(Collectors.toList()));
                 })
                 .map(toVoid(deleted -> Assert.assertEquals(2L,deleted.longValue())))
                 .setHandler(countdownLatchHandler(latch))
@@ -127,7 +127,7 @@ public abstract class ClassicTestBase<P,T,O, DAO extends GenericVertxDAO<P, T, F
                     assertDuplicateKeyException(x);
                     return null;
                 })
-                .compose(v -> dao.deleteByConditionAsync(DSL.trueCondition()))
+                .compose(v -> dao.deleteByCondition(DSL.trueCondition()))
                 .setHandler(countdownLatchHandler(latch));
         await(latch);
     }
@@ -137,9 +137,9 @@ public abstract class ClassicTestBase<P,T,O, DAO extends GenericVertxDAO<P, T, F
         CountDownLatch latch = new CountDownLatch(1);
         Future<T> insertFuture = insertAndReturn(create());
         insertFuture.
-                compose(v -> dao.findOneByConditionAsync(eqPrimaryKey(insertFuture.result())))
+                compose(v -> dao.findOneByCondition(eqPrimaryKey(insertFuture.result())))
                 .map(toVoid(Assert::assertNotNull))
-                .compose(v -> dao.deleteByConditionAsync(eqPrimaryKey(insertFuture.result())))
+                .compose(v -> dao.deleteByCondition(eqPrimaryKey(insertFuture.result())))
                 .setHandler(countdownLatchHandler(latch));
         await(latch);
     }
@@ -151,14 +151,14 @@ public abstract class ClassicTestBase<P,T,O, DAO extends GenericVertxDAO<P, T, F
         Future<T> insertFuture1 = insertAndReturn(setSomeO(create(), someO));
         Future<T> insertFuture2 = insertAndReturn(setSomeO(create(), someO));
         CompositeFuture.all(insertFuture1, insertFuture2).
-                compose(v -> dao.findOneByConditionAsync(otherfield.eq(someO))).
+                compose(v -> dao.findOneByCondition(otherfield.eq(someO))).
                 otherwise((x) -> {
                     Assert.assertNotNull(x);
                     //cursor found more than one row
                     Assert.assertEquals(TooManyRowsException.class, x.getClass());
                     return null;
                 }).
-                compose(v -> dao.deleteByConditionAsync(otherfield.eq(someO))).
+                compose(v -> dao.deleteByCondition(otherfield.eq(someO))).
                 setHandler(countdownLatchHandler(latch));
         await(latch);
     }
@@ -170,9 +170,9 @@ public abstract class ClassicTestBase<P,T,O, DAO extends GenericVertxDAO<P, T, F
         Future<T> insertFuture1 = insertAndReturn(setSomeO(create(), someO));
         Future<T> insertFuture2 = insertAndReturn(setSomeO(create(), someO));
         CompositeFuture.all(insertFuture1, insertFuture2).
-                compose(v -> dao.findManyByConditionAsync(otherfield.eq(someO))).
+                compose(v -> dao.findManyByCondition(otherfield.eq(someO))).
                 map(toVoid(values -> Assert.assertEquals(2, values.size()))).
-                compose(v -> dao.deleteByConditionAsync(otherfield.eq(someO))).
+                compose(v -> dao.deleteByCondition(otherfield.eq(someO))).
                 setHandler(countdownLatchHandler(latch));
         await(latch);
     }
@@ -184,12 +184,12 @@ public abstract class ClassicTestBase<P,T,O, DAO extends GenericVertxDAO<P, T, F
         Future<T> insertFuture1 = insertAndReturn(create());
         Future<T> insertFuture2 = insertAndReturn(create());
         CompositeFuture.all(insertFuture1, insertFuture2).
-                compose(v -> dao.findAllAsync()).
+                compose(v -> dao.findAll()).
                 map(toVoid(list -> {
                     Assert.assertNotNull(list);
                     Assert.assertEquals(2, list.size());
                 })).
-                compose(v -> dao.deleteByConditionAsync(DSL.trueCondition())).
+                compose(v -> dao.deleteByCondition(DSL.trueCondition())).
                 setHandler(countdownLatchHandler(latch));
         await(latch);
     }
