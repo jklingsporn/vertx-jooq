@@ -65,12 +65,12 @@ SomethingDao dao = new SomethingDao(configuration,vertx);
 //fetch something with ID 123...
 dao.findOneById(123)
     .setHandler(res->{
-        		if(res.succeeded()){
-            		vertx.eventBus().send("sendSomething",something.toJson())
-        		}else{
-        				System.err.println("Something failed badly: "+res.cause().getMessage());
-        		}
-        });
+    		if(res.succeeded()){
+        		vertx.eventBus().send("sendSomething", res.result().toJson())
+    		}else{
+    				System.err.println("Something failed badly: "+res.cause().getMessage());
+    		}
+    });
 
 //maybe consume it in another verticle
 vertx.eventBus().<JsonObject>consumer("sendSomething", jsonEvent->{
@@ -80,12 +80,12 @@ vertx.eventBus().<JsonObject>consumer("sendSomething", jsonEvent->{
     //... change some values
     something.setSomeregularnumber(456);
     //... and update it into the DB
-    Future<Void> updatedFuture = dao.update(something);
+    Future<Integer> updatedFuture = dao.update(something);
 });
 
 //or do you prefer writing your own type-safe SQL?
 JDBCClassicGenericQueryExecutor queryExecutor = new JDBCClassicGenericQueryExecutor(configuration,vertx);
-Future<Integer> updatedCustomFuture = queryExecutor.execute(dslContext ->
+Future<Integer> updatedCustom = queryExecutor.execute(dslContext ->
 				dslContext
 				.update(Tables.SOMETHING)
 				.set(Tables.SOMETHING.SOMEREGULARNUMBER,456)
@@ -94,7 +94,7 @@ Future<Integer> updatedCustomFuture = queryExecutor.execute(dslContext ->
 );
 
 //check for completion
-updatedCustomFuture.setHandler(res->{
+updatedCustom.setHandler(res->{
 		if(res.succeeded()){
 				System.out.println("Rows updated: "+res.result());
 		}else{

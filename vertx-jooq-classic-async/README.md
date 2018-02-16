@@ -238,7 +238,7 @@ SomethingDao dao = new SomethingDao(configuration, client);
 dao.findOneById(123)
     .setHandler(res->{
         		if(res.succeeded()){
-            		vertx.eventBus().send("sendSomething",something.toJson())
+            		vertx.eventBus().send("sendSomething", res.result().toJson())
         		}else{
         				System.err.println("Something failed badly: "+res.cause().getMessage());
         		}
@@ -252,19 +252,19 @@ vertx.eventBus().<JsonObject>consumer("sendSomething", jsonEvent->{
     //... change some values
     something.setSomeregularnumber(456);
     //... and update it into the DB
-    Future<Void> updatedFuture = dao.update(something);
+    Future<Integer> updatedFuture = dao.update(something);
 
 });
 
 //or do you prefer writing your own type-safe SQL?
 AsyncClassicGenericQueryExecutor queryExecutor = new AsyncClassicGenericQueryExecutor(client);
-Future<Integer> updatedCustomFuture = queryExecutor.execute(DSL.using(configuration)
+Future<Integer> updatedCustom = queryExecutor.execute(DSL.using(configuration)
 			.update(Tables.SOMETHING)
 			.set(Tables.SOMETHING.SOMEREGULARNUMBER,456)
 			.where(Tables.SOMETHING.SOMEID.eq(something.getSomeid())));
 
 //check for completion
-updatedCustomFuture.setHandler(res->{
+updatedCustom.setHandler(res->{
 		if(res.succeeded()){
 				System.out.println("Rows updated: "+res.result());
 		}else{
