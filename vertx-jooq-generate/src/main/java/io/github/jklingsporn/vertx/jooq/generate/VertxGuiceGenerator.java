@@ -76,7 +76,6 @@ public class VertxGuiceGenerator extends VertxGenerator {
         closeJavaWriter(out);
     }
 
-
     protected void generateDAOBinding(TableDefinition table, JavaWriter out){
         UniqueKeyDefinition key = table.getPrimaryKey();
         if (key == null) {

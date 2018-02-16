@@ -23,6 +23,9 @@ obtained, eg `byId`. If you are upgrading from a previous version, you will have
 This made it easy to just wrap the blocking variant of a CRUD-operation in a `Vertx.executeBlocking` block to get the async variant
   of it. The downside however was that the blocking CRUD-operations were still visible in the DAO-API and it was up to the user
   to call the correct (async) method. The blocking variants have been removed from the API - all calls are now asynchronous.
+- All insert (except `insertReturningPrimary`), update and delete-methods now contain information about the number of affected rows.
+The result is a cleaner, thinner API.
+- Guice finally available for all async APIs.
 
 ## different needs, different apis
 ![What do you want](https://media.giphy.com/media/E87jjnSCANThe/giphy.gif)
@@ -32,15 +35,14 @@ Before you start generating code using vertx-jooq, you have to answer these ques
   - a `io.vertx.core.Future`-based API. This is `vertx-jooq-classic`.
   - a [rxjava2](https://github.com/ReactiveX/RxJava) based API. This is `vertx-jooq-rx`.
   - an API that returns a [vertx-ified implementation](https://github.com/cescoffier/vertx-completable-future)
-  of `java.util.concurrent.CompletableFuture` for all async DAO operations. It has some limitations which you need to be aware about (see [known issues](https://github.com/jklingsporn/vertx-jooq#known-issues)).
-  This is `vertx-jooq-completablefuture`.
+  of `java.util.concurrent.CompletableFuture` for all async DAO operations. This is `vertx-jooq-completablefuture`.
 - How do you want to communicate with the database? There are two options:
   - Using good old JDBC, check for the modules with `-jdbc` suffix.
   - Using this [asynchronous](https://github.com/mauricio/postgresql-async) database driver, check for `-async` modules.
 - Do you use [Guice](https://github.com/google/guice) for dependency injection?
 
 When you made your choice, you can start to configure the code-generator. This can be either done programmatically or
- using a maven- or gradle-plugin (recommended way). Please check the documentation in the API of your choice how to set it up:
+ using a maven- / gradle-plugin (recommended way). Please check the documentation in the API of your choice how to set it up:
 
 - [`vertx-jooq-classic-async`](vertx-jooq-classic-async)
 - [`vertx-jooq-classic-jdbc`](vertx-jooq-classic-jdbc)
