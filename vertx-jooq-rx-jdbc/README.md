@@ -2,7 +2,7 @@
 ```
 <dependency>
   <groupId>io.github.jklingsporn</groupId>
-  <artifactId>vertx-jooq-completablefuture-async</artifactId>
+  <artifactId>vertx-jooq-rx-jdbc</artifactId>
   <version>3.0.0-BETA</version>
 </dependency>
 ```
@@ -31,7 +31,7 @@ If you are new to jOOQ, I recommend to read the awesome [jOOQ documentation](htt
     </dependency>
     <dependency>
       <groupId>io.github.jklingsporn</groupId>
-      <artifactId>vertx-jooq-completablefuture-async</artifactId>
+      <artifactId>vertx-jooq-rx-jdbc</artifactId>
       <version>3.0.0-BETA</version>
     </dependency>
   </dependencies>
@@ -79,7 +79,7 @@ If you are new to jOOQ, I recommend to read the awesome [jOOQ documentation](htt
               <!-- Generator parameters -->
               <generator>
                   <name>io.github.jklingsporn.vertx.jooq.generate.VertxGenerator</name>
-                  <!-- use 'io.github.jklingsporn.vertx.jooq.generate.completablefuture.VertxGuiceCompletableFutureGenerator' to enable Guice DI -->
+              		<!-- use 'io.github.jklingsporn.vertx.jooq.generate.rx.VertxGuiceRXGenerator' to enable Guice DI -->
                   <database>
                       <name>org.jooq.util.mysql.MySQLDatabase</name>
                       <includes>.*</includes>
@@ -121,7 +121,7 @@ If you are new to jOOQ, I recommend to read the awesome [jOOQ documentation](htt
 
 
                   <strategy>
-                      <name>io.github.jklingsporn.vertx.jooq.generate.completablefuture.AsyncCompletableFutureVertxGeneratorStrategy</name>
+                      <name>io.github.jklingsporn.vertx.jooq.generate.rx.JDBCRXVertxGeneratorStrategy</name>
                   </strategy>
               </generator>
 
@@ -162,7 +162,7 @@ version 'your project version'
 apply plugin: 'java'
 
 dependencies {
-    compile "io.github.jklingsporn:vertx-jooq-completablefuture:$vertx_jooq_version"
+    compile "io.github.jklingsporn:vertx-jooq-rx:$vertx_jooq_version"
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
 
@@ -203,7 +203,7 @@ task jooqGenerate {
                     directory("$projectDir/src/main/java")
                 }
                 strategy {
-                    name('io.github.jklingsporn.vertx.jooq.generate.completablefuture.AsyncCompletableFutureVertxGeneratorStrategy')
+                    name('io.github.jklingsporn.vertx.jooq.generate.rx.JDBCRXVertxGeneratorStrategy')
                 }
             }
         }
@@ -221,28 +221,23 @@ of how to setup the generator programmatically.
 ## usage
 ```
 //Setup your jOOQ configuration
-Configuration configuration = new DefaultConfiguration();
-configuration.set(SQLDialect.MYSQL); //or SQLDialect.POSTGRES
-//no other DB-Configuration necessary because jOOQ is only used to render our statements - not for excecution
+Configuration configuration = ...
 
 //setup Vertx
 Vertx vertx = Vertx.vertx();
-//setup the client
-JsonObject config = new JsonObject().put("host", "127.0.0.1").put("username", "vertx").putNull("password").put("database","vertx");
-AsyncJooqSQLClient client = AsyncJooqSQLClient.create(vertx,MySQLClient.createNonShared(vertx, config))
 
 //instantiate a DAO (which is generated for you)
-SomethingDao dao = new SomethingDao(configuration, client);
+SomethingDao dao = new SomethingDao(configuration,vertx);
 
 //fetch something with ID 123...
 dao.findOneById(123)
-    .whenComplete((something,x)->{
-        		if(x==null){
-            		vertx.eventBus().send("sendSomething",something.toJson())
-        		}else{
-        				System.err.println("Something failed badly: "+x.getMessage());
-        		}
-        });
+    .doOnEvent((something,x)->{
+				if(x==null){
+						vertx.eventBus().send("sendSomething",something.toJson())
+				}else{
+						System.err.println("Something failed badly: "+x.getMessage());
+				}
+		});
 
 //maybe consume it in another verticle
 vertx.eventBus().<JsonObject>consumer("sendSomething", jsonEvent->{
@@ -252,28 +247,28 @@ vertx.eventBus().<JsonObject>consumer("sendSomething", jsonEvent->{
     //... change some values
     something.setSomeregularnumber(456);
     //... and update it into the DB
-    CompletableFuture<Integer> updatedFuture = dao.update(something);
-
+    Single<Integer> updatedFuture = dao.update(something);
 });
 
 //or do you prefer writing your own type-safe SQL?
-AsyncCompletableFutureGenericQueryExecutor queryExecutor = new AsyncCompletableFutureGenericQueryExecutor(vertx, client);
-CompletableFuture<Integer> updatedCustomFuture = queryExecutor.execute(DSL.using(configuration)
-			.update(Tables.SOMETHING)
-			.set(Tables.SOMETHING.SOMEREGULARNUMBER,456)
-			.where(Tables.SOMETHING.SOMEID.eq(something.getSomeid())));
+JDBCRXGenericQueryExecutor queryExecutor = new JDBCRXGenericQueryExecutor(configuration,vertx);
+Single<Integer> updatedCustom = queryExecutor.execute(dslContext ->
+				dslContext
+				.update(Tables.SOMETHING)
+				.set(Tables.SOMETHING.SOMEREGULARNUMBER,456)
+				.where(Tables.SOMETHING.SOMEID.eq(something.getSomeid()))
+				.execute()
+);
 
 //check for completion
-updatedCustomFuture.whenComplete((updated,x)->{
-			if(x==null){
-					System.out.println("Rows updated: "+updated);
-			}else{
-					System.err.println("Something failed badly: "+x.getMessage());
-			}
-	 });
+updatedCustom.doOnEvent((updated,x)->{
+				if(x==null){
+						System.out.println("Rows updated: "+updated);
+				}else{
+						System.err.println("Something failed badly: "+x.getMessage());
+				}
+		 });
 ```
+
 # known issues
-- The [`VertxCompletableFuture`](https://github.com/cescoffier/vertx-completable-future) is not part of the vertx-core package.
-The reason behind this is that it violates the contract of `CompletableFuture#XXXAsync` methods which states that those methods should
-run on the ForkJoin-Pool if no Executor is provided. This can not be done, because it would break the threading model of Vertx. Please
-keep that in mind. If you can not tolerate this, please use the [`classic`](../vertx-jooq-classic-jdbc) or [`rx`](../vertx-jooq-rx-jdbc) API instead.
+- Since jOOQ is using JDBC under the hood, the non-blocking fashion is achieved by using the `Vertx.executeBlocking` method.

@@ -2,7 +2,7 @@
 ```
 <dependency>
   <groupId>io.github.jklingsporn</groupId>
-  <artifactId>vertx-jooq-completablefuture-async</artifactId>
+  <artifactId>vertx-jooq-rx-async</artifactId>
   <version>3.0.0-BETA</version>
 </dependency>
 ```
@@ -31,7 +31,7 @@ If you are new to jOOQ, I recommend to read the awesome [jOOQ documentation](htt
     </dependency>
     <dependency>
       <groupId>io.github.jklingsporn</groupId>
-      <artifactId>vertx-jooq-completablefuture-async</artifactId>
+      <artifactId>vertx-jooq-rx-async</artifactId>
       <version>3.0.0-BETA</version>
     </dependency>
   </dependencies>
@@ -79,7 +79,7 @@ If you are new to jOOQ, I recommend to read the awesome [jOOQ documentation](htt
               <!-- Generator parameters -->
               <generator>
                   <name>io.github.jklingsporn.vertx.jooq.generate.VertxGenerator</name>
-                  <!-- use 'io.github.jklingsporn.vertx.jooq.generate.completablefuture.VertxGuiceCompletableFutureGenerator' to enable Guice DI -->
+                  <!-- use 'io.github.jklingsporn.vertx.jooq.generate.rx.VertxGuiceRXGenerator' to enable Guice DI -->
                   <database>
                       <name>org.jooq.util.mysql.MySQLDatabase</name>
                       <includes>.*</includes>
@@ -121,7 +121,7 @@ If you are new to jOOQ, I recommend to read the awesome [jOOQ documentation](htt
 
 
                   <strategy>
-                      <name>io.github.jklingsporn.vertx.jooq.generate.completablefuture.AsyncCompletableFutureVertxGeneratorStrategy</name>
+                      <name>io.github.jklingsporn.vertx.jooq.generate.rx.AsyncRXVertxGeneratorStrategy</name>
                   </strategy>
               </generator>
 
@@ -162,7 +162,7 @@ version 'your project version'
 apply plugin: 'java'
 
 dependencies {
-    compile "io.github.jklingsporn:vertx-jooq-completablefuture:$vertx_jooq_version"
+    compile "io.github.jklingsporn:vertx-jooq-rx:$vertx_jooq_version"
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
 
@@ -203,7 +203,7 @@ task jooqGenerate {
                     directory("$projectDir/src/main/java")
                 }
                 strategy {
-                    name('io.github.jklingsporn.vertx.jooq.generate.completablefuture.AsyncCompletableFutureVertxGeneratorStrategy')
+                    name('io.github.jklingsporn.vertx.jooq.generate.rx.AsyncRXVertxGeneratorStrategy')
                 }
             }
         }
@@ -236,7 +236,7 @@ SomethingDao dao = new SomethingDao(configuration, client);
 
 //fetch something with ID 123...
 dao.findOneById(123)
-    .whenComplete((something,x)->{
+    .doOnEvent((something,x)->{
         		if(x==null){
             		vertx.eventBus().send("sendSomething",something.toJson())
         		}else{
@@ -252,19 +252,19 @@ vertx.eventBus().<JsonObject>consumer("sendSomething", jsonEvent->{
     //... change some values
     something.setSomeregularnumber(456);
     //... and update it into the DB
-    CompletableFuture<Integer> updatedFuture = dao.update(something);
+    Single<Integer> updatedFuture = dao.update(something);
 
 });
 
 //or do you prefer writing your own type-safe SQL?
-AsyncCompletableFutureGenericQueryExecutor queryExecutor = new AsyncCompletableFutureGenericQueryExecutor(vertx, client);
-CompletableFuture<Integer> updatedCustomFuture = queryExecutor.execute(DSL.using(configuration)
+AsyncRXGenericQueryExecutor queryExecutor = new AsyncRXGenericQueryExecutor(client);
+Single<Integer> updatedCustomFuture = queryExecutor.execute(DSL.using(configuration)
 			.update(Tables.SOMETHING)
 			.set(Tables.SOMETHING.SOMEREGULARNUMBER,456)
 			.where(Tables.SOMETHING.SOMEID.eq(something.getSomeid())));
 
 //check for completion
-updatedCustomFuture.whenComplete((updated,x)->{
+updatedCustomFuture.doOnEvent((updated,x)->{
 			if(x==null){
 					System.out.println("Rows updated: "+updated);
 			}else{
@@ -272,8 +272,3 @@ updatedCustomFuture.whenComplete((updated,x)->{
 			}
 	 });
 ```
-# known issues
-- The [`VertxCompletableFuture`](https://github.com/cescoffier/vertx-completable-future) is not part of the vertx-core package.
-The reason behind this is that it violates the contract of `CompletableFuture#XXXAsync` methods which states that those methods should
-run on the ForkJoin-Pool if no Executor is provided. This can not be done, because it would break the threading model of Vertx. Please
-keep that in mind. If you can not tolerate this, please use the [`classic`](../vertx-jooq-classic-jdbc) or [`rx`](../vertx-jooq-rx-jdbc) API instead.
