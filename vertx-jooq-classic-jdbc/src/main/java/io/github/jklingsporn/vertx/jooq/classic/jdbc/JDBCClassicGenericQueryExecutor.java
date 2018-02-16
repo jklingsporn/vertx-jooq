@@ -24,7 +24,7 @@ public class JDBCClassicGenericQueryExecutor implements JDBCQueryExecutor<Future
     }
 
     @Override
-    public <X> Future<X> executeAsync(Function<DSLContext, X> function){
+    public <X> Future<X> execute(Function<DSLContext, X> function){
         return executeBlocking(h -> h.complete(function.apply(DSL.using(configuration))));
     }
 

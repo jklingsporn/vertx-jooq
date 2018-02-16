@@ -5,7 +5,7 @@ import org.jooq.DSLContext;
 import java.util.function.Function;
 
 /**
- * @param <T> the type returned by the executeAsync-method, e.g. {@code Future<?>}.
+ * @param <T> the type returned by the execute-method, e.g. {@code Future<?>}.
  */
 @FunctionalInterface
 public interface JDBCQueryExecutor<T> {
@@ -16,5 +16,5 @@ public interface JDBCQueryExecutor<T> {
      * @param <X>
      * @return the result of this operation.
      */
-    public <X> T executeAsync(Function<DSLContext, X> function);
+    public <X> T execute(Function<DSLContext, X> function);
 }

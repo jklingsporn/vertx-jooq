@@ -27,7 +27,7 @@ public class JDBCCompletableFutureGenericQueryExecutor implements JDBCQueryExecu
     }
 
     @Override
-    public <X> CompletableFuture<X> executeAsync(Function<DSLContext, X> function){
+    public <X> CompletableFuture<X> execute(Function<DSLContext, X> function){
         return executeBlocking(h -> h.complete(function.apply(DSL.using(configuration))));
     }
 
