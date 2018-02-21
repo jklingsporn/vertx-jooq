@@ -27,29 +27,28 @@ public class JDBCCompletableFutureGenericQueryExecutor implements JDBCQueryExecu
     }
 
     @Override
-    public <X> CompletableFuture<X> execute(Function<DSLContext, X> function){
+    public <U> CompletableFuture<U> execute(Function<DSLContext, U> function){
         return executeBlocking(h -> h.complete(function.apply(DSL.using(configuration))));
     }
 
     /**
      * @param blockingCodeHandler
-     * @param <T>
+     * @param <U>
      * @return a CompletableFuture that is completed when the blocking code has been executed by Vertx.
      */
-    <T> CompletableFuture<T> executeBlocking(Handler<Future<T>> blockingCodeHandler){
-        VertxCompletableFuture<T> future = new VertxCompletableFuture<>(vertx);
+    <U> CompletableFuture<U> executeBlocking(Handler<Future<U>> blockingCodeHandler){
+        VertxCompletableFuture<U> future = new VertxCompletableFuture<>(vertx);
         vertx.executeBlocking(blockingCodeHandler, createCompletionHandler(future));
         return future;
     }
 
 
     /**
-     * A handler which completes the given future.
      * @param future
-     * @param <T>
-     * @return
+     * @param <U>
+     * @return A handler which completes the given future.
      */
-    private static <T> Handler<AsyncResult<T>> createCompletionHandler(VertxCompletableFuture<T> future) {
+    private static <U> Handler<AsyncResult<U>> createCompletionHandler(VertxCompletableFuture<U> future) {
         return h->{
             if(h.succeeded()){
                 future.complete(h.result());
