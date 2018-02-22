@@ -115,7 +115,7 @@ public abstract class AbstractVertxDAO<R extends UpdatableRecord<R>, P, T, FIND_
     public EXECUTE insert(P pojo){
         Objects.requireNonNull(pojo);
         DSLContext dslContext = using(configuration());
-        return queryExecutor().execute(dslContext.insertInto(getTable()).set(dslContext.newRecord(getTable(), pojo)));
+        return queryExecutor().execute(dslContext.insertInto(getTable()).set(newRecord(dslContext,pojo)));
     }
 
     @Override
@@ -125,7 +125,7 @@ public abstract class AbstractVertxDAO<R extends UpdatableRecord<R>, P, T, FIND_
         InsertSetStep<R> insertSetStep = dslContext.insertInto(getTable());
         InsertValuesStepN<R> insertValuesStepN = null;
         for (P pojo : pojos) {
-            insertValuesStepN = insertSetStep.values(dslContext.newRecord(getTable(), pojo).intoArray());
+            insertValuesStepN = insertSetStep.values(newRecord(dslContext, pojo).intoArray());
         }
         return queryExecutor().execute(insertValuesStepN);
     }
@@ -137,7 +137,7 @@ public abstract class AbstractVertxDAO<R extends UpdatableRecord<R>, P, T, FIND_
         Objects.requireNonNull(key,()->"No primary key");
         DSLContext dslContext = using(configuration());
         return queryExecutor().insertReturning(
-                dslContext.insertInto(getTable()).set(dslContext.newRecord(getTable(), object)).returning(key.getFields()),
+                dslContext.insertInto(getTable()).set(newRecord(dslContext, object)).returning(key.getFields()),
                 record->{
                     Objects.requireNonNull(record, () -> "Failed inserting record or no key");
                     Record key1 = ((R)record).key();
@@ -201,6 +201,33 @@ public abstract class AbstractVertxDAO<R extends UpdatableRecord<R>, P, T, FIND_
             result.set(fields[i], fields[i].getDataType().convert(values[i]));
 
         return (T) result;
+    }
+
+    /**
+     * @param dslContext
+     * @param pojo
+     * @return a new {@code Record} based on the pojo.
+     */
+    private Record newRecord(DSLContext dslContext, P pojo) {
+        return setDefaultOnNullable(dslContext.newRecord(getTable(), pojo));
+    }
+
+    /**
+     * Either removes or defaults fields that have a default value and are nullable.
+     * @param record the record
+     * @return the record
+     */
+    private static Record setDefaultOnNullable(Record record) {
+        int size = record.size();
+        for (int i = 0; i < size; i++)
+            if (record.get(i) == null) {
+                @SuppressWarnings("unchecked")
+                Field<Object> field = (Field<Object>) record.field(i);
+                if (!field.getDataType().nullable())
+                    record.set(field, DSL.defaultValue());
+            }
+
+        return record;
     }
 
     protected abstract T getId(P object);
