@@ -9,8 +9,6 @@ import generated.cf.async.regular.tables.interfaces.ISomething;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
-import java.time.LocalDateTime;
-
 import javax.annotation.Generated;
 
 
@@ -27,18 +25,17 @@ import javax.annotation.Generated;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Something implements ISomething {
 
-    private static final long serialVersionUID = -1184816835;
+    private static final long serialVersionUID = 1091289234;
 
-    private Integer       someid;
-    private String        somestring;
-    private Long          somehugenumber;
-    private Short         somesmallnumber;
-    private Integer       someregularnumber;
-    private Double        somedouble;
-    private String        someenum;
-    private JsonObject    somejsonobject;
-    private JsonArray     somejsonarray;
-    private LocalDateTime sometimestamp;
+    private Integer    someid;
+    private String     somestring;
+    private Long       somehugenumber;
+    private Short      somesmallnumber;
+    private Integer    someregularnumber;
+    private Double     somedouble;
+    private String     someenum;
+    private JsonObject somejsonobject;
+    private JsonArray  somejsonarray;
 
     public Something() {}
 
@@ -52,20 +49,18 @@ public class Something implements ISomething {
         this.someenum = value.someenum;
         this.somejsonobject = value.somejsonobject;
         this.somejsonarray = value.somejsonarray;
-        this.sometimestamp = value.sometimestamp;
     }
 
     public Something(
-        Integer       someid,
-        String        somestring,
-        Long          somehugenumber,
-        Short         somesmallnumber,
-        Integer       someregularnumber,
-        Double        somedouble,
-        String        someenum,
-        JsonObject    somejsonobject,
-        JsonArray     somejsonarray,
-        LocalDateTime sometimestamp
+        Integer    someid,
+        String     somestring,
+        Long       somehugenumber,
+        Short      somesmallnumber,
+        Integer    someregularnumber,
+        Double     somedouble,
+        String     someenum,
+        JsonObject somejsonobject,
+        JsonArray  somejsonarray
     ) {
         this.someid = someid;
         this.somestring = somestring;
@@ -76,7 +71,6 @@ public class Something implements ISomething {
         this.someenum = someenum;
         this.somejsonobject = somejsonobject;
         this.somejsonarray = somejsonarray;
-        this.sometimestamp = sometimestamp;
     }
 
     @Override
@@ -179,17 +173,6 @@ public class Something implements ISomething {
     }
 
     @Override
-    public LocalDateTime getSometimestamp() {
-        return this.sometimestamp;
-    }
-
-    @Override
-    public Something setSometimestamp(LocalDateTime sometimestamp) {
-        this.sometimestamp = sometimestamp;
-        return this;
-    }
-
-    @Override
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
@@ -252,12 +235,6 @@ public class Something implements ISomething {
         }
         else if (!somejsonarray.equals(other.somejsonarray))
             return false;
-        if (sometimestamp == null) {
-            if (other.sometimestamp != null)
-                return false;
-        }
-        else if (!sometimestamp.equals(other.sometimestamp))
-            return false;
         return true;
     }
 
@@ -274,7 +251,6 @@ public class Something implements ISomething {
         result = prime * result + ((this.someenum == null) ? 0 : this.someenum.hashCode());
         result = prime * result + ((this.somejsonobject == null) ? 0 : this.somejsonobject.hashCode());
         result = prime * result + ((this.somejsonarray == null) ? 0 : this.somejsonarray.hashCode());
-        result = prime * result + ((this.sometimestamp == null) ? 0 : this.sometimestamp.hashCode());
         return result;
     }
 
@@ -291,7 +267,6 @@ public class Something implements ISomething {
         sb.append(", ").append(someenum);
         sb.append(", ").append(somejsonobject);
         sb.append(", ").append(somejsonarray);
-        sb.append(", ").append(sometimestamp);
 
         sb.append(")");
         return sb.toString();
@@ -315,7 +290,6 @@ public class Something implements ISomething {
         setSomeenum(from.getSomeenum());
         setSomejsonobject(from.getSomejsonobject());
         setSomejsonarray(from.getSomejsonarray());
-        setSometimestamp(from.getSometimestamp());
     }
 
     /**

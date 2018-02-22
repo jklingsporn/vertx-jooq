@@ -162,7 +162,7 @@ public class VertxGenerator extends JavaGenerator {
         return table.getDatabase().getEnum(table.getSchema(), column.getType().getUserType()) != null;
     }
 
-    private boolean isType(String columnType, Class<?> clazz) {
+    protected boolean isType(String columnType, Class<?> clazz) {
         return columnType.equals(clazz.getName());
     }
 
@@ -188,7 +188,7 @@ public class VertxGenerator extends JavaGenerator {
         for (TypedElementDefinition<?> column : table.getColumns()) {
             String getter = getStrategy().getJavaGetterName(column, GeneratorStrategy.Mode.INTERFACE);
             String columnType = getJavaType(column.getType());
-            if(handleCustomTypeToJson(column,getter,getJavaType(column.getType()), getJsonKeyName(column), out)) {
+            if(handleCustomTypeToJson(column,getter,columnType, getJsonKeyName(column), out)) {
                 //handled by user
             }else if(isEnum(table,column)){
                 out.tab(2).println("json.put(\"%s\",%s()==null?null:%s().getLiteral());", getJsonKeyName(column),getter,getter);

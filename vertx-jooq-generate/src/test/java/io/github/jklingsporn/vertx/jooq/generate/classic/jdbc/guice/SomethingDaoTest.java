@@ -13,6 +13,7 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 
 import java.sql.SQLIntegrityConstraintViolationException;
+import java.time.LocalDateTime;
 import java.util.Random;
 
 /**
@@ -47,6 +48,7 @@ public class SomethingDaoTest extends ClassicTestBase<Something, Integer, Long, 
         something.setSomesmallnumber((short) random.nextInt(Short.MAX_VALUE));
         //someBoolean has a default value and does not need to be set
         something.setSomestring("my_string");
+        something.setSometimestamp(LocalDateTime.now());
         return something;
     }
 

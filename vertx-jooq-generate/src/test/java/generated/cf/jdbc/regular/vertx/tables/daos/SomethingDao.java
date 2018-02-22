@@ -11,6 +11,7 @@ import io.github.jklingsporn.vertx.jooq.shared.internal.AbstractVertxDAO;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.annotation.Generated;
@@ -104,5 +105,12 @@ public class SomethingDao extends AbstractVertxDAO<SomethingRecord, generated.cf
      */
     public CompletableFuture<List<generated.cf.jdbc.regular.vertx.tables.pojos.Something>> findManyBySomejsonarray(List<JsonArray> values) {
         return findManyByCondition(Something.SOMETHING.SOMEJSONARRAY.in(values));
+    }
+
+    /**
+     * Find records that have <code>SOMETIMESTAMP IN (values)</code> asynchronously
+     */
+    public CompletableFuture<List<generated.cf.jdbc.regular.vertx.tables.pojos.Something>> findManyBySometimestamp(List<LocalDateTime> values) {
+        return findManyByCondition(Something.SOMETHING.SOMETIMESTAMP.in(values));
     }
 }

@@ -37,7 +37,8 @@ public class JDBCDatabaseConfigurationProvider extends AbstractDatabaseConfigura
                 "  someBoolean boolean default false not null,\n" +
                 "  someDouble double ,\n" +
                 "  someJsonObject varchar(45) ,\n" +
-                "  someJsonArray varchar(45) \n" +
+                "  someJsonArray varchar(45), \n" +
+                "  someTimestamp timestamp(2) \n" +
                 ");").execute();
         connection.prepareStatement("DROP TABLE IF EXISTS somethingComposite");
         connection.prepareStatement("\n" +

@@ -12,6 +12,7 @@ import org.jooq.Condition;
 import org.junit.BeforeClass;
 
 import java.sql.SQLIntegrityConstraintViolationException;
+import java.time.LocalDateTime;
 import java.util.Random;
 
 /**
@@ -45,6 +46,7 @@ public class SomethingDaoTest extends RXTestBase<Something, Integer, Long, Somet
         something.setSomesmallnumber((short) random.nextInt(Short.MAX_VALUE));
         //someBoolean has a default value and does not need to be set
         something.setSomestring("my_string");
+        something.setSometimestamp(LocalDateTime.now());
         return something;
     }
 

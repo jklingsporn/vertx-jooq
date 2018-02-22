@@ -9,7 +9,6 @@ import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
 
 import javax.annotation.Generated;
 
@@ -117,16 +116,6 @@ public interface ISomething extends VertxPojo, Serializable {
      */
     public JsonArray getSomejsonarray();
 
-    /**
-     * Setter for <code>something.someTimestamp</code>.
-     */
-    public ISomething setSometimestamp(LocalDateTime value);
-
-    /**
-     * Getter for <code>something.someTimestamp</code>.
-     */
-    public LocalDateTime getSometimestamp();
-
     // -------------------------------------------------------------------------
     // FROM and INTO
     // -------------------------------------------------------------------------
@@ -152,7 +141,6 @@ public interface ISomething extends VertxPojo, Serializable {
         setSomeenum(json.getString("someEnum"));
         setSomejsonobject(json.getJsonObject("someJsonObject"));
         setSomejsonarray(json.getJsonArray("someJsonArray"));
-        // Omitting unrecognized type java.time.LocalDateTime for column someTimestamp!
         return this;
     }
 
@@ -169,7 +157,6 @@ public interface ISomething extends VertxPojo, Serializable {
         json.put("someEnum",getSomeenum());
         json.put("someJsonObject",getSomejsonobject());
         json.put("someJsonArray",getSomejsonarray());
-        // Omitting unrecognized type java.time.LocalDateTime for column someTimestamp!
         return json;
     }
 

@@ -11,7 +11,6 @@ import io.github.jklingsporn.vertx.jooq.shared.internal.async.AbstractAsyncVertx
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.annotation.Generated;
@@ -109,13 +108,6 @@ public class SomethingDao extends AbstractAsyncVertxDAO<SomethingRecord, generat
      */
     public Single<List<generated.rx.async.guice.tables.pojos.Something>> findManyBySomejsonarray(List<JsonArray> values) {
         return findManyByCondition(Something.SOMETHING.SOMEJSONARRAY.in(values));
-    }
-
-    /**
-     * Find records that have <code>someTimestamp IN (values)</code> asynchronously
-     */
-    public Single<List<generated.rx.async.guice.tables.pojos.Something>> findManyBySometimestamp(List<LocalDateTime> values) {
-        return findManyByCondition(Something.SOMETHING.SOMETIMESTAMP.in(values));
     }
 
     @Override
