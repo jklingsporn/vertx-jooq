@@ -69,6 +69,7 @@ abstract class AbstractDatabaseConfigurationProvider {
         generateConfig.setFluentSetters(true);
         generateConfig.setDaos(true);
         generateConfig.setPojosEqualsAndHashCode(true);
+        generateConfig.setJavaTimeTypes(true);
 
         /*
          * We need to do a small hack to let jOOQ's DAOImpl implement our interface. That's why

@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -22,7 +23,7 @@ import java.util.stream.Collectors;
 /**
  * Created by jensklingsporn on 09.02.18.
  */
-public abstract class RXTestBase<P,T,O, DAO extends GenericVertxDAO<P, T, Single<List<P>>, Single<P>, Single<Integer>, Single<T>>> {
+public abstract class RXTestBase<P,T,O, DAO extends GenericVertxDAO<P, T, Single<List<P>>, Single<Optional<P>>, Single<Integer>, Single<T>>> {
 
     private static final Logger logger = LoggerFactory.getLogger(RXTestBase.class);
 
@@ -99,11 +100,11 @@ public abstract class RXTestBase<P,T,O, DAO extends GenericVertxDAO<P, T, Single
         insertAndReturn(create())
                 .flatMap(dao::findOneById)
                 .flatMap(something -> dao
-                        .update(setSomeO(something, createSomeO()))
+                        .update(setSomeO(something.get(), createSomeO()))
                         .flatMap(updatedRows -> {
                             Assert.assertEquals(1l, updatedRows.longValue());
                             return dao
-                                    .deleteById(getId(something))
+                                    .deleteById(getId(something.get()))
                                     .doOnSuccess(deletedRows -> Assert.assertEquals(1l, deletedRows.longValue()));
                         }))
                 .subscribe(countdownLatchHandler(latch))
@@ -174,7 +175,7 @@ public abstract class RXTestBase<P,T,O, DAO extends GenericVertxDAO<P, T, Single
                     Assert.assertNotNull(x);
                     //cursor found more than one row
                     assertException(TooManyRowsException.class, x);
-                    return Single.just(create());
+                    return Single.just(Optional.of(create()));
                 })
                 .flatMap(v -> dao.deleteByCondition(otherfield.eq(someO)))
                 .subscribe(countdownLatchHandler(latch));
@@ -213,10 +214,11 @@ public abstract class RXTestBase<P,T,O, DAO extends GenericVertxDAO<P, T, Single
     }
 
     @Test
-    public void findOneNoMatchShouldReturnNull() throws InterruptedException {
+    public void findOneNoMatchShouldReturnEmptyOptional() throws InterruptedException {
+        //because Single does not permit null values, RX-API has to return Optionals for findOne
         CountDownLatch latch = new CountDownLatch(1);
         dao.findOneByCondition(DSL.falseCondition())
-                .doOnSuccess(Assert::assertNull)
+                .doOnSuccess(opt->Assert.assertFalse(opt.isPresent()))
                 .subscribe(countdownLatchHandler(latch));
         await(latch);
     }

@@ -12,12 +12,13 @@ import org.jooq.ResultQuery;
 import org.jooq.exception.TooManyRowsException;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 
 /**
  * Created by jensklingsporn on 07.02.18.
  */
-public class AsyncRXGenericQueryExecutor extends AbstractAsyncQueryExecutor<Single<List<JsonObject>>,Single<JsonObject>,Single<Integer>> {
+public class AsyncRXGenericQueryExecutor extends AbstractAsyncQueryExecutor<Single<List<JsonObject>>,Single<Optional<JsonObject>>,Single<Integer>> {
 
     protected final AsyncSQLClient delegate;
 
@@ -44,18 +45,19 @@ public class AsyncRXGenericQueryExecutor extends AbstractAsyncQueryExecutor<Sing
     }
 
     @Override
-    public <Q extends Record> Single<JsonObject> findOneJson(ResultQuery<Q> query) {
+    public <Q extends Record> Single<Optional<JsonObject>> findOneJson(ResultQuery<Q> query) {
         log(query);
         return getConnection().flatMap(executeAndClose(sqlConnection ->
                 sqlConnection.rxQueryWithParams(query.getSQL(), getBindValues(query)).map(rs -> {
                     List<JsonObject> rows = rs.getRows();
                     switch (rows.size()) {
-                        case 0: return null;
-                        case 1: return rows.get(0);
+                        case 0: return Optional.empty();
+                        case 1: return Optional.of(rows.get(0));
                         default: throw new TooManyRowsException(String.format("Found more than one row: %d", rows.size()));
                     }
                 })));
     }
+
 
     protected Single<io.vertx.reactivex.ext.sql.SQLConnection> getConnection(){
         return delegate.rxGetConnection();

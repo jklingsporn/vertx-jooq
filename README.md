@@ -1,6 +1,7 @@
 # vertx-jooq
 A [jOOQ](http://www.jooq.org/)-CodeGenerator to create [vertx](http://vertx.io/)-ified DAOs and POJOs!
-Perform all CRUD-operations asynchronously and convert your POJOs from/into a `io.vertx.core.JsonObject`.
+Perform all CRUD-operations asynchronously and convert your POJOs from/into a `io.vertx.core.json.JsonObject` using the API and
+driver of your choice.
 
 ## new in version 3.0
 A lot has changed - not only under the hood.
@@ -42,7 +43,7 @@ Before you start generating code using vertx-jooq, you have to answer these ques
 - Do you use [Guice](https://github.com/google/guice) for dependency injection?
 
 When you made your choice, you can start to configure the code-generator. This can be either done programmatically or
- using a maven- / gradle-plugin (recommended way). Please check the documentation in the API of your choice how to set it up:
+ using a maven- / gradle-plugin (recommended way). Please check the documentation in the module of the API of your choice how to set it up:
 
 - [`vertx-jooq-classic-async`](vertx-jooq-classic-async)
 - [`vertx-jooq-classic-jdbc`](vertx-jooq-classic-jdbc)

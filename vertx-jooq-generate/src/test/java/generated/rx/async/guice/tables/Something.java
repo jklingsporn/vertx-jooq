@@ -14,6 +14,7 @@ import io.github.jklingsporn.vertx.jooq.shared.JsonObjectConverter;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
@@ -44,7 +45,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Something extends TableImpl<SomethingRecord> {
 
-    private static final long serialVersionUID = -1493121761;
+    private static final long serialVersionUID = -681462880;
 
     /**
      * The reference instance of <code>something</code>
@@ -103,6 +104,11 @@ public class Something extends TableImpl<SomethingRecord> {
      * The column <code>something.someJsonArray</code>.
      */
     public final TableField<SomethingRecord, JsonArray> SOMEJSONARRAY = createField("someJsonArray", org.jooq.impl.SQLDataType.VARCHAR(45), this, "", new JsonArrayConverter());
+
+    /**
+     * The column <code>something.someTimestamp</code>.
+     */
+    public final TableField<SomethingRecord, LocalDateTime> SOMETIMESTAMP = createField("someTimestamp", org.jooq.impl.SQLDataType.LOCALDATETIME, this, "");
 
     /**
      * Create a <code>something</code> table reference

@@ -6,12 +6,13 @@ import io.vertx.reactivex.core.Vertx;
 import org.jooq.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 
 /**
  * Created by jensklingsporn on 20.12.17.
  */
-public class JDBCRXQueryExecutor<R extends UpdatableRecord<R>,P,T> extends JDBCRXGenericQueryExecutor implements QueryExecutor<R,T,Single<List<P>>,Single<P>,Single<Integer>,Single<T>> {
+public class JDBCRXQueryExecutor<R extends UpdatableRecord<R>,P,T> extends JDBCRXGenericQueryExecutor implements QueryExecutor<R,T,Single<List<P>>,Single<Optional<P>>,Single<Integer>,Single<T>> {
 
     private final Class<P> daoType;
 
@@ -26,8 +27,8 @@ public class JDBCRXQueryExecutor<R extends UpdatableRecord<R>,P,T> extends JDBCR
     }
 
     @Override
-    public Single<P> findOne(ResultQuery<R> query) {
-        return executeBlocking(h -> h.complete(query.fetchOneInto(daoType)));
+    public Single<Optional<P>> findOne(ResultQuery<R> query) {
+        return executeBlocking(h -> h.complete(Optional.ofNullable(query.fetchOneInto(daoType))));
     }
 
     @Override

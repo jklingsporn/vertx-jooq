@@ -7,8 +7,10 @@ import org.jooq.UpdatableRecord;
 import java.util.List;
 
 /**
- * Created by jensklingsporn on 21.10.16.
- * Vertx-ified version of jOOQs <code>DAO</code>-interface.
+ * A {@code io.vertx.core.Future}-based API.
+ * @param <R> The {@code Record} type.
+ * @param <P> The POJO
+ * @param <T> The primary key.
  */
 public interface VertxDAO<R extends UpdatableRecord<R>, P, T> extends GenericVertxDAO<P,T,Future<List<P>>,Future<P>,Future<Integer>,Future<T>>{
 

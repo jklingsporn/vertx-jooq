@@ -10,13 +10,14 @@ import org.jooq.Table;
 import org.jooq.UpdatableRecord;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
  * Created by jensklingsporn on 07.02.18.
  */
-public class AsyncRXQueryExecutor<R extends UpdatableRecord<R>,P,T> extends AsyncRXGenericQueryExecutor implements QueryExecutor<R,T,Single<List<P>>,Single<P>,Single<Integer>,Single<T>>{
+public class AsyncRXQueryExecutor<R extends UpdatableRecord<R>,P,T> extends AsyncRXGenericQueryExecutor implements QueryExecutor<R,T,Single<List<P>>,Single<Optional<P>>,Single<Integer>,Single<T>>{
 
     private final Function<JsonObject,P> pojoMapper;
 
@@ -31,8 +32,8 @@ public class AsyncRXQueryExecutor<R extends UpdatableRecord<R>,P,T> extends Asyn
     }
 
     @Override
-    public Single<P> findOne(ResultQuery<R> query) {
-        return findOneJson(query).map(val -> val == null?null:pojoMapper.apply(val));
+    public Single<Optional<P>> findOne(ResultQuery<R> query) {
+        return findOneJson(query).map(val->val.map(pojoMapper));
     }
 
     @Override

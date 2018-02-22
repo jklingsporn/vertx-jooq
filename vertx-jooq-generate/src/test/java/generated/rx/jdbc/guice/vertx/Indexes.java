@@ -31,15 +31,15 @@ public class Indexes {
     // INDEX definitions
     // -------------------------------------------------------------------------
 
-    public static final Index SYS_IDX_SYS_PK_10336_10338 = Indexes0.SYS_IDX_SYS_PK_10336_10338;
-    public static final Index SYS_IDX_SYS_PK_10340_10341 = Indexes0.SYS_IDX_SYS_PK_10340_10341;
+    public static final Index SYS_IDX_SYS_PK_10344_10346 = Indexes0.SYS_IDX_SYS_PK_10344_10346;
+    public static final Index SYS_IDX_SYS_PK_10348_10349 = Indexes0.SYS_IDX_SYS_PK_10348_10349;
 
     // -------------------------------------------------------------------------
     // [#1459] distribute members to avoid static initialisers > 64kb
     // -------------------------------------------------------------------------
 
     private static class Indexes0 extends AbstractKeys {
-        public static Index SYS_IDX_SYS_PK_10336_10338 = createIndex("SYS_IDX_SYS_PK_10336_10338", Something.SOMETHING, new OrderField[] { Something.SOMETHING.SOMEID }, true);
-        public static Index SYS_IDX_SYS_PK_10340_10341 = createIndex("SYS_IDX_SYS_PK_10340_10341", Somethingcomposite.SOMETHINGCOMPOSITE, new OrderField[] { Somethingcomposite.SOMETHINGCOMPOSITE.SOMEID, Somethingcomposite.SOMETHINGCOMPOSITE.SOMESECONDID }, true);
+        public static Index SYS_IDX_SYS_PK_10344_10346 = createIndex("SYS_IDX_SYS_PK_10344_10346", Something.SOMETHING, new OrderField[] { Something.SOMETHING.SOMEID }, true);
+        public static Index SYS_IDX_SYS_PK_10348_10349 = createIndex("SYS_IDX_SYS_PK_10348_10349", Somethingcomposite.SOMETHINGCOMPOSITE, new OrderField[] { Somethingcomposite.SOMETHINGCOMPOSITE.SOMEID, Somethingcomposite.SOMETHINGCOMPOSITE.SOMESECONDID }, true);
     }
 }

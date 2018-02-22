@@ -27,7 +27,8 @@ public class AsyncRXDatabaseClientProvider {
                 .put("username", "vertx")
                 .putNull("password")
                 .put("database", "vertx")
-                .put("maxPoolSize", 1));
+                .put("maxPoolSize", 1)
+        );
     }
 
     public Vertx getVertx() {
