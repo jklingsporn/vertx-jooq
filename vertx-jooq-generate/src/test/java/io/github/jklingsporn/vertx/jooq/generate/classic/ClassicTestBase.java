@@ -194,5 +194,23 @@ public abstract class ClassicTestBase<P,T,O, DAO extends GenericVertxDAO<P, T, F
         await(latch);
     }
 
+    @Test
+    public void findOneNoMatchShouldReturnNull() throws InterruptedException {
+        CountDownLatch latch = new CountDownLatch(1);
+        dao.findOneByCondition(DSL.falseCondition())
+                .map(toVoid(Assert::assertNull))
+                .setHandler(countdownLatchHandler(latch));
+        await(latch);
+    }
+
+    @Test
+    public void findManyNoMatchShouldReturnEmptyCollection() throws InterruptedException {
+        CountDownLatch latch = new CountDownLatch(1);
+        dao.findManyByCondition(DSL.falseCondition())
+                .map(toVoid(res->Assert.assertTrue(res.isEmpty())))
+                .setHandler(countdownLatchHandler(latch));
+        await(latch);
+    }
+
 
 }

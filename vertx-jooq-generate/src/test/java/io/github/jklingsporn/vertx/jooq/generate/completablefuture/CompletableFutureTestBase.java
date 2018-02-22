@@ -197,5 +197,22 @@ public abstract class CompletableFutureTestBase<P,T,O, DAO extends GenericVertxD
         await(latch);
     }
 
+    @Test
+    public void findOneNoMatchShouldReturnNull() throws InterruptedException {
+        CountDownLatch latch = new CountDownLatch(1);
+        dao.findOneByCondition(DSL.falseCondition())
+                .thenAccept(Assert::assertNull)
+                .whenComplete(countdownLatchHandler(latch));
+        await(latch);
+    }
+
+    @Test
+    public void findManyNoMatchShouldReturnEmptyCollection() throws InterruptedException {
+        CountDownLatch latch = new CountDownLatch(1);
+        dao.findManyByCondition(DSL.falseCondition())
+                .thenAccept(res->Assert.assertTrue(res.isEmpty()))
+                .whenComplete(countdownLatchHandler(latch));
+        await(latch);
+    }
 
 }

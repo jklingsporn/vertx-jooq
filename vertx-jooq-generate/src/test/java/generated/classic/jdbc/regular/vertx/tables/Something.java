@@ -44,7 +44,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Something extends TableImpl<SomethingRecord> {
 
-    private static final long serialVersionUID = 1553362435;
+    private static final long serialVersionUID = -1761282493;
 
     /**
      * The reference instance of <code>VERTX.SOMETHING</code>
@@ -146,7 +146,7 @@ public class Something extends TableImpl<SomethingRecord> {
      */
     @Override
     public List<Index> getIndexes() {
-        return Arrays.<Index>asList(Indexes.SYS_IDX_SYS_PK_10157_10159);
+        return Arrays.<Index>asList(Indexes.SYS_IDX_SYS_PK_10161_10163);
     }
 
     /**
@@ -162,7 +162,7 @@ public class Something extends TableImpl<SomethingRecord> {
      */
     @Override
     public UniqueKey<SomethingRecord> getPrimaryKey() {
-        return Keys.SYS_PK_10157;
+        return Keys.SYS_PK_10161;
     }
 
     /**
@@ -170,7 +170,7 @@ public class Something extends TableImpl<SomethingRecord> {
      */
     @Override
     public List<UniqueKey<SomethingRecord>> getKeys() {
-        return Arrays.<UniqueKey<SomethingRecord>>asList(Keys.SYS_PK_10157);
+        return Arrays.<UniqueKey<SomethingRecord>>asList(Keys.SYS_PK_10161);
     }
 
     /**

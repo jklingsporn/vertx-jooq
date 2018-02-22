@@ -212,5 +212,23 @@ public abstract class RXTestBase<P,T,O, DAO extends GenericVertxDAO<P, T, Single
         await(latch);
     }
 
+    @Test
+    public void findOneNoMatchShouldReturnNull() throws InterruptedException {
+        CountDownLatch latch = new CountDownLatch(1);
+        dao.findOneByCondition(DSL.falseCondition())
+                .doOnSuccess(Assert::assertNull)
+                .subscribe(countdownLatchHandler(latch));
+        await(latch);
+    }
+
+    @Test
+    public void findManyNoMatchShouldReturnEmptyCollection() throws InterruptedException {
+        CountDownLatch latch = new CountDownLatch(1);
+        dao.findManyByCondition(DSL.falseCondition())
+                .doOnSuccess(res->Assert.assertTrue(res.isEmpty()))
+                .subscribe(countdownLatchHandler(latch));
+        await(latch);
+    }
+
 
 }
