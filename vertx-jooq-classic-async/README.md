@@ -238,7 +238,7 @@ SomethingDao dao = new SomethingDao(configuration, client);
 dao.findOneById(123)
     .setHandler(res->{
         		if(res.succeeded()){
-            		vertx.eventBus().send("sendSomething", res.result().toJson())
+            		vertx.eventBus().send("sendSomething", res.result().toJson());
         		}else{
         				System.err.println("Something failed badly: "+res.cause().getMessage());
         		}

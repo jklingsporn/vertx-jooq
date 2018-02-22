@@ -231,9 +231,10 @@ SomethingDao dao = new SomethingDao(configuration,vertx);
 
 //fetch something with ID 123...
 dao.findOneById(123)
-    .doOnEvent((something,x)->{
+    .doOnEvent((opt,x)->{
 				if(x==null){
-						vertx.eventBus().send("sendSomething",something.toJson())
+    				//findOne returns Optional for RX
+						opt.ifPresent(something -> vertx.eventBus().send("sendSomething",something.toJson()));
 				}else{
 						System.err.println("Something failed badly: "+x.getMessage());
 				}

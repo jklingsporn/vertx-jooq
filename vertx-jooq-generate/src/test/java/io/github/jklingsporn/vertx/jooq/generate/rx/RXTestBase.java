@@ -215,7 +215,7 @@ public abstract class RXTestBase<P,T,O, DAO extends GenericVertxDAO<P, T, Single
 
     @Test
     public void findOneNoMatchShouldReturnEmptyOptional() throws InterruptedException {
-        //because Single does not permit null values, RX-API has to return Optionals for findOne
+        //because Single does not permit null values, RX-API has to return Optional<P> for findOne
         CountDownLatch latch = new CountDownLatch(1);
         dao.findOneByCondition(DSL.falseCondition())
                 .doOnSuccess(opt->Assert.assertFalse(opt.isPresent()))
