@@ -34,7 +34,7 @@ public class JDBCDatabaseConfigurationProvider extends AbstractDatabaseConfigura
                 "  someHugeNumber bigint ,\n" +
                 "  someSmallNumber smallint ,\n" +
                 "  someRegularNumber int ,\n" +
-                "  someBoolean boolean,\n" +
+                "  someBoolean boolean default false not null,\n" +
                 "  someDouble double ,\n" +
                 "  someJsonObject varchar(45) ,\n" +
                 "  someJsonArray varchar(45) \n" +

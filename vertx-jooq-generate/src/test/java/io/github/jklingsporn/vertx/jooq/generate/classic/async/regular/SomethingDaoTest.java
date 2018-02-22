@@ -39,11 +39,13 @@ public class SomethingDaoTest extends ClassicTestBase<Something, Integer, Long, 
         Something something = new Something();
         something.setSomeid(random.nextInt());
         something.setSomedouble(random.nextDouble());
+        something.setSomeregularnumber(random.nextInt());
         something.setSomehugenumber(random.nextLong());
         something.setSomejsonarray(new JsonArray().add(1).add(2).add(3));
         something.setSomejsonobject(new JsonObject().put("key", "value"));
         something.setSomesmallnumber((short) random.nextInt(Short.MAX_VALUE));
         something.setSomestring("my_string");
+        //someEnum has a default value and does not need to be set
         return something;
     }
 
@@ -76,4 +78,5 @@ public class SomethingDaoTest extends ClassicTestBase<Something, Integer, Long, 
     protected void assertDuplicateKeyException(Throwable x) {
         Assert.assertEquals(com.github.mauricio.async.db.mysql.exceptions.MySQLException.class, x.getClass());
     }
+
 }

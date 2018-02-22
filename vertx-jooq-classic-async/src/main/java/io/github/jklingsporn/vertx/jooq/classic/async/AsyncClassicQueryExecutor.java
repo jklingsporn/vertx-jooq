@@ -39,7 +39,7 @@ public class AsyncClassicQueryExecutor<R extends UpdatableRecord<R>,P,T> extends
     @SuppressWarnings("unchecked")
     public Future<T> insertReturning(InsertResultStep<R> query, Function<Object, T> keyMapper) {
         return getConnection().compose(sqlConnection->{
-            log("Insert Returning", ()-> query.getSQL(ParamType.INLINED));
+            log(query);
             Future<Object> future = Future.future();
             sqlConnection.update(
                     query.getSQL(ParamType.INLINED),

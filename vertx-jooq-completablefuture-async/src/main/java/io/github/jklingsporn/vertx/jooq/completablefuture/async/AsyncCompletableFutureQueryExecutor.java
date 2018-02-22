@@ -43,6 +43,7 @@ public class AsyncCompletableFutureQueryExecutor <R extends UpdatableRecord<R>,P
     @SuppressWarnings("unchecked")
     public CompletableFuture<T> insertReturning(InsertResultStep<R> query, Function<Object, T> keyMapper) {
         return getConnection().thenCompose(sqlConnection -> {
+            log(query);
             CompletableFuture<Object> cf = new VertxCompletableFuture<>(vertx);
             sqlConnection.update(query.getSQL(ParamType.INLINED), executeAndClose(updateResult->updateResult.getKeys().getLong(0), sqlConnection, cf));
             return cf.thenApply(keyMapper);

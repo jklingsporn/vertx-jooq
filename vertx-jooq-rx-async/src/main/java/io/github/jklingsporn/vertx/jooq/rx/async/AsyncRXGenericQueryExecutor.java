@@ -27,6 +27,7 @@ public class AsyncRXGenericQueryExecutor extends AbstractAsyncQueryExecutor<Sing
 
     @Override
     public Single<Integer> execute(Query query) {
+        log(query);
         return getConnection()
                 .flatMap(executeAndClose(sqlConnection ->
                                 sqlConnection
@@ -37,12 +38,14 @@ public class AsyncRXGenericQueryExecutor extends AbstractAsyncQueryExecutor<Sing
 
     @Override
     public <Q extends Record> Single<List<JsonObject>> findManyJson(ResultQuery<Q> query) {
+        log(query);
         return getConnection().flatMap(executeAndClose(sqlConnection ->
                 sqlConnection.rxQueryWithParams(query.getSQL(), getBindValues(query)).map(ResultSet::getRows)));
     }
 
     @Override
     public <Q extends Record> Single<JsonObject> findOneJson(ResultQuery<Q> query) {
+        log(query);
         return getConnection().flatMap(executeAndClose(sqlConnection ->
                 sqlConnection.rxQueryWithParams(query.getSQL(), getBindValues(query)).map(rs -> {
                     List<JsonObject> rows = rs.getRows();

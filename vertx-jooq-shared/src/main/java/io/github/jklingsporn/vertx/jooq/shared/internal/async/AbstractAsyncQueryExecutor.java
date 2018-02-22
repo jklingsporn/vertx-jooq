@@ -2,7 +2,10 @@ package io.github.jklingsporn.vertx.jooq.shared.internal.async;
 
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+import io.vertx.core.logging.Logger;
+import io.vertx.core.logging.LoggerFactory;
 import org.jooq.*;
+import org.jooq.conf.ParamType;
 
 import java.util.Map;
 import java.util.function.UnaryOperator;
@@ -14,6 +17,8 @@ import java.util.stream.Collectors;
  * @param <EXECUTE> the result type returned for all insert, update and delete-operations. This varies on the AsyncQueryExecutor-subtypes, e.g. {@code Future<Integer>}.
  */
 public abstract class AbstractAsyncQueryExecutor<FIND_MANY_JSON, FIND_ONE_JSON, EXECUTE> implements AsyncQueryExecutor<FIND_MANY_JSON, FIND_ONE_JSON, EXECUTE>{
+
+    private static final Logger logger = LoggerFactory.getLogger(AbstractAsyncQueryExecutor.class);
 
     /**
      * The <code>AsyncSQLClient</code> does not know anything about converters you may have set for your entities,
@@ -58,4 +63,11 @@ public abstract class AbstractAsyncQueryExecutor<FIND_MANY_JSON, FIND_ONE_JSON, 
     protected static <T> Object convertToDatabaseType(Param<T> param) {
         return param.getBinding().converter().to(param.getValue());
     }
+
+    protected void log(Query query){
+        if(logger.isDebugEnabled()){
+            logger.debug("Executing {}", query.getSQL(ParamType.INLINED));
+        }
+    }
+
 }

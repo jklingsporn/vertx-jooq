@@ -3,9 +3,11 @@ package io.github.jklingsporn.vertx.jooq.rx.async;
 import io.github.jklingsporn.vertx.jooq.shared.internal.QueryExecutor;
 import io.reactivex.Single;
 import io.vertx.core.json.JsonObject;
-import io.vertx.ext.sql.UpdateResult;
 import io.vertx.reactivex.ext.asyncsql.AsyncSQLClient;
-import org.jooq.*;
+import org.jooq.InsertResultStep;
+import org.jooq.ResultQuery;
+import org.jooq.Table;
+import org.jooq.UpdatableRecord;
 
 import java.util.List;
 import java.util.function.Function;
@@ -34,18 +36,9 @@ public class AsyncRXQueryExecutor<R extends UpdatableRecord<R>,P,T> extends Asyn
     }
 
     @Override
-    public Single<Integer> execute(Query query) {
-        return getConnection()
-                .flatMap(executeAndClose(sqlConnection ->
-                                sqlConnection
-                                        .rxUpdateWithParams(query.getSQL(), getBindValues(query))
-                                        .map(UpdateResult::getUpdated))
-                );
-    }
-
-    @Override
     @SuppressWarnings("unchecked")
     public Single<T> insertReturning(InsertResultStep<R> query, Function<Object, T> keyMapper) {
+        log(query);
         return getConnection()
                 .flatMap(executeAndClose(sqlConnection ->
                                         sqlConnection

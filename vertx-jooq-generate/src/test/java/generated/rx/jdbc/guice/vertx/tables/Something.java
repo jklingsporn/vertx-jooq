@@ -44,7 +44,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Something extends TableImpl<SomethingRecord> {
 
-    private static final long serialVersionUID = -1329689818;
+    private static final long serialVersionUID = 1896751197;
 
     /**
      * The reference instance of <code>VERTX.SOMETHING</code>
@@ -87,7 +87,7 @@ public class Something extends TableImpl<SomethingRecord> {
     /**
      * The column <code>VERTX.SOMETHING.SOMEBOOLEAN</code>.
      */
-    public final TableField<SomethingRecord, Boolean> SOMEBOOLEAN = createField("SOMEBOOLEAN", org.jooq.impl.SQLDataType.BOOLEAN, this, "");
+    public final TableField<SomethingRecord, Boolean> SOMEBOOLEAN = createField("SOMEBOOLEAN", org.jooq.impl.SQLDataType.BOOLEAN.nullable(false).defaultValue(org.jooq.impl.DSL.field("FALSE", org.jooq.impl.SQLDataType.BOOLEAN)), this, "");
 
     /**
      * The column <code>VERTX.SOMETHING.SOMEDOUBLE</code>.
@@ -146,7 +146,7 @@ public class Something extends TableImpl<SomethingRecord> {
      */
     @Override
     public List<Index> getIndexes() {
-        return Arrays.<Index>asList(Indexes.SYS_IDX_SYS_PK_10304_10305);
+        return Arrays.<Index>asList(Indexes.SYS_IDX_SYS_PK_10328_10330);
     }
 
     /**
@@ -162,7 +162,7 @@ public class Something extends TableImpl<SomethingRecord> {
      */
     @Override
     public UniqueKey<SomethingRecord> getPrimaryKey() {
-        return Keys.SYS_PK_10304;
+        return Keys.SYS_PK_10328;
     }
 
     /**
@@ -170,7 +170,7 @@ public class Something extends TableImpl<SomethingRecord> {
      */
     @Override
     public List<UniqueKey<SomethingRecord>> getKeys() {
-        return Arrays.<UniqueKey<SomethingRecord>>asList(Keys.SYS_PK_10304);
+        return Arrays.<UniqueKey<SomethingRecord>>asList(Keys.SYS_PK_10328);
     }
 
     /**

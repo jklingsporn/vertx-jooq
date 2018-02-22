@@ -40,11 +40,12 @@ public class SomethingDaoTest extends ClassicTestBase<Something, Integer, Long, 
         Something something = new Something();
         something.setSomeid(random.nextInt());
         something.setSomedouble(random.nextDouble());
+        something.setSomeregularnumber(random.nextInt());
         something.setSomehugenumber(random.nextLong());
         something.setSomejsonarray(new JsonArray().add(1).add(2).add(3));
         something.setSomejsonobject(new JsonObject().put("key", "value"));
         something.setSomesmallnumber((short) random.nextInt(Short.MAX_VALUE));
-        something.setSomeboolean(random.nextBoolean());
+        //someBoolean has a default value and does not need to be set
         something.setSomestring("my_string");
         return something;
     }

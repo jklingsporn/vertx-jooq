@@ -40,8 +40,8 @@ public class Keys {
     // UNIQUE and PRIMARY KEY definitions
     // -------------------------------------------------------------------------
 
-    public static final UniqueKey<SomethingRecord> SYS_PK_10355 = UniqueKeys0.SYS_PK_10355;
-    public static final UniqueKey<SomethingcompositeRecord> SYS_PK_10357 = UniqueKeys0.SYS_PK_10357;
+    public static final UniqueKey<SomethingRecord> SYS_PK_10385 = UniqueKeys0.SYS_PK_10385;
+    public static final UniqueKey<SomethingcompositeRecord> SYS_PK_10389 = UniqueKeys0.SYS_PK_10389;
 
     // -------------------------------------------------------------------------
     // FOREIGN KEY definitions
@@ -57,7 +57,7 @@ public class Keys {
     }
 
     private static class UniqueKeys0 extends AbstractKeys {
-        public static final UniqueKey<SomethingRecord> SYS_PK_10355 = createUniqueKey(Something.SOMETHING, "SYS_PK_10355", Something.SOMETHING.SOMEID);
-        public static final UniqueKey<SomethingcompositeRecord> SYS_PK_10357 = createUniqueKey(Somethingcomposite.SOMETHINGCOMPOSITE, "SYS_PK_10357", Somethingcomposite.SOMETHINGCOMPOSITE.SOMEID, Somethingcomposite.SOMETHINGCOMPOSITE.SOMESECONDID);
+        public static final UniqueKey<SomethingRecord> SYS_PK_10385 = createUniqueKey(Something.SOMETHING, "SYS_PK_10385", Something.SOMETHING.SOMEID);
+        public static final UniqueKey<SomethingcompositeRecord> SYS_PK_10389 = createUniqueKey(Somethingcomposite.SOMETHINGCOMPOSITE, "SYS_PK_10389", Somethingcomposite.SOMETHINGCOMPOSITE.SOMEID, Somethingcomposite.SOMETHINGCOMPOSITE.SOMESECONDID);
     }
 }

@@ -5,8 +5,6 @@ import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.json.JsonObject;
-import io.vertx.core.logging.Logger;
-import io.vertx.core.logging.LoggerFactory;
 import io.vertx.ext.asyncsql.AsyncSQLClient;
 import io.vertx.ext.sql.ResultSet;
 import io.vertx.ext.sql.SQLConnection;
@@ -14,19 +12,15 @@ import io.vertx.ext.sql.UpdateResult;
 import org.jooq.Query;
 import org.jooq.Record;
 import org.jooq.ResultQuery;
-import org.jooq.conf.ParamType;
 import org.jooq.exception.TooManyRowsException;
 
 import java.util.List;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 /**
  * Created by jensklingsporn on 07.02.18.
  */
 public class AsyncClassicGenericQueryExecutor extends AbstractAsyncQueryExecutor<Future<List<JsonObject>>, Future<JsonObject>, Future<Integer>> {
-
-    private static final Logger logger = LoggerFactory.getLogger(AsyncClassicGenericQueryExecutor.class);
 
     protected final AsyncSQLClient delegate;
 
@@ -37,7 +31,7 @@ public class AsyncClassicGenericQueryExecutor extends AbstractAsyncQueryExecutor
     @Override
     public Future<Integer> execute(Query query) {
         return getConnection().compose(sqlConnection -> {
-            log("Execute", () -> query.getSQL(ParamType.INLINED));
+            log(query);
             Future<Integer> future = Future.future();
             sqlConnection.updateWithParams(
                     query.getSQL(),
@@ -50,10 +44,11 @@ public class AsyncClassicGenericQueryExecutor extends AbstractAsyncQueryExecutor
         });
     }
 
+
     @Override
     public <Q extends Record> Future<List<JsonObject>> findManyJson(ResultQuery<Q> query) {
         return getConnection().compose(sqlConnection -> {
-            log("Fetch", () -> query.getSQL(ParamType.INLINED));
+            log(query);
             Future<List<JsonObject>> future = Future.future();
             sqlConnection.queryWithParams(
                     query.getSQL(),
@@ -67,7 +62,7 @@ public class AsyncClassicGenericQueryExecutor extends AbstractAsyncQueryExecutor
     @Override
     public <Q extends Record> Future<JsonObject> findOneJson(ResultQuery<Q> query) {
         return getConnection().compose(sqlConnection -> {
-            log("Fetch one", () -> query.getSQL(ParamType.INLINED));
+            log(query);
             Future<JsonObject> future = Future.future();
             sqlConnection.queryWithParams(
                     query.getSQL(),
@@ -96,11 +91,6 @@ public class AsyncClassicGenericQueryExecutor extends AbstractAsyncQueryExecutor
         return future;
     }
 
-    protected void log(String type, Supplier<String> messageSupplier){
-        if(logger.isDebugEnabled()){
-            logger.debug("{}: {}",type, messageSupplier.get());
-        }
-    }
 
     protected <V,U> Handler<AsyncResult<V>> executeAndClose(Function<V, U> func, SQLConnection sqlConnection, Future<U> resultFuture) {
         return rs -> {

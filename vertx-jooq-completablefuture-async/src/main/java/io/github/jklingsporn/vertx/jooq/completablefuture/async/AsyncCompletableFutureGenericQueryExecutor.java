@@ -67,6 +67,7 @@ public class AsyncCompletableFutureGenericQueryExecutor extends AbstractAsyncQue
     @Override
     public CompletableFuture<Integer> execute(Query query) {
         return getConnection().thenCompose(sqlConnection -> {
+            log(query);
             CompletableFuture<Integer> cf = new VertxCompletableFuture<>(vertx);
             JsonArray bindValues = getBindValues(query);
             sqlConnection.updateWithParams(query.getSQL(), bindValues, executeAndClose(UpdateResult::getUpdated,sqlConnection,cf));
@@ -77,6 +78,7 @@ public class AsyncCompletableFutureGenericQueryExecutor extends AbstractAsyncQue
     @Override
     public <Q extends Record> CompletableFuture<List<JsonObject>> findManyJson(ResultQuery<Q> query) {
         return getConnection().thenCompose(sqlConnection -> {
+            log(query);
             CompletableFuture<List<JsonObject>> cf = new VertxCompletableFuture<>(vertx);
             sqlConnection.queryWithParams(
                     query.getSQL(),
@@ -92,6 +94,7 @@ public class AsyncCompletableFutureGenericQueryExecutor extends AbstractAsyncQue
     @Override
     public <Q extends Record> CompletableFuture<JsonObject> findOneJson(ResultQuery<Q> query) {
         return getConnection().thenCompose(sqlConnection -> {
+            log(query);
             CompletableFuture<JsonObject> cf = new VertxCompletableFuture<>(vertx);
             sqlConnection.queryWithParams(query.getSQL(), getBindValues(query), executeAndClose(rs -> {
                 List<JsonObject> rows = rs.getRows();

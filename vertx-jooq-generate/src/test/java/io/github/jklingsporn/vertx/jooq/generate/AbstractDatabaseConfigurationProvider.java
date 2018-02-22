@@ -15,6 +15,10 @@ abstract class AbstractDatabaseConfigurationProvider {
 
     private static final String TARGET_FOLDER = "src/test/java";
 
+    static{
+        System.setProperty("vertx.logger-delegate-factory-class-name","io.vertx.core.logging.SLF4JLogDelegateFactory");
+    }
+
     public abstract void setupDatabase() throws Exception;
 
     public abstract Configuration createGeneratorConfig(String generatorName, String packageName, Class<? extends VertxGeneratorStrategy> generatorStrategy);

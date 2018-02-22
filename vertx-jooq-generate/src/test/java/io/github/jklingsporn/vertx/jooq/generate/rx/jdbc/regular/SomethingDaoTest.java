@@ -43,7 +43,7 @@ public class SomethingDaoTest extends RXTestBase<Something, Integer, Long, Somet
         something.setSomejsonarray(new JsonArray().add(1).add(2).add(3));
         something.setSomejsonobject(new JsonObject().put("key", "value"));
         something.setSomesmallnumber((short) random.nextInt(Short.MAX_VALUE));
-        something.setSomeboolean(random.nextBoolean());
+        //someBoolean has a default value and does not need to be set
         something.setSomestring("my_string");
         return something;
     }
