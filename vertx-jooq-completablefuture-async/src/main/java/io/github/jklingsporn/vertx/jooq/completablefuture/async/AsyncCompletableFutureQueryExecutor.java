@@ -4,12 +4,12 @@ import io.github.jklingsporn.vertx.jooq.shared.internal.QueryExecutor;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.asyncsql.AsyncSQLClient;
+import io.vertx.ext.sql.UpdateResult;
 import me.escoffier.vertx.completablefuture.VertxCompletableFuture;
 import org.jooq.InsertResultStep;
 import org.jooq.ResultQuery;
 import org.jooq.Table;
 import org.jooq.UpdatableRecord;
-import org.jooq.conf.ParamType;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -45,7 +45,13 @@ public class AsyncCompletableFutureQueryExecutor <R extends UpdatableRecord<R>,P
         return getConnection().thenCompose(sqlConnection -> {
             log(query);
             CompletableFuture<Object> cf = new VertxCompletableFuture<>(vertx);
-            sqlConnection.update(query.getSQL(ParamType.INLINED), executeAndClose(updateResult->updateResult.getKeys().getLong(0), sqlConnection, cf));
+            sqlConnection.updateWithParams(
+                    query.getSQL(),
+                    getBindValues(query),
+                    this.<UpdateResult, Object>executeAndClose(res -> res.getKeys().getLong(0),
+                            sqlConnection,
+                            cf)
+            );
             return cf.thenApply(keyMapper);
         });
     }

@@ -37,6 +37,7 @@ public class AsyncDatabaseConfigurationProvider extends AbstractDatabaseConfigur
                 "  `someEnum` ENUM('FOO', 'BAR', 'BAZ') DEFAULT 'FOO' NOT NULL,\n" +
                 "  `someJsonObject` VARCHAR(45) NULL,\n" +
                 "  `someJsonArray` VARCHAR(45) NULL,\n" +
+
                 "  PRIMARY KEY (`someId`));").execute();
         connection.prepareStatement("DROP TABLE IF EXISTS somethingComposite;").execute();
         connection.prepareStatement("CREATE TABLE `somethingComposite` (\n" +
