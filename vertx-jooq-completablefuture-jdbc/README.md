@@ -3,7 +3,7 @@
 <dependency>
   <groupId>io.github.jklingsporn</groupId>
   <artifactId>vertx-jooq-completablefuture-jdbc</artifactId>
-  <version>3.0.0-BETA</version>
+  <version>3.0.0</version>
 </dependency>
 ```
 
@@ -32,7 +32,7 @@ If you are new to jOOQ, I recommend to read the awesome [jOOQ documentation](htt
     <dependency>
       <groupId>io.github.jklingsporn</groupId>
       <artifactId>vertx-jooq-completablefuture-jdbc</artifactId>
-      <version>3.0.0-BETA</version>
+      <version>3.0.0</version>
     </dependency>
   </dependencies>
   <build>
@@ -61,7 +61,7 @@ If you are new to jOOQ, I recommend to read the awesome [jOOQ documentation](htt
               <dependency>
                   <groupId>io.github.jklingsporn</groupId>
                   <artifactId>vertx-jooq-generate</artifactId>
-                  <version>3.0.0-BETA</version>
+                  <version>3.0.0</version>
               </dependency>
           </dependencies>
 
@@ -138,7 +138,7 @@ The following code-snippet can be copy-pasted into your `build.gradle` to genera
 ```gradle
 buildscript {
     ext {
-        vertx_jooq_version = '3.0.0-BETA'
+        vertx_jooq_version = '3.0.0'
         postgresql_version = '42.1.4'
     }
     repositories {
