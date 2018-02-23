@@ -108,4 +108,5 @@ updatedCustom.setHandler(res->{
 
 # known issues
 - The generator will omit datatypes that it does not know, e.g. `java.sql.Timestamp`. To fix this, you can easily subclass the generator, handle these types and generate the code using your generator.
- See the `handleCustomTypeFromJson` and `handleCustomTypeToJson` methods in the `AbstractVertxGenerator`.
+ See the `handleCustomTypeFromJson` and `handleCustomTypeToJson` methods in the `AbstractVertxGenerator` or checkout the [`CustomVertxGenerator`](vertx-jooq-generate/src/test/java/io/github/jklingsporn/vertx/jooq/generate/custom)
+ from the tests.
