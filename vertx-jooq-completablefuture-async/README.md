@@ -229,7 +229,7 @@ configuration.set(SQLDialect.MYSQL); //or SQLDialect.POSTGRES
 Vertx vertx = Vertx.vertx();
 //setup the client
 JsonObject config = new JsonObject().put("host", "127.0.0.1").put("username", "vertx").putNull("password").put("database","vertx");
-AsyncJooqSQLClient client = AsyncJooqSQLClient.create(vertx,MySQLClient.createNonShared(vertx, config))
+AsyncSQLClient client = MySQLClient.createNonShared(vertx, config);
 
 //instantiate a DAO (which is generated for you)
 SomethingDao dao = new SomethingDao(configuration, client);
