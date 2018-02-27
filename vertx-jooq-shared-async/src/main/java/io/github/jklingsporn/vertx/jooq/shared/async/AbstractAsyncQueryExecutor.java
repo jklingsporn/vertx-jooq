@@ -65,7 +65,7 @@ public abstract class AbstractAsyncQueryExecutor<FIND_MANY_JSON, FIND_ONE_JSON, 
 
 
     protected <T> Object convertToDatabaseType(Param<T> param) {
-        return convertJodaTimeTypes(param.getBinding().converter().to(param.getValue()));
+        return convertToAsyncDriverTypes(param.getBinding().converter().to(param.getValue()));
     }
 
     protected void log(Query query){
@@ -81,8 +81,10 @@ public abstract class AbstractAsyncQueryExecutor<FIND_MANY_JSON, FIND_ONE_JSON, 
      * @see <a href="https://github.com/jklingsporn/vertx-jooq/issues/31">#31</a>
      * @see <a href="https://github.com/vert-x3/vertx-mysql-postgresql-client/blob/master/src/main/java/io/vertx/ext/asyncsql/impl/ScalaUtils.java">ScalaUtils#convertValue</a>
      */
-    protected Object convertJodaTimeTypes(Object object){
-        if(object instanceof LocalDateTime){
+    protected Object convertToAsyncDriverTypes(Object object){
+        if(object instanceof Enum){
+            return ((Enum)object).name();
+        }else if(object instanceof LocalDateTime){
             LocalDateTime convert = (LocalDateTime) object;
             return new org.joda.time.LocalDateTime(convert.getYear(),convert.getMonthValue(),convert.getDayOfMonth(),convert.getHour(),convert.getMinute(),convert.getSecond(), convert.get(ChronoField.MILLI_OF_SECOND));
         }else if(object instanceof LocalDate){
