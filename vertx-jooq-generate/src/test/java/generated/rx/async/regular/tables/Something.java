@@ -7,6 +7,7 @@ package generated.rx.async.regular.tables;
 import generated.rx.async.regular.DefaultSchema;
 import generated.rx.async.regular.Indexes;
 import generated.rx.async.regular.Keys;
+import generated.rx.async.regular.enums.SomethingSomeenum;
 import generated.rx.async.regular.tables.records.SomethingRecord;
 
 import io.github.jklingsporn.vertx.jooq.shared.JsonArrayConverter;
@@ -45,7 +46,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Something extends TableImpl<SomethingRecord> {
 
-    private static final long serialVersionUID = 335038628;
+    private static final long serialVersionUID = -1974581204;
 
     /**
      * The reference instance of <code>something</code>
@@ -93,7 +94,7 @@ public class Something extends TableImpl<SomethingRecord> {
     /**
      * The column <code>something.someEnum</code>.
      */
-    public final TableField<SomethingRecord, String> SOMEENUM = createField("someEnum", org.jooq.impl.SQLDataType.VARCHAR(3).nullable(false).defaultValue(org.jooq.impl.DSL.inline("FOO", org.jooq.impl.SQLDataType.VARCHAR)), this, "");
+    public final TableField<SomethingRecord, SomethingSomeenum> SOMEENUM = createField("someEnum", org.jooq.util.mysql.MySQLDataType.VARCHAR.asEnumDataType(generated.rx.async.regular.enums.SomethingSomeenum.class).nullable(false).defaultValue(generated.rx.async.regular.enums.SomethingSomeenum.FOO), this, "");
 
     /**
      * The column <code>something.someJsonObject</code>.

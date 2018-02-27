@@ -4,6 +4,8 @@
 package generated.classic.async.guice.tables.interfaces;
 
 
+import generated.classic.async.guice.enums.SomethingSomeenum;
+
 import io.github.jklingsporn.vertx.jooq.shared.internal.VertxPojo;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
@@ -90,12 +92,12 @@ public interface ISomething extends VertxPojo, Serializable {
     /**
      * Setter for <code>something.someEnum</code>.
      */
-    public ISomething setSomeenum(String value);
+    public ISomething setSomeenum(SomethingSomeenum value);
 
     /**
      * Getter for <code>something.someEnum</code>.
      */
-    public String getSomeenum();
+    public SomethingSomeenum getSomeenum();
 
     /**
      * Setter for <code>something.someJsonObject</code>.
@@ -149,7 +151,7 @@ public interface ISomething extends VertxPojo, Serializable {
         setSomesmallnumber(json.getInteger("someSmallNumber")==null?null:json.getInteger("someSmallNumber").shortValue());
         setSomeregularnumber(json.getInteger("someRegularNumber"));
         setSomedouble(json.getDouble("someDouble"));
-        setSomeenum(json.getString("someEnum"));
+        setSomeenum(java.util.Arrays.stream(generated.classic.async.guice.enums.SomethingSomeenum.values()).filter(td -> td.getLiteral().equals(json.getString("someEnum"))).findFirst().orElse(null));
         setSomejsonobject(json.getJsonObject("someJsonObject"));
         setSomejsonarray(json.getJsonArray("someJsonArray"));
         // Omitting unrecognized type java.time.LocalDateTime for column someTimestamp!
@@ -166,7 +168,7 @@ public interface ISomething extends VertxPojo, Serializable {
         json.put("someSmallNumber",getSomesmallnumber());
         json.put("someRegularNumber",getSomeregularnumber());
         json.put("someDouble",getSomedouble());
-        json.put("someEnum",getSomeenum());
+        json.put("someEnum",getSomeenum()==null?null:getSomeenum().getLiteral());
         json.put("someJsonObject",getSomejsonobject());
         json.put("someJsonArray",getSomejsonarray());
         // Omitting unrecognized type java.time.LocalDateTime for column someTimestamp!

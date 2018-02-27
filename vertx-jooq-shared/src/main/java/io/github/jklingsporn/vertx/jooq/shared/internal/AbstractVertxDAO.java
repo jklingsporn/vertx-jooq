@@ -208,22 +208,22 @@ public abstract class AbstractVertxDAO<R extends UpdatableRecord<R>, P, T, FIND_
      * @param pojo
      * @return a new {@code Record} based on the pojo.
      */
-    private Record newRecord(DSLContext dslContext, P pojo) {
-        return setDefaultOnNullable(dslContext.newRecord(getTable(), pojo));
+    protected Record newRecord(DSLContext dslContext, P pojo) {
+        return setDefault(dslContext.newRecord(getTable(), pojo));
     }
 
     /**
-     * Either removes or defaults fields that have a default value and are nullable.
+     * Defaults fields that have a default value and are nullable.
      * @param record the record
      * @return the record
      */
-    private static Record setDefaultOnNullable(Record record) {
+    private Record setDefault(Record record) {
         int size = record.size();
         for (int i = 0; i < size; i++)
             if (record.get(i) == null) {
                 @SuppressWarnings("unchecked")
                 Field<Object> field = (Field<Object>) record.field(i);
-                if (!field.getDataType().nullable())
+                if (!field.getDataType().nullable() && !field.getDataType().identity())
                     record.set(field, DSL.defaultValue());
             }
 

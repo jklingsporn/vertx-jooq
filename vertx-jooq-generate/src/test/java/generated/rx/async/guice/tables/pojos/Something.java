@@ -4,6 +4,7 @@
 package generated.rx.async.guice.tables.pojos;
 
 
+import generated.rx.async.guice.enums.SomethingSomeenum;
 import generated.rx.async.guice.tables.interfaces.ISomething;
 
 import io.vertx.core.json.JsonArray;
@@ -27,18 +28,18 @@ import javax.annotation.Generated;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Something implements ISomething {
 
-    private static final long serialVersionUID = 290935396;
+    private static final long serialVersionUID = 430586173;
 
-    private Integer       someid;
-    private String        somestring;
-    private Long          somehugenumber;
-    private Short         somesmallnumber;
-    private Integer       someregularnumber;
-    private Double        somedouble;
-    private String        someenum;
-    private JsonObject    somejsonobject;
-    private JsonArray     somejsonarray;
-    private LocalDateTime sometimestamp;
+    private Integer           someid;
+    private String            somestring;
+    private Long              somehugenumber;
+    private Short             somesmallnumber;
+    private Integer           someregularnumber;
+    private Double            somedouble;
+    private SomethingSomeenum someenum;
+    private JsonObject        somejsonobject;
+    private JsonArray         somejsonarray;
+    private LocalDateTime     sometimestamp;
 
     public Something() {}
 
@@ -56,16 +57,16 @@ public class Something implements ISomething {
     }
 
     public Something(
-        Integer       someid,
-        String        somestring,
-        Long          somehugenumber,
-        Short         somesmallnumber,
-        Integer       someregularnumber,
-        Double        somedouble,
-        String        someenum,
-        JsonObject    somejsonobject,
-        JsonArray     somejsonarray,
-        LocalDateTime sometimestamp
+        Integer           someid,
+        String            somestring,
+        Long              somehugenumber,
+        Short             somesmallnumber,
+        Integer           someregularnumber,
+        Double            somedouble,
+        SomethingSomeenum someenum,
+        JsonObject        somejsonobject,
+        JsonArray         somejsonarray,
+        LocalDateTime     sometimestamp
     ) {
         this.someid = someid;
         this.somestring = somestring;
@@ -146,12 +147,12 @@ public class Something implements ISomething {
     }
 
     @Override
-    public String getSomeenum() {
+    public SomethingSomeenum getSomeenum() {
         return this.someenum;
     }
 
     @Override
-    public Something setSomeenum(String someenum) {
+    public Something setSomeenum(SomethingSomeenum someenum) {
         this.someenum = someenum;
         return this;
     }

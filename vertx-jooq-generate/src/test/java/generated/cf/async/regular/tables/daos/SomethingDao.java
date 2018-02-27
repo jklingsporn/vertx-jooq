@@ -4,6 +4,7 @@
 package generated.cf.async.regular.tables.daos;
 
 
+import generated.cf.async.regular.enums.SomethingSomeenum;
 import generated.cf.async.regular.tables.Something;
 import generated.cf.async.regular.tables.records.SomethingRecord;
 
@@ -90,7 +91,7 @@ public class SomethingDao extends AbstractAsyncVertxDAO<SomethingRecord, generat
     /**
      * Find records that have <code>someEnum IN (values)</code> asynchronously
      */
-    public CompletableFuture<List<generated.cf.async.regular.tables.pojos.Something>> findManyBySomeenum(List<String> values) {
+    public CompletableFuture<List<generated.cf.async.regular.tables.pojos.Something>> findManyBySomeenum(List<SomethingSomeenum> values) {
         return findManyByCondition(Something.SOMETHING.SOMEENUM.in(values));
     }
 

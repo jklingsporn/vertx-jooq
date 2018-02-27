@@ -4,6 +4,7 @@
 package generated.rx.async.guice.tables.daos;
 
 
+import generated.rx.async.guice.enums.SomethingSomeenum;
 import generated.rx.async.guice.tables.Something;
 import generated.rx.async.guice.tables.records.SomethingRecord;
 
@@ -93,7 +94,7 @@ public class SomethingDao extends AbstractAsyncVertxDAO<SomethingRecord, generat
     /**
      * Find records that have <code>someEnum IN (values)</code> asynchronously
      */
-    public Single<List<generated.rx.async.guice.tables.pojos.Something>> findManyBySomeenum(List<String> values) {
+    public Single<List<generated.rx.async.guice.tables.pojos.Something>> findManyBySomeenum(List<SomethingSomeenum> values) {
         return findManyByCondition(Something.SOMETHING.SOMEENUM.in(values));
     }
 

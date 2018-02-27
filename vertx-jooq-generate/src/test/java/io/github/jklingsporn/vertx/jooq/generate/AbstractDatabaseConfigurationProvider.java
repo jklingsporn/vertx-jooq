@@ -49,8 +49,9 @@ abstract class AbstractDatabaseConfigurationProvider {
         databaseConfig.setName(dbType);
         databaseConfig.setInputSchema("");
         databaseConfig.setOutputSchema("");
-        databaseConfig.setIncludes("something|somethingComposite|somethingWithoutJson");
+        databaseConfig.setIncludes("something|somethingComposite|somethingWithoutJson|something_someEnum");
         databaseConfig.setForcedTypes(Arrays.asList(jsonArrayType, jsonObjectType));
+//        databaseConfig.setEnumTypes(Collections.singletonList(new EnumType().withName("someEnum").withLiterals("FOO,BAR,BAZ")));
 
         Target targetConfig = new Target();
         targetConfig.setPackageName("generated."+packageName);

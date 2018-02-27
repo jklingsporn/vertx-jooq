@@ -4,6 +4,7 @@
 package generated.classic.async.regular.tables.daos;
 
 
+import generated.classic.async.regular.enums.SomethingSomeenum;
 import generated.classic.async.regular.tables.Something;
 import generated.classic.async.regular.tables.records.SomethingRecord;
 
@@ -88,7 +89,7 @@ public class SomethingDao extends AbstractAsyncVertxDAO<SomethingRecord, generat
     /**
      * Find records that have <code>someEnum IN (values)</code> asynchronously
      */
-    public Future<List<generated.classic.async.regular.tables.pojos.Something>> findManyBySomeenum(List<String> values) {
+    public Future<List<generated.classic.async.regular.tables.pojos.Something>> findManyBySomeenum(List<SomethingSomeenum> values) {
         return findManyByCondition(Something.SOMETHING.SOMEENUM.in(values));
     }
 
