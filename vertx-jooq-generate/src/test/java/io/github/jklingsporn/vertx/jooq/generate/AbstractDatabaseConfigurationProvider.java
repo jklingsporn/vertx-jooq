@@ -44,9 +44,6 @@ abstract class AbstractDatabaseConfigurationProvider {
         jsonArrayType.setExpression("someJsonArray");
         jsonArrayType.setTypes(".*");
 
-        /*
-         * We're using HSQLDB to generate our files
-         */
         Configuration configuration = new Configuration();
         Database databaseConfig = new Database();
         databaseConfig.setName(dbType);
@@ -72,7 +69,7 @@ abstract class AbstractDatabaseConfigurationProvider {
         generateConfig.setJavaTimeTypes(true);
 
         /*
-         * We need to do a small hack to let jOOQ's DAOImpl implement our interface. That's why
+         * We need to do a small hack to let the DAOs extend from AbstractVertxDAO. That's why
          * we need a custom Strategy.
          */
         Strategy strategy = new Strategy();

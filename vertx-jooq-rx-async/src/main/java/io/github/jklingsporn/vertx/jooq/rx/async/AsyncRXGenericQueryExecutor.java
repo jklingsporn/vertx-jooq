@@ -1,6 +1,6 @@
 package io.github.jklingsporn.vertx.jooq.rx.async;
 
-import io.github.jklingsporn.vertx.jooq.shared.internal.async.AbstractAsyncQueryExecutor;
+import io.github.jklingsporn.vertx.jooq.shared.async.AbstractAsyncQueryExecutor;
 import io.reactivex.Single;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.sql.ResultSet;

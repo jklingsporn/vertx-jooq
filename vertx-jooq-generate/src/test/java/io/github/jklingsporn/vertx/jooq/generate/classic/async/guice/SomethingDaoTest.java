@@ -12,6 +12,7 @@ import org.jooq.Condition;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 
+import java.time.LocalDateTime;
 import java.util.Random;
 
 /**
@@ -46,6 +47,7 @@ public class SomethingDaoTest extends ClassicTestBase<Something, Integer, Long, 
         something.setSomesmallnumber((short) random.nextInt(Short.MAX_VALUE));
         something.setSomestring("my_string");
         //someEnum has a default value and does not need to be set
+        something.setSometimestamp(LocalDateTime.now());
         return something;
     }
 

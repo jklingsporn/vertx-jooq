@@ -1,6 +1,6 @@
 package io.github.jklingsporn.vertx.jooq.completablefuture.async;
 
-import io.github.jklingsporn.vertx.jooq.shared.internal.async.AbstractAsyncQueryExecutor;
+import io.github.jklingsporn.vertx.jooq.shared.async.AbstractAsyncQueryExecutor;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
@@ -107,4 +107,5 @@ public class AsyncCompletableFutureGenericQueryExecutor extends AbstractAsyncQue
             return cf;
         });
     }
+
 }

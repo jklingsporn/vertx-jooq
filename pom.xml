@@ -6,6 +6,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>vertx-jooq-shared</module>
+        <module>vertx-jooq-shared-async</module>
         <module>vertx-jooq-classic</module>
         <module>vertx-jooq-classic-jdbc</module>
         <module>vertx-jooq-classic-async</module>
@@ -32,7 +33,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
     <groupId>io.github.jklingsporn</groupId>
-    <version>3.0.0</version>
+    <version>3.0.1</version>
     <artifactId>vertx-jooq</artifactId>
     <name>${project.groupId}:${project.artifactId}</name>
     <description>A jOOQ-CodeGenerator to create vertxified DAOs and POJOs</description>
