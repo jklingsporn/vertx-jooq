@@ -14,6 +14,7 @@ abstract class AbstractRXGeneratorStrategy extends AbstractVertxGeneratorStrateg
         out.println("import io.reactivex.Completable;");
         out.println("import io.reactivex.Observable;");
         out.println("import io.reactivex.Single;");
+        out.println("import java.util.Optional;");
     }
 
     @Override
@@ -23,7 +24,7 @@ abstract class AbstractRXGeneratorStrategy extends AbstractVertxGeneratorStrateg
 
     @Override
     public String renderFindOneType(String pType) {
-        return String.format("Single<%s>",pType);
+        return String.format("Single<Optional<%s>>",pType);
     }
 
     @Override

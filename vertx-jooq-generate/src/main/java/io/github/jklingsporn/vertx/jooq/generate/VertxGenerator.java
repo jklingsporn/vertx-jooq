@@ -4,7 +4,9 @@ import io.github.jklingsporn.vertx.jooq.shared.JsonArrayConverter;
 import io.github.jklingsporn.vertx.jooq.shared.JsonObjectConverter;
 import io.vertx.core.impl.Arguments;
 import org.jooq.Constants;
+import org.jooq.Name;
 import org.jooq.Record;
+import org.jooq.impl.DefaultDataType;
 import org.jooq.tools.JooqLogger;
 import org.jooq.util.*;
 
@@ -100,10 +102,9 @@ public class VertxGenerator extends JavaGenerator {
     }
 
     /**
-     * You might want to override this class in order to add injection methods.
      * @param out
      */
-    protected void generateSetVertxAnnotation(JavaWriter out){};
+    protected void generateSingletonAnnotation(JavaWriter out){};
 
     /**
      * You might want to override this class in order to add injection methods.
@@ -111,8 +112,10 @@ public class VertxGenerator extends JavaGenerator {
      */
     protected void generateConstructorAnnotation(JavaWriter out){};
 
+
     private void generateFromJson(TableDefinition table, JavaWriter out, GeneratorStrategy.Mode mode){
         out.println();
+        out.tab(1).override();
         String className = getStrategy().getJavaClassName(table, mode);
         out.tab(1).println("public %s%s fromJson(io.vertx.core.json.JsonObject json) {", mode == GeneratorStrategy.Mode.INTERFACE?"default ":"",className);
         for (TypedElementDefinition<?> column : table.getColumns()) {
@@ -161,7 +164,7 @@ public class VertxGenerator extends JavaGenerator {
         return table.getDatabase().getEnum(table.getSchema(), column.getType().getUserType()) != null;
     }
 
-    private boolean isType(String columnType, Class<?> clazz) {
+    protected boolean isType(String columnType, Class<?> clazz) {
         return columnType.equals(clazz.getName());
     }
 
@@ -181,12 +184,13 @@ public class VertxGenerator extends JavaGenerator {
 
     private void generateToJson(TableDefinition table, JavaWriter out, GeneratorStrategy.Mode mode){
         out.println();
+        out.tab(1).override();
         out.tab(1).println("public %sio.vertx.core.json.JsonObject toJson() {",mode== GeneratorStrategy.Mode.INTERFACE?"default ":"");
         out.tab(2).println("io.vertx.core.json.JsonObject json = new io.vertx.core.json.JsonObject();");
         for (TypedElementDefinition<?> column : table.getColumns()) {
             String getter = getStrategy().getJavaGetterName(column, GeneratorStrategy.Mode.INTERFACE);
             String columnType = getJavaType(column.getType());
-            if(handleCustomTypeToJson(column,getter,getJavaType(column.getType()), getJsonKeyName(column), out)) {
+            if(handleCustomTypeToJson(column,getter,columnType, getJsonKeyName(column), out)) {
                 //handled by user
             }else if(isEnum(table,column)){
                 out.tab(2).println("json.put(\"%s\",%s()==null?null:%s().getLiteral());", getJsonKeyName(column),getter,getter);
@@ -249,7 +253,7 @@ public class VertxGenerator extends JavaGenerator {
 
     /**
      * Copied (more ore less) from JavaGenerator.
-     * Generates fetchByCYZAsync- and fetchOneByCYZAsync-methods
+     * Generates fetchByCYZ- and fetchOneByCYZ-methods
      * @param table
      * @param out
      */
@@ -292,24 +296,18 @@ public class VertxGenerator extends JavaGenerator {
 
     protected void generateFindOneByMethods(JavaWriter out, String pType, String colName, String colClass, String colType, String colIdentifier) {
         out.tab(1).javadoc("Find a unique record that has <code>%s = value</code> asynchronously", colName);
-        out.tab(1).println("public %s findOneBy%sAsync(%s value) {", getUnwrappedStrategy().renderFindOneType(pType),colClass, colType);
-        out.tab(2).println("return findOneByConditionAsync(%s.eq(value));", colIdentifier);
+        out.tab(1).println("public %s findOneBy%s(%s value) {", getUnwrappedStrategy().renderFindOneType(pType),colClass, colType);
+        out.tab(2).println("return findOneByCondition(%s.eq(value));", colIdentifier);
         out.tab(1).println("}");
     }
 
     protected void generateFindManyByMethods(JavaWriter out, String pType, String colName, String colClass, String colType, String colIdentifier) {
         out.tab(1).javadoc("Find records that have <code>%s IN (values)</code> asynchronously", colName);
-        out.tab(1).println("public %s findManyBy%sAsync(%s<%s> values) {", getUnwrappedStrategy().renderFindManyType(pType), colClass, List.class, colType);
+        out.tab(1).println("public %s findManyBy%s(%s<%s> values) {", getUnwrappedStrategy().renderFindManyType(pType), colClass, List.class, colType);
         //out.tab(2).println("return findMany(%s, values);", colIdentifier);
-        out.tab(2).println("return findManyByConditionAsync(%s.in(values));", colIdentifier);
+        out.tab(2).println("return findManyByCondition(%s.in(values));", colIdentifier);
         out.tab(1).println("}");
     }
-
-    protected void generateInterfaceMethodImplementations(JavaWriter out, String pType, String colName, String colClass, String colType, String colIdentifier){
-        generateDeleteByIdAsync(out, pType, colName, colClass, colType, colIdentifier);
-    }
-
-    protected void generateDeleteByIdAsync(JavaWriter out, String pType, String colName, String colClass, String colType, String colIdentifier){}
 
     /**
      * Copied from JavaGenerator
@@ -415,7 +413,7 @@ public class VertxGenerator extends JavaGenerator {
 
         if (generateSpringAnnotations())
             out.println("@%s", out.ref("org.springframework.stereotype.Repository"));
-
+        generateSingletonAnnotation(out);
         out.println("public class %s extends %s<%s, %s, %s, %s, %s, %s, %s>[[before= implements ][%s]] {",
                 className,
                 daoImpl,
@@ -468,4 +466,49 @@ public class VertxGenerator extends JavaGenerator {
         out.println("}");
     }
 
+    /**
+     * Enums cannot have a default value for some rome reason. Also nullability information gets lost.
+     * Until a fix is provided, we have to handle it on our own.
+     * @param db
+     * @param schema
+     * @param t
+     * @param p
+     * @param s
+     * @param l
+     * @param n
+     * @param i
+     * @param d
+     * @param u
+     * @return
+     * @see <a href="https://github.com/jOOQ/jOOQ/issues/7199">Issue 7199</a>
+     */
+    @Override
+    protected String getTypeReference(Database db, SchemaDefinition schema, String t, int p, int s, int l, boolean n, boolean i, String d, Name u) {
+        if (db.getEnum(schema, u) != null) {
+            StringBuilder sb = new StringBuilder();
+            sb.append("org.jooq.util.");
+            sb.append(db.getDialect().getName().toLowerCase());
+            sb.append(".");
+            sb.append(db.getDialect().getName());
+            sb.append("DataType.");
+            sb.append(DefaultDataType.normalise(DefaultDataType.getDataType(db.getDialect(), String.class).getTypeName()));
+            sb.append(".asEnumDataType(");
+            sb.append(getStrategy().getFullJavaClassName(db.getEnum(schema, u))).append(".class");
+            sb.append(")");
+            if (!n)
+                sb.append(".nullable(false)");
+            if (i)
+                sb.append(".identity(true)");
+            if(d != null){
+                sb.append(".defaultValue(");
+                sb.append(getStrategy().getFullJavaClassName(db.getEnum(schema, u)));
+                sb.append(".");
+                sb.append(d);
+                sb.append(")");
+            }
+            return sb.toString();
+        }else{
+            return super.getTypeReference(db, schema, t, p, s, l, n, i, d, u);
+        }
+    }
 }

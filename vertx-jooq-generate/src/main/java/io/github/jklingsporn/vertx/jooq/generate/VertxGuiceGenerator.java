@@ -32,8 +32,8 @@ public class VertxGuiceGenerator extends VertxGenerator {
     }
 
     @Override
-    protected void generateSetVertxAnnotation(JavaWriter out) {
-        out.tab(1).println("@javax.inject.Inject");
+    protected void generateSingletonAnnotation(JavaWriter out) {
+        out.println("@javax.inject.Singleton");
     }
 
     @Override
@@ -48,17 +48,6 @@ public class VertxGuiceGenerator extends VertxGenerator {
     protected void generateConstructorAnnotation(JavaWriter out) {
         out.tab(1).println("@javax.inject.Inject");
     }
-
-//    private void generateSetConfigurationMethod(JavaWriter out) {
-//        out.println();
-//        out.tab(1).println("@javax.inject.Inject");
-//        generateSetConfigurationAnnotation(out);
-//        out.tab(1).println("@Override");
-//        out.tab(1).println("public void setConfiguration(Configuration configuration) {");
-//        out.tab(2).println("super.setConfiguration(configuration);");
-//        out.tab(1).println("}");
-//        out.println();
-//    }
 
     /**
      * You might want to override this class in order to perform named injection
@@ -86,7 +75,6 @@ public class VertxGuiceGenerator extends VertxGenerator {
         out.println("}");
         closeJavaWriter(out);
     }
-
 
     protected void generateDAOBinding(TableDefinition table, JavaWriter out){
         UniqueKeyDefinition key = table.getPrimaryKey();

@@ -10,20 +10,25 @@ import static org.jooq.impl.DSL.row;
 import static org.jooq.impl.DSL.using;
 
 /**
- * Created by jensklingsporn on 12.12.17.
- * Utility class to reduce duplicate code in the different VertxDAO implementations.
- * Only meant to be used by vertx-jooq.
+ * Abstract base class to reduce duplicate code in the different VertxDAO implementations.
+ * @param <R> the <code>Record</code> type.
+ * @param <P> the POJO-type
+ * @param <T> the Key-Type
+ * @param <FIND_MANY> the result type returned for all findManyXYZ-operations. This varies on the VertxDAO-subtypes, e.g. {@code Future<List<P>>}.
+ * @param <FIND_ONE> the result type returned for all findOneXYZ-operations. This varies on the VertxDAO-subtypes , e.g. {@code Future<P>}.
+ * @param <EXECUTE> the result type returned for all insert, update and delete-operations. This varies on the VertxDAO-subtypes, e.g. {@code Future<Integer>}.
+ * @param <INSERT_RETURNING> the result type returned for the insertReturning-operation. This varies on the VertxDAO-subtypes, e.g. {@code Future<T>}.
  */
-public abstract class AbstractVertxDAO<R extends UpdatableRecord<R>, P, T, FIND_MANY, FIND_ONE,EXECUTE,INSERT> implements GenericVertxDAO<P,T, FIND_MANY, FIND_ONE,EXECUTE,INSERT>
+public abstract class AbstractVertxDAO<R extends UpdatableRecord<R>, P, T, FIND_MANY, FIND_ONE,EXECUTE, INSERT_RETURNING> implements GenericVertxDAO<P,T, FIND_MANY, FIND_ONE,EXECUTE, INSERT_RETURNING>
 {
 
     private final Class<P> type;
     private final Table<R> table;
-    private final QueryExecutor<R, T, FIND_MANY, FIND_ONE, EXECUTE, INSERT> queryExecutor;
+    private final QueryExecutor<R, T, FIND_MANY, FIND_ONE, EXECUTE, INSERT_RETURNING> queryExecutor;
     private Configuration configuration;
 
 
-    protected AbstractVertxDAO(Table<R> table, Class<P> type, QueryExecutor<R, T, FIND_MANY, FIND_ONE, EXECUTE, INSERT> queryExecutor, Configuration configuration) {
+    protected AbstractVertxDAO(Table<R> table, Class<P> type, QueryExecutor<R, T, FIND_MANY, FIND_ONE, EXECUTE, INSERT_RETURNING> queryExecutor, Configuration configuration) {
         this.type = type;
         this.table = table;
         this.queryExecutor = queryExecutor;
@@ -43,18 +48,18 @@ public abstract class AbstractVertxDAO<R extends UpdatableRecord<R>, P, T, FIND_
         return configuration;
     }
 
-    protected QueryExecutor<R, T, FIND_MANY, FIND_ONE, EXECUTE, INSERT> queryExecutor(){
+    protected QueryExecutor<R, T, FIND_MANY, FIND_ONE, EXECUTE, INSERT_RETURNING> queryExecutor(){
         return this.queryExecutor;
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public EXECUTE updateAsync(P object){
+    public EXECUTE update(P object){
         Objects.requireNonNull(object);
         DSLContext dslContext = using(configuration());
-        UniqueKey<R> pk = getTable().getPrimaryKey();
         R record = dslContext.newRecord(getTable(), object);
         Condition where = DSL.trueCondition();
+        UniqueKey<R> pk = getTable().getPrimaryKey();
         for (TableField<R,?> tableField : pk.getFields()) {
             //exclude primary keys from update
             record.changed(tableField,false);
@@ -67,75 +72,72 @@ public abstract class AbstractVertxDAO<R extends UpdatableRecord<R>, P, T, FIND_
     }
 
     @Override
-    public FIND_MANY findManyByConditionAsync(Condition condition){
+    public FIND_MANY findManyByCondition(Condition condition){
         return queryExecutor().findMany(using(configuration()).selectFrom(getTable()).where(condition));
     }
 
     @Override
-    public FIND_MANY findManyByIdsAsync(Collection<T> ids){
-        return findManyByConditionAsync(equalKeys(ids));
+    public FIND_MANY findManyByIds(Collection<T> ids){
+        return findManyByCondition(equalKeys(ids));
     }
 
     @Override
-    public FIND_ONE findOneByIdAsync(T id){
-        return findOneByConditionAsync(equalKey(id));
+    public FIND_MANY findAll() {
+        return findManyByCondition(DSL.trueCondition());
     }
 
     @Override
-    public FIND_ONE findOneByConditionAsync(Condition condition){
+    public FIND_ONE findOneById(T id){
+        return findOneByCondition(equalKey(id));
+    }
+
+    @Override
+    public FIND_ONE findOneByCondition(Condition condition){
         return queryExecutor().findOne(using(configuration()).selectFrom(getTable()).where(condition));
     }
 
     @Override
-    public EXECUTE deleteByConditionAsync(Condition condition){
+    public EXECUTE deleteByCondition(Condition condition){
         return queryExecutor().execute(using(configuration()).deleteFrom(getTable()).where(condition));
     }
 
     @Override
-    public EXECUTE deleteByIdAsync(T id){
-        return deleteByConditionAsync(equalKey(id));
+    public EXECUTE deleteById(T id){
+        return deleteByCondition(equalKey(id));
     }
 
     @Override
-    public EXECUTE deleteByIdsAsync(Collection<T> ids){
-        return deleteByConditionAsync(equalKeys(ids));
+    public EXECUTE deleteByIds(Collection<T> ids){
+        return deleteByCondition(equalKeys(ids));
     }
 
-//    protected EXECUTE existsByIdAsyncInternal(T id){
-//        return queryExecutor().execute(using(configuration()).fetchExists(getTable()).where(equalKey(id)));
-//    }
-
     @Override
-    public EXECUTE insertAsync(P pojo){
+    public EXECUTE insert(P pojo){
         Objects.requireNonNull(pojo);
         DSLContext dslContext = using(configuration());
-        return queryExecutor().execute(dslContext.insertInto(getTable()).set(dslContext.newRecord(getTable(), pojo)));
+        return queryExecutor().execute(dslContext.insertInto(getTable()).set(newRecord(dslContext,pojo)));
     }
 
     @Override
-    public EXECUTE insertAsync(Collection<P> pojos){
+    public EXECUTE insert(Collection<P> pojos){
         Arguments.require(!pojos.isEmpty(), "No elements");
         DSLContext dslContext = using(configuration());
         InsertSetStep<R> insertSetStep = dslContext.insertInto(getTable());
         InsertValuesStepN<R> insertValuesStepN = null;
         for (P pojo : pojos) {
-            insertValuesStepN = insertSetStep.values(dslContext.newRecord(getTable(), pojo).fields());
+            insertValuesStepN = insertSetStep.values(newRecord(dslContext, pojo).intoArray());
         }
         return queryExecutor().execute(insertValuesStepN);
     }
 
-//    protected <X> X countAsyncInternal(){
-//        return this.<Long,X>executor().apply(dslContext -> dslContext.selectCount().from(getTable()).fetchOne(0, Long.class));
-//    }
-
     @SuppressWarnings("unchecked")
-    public INSERT insertReturningPrimaryAsync(P object){
+    public INSERT_RETURNING insertReturningPrimary(P object){
         UniqueKey<?> key = getTable().getPrimaryKey();
         //usually key shouldn't be null because DAO generation is omitted in such cases
         Objects.requireNonNull(key,()->"No primary key");
         DSLContext dslContext = using(configuration());
         return queryExecutor().insertReturning(
-                dslContext.insertInto(getTable()).set(dslContext.newRecord(getTable(), object)).returning(key.getFields()),
+                dslContext.insertInto(getTable()).set(newRecord(dslContext, object)).returning(key.getFields()),
                 record->{
                     Objects.requireNonNull(record, () -> "Failed inserting record or no key");
                     Record key1 = ((R)record).key();
@@ -199,6 +201,33 @@ public abstract class AbstractVertxDAO<R extends UpdatableRecord<R>, P, T, FIND_
             result.set(fields[i], fields[i].getDataType().convert(values[i]));
 
         return (T) result;
+    }
+
+    /**
+     * @param dslContext
+     * @param pojo
+     * @return a new {@code Record} based on the pojo.
+     */
+    protected Record newRecord(DSLContext dslContext, P pojo) {
+        return setDefault(dslContext.newRecord(getTable(), pojo));
+    }
+
+    /**
+     * Defaults fields that have a default value and are nullable.
+     * @param record the record
+     * @return the record
+     */
+    private Record setDefault(Record record) {
+        int size = record.size();
+        for (int i = 0; i < size; i++)
+            if (record.get(i) == null) {
+                @SuppressWarnings("unchecked")
+                Field<Object> field = (Field<Object>) record.field(i);
+                if (!field.getDataType().nullable() && !field.getDataType().identity())
+                    record.set(field, DSL.defaultValue());
+            }
+
+        return record;
     }
 
     protected abstract T getId(P object);

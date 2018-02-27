@@ -10,8 +10,6 @@ abstract class AbstractClassicVertxGeneratorStrategy extends AbstractVertxGenera
 
     @Override
     public void writeDAOImports(JavaWriter out) {
-        out.println("import io.vertx.core.Handler;");
-        out.println("import io.vertx.core.AsyncResult;");
         out.println("import io.vertx.core.Future;");
     }
 

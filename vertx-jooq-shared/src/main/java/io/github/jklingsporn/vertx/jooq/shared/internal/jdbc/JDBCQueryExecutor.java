@@ -5,9 +5,16 @@ import org.jooq.DSLContext;
 import java.util.function.Function;
 
 /**
- * Created by jensklingsporn on 09.02.18.
+ * @param <T> the type returned by the execute-method, e.g. {@code Future<?>}.
  */
+@FunctionalInterface
 public interface JDBCQueryExecutor<T> {
 
-    public <X> T executeAsync(Function<DSLContext, X> function);
+    /**
+     * Executes any <code>DSLContext</code>-aware function using <code>Vertx#executeBlocking</code>.
+     * @param function
+     * @param <X>
+     * @return the result of this operation.
+     */
+    public <X> T execute(Function<DSLContext, X> function);
 }

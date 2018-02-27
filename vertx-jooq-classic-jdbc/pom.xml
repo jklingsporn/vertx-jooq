@@ -5,8 +5,9 @@
     <parent>
         <artifactId>vertx-jooq</artifactId>
         <groupId>io.github.jklingsporn</groupId>
-        <version>3.0.0-BETA</version>
+        <version>3.0.1</version>
     </parent>
+    <packaging>jar</packaging>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>vertx-jooq-classic-jdbc</artifactId>

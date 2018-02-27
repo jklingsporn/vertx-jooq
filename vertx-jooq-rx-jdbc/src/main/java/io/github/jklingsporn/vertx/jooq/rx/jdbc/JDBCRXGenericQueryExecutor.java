@@ -25,7 +25,7 @@ public class JDBCRXGenericQueryExecutor implements JDBCQueryExecutor<Single<?>>{
     }
 
     @Override
-    public <X> Single<X> executeAsync(Function<DSLContext, X> function){
+    public <X> Single<X> execute(Function<DSLContext, X> function){
         return executeBlocking(h -> h.complete(function.apply(DSL.using(configuration))));
     }
 
