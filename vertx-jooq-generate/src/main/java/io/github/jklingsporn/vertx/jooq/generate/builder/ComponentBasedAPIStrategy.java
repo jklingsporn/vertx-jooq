@@ -5,96 +5,140 @@ import org.jooq.util.DefaultGeneratorStrategy;
 import org.jooq.util.Definition;
 import org.jooq.util.JavaWriter;
 
+import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
- * Created by jensklingsporn on 09.02.18.
+ * A {@code VertxGeneratorStrategy} that delegates some method calls to components.
+ * @author jensklingsporn
  */
-class ComponentBasedAPIStrategy extends DefaultGeneratorStrategy implements VertxGeneratorStrategy{
+class ComponentBasedAPIStrategy extends DefaultGeneratorStrategy implements VertxGeneratorStrategy {
 
-    private RenderQueryExecutorTypesComponent renderQueryExecutorTypesComponent;
-    private Consumer<JavaWriter> writeDAOImportsComponent;
-    private Function3 renderQueryExecutorComponent;
-    private Function3 renderDAOInterfaceComponent;
-    private Consumer6 writeConstructorComponent;
-    private BiFunction<Definition,Mode,String> getJavaClassExtendsComponent;
-    private Supplier<String> getFQVertxNameComponent;
-
-    final StrategyBuilder.APIType apiType;
-
-    ComponentBasedAPIStrategy(StrategyBuilder.APIType apiType) {
-        this.apiType = apiType;
-    }
+    RenderQueryExecutorTypesComponent renderQueryExecutorTypesDelegate;
+    Consumer<JavaWriter> writeDAOImportsDelegate;
+    RenderQueryExecutorComponent renderQueryExecutorDelegate;
+    RenderDAOInterfaceComponent renderDAOInterfaceDelegate;
+    WriteConstructorComponent writeConstructorDelegate;
+    BiFunction<Definition,Mode,String> getJavaClassExtendsDelegate;
+    BiFunction<Definition,Mode,List<String>> getJavaClassImplementsDelegate;
+    Supplier<String> getFQVertxNameDelegate;
+    OverwriteComponent overwriteDelegate = (out, className, tableIdentifier, tableRecord, pType, tType) -> {}; //no overwrite by default
+    VertxGeneratorStrategyBuilder.APIType apiType;
 
     @Override
     public String getFQVertxName() {
-        return getFQVertxNameComponent.get();
+        return getFQVertxNameDelegate.get();
     }
 
     @Override
     public String renderFindOneType(String pType) {
-        return renderQueryExecutorTypesComponent.renderFindOneType(pType);
+        return renderQueryExecutorTypesDelegate.renderFindOneType(pType);
     }
 
     @Override
     public String renderFindManyType(String pType) {
-        return renderQueryExecutorTypesComponent.renderFindManyType(pType);
+        return renderQueryExecutorTypesDelegate.renderFindManyType(pType);
     }
 
     @Override
     public String renderExecType() {
-        return renderQueryExecutorTypesComponent.renderExecType();
+        return renderQueryExecutorTypesDelegate.renderExecType();
     }
 
     @Override
     public String renderInsertReturningType(String tType) {
-        return renderQueryExecutorTypesComponent.renderInsertReturningType(tType);
+        return renderQueryExecutorTypesDelegate.renderInsertReturningType(tType);
     }
 
     @Override
     public String renderQueryExecutor(String rType, String pType, String tType) {
-        return renderQueryExecutorComponent.apply(rType,pType,tType);
+        return renderQueryExecutorDelegate.renderQueryExecutor(rType, pType, tType);
     }
 
     @Override
     public String renderDAOInterface(String rType, String pType, String tType) {
-        return renderDAOInterfaceComponent.apply(rType,pType,tType);
+        return renderDAOInterfaceDelegate.renderDAOInterface(rType, pType, tType);
     }
 
     @Override
     public void writeDAOImports(JavaWriter out) {
-        writeDAOImportsComponent.accept(out);
+        writeDAOImportsDelegate.accept(out);
     }
 
     @Override
     public void writeConstructor(JavaWriter out, String className, String tableIdentifier, String tableRecord, String pType, String tType) {
-        writeConstructorComponent.accept(out,className,tableIdentifier,tableRecord,pType,tType);
+        writeConstructorDelegate.writeConstructor(out, className, tableIdentifier, tableRecord, pType, tType);
     }
 
-    public ComponentBasedAPIStrategy setRenderDAOInterfaceComponent(Function3 renderDAOInterfaceComponent) {
-        this.renderDAOInterfaceComponent = renderDAOInterfaceComponent;
+    @Override
+    public String getJavaClassExtends(Definition definition, Mode mode) {
+        return getJavaClassExtendsDelegate.apply(definition, mode);
+    }
+
+    @Override
+    public List<String> getJavaClassImplements(Definition definition, Mode mode) {
+        List<String> javaClassImplements = super.getJavaClassImplements(definition, mode);
+        List<String> fromDelegate = getJavaClassImplementsDelegate.apply(definition, mode);
+        if(!fromDelegate.isEmpty()){
+            javaClassImplements.addAll(fromDelegate);
+        }
+        return javaClassImplements;
+    }
+
+    @Override
+    public void overwrite(JavaWriter out, String className, String tableIdentifier, String tableRecord, String pType, String tType) {
+        overwriteDelegate.overwrite(out, className, tableIdentifier, tableRecord, pType, tType);
+    }
+
+    ComponentBasedAPIStrategy setWriteConstructorDelegate(WriteConstructorComponent writeConstructorDelegate) {
+        this.writeConstructorDelegate = writeConstructorDelegate;
         return this;
     }
 
-    public ComponentBasedAPIStrategy setRenderQueryExecutorTypesComponent(RenderQueryExecutorTypesComponent renderQueryExecutorTypesComponent) {
-        this.renderQueryExecutorTypesComponent = renderQueryExecutorTypesComponent;
+    ComponentBasedAPIStrategy setGetFQVertxNameDelegate(Supplier<String> getFQVertxNameDelegate) {
+        this.getFQVertxNameDelegate = getFQVertxNameDelegate;
         return this;
     }
 
-    public ComponentBasedAPIStrategy setWriteDAOImportsComponent(Consumer<JavaWriter> writeDAOImportsComponent) {
-        this.writeDAOImportsComponent = writeDAOImportsComponent;
+    ComponentBasedAPIStrategy setRenderDAOInterfaceDelegate(RenderDAOInterfaceComponent renderDAOInterfaceDelegate) {
+        this.renderDAOInterfaceDelegate = renderDAOInterfaceDelegate;
         return this;
     }
 
-    public ComponentBasedAPIStrategy setRenderQueryExecutorComponent(Function3 renderQueryExecutorComponent) {
-        this.renderQueryExecutorComponent = renderQueryExecutorComponent;
+    ComponentBasedAPIStrategy setRenderQueryExecutorTypesDelegate(RenderQueryExecutorTypesComponent renderQueryExecutorTypesDelegate) {
+        this.renderQueryExecutorTypesDelegate = renderQueryExecutorTypesDelegate;
         return this;
     }
 
-    public ComponentBasedAPIStrategy setGetJavaClassExtendsComponent(BiFunction<Definition, Mode, String> getJavaClassExtendsComponent) {
-        this.getJavaClassExtendsComponent = getJavaClassExtendsComponent;
+    ComponentBasedAPIStrategy setWriteDAOImportsDelegate(Consumer<JavaWriter> writeDAOImportsDelegate) {
+        this.writeDAOImportsDelegate = writeDAOImportsDelegate;
+        return this;
+    }
+
+    ComponentBasedAPIStrategy setRenderQueryExecutorDelegate(RenderQueryExecutorComponent renderQueryExecutorDelegate) {
+        this.renderQueryExecutorDelegate = renderQueryExecutorDelegate;
+        return this;
+    }
+
+    ComponentBasedAPIStrategy setGetJavaClassExtendsDelegate(BiFunction<Definition, Mode, String> getJavaClassExtendsDelegate) {
+        this.getJavaClassExtendsDelegate = getJavaClassExtendsDelegate;
+        return this;
+    }
+
+    ComponentBasedAPIStrategy setGetJavaClassImplementsDelegate(BiFunction<Definition, Mode, List<String>> getJavaClassImplementsDelegate) {
+        this.getJavaClassImplementsDelegate = getJavaClassImplementsDelegate;
+        return this;
+    }
+
+    ComponentBasedAPIStrategy setApiType(VertxGeneratorStrategyBuilder.APIType apiType) {
+        this.apiType = apiType;
+        return this;
+    }
+
+    ComponentBasedAPIStrategy setOverwriteDelegate(OverwriteComponent overwriteDelegate) {
+        this.overwriteDelegate = overwriteDelegate;
         return this;
     }
 }

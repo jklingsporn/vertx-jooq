@@ -5,9 +5,9 @@ package io.github.jklingsporn.vertx.jooq.generate.builder;
  */
 public interface ExecutionStep {
 
-    public FinalStep withJDBC();
+    public FinalStep withJDBCDriver();
 
-    public FinalStep withAsync();
+    public FinalStep withAsyncDriver();
 
 
 }

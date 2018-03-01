@@ -18,8 +18,6 @@ import org.jooq.Configuration;
 import org.jooq.Record2;
 
 
-import io.reactivex.Completable;
-import io.reactivex.Observable;
 import io.reactivex.Single;
 import java.util.Optional;
 import io.github.jklingsporn.vertx.jooq.rx.async.AsyncRXQueryExecutor;

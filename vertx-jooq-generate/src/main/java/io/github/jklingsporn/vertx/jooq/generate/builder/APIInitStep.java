@@ -1,9 +1,9 @@
 package io.github.jklingsporn.vertx.jooq.generate.builder;
 
 /**
- * Created by jensklingsporn on 09.02.18.
+ * @author jensklingsporn
  */
-interface APIInitStep {
+public interface APIInitStep {
 
     public ExecutionStep withClassicAPI();
 

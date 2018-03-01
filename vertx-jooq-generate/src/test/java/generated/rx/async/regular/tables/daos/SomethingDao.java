@@ -20,8 +20,6 @@ import javax.annotation.Generated;
 import org.jooq.Configuration;
 
 
-import io.reactivex.Completable;
-import io.reactivex.Observable;
 import io.reactivex.Single;
 import java.util.Optional;
 import io.github.jklingsporn.vertx.jooq.rx.async.AsyncRXQueryExecutor;

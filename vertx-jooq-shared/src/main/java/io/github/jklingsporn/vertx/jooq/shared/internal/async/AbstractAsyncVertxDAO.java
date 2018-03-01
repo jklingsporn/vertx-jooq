@@ -33,7 +33,9 @@ public abstract class AbstractAsyncVertxDAO<R extends UpdatableRecord<R>, P, T, 
      * DAO-creation depending on T.
      */
     protected Function<Object,T> keyConverter(){
-        throw new UnsupportedOperationException("Cannot be converted");
+        return o -> {
+            throw new UnsupportedOperationException(String.format("%s cannot be converted", o==null?"null":o.getClass()));
+        };
     }
 
     @Override
