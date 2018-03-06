@@ -56,8 +56,10 @@ public abstract class AbstractAsyncQueryExecutor<FIND_MANY_JSON, FIND_ONE_JSON, 
     protected JsonArray getBindValues(Query query) {
         ArrayList<Object> bindValues = new ArrayList<>();
         for (Param<?> param : query.getParams().values()) {
-            Object value = convertToDatabaseType(param);
-            bindValues.add(value);
+            if(!param.getParamType().equals(ParamType.INLINED)) {
+                Object value = convertToDatabaseType(param);
+                bindValues.add(value);
+            }
         }
         return new JsonArray(bindValues);
     }
