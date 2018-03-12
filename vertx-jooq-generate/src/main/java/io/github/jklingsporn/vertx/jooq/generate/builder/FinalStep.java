@@ -6,4 +6,5 @@ public interface FinalStep {
 
     public VertxGeneratorStrategy build();
 
+    public VertxGeneratorStrategy buildWithGuice();
 }

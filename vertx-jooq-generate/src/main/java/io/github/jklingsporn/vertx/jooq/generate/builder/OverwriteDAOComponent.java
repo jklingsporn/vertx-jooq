@@ -6,7 +6,7 @@ import org.jooq.util.JavaWriter;
  * Created by jensklingsporn on 09.02.18.
  */
 @FunctionalInterface
-interface OverwriteComponent {
+interface OverwriteDAOComponent {
 
     public void overwrite(JavaWriter out, String className, String tableIdentifier, String tableRecord, String pType, String tType);
 }

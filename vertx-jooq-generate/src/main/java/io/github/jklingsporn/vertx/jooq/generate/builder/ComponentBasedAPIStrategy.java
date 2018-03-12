@@ -4,6 +4,7 @@ import io.github.jklingsporn.vertx.jooq.generate.VertxGeneratorStrategy;
 import org.jooq.util.DefaultGeneratorStrategy;
 import org.jooq.util.Definition;
 import org.jooq.util.JavaWriter;
+import org.jooq.util.SchemaDefinition;
 
 import java.util.List;
 import java.util.function.BiFunction;
@@ -16,6 +17,7 @@ import java.util.function.Supplier;
  */
 class ComponentBasedAPIStrategy extends DefaultGeneratorStrategy implements VertxGeneratorStrategy {
 
+    VertxGeneratorStrategyBuilder.APIType apiType;
     RenderQueryExecutorTypesComponent renderQueryExecutorTypesDelegate;
     Consumer<JavaWriter> writeDAOImportsDelegate;
     RenderQueryExecutorComponent renderQueryExecutorDelegate;
@@ -24,8 +26,8 @@ class ComponentBasedAPIStrategy extends DefaultGeneratorStrategy implements Vert
     BiFunction<Definition,Mode,String> getJavaClassExtendsDelegate;
     BiFunction<Definition,Mode,List<String>> getJavaClassImplementsDelegate;
     Supplier<String> getFQVertxNameDelegate;
-    OverwriteComponent overwriteDelegate = (out, className, tableIdentifier, tableRecord, pType, tType) -> {}; //no overwrite by default
-    VertxGeneratorStrategyBuilder.APIType apiType;
+    OverwriteDAOComponent overwriteDAODelegate = (out, className, tableIdentifier, tableRecord, pType, tType) -> {}; //no overwrite by default
+    Consumer<SchemaDefinition> writeMoreDelegate = s->{}; //nothing more to create by default
 
     @Override
     public String getFQVertxName() {
@@ -89,7 +91,7 @@ class ComponentBasedAPIStrategy extends DefaultGeneratorStrategy implements Vert
 
     @Override
     public void overwrite(JavaWriter out, String className, String tableIdentifier, String tableRecord, String pType, String tType) {
-        overwriteDelegate.overwrite(out, className, tableIdentifier, tableRecord, pType, tType);
+        overwriteDAODelegate.overwrite(out, className, tableIdentifier, tableRecord, pType, tType);
     }
 
     ComponentBasedAPIStrategy setWriteConstructorDelegate(WriteConstructorComponent writeConstructorDelegate) {
@@ -137,8 +139,8 @@ class ComponentBasedAPIStrategy extends DefaultGeneratorStrategy implements Vert
         return this;
     }
 
-    ComponentBasedAPIStrategy setOverwriteDelegate(OverwriteComponent overwriteDelegate) {
-        this.overwriteDelegate = overwriteDelegate;
+    ComponentBasedAPIStrategy setOverwriteDAODelegate(OverwriteDAOComponent overwriteDelegate) {
+        this.overwriteDAODelegate = overwriteDelegate;
         return this;
     }
 }

@@ -104,13 +104,13 @@ public class VertxGenerator extends JavaGenerator {
     /**
      * @param out
      */
-    protected void generateSingletonAnnotation(JavaWriter out){};
+    protected void generateDAOClassAnnotation(JavaWriter out){};
 
     /**
      * You might want to override this class in order to add injection methods.
      * @param out
      */
-    protected void generateConstructorAnnotation(JavaWriter out){};
+    protected void generateDAOConstructorAnnotation(JavaWriter out){};
 
 
     private void generateFromJson(TableDefinition table, JavaWriter out, GeneratorStrategy.Mode mode){
@@ -368,7 +368,6 @@ public class VertxGenerator extends JavaGenerator {
             return;
         }
         VertxJavaWriter out = (VertxJavaWriter) out1;
-        out.setDaoTypeReplacement(getKeyType(table.getPrimaryKey()));
         generateDAO(key, table, out);
     }
 
@@ -413,7 +412,7 @@ public class VertxGenerator extends JavaGenerator {
 
         if (generateSpringAnnotations())
             out.println("@%s", out.ref("org.springframework.stereotype.Repository"));
-        generateSingletonAnnotation(out);
+        generateDAOClassAnnotation(out);
         out.println("public class %s extends %s<%s, %s, %s, %s, %s, %s, %s>[[before= implements ][%s]] {",
                 className,
                 daoImpl,
@@ -433,7 +432,7 @@ public class VertxGenerator extends JavaGenerator {
             out.tab(1).println("@%s", out.ref("org.springframework.beans.factory.annotation.Autowired"));
         }
 
-        generateConstructorAnnotation(out);
+        generateDAOConstructorAnnotation(out);
         getUnwrappedStrategy().writeConstructor(out, className, tableIdentifier, tableRecord, pType, tType);
 
         // Template method implementations

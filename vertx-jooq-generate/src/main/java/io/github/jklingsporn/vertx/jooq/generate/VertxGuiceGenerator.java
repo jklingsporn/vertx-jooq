@@ -32,7 +32,7 @@ public class VertxGuiceGenerator extends VertxGenerator {
     }
 
     @Override
-    protected void generateSingletonAnnotation(JavaWriter out) {
+    protected void generateDAOClassAnnotation(JavaWriter out) {
         out.println("@javax.inject.Singleton");
     }
 
@@ -45,16 +45,9 @@ public class VertxGuiceGenerator extends VertxGenerator {
     }
 
     @Override
-    protected void generateConstructorAnnotation(JavaWriter out) {
+    protected void generateDAOConstructorAnnotation(JavaWriter out) {
         out.tab(1).println("@javax.inject.Inject");
     }
-
-    /**
-     * You might want to override this class in order to perform named injection
-     * in case your application needs to access different databases and therefore
-     * has different <code>org.jooq.Configuration</code>s set up.
-     */
-    protected void generateSetConfigurationAnnotation(JavaWriter out){}
 
     protected void generateDAOModule(SchemaDefinition schema){
         logger.info("Generate DaoModule ... ");

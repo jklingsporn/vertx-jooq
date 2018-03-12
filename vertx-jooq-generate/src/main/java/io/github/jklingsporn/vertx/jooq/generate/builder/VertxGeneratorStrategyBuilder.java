@@ -218,8 +218,8 @@ public class VertxGeneratorStrategyBuilder {
                 }
                 return null;
             }));
-            base.setOverwriteDelegate((out, className, tableIdentifier, tableRecord, pType, tType) -> {
-                if(SUPPORTED_INSERT_RETURNING_TYPES_MAP.containsKey(tType)) {
+            base.setOverwriteDAODelegate((out, className, tableIdentifier, tableRecord, pType, tType) -> {
+                if (SUPPORTED_INSERT_RETURNING_TYPES_MAP.containsKey(tType)) {
                     out.println();
                     out.tab(1).override();
                     out.tab(1).println("protected java.util.function.Function<Object,%s> keyConverter(){", tType);
@@ -229,19 +229,20 @@ public class VertxGeneratorStrategyBuilder {
                     out.println();
                     out.tab(1).override();
                     out.tab(1).println("public %s insertReturningPrimary(%s pojo){", base.renderInsertReturningType(tType), pType);
-                    switch(base.apiType){
+                    switch (base.apiType) {
                         case CLASSIC:
                             out.tab(2).println("return Future.failedFuture(new UnsupportedOperationException(\"PK not numeric\"));");
                             break;
                         case COMPLETABLE_FUTURE:
-                            out.tab(2).println("CompletableFuture<%s> failed = new CompletableFuture<>();",tType);
-                            out.tab(2).println("failed.completeExceptionally(new UnsupportedOperationException(\"PK not numeric\"));",tType);
+                            out.tab(2).println("CompletableFuture<%s> failed = new CompletableFuture<>();", tType);
+                            out.tab(2).println("failed.completeExceptionally(new UnsupportedOperationException(\"PK not numeric\"));", tType);
                             out.tab(2).println("return failed;");
                             break;
                         case RX:
-                            out.tab(2).println("return Single.<%s>error(new UnsupportedOperationException(\"PK not numeric\"));",tType);
+                            out.tab(2).println("return Single.<%s>error(new UnsupportedOperationException(\"PK not numeric\"));", tType);
                             break;
-                        default: throw new UnsupportedOperationException(base.apiType.toString());
+                        default:
+                            throw new UnsupportedOperationException(base.apiType.toString());
                     }
                     out.tab(1).println("}");
                 }
@@ -300,6 +301,11 @@ public class VertxGeneratorStrategyBuilder {
         @Override
         public VertxGeneratorStrategy build() {
             return base;
+        }
+
+        @Override
+        public VertxGeneratorStrategy buildWithGuice() {
+            return null;
         }
 
     }

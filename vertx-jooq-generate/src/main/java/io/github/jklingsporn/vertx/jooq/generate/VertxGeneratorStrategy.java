@@ -1,9 +1,8 @@
 package io.github.jklingsporn.vertx.jooq.generate;
 
-import io.github.jklingsporn.vertx.jooq.shared.internal.AbstractVertxDAO;
-import org.jooq.util.Definition;
 import org.jooq.util.GeneratorStrategy;
 import org.jooq.util.JavaWriter;
+import org.jooq.util.SchemaDefinition;
 
 /**
  * Created by jensklingsporn on 06.02.18.
@@ -42,5 +41,13 @@ public interface VertxGeneratorStrategy extends GeneratorStrategy{
      * @param tType
      */
     public default void overwrite(JavaWriter out, String className, String tableIdentifier, String tableRecord, String pType, String tType){}
+
+
+
+    public default void writeMore(SchemaDefinition schemaDefinition){}
+
+    public default void generateConstructorAnnotation(JavaWriter out) {}
+
+    public default void generateSingletonAnnotation(JavaWriter out) {}
 
 }
