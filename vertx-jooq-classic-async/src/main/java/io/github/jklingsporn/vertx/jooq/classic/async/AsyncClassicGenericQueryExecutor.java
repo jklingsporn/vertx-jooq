@@ -1,6 +1,6 @@
 package io.github.jklingsporn.vertx.jooq.classic.async;
 
-import io.github.jklingsporn.vertx.jooq.shared.internal.async.AbstractAsyncQueryExecutor;
+import io.github.jklingsporn.vertx.jooq.shared.async.AbstractAsyncQueryExecutor;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;

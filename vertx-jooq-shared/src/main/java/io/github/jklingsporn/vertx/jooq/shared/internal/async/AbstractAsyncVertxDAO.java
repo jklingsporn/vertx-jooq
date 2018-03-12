@@ -40,6 +40,6 @@ public abstract class AbstractAsyncVertxDAO<R extends UpdatableRecord<R>, P, T, 
     public INSERT_RETURNING insertReturningPrimary(P object) {
         Arguments.require(INSERT_RETURNING_SUPPORT.contains(configuration().dialect()), "Only MySQL supported");
         DSLContext dslContext = DSL.using(configuration());
-        return queryExecutor().insertReturning(dslContext.insertInto(getTable()).set(dslContext.newRecord(getTable(), object)).returning(), keyConverter());
+        return queryExecutor().insertReturning(dslContext.insertInto(getTable()).set(newRecord(dslContext, object)).returning(), keyConverter());
     }
 }

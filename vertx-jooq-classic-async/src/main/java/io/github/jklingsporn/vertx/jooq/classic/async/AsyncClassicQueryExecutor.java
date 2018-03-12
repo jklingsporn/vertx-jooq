@@ -5,8 +5,10 @@ import io.vertx.core.Future;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.asyncsql.AsyncSQLClient;
 import io.vertx.ext.sql.UpdateResult;
-import org.jooq.*;
-import org.jooq.conf.ParamType;
+import org.jooq.InsertResultStep;
+import org.jooq.ResultQuery;
+import org.jooq.Table;
+import org.jooq.UpdatableRecord;
 
 import java.util.List;
 import java.util.function.Function;
@@ -41,8 +43,9 @@ public class AsyncClassicQueryExecutor<R extends UpdatableRecord<R>,P,T> extends
         return getConnection().compose(sqlConnection->{
             log(query);
             Future<Object> future = Future.future();
-            sqlConnection.update(
-                    query.getSQL(ParamType.INLINED),
+            sqlConnection.updateWithParams(
+                    query.getSQL(),
+                    getBindValues(query),
                     this.<UpdateResult,Object>executeAndClose(res -> res.getKeys().getLong(0),
                             sqlConnection,
                             future)

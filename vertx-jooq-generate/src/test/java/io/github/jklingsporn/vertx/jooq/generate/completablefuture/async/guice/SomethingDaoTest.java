@@ -11,6 +11,7 @@ import io.vertx.core.json.JsonObject;
 import org.jooq.Condition;
 import org.junit.BeforeClass;
 
+import java.time.LocalDateTime;
 import java.util.Random;
 
 /**
@@ -44,6 +45,7 @@ public class SomethingDaoTest extends CompletableFutureTestBase<Something, Integ
         something.setSomejsonobject(new JsonObject().put("key", "value"));
         something.setSomesmallnumber((short) random.nextInt(Short.MAX_VALUE));
         something.setSomestring("my_string");
+        something.setSometimestamp(LocalDateTime.now());
         return something;
     }
 

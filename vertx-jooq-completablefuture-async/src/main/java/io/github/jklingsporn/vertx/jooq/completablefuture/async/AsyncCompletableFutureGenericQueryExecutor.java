@@ -1,6 +1,6 @@
 package io.github.jklingsporn.vertx.jooq.completablefuture.async;
 
-import io.github.jklingsporn.vertx.jooq.shared.internal.async.AbstractAsyncQueryExecutor;
+import io.github.jklingsporn.vertx.jooq.shared.async.AbstractAsyncQueryExecutor;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
@@ -50,7 +50,7 @@ public class AsyncCompletableFutureGenericQueryExecutor extends AbstractAsyncQue
         return cf;
     }
 
-    protected <P,U> Handler<AsyncResult<U>> executeAndClose(Function<U, P> func, SQLConnection sqlConnection, CompletableFuture<P> cf) {
+    protected <V,U> Handler<AsyncResult<V>> executeAndClose(Function<V, U> func, SQLConnection sqlConnection, CompletableFuture<U> cf) {
         return rs -> {
             try{
                 if (rs.succeeded()) {
@@ -107,4 +107,5 @@ public class AsyncCompletableFutureGenericQueryExecutor extends AbstractAsyncQue
             return cf;
         });
     }
+
 }
