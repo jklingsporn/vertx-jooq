@@ -2,8 +2,8 @@ package io.github.jklingsporn.vertx.jooq.generate.completablefuture.async.regula
 
 import io.github.jklingsporn.vertx.jooq.generate.AbstractVertxGeneratorTest;
 import io.github.jklingsporn.vertx.jooq.generate.AsyncDatabaseConfigurationProvider;
-import io.github.jklingsporn.vertx.jooq.generate.VertxGenerator;
-import io.github.jklingsporn.vertx.jooq.generate.completablefuture.AsyncCompletableFutureVertxGeneratorStrategy;
+import io.github.jklingsporn.vertx.jooq.generate.VertxGeneratorStrategy;
+import io.github.jklingsporn.vertx.jooq.generate.completablefuture.CompletableFutureAsyncVertxGenerator;
 
 /**
  * Created by jklingsporn on 17.09.16.
@@ -12,7 +12,7 @@ public class CompletableFutureAsyncVertxGeneratorTest extends AbstractVertxGener
 
 
     public CompletableFutureAsyncVertxGeneratorTest() {
-        super(VertxGenerator.class, AsyncCompletableFutureVertxGeneratorStrategy.class,"cf.async.regular", AsyncDatabaseConfigurationProvider.getInstance());
+        super(CompletableFutureAsyncVertxGenerator.class, VertxGeneratorStrategy.class,"cf.async.regular", AsyncDatabaseConfigurationProvider.getInstance());
     }
 
 }

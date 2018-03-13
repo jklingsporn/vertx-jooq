@@ -1,10 +1,8 @@
 package io.github.jklingsporn.vertx.jooq.generate.builder;
 
-import io.github.jklingsporn.vertx.jooq.generate.VertxGeneratorStrategy;
-
 public interface FinalStep {
 
-    public VertxGeneratorStrategy build();
+    public ComponentBasedVertxGenerator build();
 
-    public VertxGeneratorStrategy buildWithGuice();
+    public ComponentBasedVertxGenerator buildWithGuice(boolean generateGuiceModules);
 }

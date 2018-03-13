@@ -1,62 +1,38 @@
-package io.github.jklingsporn.vertx.jooq.generate;
+package io.github.jklingsporn.vertx.jooq.generate.builder;
 
-import org.jooq.tools.JooqLogger;
 import org.jooq.util.*;
 
 import java.io.File;
+import java.util.function.Function;
 
-/**
- * Created by jklingsporn on 17.09.16.
- * Extension of the <code>VertxGenerator</code>.
- * It adds <code>@javax.inject.Inject</code> Annotations to the <code>#setConfiguration</code>- and <code>#setVertx</code>-
- * methods. By default this generator also creates a module that automatically binds all generated DAOs to their according
- * implementation.
- */
-public class VertxGuiceGenerator extends VertxGenerator {
+class ComponentBasedGuiceVertxGenerator extends ComponentBasedVertxGenerator {
 
-    private static final JooqLogger logger = JooqLogger.getLogger(VertxGuiceGenerator.class);
 
-    private final String daoClassName;
-    private final boolean generateGuiceModules;
-    private final boolean generateInjectAnnotations;
-
-    public VertxGuiceGenerator(String daoClassName) {
-        this(daoClassName, true,true,true);
+    public ComponentBasedGuiceVertxGenerator(ComponentBasedVertxGenerator copy) {
+        super(copy);
     }
 
-    public VertxGuiceGenerator(String daoClassName, boolean generateJson, boolean generateGuiceModules, boolean generateInjectConfigurationMethod) {
-        super(generateJson);
-        this.daoClassName = daoClassName;
-        this.generateGuiceModules = generateGuiceModules;
-        this.generateInjectAnnotations = generateInjectConfigurationMethod;
-    }
-
-    @Override
-    protected void generateDAOClassAnnotation(JavaWriter out) {
-        out.println("@javax.inject.Singleton");
-    }
-
-    @Override
-    protected void generateDaos(SchemaDefinition schema) {
-        super.generateDaos(schema);
-        if(generateGuiceModules){
-            generateDAOModule(schema);
+    protected JavaWriter generateDAOModule(SchemaDefinition schema, Function<File,JavaWriter> writerGen){
+        String daoClassName;
+        switch(apiType){
+            case CLASSIC:
+                daoClassName = "io.github.jklingsporn.vertx.jooq.classic.VertxDAO";
+                break;
+            case COMPLETABLE_FUTURE:
+                daoClassName = "io.github.jklingsporn.vertx.jooq.completablefuture.VertxDAO";
+                break;
+            case RX:
+                daoClassName = "io.github.jklingsporn.vertx.jooq.rx.VertxDAO";
+                break;
+            default: throw new UnsupportedOperationException(apiType.toString());
         }
-    }
-
-    @Override
-    protected void generateDAOConstructorAnnotation(JavaWriter out) {
-        out.tab(1).println("@javax.inject.Inject");
-    }
-
-    protected void generateDAOModule(SchemaDefinition schema){
         logger.info("Generate DaoModule ... ");
-        JavaWriter out = newJavaWriter(getModuleFile(schema));
+        JavaWriter out = writerGen.apply(getModuleFile(schema));
         out.println("package "+ getStrategy().getJavaPackageName(schema)+".tables.modules;");
         out.println();
         out.println("import com.google.inject.AbstractModule;");
         out.println("import com.google.inject.TypeLiteral;");
-        out.println("import %s;",daoClassName);
+        out.println("import %s;", daoClassName);
         out.println();
         out.println("public class DaoModule extends AbstractModule {");
         out.tab(1).println("@Override");
@@ -66,7 +42,7 @@ public class VertxGuiceGenerator extends VertxGenerator {
         }
         out.tab(1).println("}");
         out.println("}");
-        closeJavaWriter(out);
+        return out;
     }
 
     protected void generateDAOBinding(TableDefinition table, JavaWriter out){

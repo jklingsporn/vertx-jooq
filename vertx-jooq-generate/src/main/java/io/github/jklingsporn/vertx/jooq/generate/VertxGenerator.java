@@ -2,6 +2,7 @@ package io.github.jklingsporn.vertx.jooq.generate;
 
 import io.github.jklingsporn.vertx.jooq.shared.JsonArrayConverter;
 import io.github.jklingsporn.vertx.jooq.shared.JsonObjectConverter;
+import io.github.jklingsporn.vertx.jooq.shared.internal.AbstractVertxDAO;
 import io.vertx.core.impl.Arguments;
 import org.jooq.Constants;
 import org.jooq.Name;
@@ -13,6 +14,7 @@ import org.jooq.util.*;
 import java.io.File;
 import java.time.Instant;
 import java.util.List;
+import java.util.function.Function;
 
 /**
  * Created by jklingsporn on 17.10.16.
@@ -23,12 +25,12 @@ import java.util.List;
  * It also generates DAOs which implement
  * <code>VertxDAO</code> and allow you to execute CRUD-operations asynchronously.
  */
-public class VertxGenerator extends JavaGenerator {
+public abstract class VertxGenerator extends JavaGenerator {
 
-    private static final JooqLogger logger = JooqLogger.getLogger(VertxGenerator.class);
+    protected static final JooqLogger logger = JooqLogger.getLogger(VertxGenerator.class);
 
     private final boolean generateJson;
-    private VertxGeneratorStrategy vertxGeneratorStrategy;
+    protected VertxGeneratorStrategy vertxGeneratorStrategy;
 
     public VertxGenerator() {
         this(true);
@@ -82,36 +84,15 @@ public class VertxGenerator extends JavaGenerator {
     protected void printPackage(JavaWriter out, Definition definition, GeneratorStrategy.Mode mode) {
         super.printPackage(out, definition, mode);
         if(mode.equals(GeneratorStrategy.Mode.DAO)){
-            getUnwrappedStrategy().writeDAOImports(out);
+            writeDAOImports(out);
         }
     }
 
     @Override
-    public void setStrategy(GeneratorStrategy strategy) {
-        Arguments.require(strategy instanceof VertxGeneratorStrategy, "Requires instance of VertxGeneratorStrategy");
-        super.setStrategy(strategy);
-        this.vertxGeneratorStrategy = (VertxGeneratorStrategy) strategy;
+    protected void generateDaos(SchemaDefinition schema) {
+        super.generateDaos(schema);
+        writeExtraData(schema);
     }
-
-    /**
-     * @return the VertxGeneratorStrategy used. Unfortunately we cannot use #getStrategy()
-     * because it returns a wrapper instance.
-     */
-    public VertxGeneratorStrategy getUnwrappedStrategy() {
-        return vertxGeneratorStrategy;
-    }
-
-    /**
-     * @param out
-     */
-    protected void generateDAOClassAnnotation(JavaWriter out){};
-
-    /**
-     * You might want to override this class in order to add injection methods.
-     * @param out
-     */
-    protected void generateDAOConstructorAnnotation(JavaWriter out){};
-
 
     private void generateFromJson(TableDefinition table, JavaWriter out, GeneratorStrategy.Mode mode){
         out.println();
@@ -216,7 +197,7 @@ public class VertxGenerator extends JavaGenerator {
      * your choice for <code>GeneratorStrategy#getJavaMemberName(column, DefaultGeneratorStrategy.Mode.POJO)</code>
      */
     protected String getJsonKeyName(TypedElementDefinition<?> column) {
-        return column.getName();
+        return vertxGeneratorStrategy.getJsonKeyName(column);
     }
 
     private boolean isAllowedJsonType(TypedElementDefinition<?> column, String columnType){
@@ -240,6 +221,13 @@ public class VertxGenerator extends JavaGenerator {
      */
     protected boolean handleCustomTypeToJson(TypedElementDefinition<?> column, String getter, String columnType, String javaMemberName, JavaWriter out) {
         return false;
+    }
+
+    @Override
+    public void setStrategy(GeneratorStrategy strategy) {
+        Arguments.require(strategy instanceof VertxGeneratorStrategy, "Requires instance of VertxGeneratorStrategy");
+        super.setStrategy(strategy);
+        this.vertxGeneratorStrategy = (VertxGeneratorStrategy) strategy;
     }
 
     private void generateFromJsonConstructor(TableDefinition table, JavaWriter out, GeneratorStrategy.Mode mode){
@@ -296,14 +284,14 @@ public class VertxGenerator extends JavaGenerator {
 
     protected void generateFindOneByMethods(JavaWriter out, String pType, String colName, String colClass, String colType, String colIdentifier) {
         out.tab(1).javadoc("Find a unique record that has <code>%s = value</code> asynchronously", colName);
-        out.tab(1).println("public %s findOneBy%s(%s value) {", getUnwrappedStrategy().renderFindOneType(pType),colClass, colType);
+        out.tab(1).println("public %s findOneBy%s(%s value) {", renderFindOneType(pType),colClass, colType);
         out.tab(2).println("return findOneByCondition(%s.eq(value));", colIdentifier);
         out.tab(1).println("}");
     }
 
     protected void generateFindManyByMethods(JavaWriter out, String pType, String colName, String colClass, String colType, String colIdentifier) {
         out.tab(1).javadoc("Find records that have <code>%s IN (values)</code> asynchronously", colName);
-        out.tab(1).println("public %s findManyBy%s(%s<%s> values) {", getUnwrappedStrategy().renderFindManyType(pType), colClass, List.class, colType);
+        out.tab(1).println("public %s findManyBy%s(%s<%s> values) {", renderFindManyType(pType), colClass, List.class, colType);
         //out.tab(2).println("return findMany(%s, values);", colIdentifier);
         out.tab(2).println("return findManyByCondition(%s.in(values));", colIdentifier);
         out.tab(1).println("}");
@@ -377,7 +365,7 @@ public class VertxGenerator extends JavaGenerator {
         final String className = getStrategy().getJavaClassName(table, GeneratorStrategy.Mode.DAO);
         final List<String> interfaces = out.ref(getStrategy().getJavaClassImplements(table, GeneratorStrategy.Mode.DAO));
         final String tableRecord = out.ref(getStrategy().getFullJavaClassName(table, GeneratorStrategy.Mode.RECORD));
-        final String daoImpl = out.ref(getStrategy().getJavaClassExtends(table, GeneratorStrategy.Mode.DAO));
+        final String daoImpl = out.ref(renderDaoExtends());
         final String tableIdentifier = out.ref(getStrategy().getFullJavaIdentifier(table), 2);
 
         String tType = "Void";
@@ -404,7 +392,7 @@ public class VertxGenerator extends JavaGenerator {
         }
 
         tType = out.ref(tType);
-        interfaces.add(getUnwrappedStrategy().renderDAOInterface(tableRecord, pType, tType)); //let DAO implement the right DAO-interface
+        interfaces.add(renderDAOInterface(tableRecord, pType, tType)); //let DAO implement the right DAO-interface
 
         printPackage(out, table, GeneratorStrategy.Mode.DAO);
         generateDaoClassJavadoc(table, out);
@@ -412,17 +400,17 @@ public class VertxGenerator extends JavaGenerator {
 
         if (generateSpringAnnotations())
             out.println("@%s", out.ref("org.springframework.stereotype.Repository"));
-        generateDAOClassAnnotation(out);
+        writeDAOClassAnnotation(out);
         out.println("public class %s extends %s<%s, %s, %s, %s, %s, %s, %s>[[before= implements ][%s]] {",
                 className,
                 daoImpl,
                 tableRecord,
                 pType,
                 tType,
-                getUnwrappedStrategy().renderFindManyType(pType),
-                getUnwrappedStrategy().renderFindOneType(pType),
-                getUnwrappedStrategy().renderExecType(),
-                getUnwrappedStrategy().renderInsertReturningType(tType),
+                renderFindManyType(pType),
+                renderFindOneType(pType),
+                renderExecType(),
+                renderInsertReturningType(tType),
                 interfaces);
 
         // Only one constructor
@@ -432,8 +420,8 @@ public class VertxGenerator extends JavaGenerator {
             out.tab(1).println("@%s", out.ref("org.springframework.beans.factory.annotation.Autowired"));
         }
 
-        generateDAOConstructorAnnotation(out);
-        getUnwrappedStrategy().writeConstructor(out, className, tableIdentifier, tableRecord, pType, tType);
+        writeDAOConstructorAnnotation(out);
+        writeConstructor(out, className, tableIdentifier, tableRecord, pType, tType);
 
         // Template method implementations
         // -------------------------------
@@ -461,7 +449,7 @@ public class VertxGenerator extends JavaGenerator {
         out.tab(1).println("}");
         generateFetchMethods(table,out);
         generateDaoClassFooter(table, out);
-        getUnwrappedStrategy().overwrite(out,className, tableIdentifier, tableRecord, pType,tType);
+        overwrite(out, className, tableIdentifier, tableRecord, pType, tType);
         out.println("}");
     }
 
@@ -510,4 +498,54 @@ public class VertxGenerator extends JavaGenerator {
             return super.getTypeReference(db, schema, t, p, s, l, n, i, d, u);
         }
     }
+
+    /**
+     * Can be used to overwrite certain methods, e.g. AsyncXYZ-strategies shouldn't
+     * allow insertReturning for non-numeric or compound primary keys due to limitations
+     * of the AsyncMySQL/Postgres client.
+     * @param out
+     * @param className
+     * @param tableIdentifier
+     * @param tableRecord
+     * @param pType
+     * @param tType
+     */
+    protected void overwrite(JavaWriter out, String className, String tableIdentifier, String tableRecord, String pType, String tType){}
+
+    protected String renderDaoExtends(){
+        return AbstractVertxDAO.class.getName();
+    }
+
+    protected String renderFQVertxName(){
+        return "io.vertx.core.Vertx";
+    }
+
+    protected abstract String renderFindOneType(String pType);
+
+    protected abstract String renderFindManyType(String pType);
+
+    protected abstract String renderExecType();
+
+    protected abstract String renderInsertReturningType(String tType);
+
+    protected abstract String renderQueryExecutor(String rType, String pType, String tType);
+
+    protected abstract String renderDAOInterface(String rType, String pType, String tType);
+
+    protected abstract void writeDAOImports(JavaWriter out);
+
+    protected abstract void writeConstructor(JavaWriter out, String className, String tableIdentifier, String tableRecord, String pType, String tType);
+
+    protected abstract void writeDAOClassAnnotation(JavaWriter out);
+
+    protected abstract void writeDAOConstructorAnnotation(JavaWriter out);
+
+    private void writeExtraData(SchemaDefinition definition){
+        JavaWriter writer = writeExtraData(definition, this::newJavaWriter);
+        if(writer!=null){
+            closeJavaWriter(writer);
+        }
+    }
+
+    protected abstract JavaWriter writeExtraData(SchemaDefinition definition, Function<File,JavaWriter> writerGenerator);
 }

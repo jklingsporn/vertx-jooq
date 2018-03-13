@@ -1,21 +1,17 @@
 package io.github.jklingsporn.vertx.jooq.generate.builder;
 
-import io.github.jklingsporn.vertx.jooq.generate.VertxGeneratorStrategy;
 import io.github.jklingsporn.vertx.jooq.shared.internal.AbstractVertxDAO;
-import io.github.jklingsporn.vertx.jooq.shared.internal.VertxPojo;
 import io.github.jklingsporn.vertx.jooq.shared.internal.async.AbstractAsyncVertxDAO;
 import org.jooq.Configuration;
-import org.jooq.util.GeneratorStrategy;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Builder to create a {@code VertxGeneratorStrategy}. Non-instantiable, see static init() method.
+ * Builder to create a {@code VertxGenerator}. Non-instantiable, see static init() method.
  * @author jensklingsporn
  */
-public class VertxGeneratorStrategyBuilder {
+public class VertxGeneratorBuilder {
 
     static final Map<String,String> SUPPORTED_INSERT_RETURNING_TYPES_MAP;
     static{
@@ -33,27 +29,20 @@ public class VertxGeneratorStrategyBuilder {
     }
 
 
-    private VertxGeneratorStrategyBuilder() {}
+    private VertxGeneratorBuilder() {}
 
     /**
      * @return an {@code APIInitStep} to init the build of a {@code VertxGeneratorStrategy}.
      */
     public static APIInitStep init(){
-        return new APIInitStepImpl(new ComponentBasedAPIStrategy()
-                .setGetFQVertxNameDelegate(() -> "io.vertx.core.Vertx")
-                .setGetJavaClassImplementsDelegate((definition, mode) -> {
-                    if (mode.equals(GeneratorStrategy.Mode.INTERFACE)) {
-                        return Collections.singletonList(VertxPojo.class.getName());
-                    }
-                    return Collections.emptyList();
-                }));
+        return new APIInitStepImpl(new ComponentBasedVertxGenerator().setRenderFQVertxNameDelegate(() -> "io.vertx.core.Vertx"));
     }
 
     static class APIInitStepImpl implements APIInitStep {
 
-        private final ComponentBasedAPIStrategy base;
+        private final ComponentBasedVertxGenerator base;
 
-        APIInitStepImpl(ComponentBasedAPIStrategy base) {
+        APIInitStepImpl(ComponentBasedVertxGenerator base) {
             this.base = base;
         }
 
@@ -123,7 +112,7 @@ public class VertxGeneratorStrategyBuilder {
         @Override
         public ExecutionStep withRXAPI() {
             return new ExecutionStepImpl(base
-                    .setGetFQVertxNameDelegate(()->"io.vertx.reactivex.core.Vertx")
+                    .setRenderFQVertxNameDelegate(() -> "io.vertx.reactivex.core.Vertx")
                     .setApiType(APIType.RX)
                     .setWriteDAOImportsDelegate(out -> {
                         out.println("import io.reactivex.Single;");
@@ -157,20 +146,15 @@ public class VertxGeneratorStrategyBuilder {
 
     static class ExecutionStepImpl implements ExecutionStep {
 
-        private final ComponentBasedAPIStrategy base;
+        private final ComponentBasedVertxGenerator base;
 
-        ExecutionStepImpl(ComponentBasedAPIStrategy base) {
+        ExecutionStepImpl(ComponentBasedVertxGenerator base) {
             this.base = base;
         }
 
         @Override
         public FinalStep withJDBCDriver() {
-            base.setGetJavaClassExtendsDelegate(((definition, mode) -> {
-                if(mode == GeneratorStrategy.Mode.DAO){
-                    return AbstractVertxDAO.class.getName();
-                }
-                return null;
-            }));
+            base.setRenderDAOExtendsDelegate(AbstractVertxDAO.class::getName);
             switch(base.apiType){
                 case CLASSIC:
                     return new FinalStepImpl(base
@@ -178,7 +162,7 @@ public class VertxGeneratorStrategyBuilder {
                             .setRenderQueryExecutorDelegate((rType, pType, tType) -> String.format("JDBCClassicQueryExecutor<%s,%s,%s>", rType, pType, tType))
                             .setWriteConstructorDelegate((out, className, tableIdentifier, tableRecord, pType, tType) -> {
                                 out.tab(1).javadoc("@param configuration The Configuration used for rendering and query execution.\n     * @param vertx the vertx instance");
-                                out.tab(1).println("public %s(%s configuration, %s vertx) {", className, Configuration.class, base.getFQVertxName());
+                                out.tab(1).println("public %s(%s configuration, %s vertx) {", className, Configuration.class, base.renderFQVertxName());
                                 out.tab(2).println("super(%s, %s.class, new %s(%s.class,configuration,vertx), configuration);", tableIdentifier, pType, base.renderQueryExecutor(tableRecord, pType, tType), pType);
                                 out.tab(1).println("}");
                             })
@@ -189,7 +173,7 @@ public class VertxGeneratorStrategyBuilder {
                             .setRenderQueryExecutorDelegate((rType, pType, tType) -> String.format("JDBCCompletableFutureQueryExecutor<%s,%s,%s>", rType, pType, tType))
                             .setWriteConstructorDelegate((out, className, tableIdentifier, tableRecord, pType, tType) -> {
                                 out.tab(1).javadoc("@param configuration The Configuration used for rendering and query execution.\n     * @param vertx the vertx instance");
-                                out.tab(1).println("public %s(%s configuration, %s vertx) {", className, Configuration.class, base.getFQVertxName());
+                                out.tab(1).println("public %s(%s configuration, %s vertx) {", className, Configuration.class, base.renderFQVertxName());
                                 out.tab(2).println("super(%s, %s.class, new %s(%s.class,configuration,vertx), configuration);", tableIdentifier, pType, base.renderQueryExecutor(tableRecord, pType, tType), pType);
                                 out.tab(1).println("}");
                             })
@@ -201,7 +185,7 @@ public class VertxGeneratorStrategyBuilder {
                             .setWriteConstructorDelegate((out, className, tableIdentifier, tableRecord, pType, tType) -> {
                                 out.tab(1).javadoc("@param configuration The Configuration used for rendering and query execution.\n" +
                                         "     * @param vertx the vertx instance");
-                                out.tab(1).println("public %s(%s configuration, %s vertx) {", className, Configuration.class, base.getFQVertxName());
+                                out.tab(1).println("public %s(%s configuration, %s vertx) {", className, Configuration.class, base.renderFQVertxName());
                                 out.tab(2).println("super(%s, %s.class, new %s(%s.class,configuration,vertx), configuration);", tableIdentifier, pType, base.renderQueryExecutor(tableRecord, pType, tType),pType);
                                 out.tab(1).println("}");
                             })
@@ -212,12 +196,7 @@ public class VertxGeneratorStrategyBuilder {
 
         @Override
         public FinalStep withAsyncDriver() {
-            base.setGetJavaClassExtendsDelegate(((definition, mode) -> {
-                if (mode == GeneratorStrategy.Mode.DAO) {
-                    return AbstractAsyncVertxDAO.class.getName();
-                }
-                return null;
-            }));
+            base.setRenderDAOExtendsDelegate(AbstractAsyncVertxDAO.class::getName);
             base.setOverwriteDAODelegate((out, className, tableIdentifier, tableRecord, pType, tType) -> {
                 if (SUPPORTED_INSERT_RETURNING_TYPES_MAP.containsKey(tType)) {
                     out.println();
@@ -267,7 +246,7 @@ public class VertxGeneratorStrategyBuilder {
                             .setWriteConstructorDelegate((out, className, tableIdentifier, tableRecord, pType, tType) -> {
                                 out.tab(1).javadoc("@param configuration Used for rendering, so only SQLDialect must be set and must be one of the MYSQL types or POSTGRES.\n" +
                                         "     * @param vertx the vertx instance\n     * @param delegate A configured AsyncSQLClient that is used for query execution");
-                                out.tab(1).println("public %s(%s configuration, %s vertx, io.vertx.ext.asyncsql.AsyncSQLClient delegate) {", className, Configuration.class, base.getFQVertxName());
+                                out.tab(1).println("public %s(%s configuration, %s vertx, io.vertx.ext.asyncsql.AsyncSQLClient delegate) {", className, Configuration.class, base.renderFQVertxName());
                                 out.tab(2).println("super(%s, %s.class, new %s(vertx,delegate,%s::new, %s), configuration);", tableIdentifier, pType, base.renderQueryExecutor(tableRecord, pType, tType),pType,tableIdentifier);
                                 out.tab(1).println("}");
                             })
@@ -292,20 +271,28 @@ public class VertxGeneratorStrategyBuilder {
 
     static class FinalStepImpl implements FinalStep{
 
-        private final ComponentBasedAPIStrategy base;
+        private final ComponentBasedVertxGenerator base;
 
-        FinalStepImpl(ComponentBasedAPIStrategy base) {
+        FinalStepImpl(ComponentBasedVertxGenerator base) {
             this.base = base;
         }
 
         @Override
-        public VertxGeneratorStrategy build() {
+        public ComponentBasedVertxGenerator build() {
             return base;
         }
 
         @Override
-        public VertxGeneratorStrategy buildWithGuice() {
-            return null;
+        public ComponentBasedVertxGenerator buildWithGuice(boolean generateGuiceModules) {
+            base.setWriteDAOConstructorAnnotationDelegate((out)->out.tab(1).println("@javax.inject.Inject"));
+            base.setWriteDAOClassAnnotationDelegate((out)-> out.println("@javax.inject.Singleton"));
+            ComponentBasedGuiceVertxGenerator guiceVertxGenerator = new ComponentBasedGuiceVertxGenerator(base);
+            return guiceVertxGenerator.setWriteExtraDataDelegate((schema,writerGen) -> {
+                        if (generateGuiceModules) {
+                            return guiceVertxGenerator.generateDAOModule(schema,writerGen);
+                        }
+                        return null;
+                    });
         }
 
     }

@@ -1,53 +1,211 @@
 package io.github.jklingsporn.vertx.jooq.generate;
 
+import io.github.jklingsporn.vertx.jooq.shared.internal.VertxPojo;
+import org.jooq.util.DefaultGeneratorStrategy;
+import org.jooq.util.Definition;
 import org.jooq.util.GeneratorStrategy;
-import org.jooq.util.JavaWriter;
-import org.jooq.util.SchemaDefinition;
+import org.jooq.util.TypedElementDefinition;
+
+import java.io.File;
+import java.util.Collection;
+import java.util.List;
 
 /**
- * Created by jensklingsporn on 06.02.18.
+ * Created by jensklingsporn on 08.02.18.
  */
-public interface VertxGeneratorStrategy extends GeneratorStrategy{
+public class VertxGeneratorStrategy implements GeneratorStrategy {
 
-    public default String getFQVertxName(){
-        return "io.vertx.core.Vertx";
+    private final GeneratorStrategy delegate;
+
+    public VertxGeneratorStrategy(GeneratorStrategy delegate) {
+        this.delegate = delegate;
     }
 
-    public abstract String renderFindOneType(String pType);
+    public VertxGeneratorStrategy(){
+        this(new DefaultGeneratorStrategy());
+    }
 
-    public abstract String renderFindManyType(String pType);
+    public String getJsonKeyName(TypedElementDefinition<?> column) {
+        return column.getName();
+    }
 
-    public abstract String renderExecType();
+    @Override
+    public List<String> getJavaClassImplements(Definition definition, Mode mode) {
+        List<String> javaClassImplements = delegate.getJavaClassImplements(definition, mode);
+        if(mode.equals(Mode.INTERFACE) || mode.equals(Mode.POJO) || mode.equals(Mode.RECORD)) {
+            //let POJO and RECORD also implement VertxPojo to fix #37
+            javaClassImplements.add(VertxPojo.class.getName());
+        }
+        return javaClassImplements;
+    }
 
-    public abstract String renderInsertReturningType(String tType);
+    @Override
+    public String getFileName(Definition definition) {
+        return delegate.getFileName(definition);
+    }
 
-    public abstract String renderQueryExecutor(String rType, String pType, String tType);
+    @Override
+    public String getFileName(Definition definition, Mode mode) {
+        return delegate.getFileName(definition, mode);
+    }
 
-    public abstract String renderDAOInterface(String rType, String pType, String tType);
+    @Override
+    public File getFileRoot() {
+        return delegate.getFileRoot();
+    }
 
-    public abstract void writeDAOImports(JavaWriter out);
+    @Override
+    public File getFile(Definition definition) {
+        return delegate.getFile(definition);
+    }
 
-    public void writeConstructor(JavaWriter out, String className, String tableIdentifier, String tableRecord, String pType, String tType);
+    @Override
+    public File getFile(Definition definition, Mode mode) {
+        return delegate.getFile(definition, mode);
+    }
 
-    /**
-     * Can be used to overwrite certain methods, e.g. AsyncXYZ-strategies shouldn't
-     * allow insertReturning for non-numeric or compound primary keys due to limitations
-     * of the AsyncMySQL/Postgres client.
-     * @param out
-     * @param className
-     * @param tableIdentifier
-     * @param tableRecord
-     * @param pType
-     * @param tType
-     */
-    public default void overwrite(JavaWriter out, String className, String tableIdentifier, String tableRecord, String pType, String tType){}
+    @Override
+    public File getFile(String fileName) {
+        return delegate.getFile(fileName);
+    }
+    @Override
+    public String getFileHeader(Definition definition) {
+        return delegate.getFileHeader(definition);
+    }
 
+    @Override
+    public String getFullJavaIdentifier(Definition definition) {
+        return delegate.getFullJavaIdentifier(definition);
+    }
+    @Override
+    public String getJavaSetterName(Definition definition) {
+        return delegate.getJavaSetterName(definition);
+    }
+    @Override
+    public String getJavaGetterName(Definition definition) {
+        return delegate.getJavaGetterName(definition);
+    }
+    @Override
+    public String getJavaMethodName(Definition definition) {
+        return delegate.getJavaMethodName(definition);
+    }
+    @Override
+    public String getJavaClassExtends(Definition definition) {
+        return delegate.getJavaClassExtends(definition);
+    }
+    @Override
+    public List<String> getJavaClassImplements(Definition definition) {
+        return delegate.getJavaClassImplements(definition);
+    }
+    @Override
+    public String getJavaClassName(Definition definition) {
+        return delegate.getJavaClassName(definition);
+    }
+    @Override
+    public String getJavaPackageName(Definition definition) {
+        return delegate.getJavaPackageName(definition);
+    }
+    @Override
+    public String getJavaMemberName(Definition definition) {
+        return delegate.getJavaMemberName(definition);
+    }
 
+    @Override
+    public String getFullJavaClassName(Definition definition) {
+        return delegate.getFullJavaClassName(definition);
+    }
 
-    public default void writeMore(SchemaDefinition schemaDefinition){}
-
-    public default void generateConstructorAnnotation(JavaWriter out) {}
-
-    public default void generateSingletonAnnotation(JavaWriter out) {}
+    @Override
+    public String getFullJavaClassName(Definition definition, Mode mode) {
+        return delegate.getFullJavaClassName(definition, mode);
+    }
+    @Override
+    public List<String> getJavaIdentifiers(Collection<? extends Definition> definitions) {
+        return delegate.getJavaIdentifiers(definitions);
+    }
+    @Override
+    public List<String> getJavaIdentifiers(Definition... definitions) {
+        return delegate.getJavaIdentifiers(definitions);
+    }
+    @Override
+    public List<String> getFullJavaIdentifiers(Collection<? extends Definition> definitions) {
+        return delegate.getFullJavaIdentifiers(definitions);
+    }
+    @Override
+    public List<String> getFullJavaIdentifiers(Definition... definitions) {
+        return delegate.getFullJavaIdentifiers(definitions);
+    }
+    @Override
+    public void setInstanceFields(boolean instanceFields) {
+        delegate.setInstanceFields(instanceFields);
+    }
+    @Override
+    public boolean getInstanceFields() {
+        return delegate.getInstanceFields();
+    }
+    @Override
+    public void setJavaBeansGettersAndSetters(boolean javaBeansGettersAndSetters) {
+        delegate.setJavaBeansGettersAndSetters(javaBeansGettersAndSetters);
+    }
+    @Override
+    public boolean getJavaBeansGettersAndSetters() {
+        return delegate.getJavaBeansGettersAndSetters();
+    }
+    @Override
+    public String getTargetDirectory() {
+        return delegate.getTargetDirectory();
+    }
+    @Override
+    public void setTargetDirectory(String directory) {
+        delegate.setTargetDirectory(directory);
+    }
+    @Override
+    public String getTargetPackage() {
+        return delegate.getTargetPackage();
+    }
+    @Override
+    public void setTargetPackage(String packageName) {
+        delegate.setTargetPackage(packageName);
+    }
+    @Override
+    public String getFileHeader(Definition definition, Mode mode) {
+        return delegate.getFileHeader(definition, mode);
+    }
+    @Override
+    public String getJavaIdentifier(Definition definition) {
+        return delegate.getJavaIdentifier(definition);
+    }
+    @Override
+    public String getJavaSetterName(Definition definition, Mode mode) {
+        return delegate.getJavaSetterName(definition, mode);
+    }
+    @Override
+    public String getJavaGetterName(Definition definition, Mode mode) {
+        return delegate.getJavaGetterName(definition, mode);
+    }
+    @Override
+    public String getJavaMethodName(Definition definition, Mode mode) {
+        return delegate.getJavaMethodName(definition, mode);
+    }
+    @Override
+    public String getJavaClassExtends(Definition definition, Mode mode) {
+        return delegate.getJavaClassExtends(definition, mode);
+    }
+    @Override
+    public String getJavaClassName(Definition definition, Mode mode) {
+        return delegate.getJavaClassName(definition, mode);
+    }
+    @Override
+    public String getJavaPackageName(Definition definition, Mode mode) {
+        return delegate.getJavaPackageName(definition, mode);
+    }
+    @Override
+    public String getJavaMemberName(Definition definition, Mode mode) {
+        return delegate.getJavaMemberName(definition, mode);
+    }
+    @Override
+    public String getOverloadSuffix(Definition definition, Mode mode, String overloadIndex) {
+        return delegate.getOverloadSuffix(definition, mode, overloadIndex);
+    }
 
 }
