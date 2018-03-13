@@ -9,9 +9,7 @@ import org.joda.time.DateTimeZone;
 import org.jooq.*;
 import org.jooq.conf.ParamType;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
+import java.time.*;
 import java.time.temporal.ChronoField;
 import java.util.ArrayList;
 import java.util.Map;
@@ -56,8 +54,10 @@ public abstract class AbstractAsyncQueryExecutor<FIND_MANY_JSON, FIND_ONE_JSON, 
     protected JsonArray getBindValues(Query query) {
         ArrayList<Object> bindValues = new ArrayList<>();
         for (Param<?> param : query.getParams().values()) {
-            Object value = convertToDatabaseType(param);
-            bindValues.add(value);
+            if(!param.getParamType().equals(ParamType.INLINED)) {
+                Object value = convertToDatabaseType(param);
+                bindValues.add(value);
+            }
         }
         return new JsonArray(bindValues);
     }
@@ -93,6 +93,24 @@ public abstract class AbstractAsyncQueryExecutor<FIND_MANY_JSON, FIND_ONE_JSON, 
         }else if(object instanceof ZonedDateTime){
             ZonedDateTime convert = (ZonedDateTime) object;
             return new org.joda.time.DateTime(convert.getYear(),convert.getMonthValue(),convert.getDayOfMonth(),convert.getHour(),convert.getMinute(),convert.getSecond(), convert.get(ChronoField.MILLI_OF_SECOND), DateTimeZone.forID(convert.getZone().getId()));
+        } else if (object instanceof OffsetDateTime) {
+            OffsetDateTime obj = (OffsetDateTime) object;
+
+            // Keep the same instant when converting to date time
+            ZonedDateTime convert = obj.atZoneSameInstant(ZoneOffset.UTC);
+            org.joda.time.DateTime dt = new org.joda.time.DateTime(convert.getYear(),
+                    convert.getMonthValue(),
+                    convert.getDayOfMonth(),
+                    convert.getHour(),
+                    convert.getMinute(),
+                    convert.getSecond(),
+                    convert.get(ChronoField.MILLI_OF_SECOND),
+                    DateTimeZone.forID(convert.getZone().getId()));
+            return dt;
+        } else if (object instanceof Instant) {
+            Instant convert = (Instant) object;
+            org.joda.time.Instant i = org.joda.time.Instant.parse(convert.toString());
+            return i.toDateTime();
         }
         return object;
     }

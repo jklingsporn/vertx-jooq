@@ -34,7 +34,8 @@ public abstract class AbstractVertxGeneratorStrategy extends DefaultGeneratorStr
     @Override
     public List<String> getJavaClassImplements(Definition definition, Mode mode) {
         List<String> javaClassImplements = super.getJavaClassImplements(definition, mode);
-        if(mode.equals(Mode.INTERFACE)){
+        if(mode.equals(Mode.INTERFACE) || mode.equals(Mode.POJO) || mode.equals(Mode.RECORD)){
+            //let POJO and RECORD also implement VertxPojo to fix #37
             javaClassImplements.add(VertxPojo.class.getName());
         }
         return javaClassImplements;
