@@ -1,16 +1,21 @@
 package io.github.jklingsporn.vertx.jooq.generate.builder;
 
+import io.github.jklingsporn.vertx.jooq.shared.JsonArrayConverter;
+import io.github.jklingsporn.vertx.jooq.shared.JsonObjectConverter;
 import io.github.jklingsporn.vertx.jooq.shared.internal.AbstractVertxDAO;
 import io.github.jklingsporn.vertx.jooq.shared.internal.async.AbstractAsyncVertxDAO;
+import io.vertx.core.buffer.Buffer;
+import io.vertx.core.json.JsonArray;
+import io.vertx.core.json.JsonObject;
 import org.jooq.Configuration;
-import org.jooq.util.GeneratorStrategy;
-import org.jooq.util.JavaWriter;
-import org.jooq.util.TableDefinition;
-import org.jooq.util.UniqueKeyDefinition;
+import org.jooq.util.*;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
+import java.math.BigDecimal;
+import java.time.*;
+import java.time.temporal.Temporal;
+import java.util.*;
+import java.util.function.Function;
 
 /**
  * Builder to create a {@code VertxGenerator}. Non-instantiable, see static init() method.
@@ -272,6 +277,117 @@ public class VertxGeneratorBuilder {
                 default: throw new UnsupportedOperationException(base.apiType.toString());
             }
         }
+
+        @Override
+        public DIStep withPostgresReactiveDriver() {
+            base.setRenderDAOExtendsDelegate(AbstractVertxDAO.class::getName);
+            base.addWriteExtraDataDelegate((schema, writerGen) -> {
+                ComponentBasedVertxGenerator.logger.info("Generate RowMappers ... ");
+                String packageName = (base.getStrategy().getTargetDirectory() + "/" + base.getStrategy().getJavaPackageName(schema) + ".tables.mappers").replaceAll("\\.", "/");
+                File moduleFile = new File(packageName, "DaoModule.java");
+                JavaWriter out = writerGen.apply(moduleFile);
+                out.println("package " + base.getStrategy().getJavaPackageName(schema) + ".tables.mappers;");
+                out.println();
+                out.println("import com.julienviet.pgclient.Row;");
+                out.println("import %s;", Function.class.getName());
+                out.println();
+                out.println("public class RowMappers {");
+                out.println();
+                out.tab(1).println("private RowMappers(){}"); //not instantiable
+                out.println();
+                Set<String> supportedRowTypes = new HashSet<>();
+                supportedRowTypes.add(Boolean.class.getName());
+                supportedRowTypes.add(Integer.class.getName());
+                supportedRowTypes.add(Long.class.getName());
+                supportedRowTypes.add(Float.class.getName());
+                supportedRowTypes.add(BigDecimal.class.getName());
+                supportedRowTypes.add(String.class.getName());
+                supportedRowTypes.add(Character.class.getName());
+                supportedRowTypes.add(Buffer.class.getName());
+                supportedRowTypes.add(JsonObject.class.getName());
+                supportedRowTypes.add(JsonArray.class.getName());
+                supportedRowTypes.add(UUID.class.getName());
+                supportedRowTypes.add(Instant.class.getName());
+                supportedRowTypes.add(Temporal.class.getName());
+                supportedRowTypes.add(LocalTime.class.getName());
+                supportedRowTypes.add(LocalDate.class.getName());
+                supportedRowTypes.add(LocalDateTime.class.getName());
+                supportedRowTypes.add(OffsetTime.class.getName());
+                supportedRowTypes.add(OffsetDateTime.class.getName());
+                for (TableDefinition table : schema.getTables()) {
+                    UniqueKeyDefinition key = table.getPrimaryKey();
+                    if (key == null) {
+                        ComponentBasedVertxGenerator.logger.info("{} has no primary key. Skipping...", out.file().getName());
+                        continue;
+                    }
+                    final String pType = base.getStrategy().getFullJavaClassName(table, GeneratorStrategy.Mode.POJO);
+                    out.tab(1).println("public static Function<Row,%s> get%sMapper() {",pType,pType);
+                    out.tab(2).println("return row -> {");
+                    out.tab(3).println("%s pojo = new %s();",pType,pType);
+                    for (TypedElementDefinition<?> column : table.getColumns()) {
+                        String setter = base.getStrategy().getJavaSetterName(column, GeneratorStrategy.Mode.INTERFACE);
+                        String javaType = base.getJavaType(column.getType());
+                        if(supportedRowTypes.contains(javaType)){
+                            try {
+                                out.tab(3).println("pojo.%s(row.get%s(\"%s\"));", setter, Class.forName(javaType).getSimpleName(),  column.getName());
+                            } catch (ClassNotFoundException e) {
+                                ComponentBasedVertxGenerator.logger.error(e.getMessage(),e);
+                            }
+                        }else if(column.getType().getConverter() != null && column.getType().getConverter().equalsIgnoreCase(JsonObjectConverter.class.getName())){
+                            out.tab(3).println("pojo.%s(row.getJsonObject(\"%s\"));", setter, column.getName());
+                        }else if(column.getType().getConverter() != null && column.getType().getConverter().equalsIgnoreCase(JsonArrayConverter.class.getName())){
+                            out.tab(3).println("pojo.%s(row.getJsonArray(\"%s\"));", setter, column.getName());
+                        }else{
+                            ComponentBasedVertxGenerator.logger.warn(String.format("Omitting unrecognized type %s for column %s in table %s!",column.getType(),column.getName(),table.getName()));
+                            out.tab(3).println(String.format("// Omitting unrecognized type %s for column %s!",column.getType(),column.getName()));
+                        }
+                    }
+                    out.tab(3).println("return pojo;");
+                    out.tab(2).println("}");
+                    out.tab(1).println("}");
+                    out.println();
+                }
+                out.println("}");
+                return out;
+            });
+            switch(base.apiType){
+                case CLASSIC:
+                    return new DIStepImpl(base
+                            .setWriteDAOImportsDelegate(base.writeDAOImportsDelegate.andThen(out -> out.println("import io.github.jklingsporn.vertx.jooq.classic.jdbc.JDBCClassicQueryExecutor;")))
+                            .setRenderQueryExecutorDelegate((rType, pType, tType) -> String.format("JDBCClassicQueryExecutor<%s,%s,%s>", rType, pType, tType))
+                            .setWriteConstructorDelegate((out, className, tableIdentifier, tableRecord, pType, tType) -> {
+                                out.tab(1).javadoc("@param configuration The Configuration used for rendering and query execution.\n     * @param vertx the vertx instance");
+                                out.tab(1).println("public %s(%s configuration, %s vertx) {", className, Configuration.class, base.renderFQVertxName());
+                                out.tab(2).println("super(%s, %s.class, new %s(%s.class,configuration,vertx), configuration);", tableIdentifier, pType, base.renderQueryExecutor(tableRecord, pType, tType), pType);
+                                out.tab(1).println("}");
+                            })
+                    );
+                case COMPLETABLE_FUTURE:
+                    return new DIStepImpl(base
+                            .setWriteDAOImportsDelegate(base.writeDAOImportsDelegate.andThen(out -> out.println("import io.github.jklingsporn.vertx.jooq.completablefuture.jdbc.JDBCCompletableFutureQueryExecutor;")))
+                            .setRenderQueryExecutorDelegate((rType, pType, tType) -> String.format("JDBCCompletableFutureQueryExecutor<%s,%s,%s>", rType, pType, tType))
+                            .setWriteConstructorDelegate((out, className, tableIdentifier, tableRecord, pType, tType) -> {
+                                out.tab(1).javadoc("@param configuration The Configuration used for rendering and query execution.\n     * @param vertx the vertx instance");
+                                out.tab(1).println("public %s(%s configuration, %s vertx) {", className, Configuration.class, base.renderFQVertxName());
+                                out.tab(2).println("super(%s, %s.class, new %s(%s.class,configuration,vertx), configuration);", tableIdentifier, pType, base.renderQueryExecutor(tableRecord, pType, tType), pType);
+                                out.tab(1).println("}");
+                            })
+                    );
+                case RX:
+                    return new DIStepImpl(base
+                            .setWriteDAOImportsDelegate(base.writeDAOImportsDelegate.andThen(out -> out.println("import io.github.jklingsporn.vertx.jooq.rx.jdbc.JDBCRXQueryExecutor;")))
+                            .setRenderQueryExecutorDelegate((rType, pType, tType) -> String.format("JDBCRXQueryExecutor<%s,%s,%s>", rType, pType, tType))
+                            .setWriteConstructorDelegate((out, className, tableIdentifier, tableRecord, pType, tType) -> {
+                                out.tab(1).javadoc("@param configuration The Configuration used for rendering and query execution.\n" +
+                                        "     * @param vertx the vertx instance");
+                                out.tab(1).println("public %s(%s configuration, %s vertx) {", className, Configuration.class, base.renderFQVertxName());
+                                out.tab(2).println("super(%s, %s.class, new %s(%s.class,configuration,vertx), configuration);", tableIdentifier, pType, base.renderQueryExecutor(tableRecord, pType, tType),pType);
+                                out.tab(1).println("}");
+                            })
+                    );
+                default: throw new UnsupportedOperationException(base.apiType.toString());
+            }
+        }
     }
 
     static class DIStepImpl extends FinalStepImpl implements DIStep{
@@ -317,6 +433,7 @@ public class VertxGeneratorBuilder {
                         UniqueKeyDefinition key = table.getPrimaryKey();
                         if (key == null) {
                             ComponentBasedVertxGenerator.logger.info("{} has no primary key. Skipping...", out.file().getName());
+                            continue;
                         }
                         final String keyType = base.getKeyType(key);
                         final String tableRecord = base.getStrategy().getFullJavaClassName(table, GeneratorStrategy.Mode.RECORD);

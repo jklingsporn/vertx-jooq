@@ -142,12 +142,24 @@ public abstract class VertxGenerator extends JavaGenerator {
         out.println();
     }
 
-    private boolean isEnum(TableDefinition table, TypedElementDefinition<?> column) {
+    public boolean isEnum(TableDefinition table, TypedElementDefinition<?> column) {
         return table.getDatabase().getEnum(table.getSchema(), column.getType().getUserType()) != null;
     }
 
     protected boolean isType(String columnType, Class<?> clazz) {
         return columnType.equals(clazz.getName());
+    }
+
+    @Override
+    public String getJavaType(DataTypeDefinition type) {
+        return super.getJavaType(type);
+    }
+
+    public void printIfType(Class<?> clazz, TypedElementDefinition<?> column, String setterName, JavaWriter out) {
+        boolean isType = getJavaType(column.getType()).equals(clazz.getName());
+        if(isType){
+            out.tab(3).println("%s(row.get%s(\"%s\"));", setterName, clazz.getSimpleName(),  column.getName());
+        }
     }
 
     /**

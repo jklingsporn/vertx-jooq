@@ -9,5 +9,6 @@ public interface ExecutionStep {
 
     public DIStep withAsyncDriver();
 
+    public DIStep withPostgresReactiveDriver();
 
 }

@@ -35,24 +35,6 @@ class ComponentBasedVertxGenerator extends VertxGenerator {
     Consumer<JavaWriter> writeDAOConstructorAnnotationDelegate = (w)->{};
     Collection<BiFunction<SchemaDefinition,Function<File,JavaWriter>,JavaWriter>> writeExtraDataDelegates = new ArrayList<>();
 
-    public ComponentBasedVertxGenerator() {
-    }
-
-    public ComponentBasedVertxGenerator(ComponentBasedVertxGenerator copy) {
-        this.apiType = copy.apiType;
-        this.renderQueryExecutorTypesDelegate = copy.renderQueryExecutorTypesDelegate;
-        this.writeDAOImportsDelegate = copy.writeDAOImportsDelegate;
-        this.renderQueryExecutorDelegate = copy.renderQueryExecutorDelegate;
-        this.renderDAOInterfaceDelegate = copy.renderDAOInterfaceDelegate;
-        this.writeConstructorDelegate = copy.writeConstructorDelegate;
-        this.renderFQVertxNameDelegate = copy.renderFQVertxNameDelegate;
-        this.renderDAOExtendsDelegate = copy.renderDAOExtendsDelegate;
-        this.overwriteDAODelegate = copy.overwriteDAODelegate;
-        this.writeDAOClassAnnotationDelegate = copy.writeDAOClassAnnotationDelegate;
-        this.writeDAOConstructorAnnotationDelegate = copy.writeDAOConstructorAnnotationDelegate;
-        this.writeExtraDataDelegates = copy.writeExtraDataDelegates;
-    }
-
     @Override
     public String renderFQVertxName() {
         return renderFQVertxNameDelegate.get();
