@@ -6,26 +6,25 @@ import com.julienviet.pgclient.Row;
 import com.julienviet.pgclient.Tuple;
 import io.github.jklingsporn.vertx.jooq.shared.internal.QueryExecutor;
 import io.vertx.core.Future;
-import io.vertx.core.json.JsonObject;
 import org.jooq.*;
+import org.jooq.exception.TooManyRowsException;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Function;
-import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 /**
  * Created by jensklingsporn on 01.03.18.
  */
 public class ReactiveClassicQueryExecutor<R extends UpdatableRecord<R>,P,T> implements QueryExecutor<R,T,Future<List<P>>,Future<P>,Future<Integer>,Future<T>>{
 
-    private final Function<JsonObject,P> pojoMapper;
+    private final Function<Row,P> pojoMapper;
     private final PgClient delegate;
 
-    public ReactiveClassicQueryExecutor(PgClient delegate, Function<JsonObject, P> pojoMapper, Table<R> table) {
-        this.pojoMapper = convertFromSQL(table).andThen(pojoMapper);
+    public ReactiveClassicQueryExecutor(PgClient delegate, Function<Row, P> pojoMapper) {
+        this.pojoMapper = pojoMapper; //TODO respect jOOQ-converters
         this.delegate = delegate;
     }
 
@@ -33,23 +32,30 @@ public class ReactiveClassicQueryExecutor<R extends UpdatableRecord<R>,P,T> impl
     public Future<List<P>> findMany(ResultQuery<R> query) {
         Future<PgResult<Row>> rowFuture = Future.future();
         delegate.preparedQuery(query.getSQL(),getBindValues(query),rowFuture);
-        rowFuture.map(res->{
-            for(Row row: res){
-
-            }
-            return Future.succeededFuture();
-        });
-        return null;
+        return rowFuture.map(res-> StreamSupport
+                .stream(res.spliterator(),false)
+                .map(pojoMapper::apply)
+                .collect(Collectors.toList()));
     }
 
     @Override
     public Future<P> findOne(ResultQuery<R> query) {
-        return null;
+        Future<PgResult<Row>> rowFuture = Future.future();
+        delegate.preparedQuery(query.getSQL(),getBindValues(query),rowFuture);
+        return rowFuture.map(res-> {
+            switch (res.size()) {
+                case 0: return null;
+                case 1: return pojoMapper.apply(res.iterator().next());
+                default: throw new TooManyRowsException(String.format("Found more than one row: %d", res.size()));
+            }
+        });
     }
 
     @Override
     public Future<Integer> execute(Query query) {
-        return null;
+        Future<PgResult<Row>> rowFuture = Future.future();
+        delegate.preparedQuery(query.getSQL(),getBindValues(query),rowFuture);
+        return rowFuture.map(PgResult::updatedCount);
     }
 
     @Override
@@ -57,24 +63,6 @@ public class ReactiveClassicQueryExecutor<R extends UpdatableRecord<R>,P,T> impl
         return null;
     }
 
-    protected UnaryOperator<JsonObject> convertFromSQL(Table<?> table){
-        Map<String, Converter<Object, Object>> pojoConverters = table
-                .fieldStream()
-                .filter(f -> f.getConverter() != null)
-                .collect(Collectors.toMap(Field::getName, v -> ((Converter<Object, Object>) v.getConverter())));
-        return json -> {
-            JsonObject theCopy = new JsonObject();
-            for (Map.Entry<String, Object> jsonMap : json.getMap().entrySet()) {
-                Converter<Object, Object> converter = pojoConverters.get(jsonMap.getKey());
-                if(converter!=null){
-                    theCopy.put(jsonMap.getKey(), converter.from(jsonMap.getValue()));
-                }else{
-                    theCopy.put(jsonMap.getKey(), jsonMap.getValue());
-                }
-            }
-            return theCopy;
-        };
-    }
 
     protected Tuple getBindValues(Query query) {
         ArrayList<Object> bindValues = new ArrayList<>();
@@ -84,8 +72,6 @@ public class ReactiveClassicQueryExecutor<R extends UpdatableRecord<R>,P,T> impl
         }
         return Tuple.of(bindValues.toArray());
     }
-
-
 
     protected <U> Object convertToDatabaseType(Param<U> param) {
         return (param.getBinding().converter().to(param.getValue()));

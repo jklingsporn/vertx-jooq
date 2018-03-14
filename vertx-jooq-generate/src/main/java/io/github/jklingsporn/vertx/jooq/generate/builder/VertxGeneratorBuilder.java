@@ -284,7 +284,7 @@ public class VertxGeneratorBuilder {
             base.addWriteExtraDataDelegate((schema, writerGen) -> {
                 ComponentBasedVertxGenerator.logger.info("Generate RowMappers ... ");
                 String packageName = (base.getStrategy().getTargetDirectory() + "/" + base.getStrategy().getJavaPackageName(schema) + ".tables.mappers").replaceAll("\\.", "/");
-                File moduleFile = new File(packageName, "DaoModule.java");
+                File moduleFile = new File(packageName, "RowMappers.java");
                 JavaWriter out = writerGen.apply(moduleFile);
                 out.println("package " + base.getStrategy().getJavaPackageName(schema) + ".tables.mappers;");
                 out.println();
@@ -300,6 +300,7 @@ public class VertxGeneratorBuilder {
                 supportedRowTypes.add(Integer.class.getName());
                 supportedRowTypes.add(Long.class.getName());
                 supportedRowTypes.add(Float.class.getName());
+                supportedRowTypes.add(Double.class.getName());
                 supportedRowTypes.add(BigDecimal.class.getName());
                 supportedRowTypes.add(String.class.getName());
                 supportedRowTypes.add(Character.class.getName());
@@ -321,7 +322,7 @@ public class VertxGeneratorBuilder {
                         continue;
                     }
                     final String pType = base.getStrategy().getFullJavaClassName(table, GeneratorStrategy.Mode.POJO);
-                    out.tab(1).println("public static Function<Row,%s> get%sMapper() {",pType,pType);
+                    out.tab(1).println("public static Function<Row,%s> get%sMapper() {",pType,base.getStrategy().getJavaClassName(table, GeneratorStrategy.Mode.POJO));
                     out.tab(2).println("return row -> {");
                     out.tab(3).println("%s pojo = new %s();",pType,pType);
                     for (TypedElementDefinition<?> column : table.getColumns()) {
@@ -343,7 +344,7 @@ public class VertxGeneratorBuilder {
                         }
                     }
                     out.tab(3).println("return pojo;");
-                    out.tab(2).println("}");
+                    out.tab(2).println("};");
                     out.tab(1).println("}");
                     out.println();
                 }
