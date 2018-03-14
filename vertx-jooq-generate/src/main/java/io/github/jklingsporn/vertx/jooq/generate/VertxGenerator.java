@@ -13,6 +13,7 @@ import org.jooq.util.*;
 
 import java.io.File;
 import java.time.Instant;
+import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 
@@ -27,7 +28,7 @@ import java.util.function.Function;
  */
 public abstract class VertxGenerator extends JavaGenerator {
 
-    protected static final JooqLogger logger = JooqLogger.getLogger(VertxGenerator.class);
+    private static final JooqLogger logger = JooqLogger.getLogger(VertxGenerator.class);
 
     private final boolean generateJson;
     protected VertxGeneratorStrategy vertxGeneratorStrategy;
@@ -302,7 +303,7 @@ public abstract class VertxGenerator extends JavaGenerator {
      * @param key
      * @return
      */
-    protected String getKeyType(UniqueKeyDefinition key){
+    public String getKeyType(UniqueKeyDefinition key){
         String tType;
 
         List<ColumnDefinition> keyColumns = key.getKeyColumns();
@@ -541,11 +542,9 @@ public abstract class VertxGenerator extends JavaGenerator {
     protected abstract void writeDAOConstructorAnnotation(JavaWriter out);
 
     private void writeExtraData(SchemaDefinition definition){
-        JavaWriter writer = writeExtraData(definition, this::newJavaWriter);
-        if(writer!=null){
-            closeJavaWriter(writer);
-        }
+        Collection<JavaWriter> writers = writeExtraData(definition, this::newJavaWriter);
+        writers.forEach(this::closeJavaWriter);
     }
 
-    protected abstract JavaWriter writeExtraData(SchemaDefinition definition, Function<File,JavaWriter> writerGenerator);
+    protected abstract Collection<JavaWriter> writeExtraData(SchemaDefinition definition, Function<File,JavaWriter> writerGenerator);
 }

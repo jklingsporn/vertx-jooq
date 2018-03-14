@@ -3,7 +3,12 @@ package io.github.jklingsporn.vertx.jooq.generate.builder;
 import io.github.jklingsporn.vertx.jooq.shared.internal.AbstractVertxDAO;
 import io.github.jklingsporn.vertx.jooq.shared.internal.async.AbstractAsyncVertxDAO;
 import org.jooq.Configuration;
+import org.jooq.util.GeneratorStrategy;
+import org.jooq.util.JavaWriter;
+import org.jooq.util.TableDefinition;
+import org.jooq.util.UniqueKeyDefinition;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -277,15 +282,60 @@ public class VertxGeneratorBuilder {
 
         @Override
         public FinalStep withGuice(boolean generateGuiceModules) {
-            ComponentBasedGuiceVertxGenerator guiceVertxGenerator = new ComponentBasedGuiceVertxGenerator(base);
-            guiceVertxGenerator.setWriteDAOConstructorAnnotationDelegate((out)->out.tab(1).println("@javax.inject.Inject"));
-            guiceVertxGenerator.setWriteDAOClassAnnotationDelegate((out)-> out.println("@javax.inject.Singleton"));
-            return new FinalStepImpl(guiceVertxGenerator.setWriteExtraDataDelegate((schema,writerGen) -> {
-                if (generateGuiceModules) {
-                    return guiceVertxGenerator.generateDAOModule(schema,writerGen);
-                }
-                return null;
-            }));
+            base.setWriteDAOConstructorAnnotationDelegate((out)->out.tab(1).println("@javax.inject.Inject"));
+            base.setWriteDAOClassAnnotationDelegate((out)-> out.println("@javax.inject.Singleton"));
+            if (generateGuiceModules) {
+                base.addWriteExtraDataDelegate((schema, writerGen) -> {
+                    ComponentBasedVertxGenerator.logger.info("Generate DaoModule ... ");
+                    String daoClassName;
+                    switch (base.apiType) {
+                        case CLASSIC:
+                            daoClassName = "io.github.jklingsporn.vertx.jooq.classic.VertxDAO";
+                            break;
+                        case COMPLETABLE_FUTURE:
+                            daoClassName = "io.github.jklingsporn.vertx.jooq.completablefuture.VertxDAO";
+                            break;
+                        case RX:
+                            daoClassName = "io.github.jklingsporn.vertx.jooq.rx.VertxDAO";
+                            break;
+                        default:
+                            throw new UnsupportedOperationException(base.apiType.toString());
+                    }
+                    String packageName = (base.getStrategy().getTargetDirectory() + "/" + base.getStrategy().getJavaPackageName(schema) + ".tables.modules").replaceAll("\\.", "/");
+                    File moduleFile = new File(packageName, "DaoModule.java");
+                    JavaWriter out = writerGen.apply(moduleFile);
+                    out.println("package " + base.getStrategy().getJavaPackageName(schema) + ".tables.modules;");
+                    out.println();
+                    out.println("import com.google.inject.AbstractModule;");
+                    out.println("import com.google.inject.TypeLiteral;");
+                    out.println("import %s;", daoClassName);
+                    out.println();
+                    out.println("public class DaoModule extends AbstractModule {");
+                    out.tab(1).println("@Override");
+                    out.tab(1).println("protected void configure() {");
+                    for (TableDefinition table : schema.getTables()) {
+                        UniqueKeyDefinition key = table.getPrimaryKey();
+                        if (key == null) {
+                            ComponentBasedVertxGenerator.logger.info("{} has no primary key. Skipping...", out.file().getName());
+                        }
+                        final String keyType = base.getKeyType(key);
+                        final String tableRecord = base.getStrategy().getFullJavaClassName(table, GeneratorStrategy.Mode.RECORD);
+                        final String pType = base.getStrategy().getFullJavaClassName(table, GeneratorStrategy.Mode.POJO);
+                        final String className = base.getStrategy().getFullJavaClassName(table, GeneratorStrategy.Mode.DAO);
+                        if (base.generateInterfaces()) {
+                            String iType = base.getStrategy().getFullJavaClassName(table, GeneratorStrategy.Mode.INTERFACE);
+                            out.tab(2).println("bind(new TypeLiteral<VertxDAO<%s, ? extends %s, %s>>() {}).to(%s.class).asEagerSingleton();",
+                                    tableRecord, iType, keyType, className);
+                        }
+                        out.tab(2).println("bind(new TypeLiteral<VertxDAO<%s, %s, %s>>() {}).to(%s.class).asEagerSingleton();",
+                                tableRecord, pType, keyType, className);
+                    }
+                    out.tab(1).println("}");
+                    out.println("}");
+                    return out;
+                });
+            }
+            return new FinalStepImpl(base);
         }
 
 

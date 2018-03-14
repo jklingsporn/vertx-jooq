@@ -1,20 +1,26 @@
 package io.github.jklingsporn.vertx.jooq.generate.builder;
 
 import io.github.jklingsporn.vertx.jooq.generate.VertxGenerator;
+import org.jooq.tools.JooqLogger;
 import org.jooq.util.JavaWriter;
 import org.jooq.util.SchemaDefinition;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 /**
  * A {@code VertxGenerator} that delegates some method calls to components.
  * @author jensklingsporn
  */
 class ComponentBasedVertxGenerator extends VertxGenerator {
+
+    static final JooqLogger logger = JooqLogger.getLogger(ComponentBasedVertxGenerator.class);
 
     VertxGeneratorBuilder.APIType apiType;
     RenderQueryExecutorTypesComponent renderQueryExecutorTypesDelegate;
@@ -27,7 +33,7 @@ class ComponentBasedVertxGenerator extends VertxGenerator {
     OverwriteDAOComponent overwriteDAODelegate = (out, className, tableIdentifier, tableRecord, pType, tType) -> {}; //no overwrite by default
     Consumer<JavaWriter> writeDAOClassAnnotationDelegate = (w)->{};
     Consumer<JavaWriter> writeDAOConstructorAnnotationDelegate = (w)->{};
-    BiFunction<SchemaDefinition,Function<File,JavaWriter>,JavaWriter> writeExtraDataDelegate = (s,f)-> null;
+    Collection<BiFunction<SchemaDefinition,Function<File,JavaWriter>,JavaWriter>> writeExtraDataDelegates = new ArrayList<>();
 
     public ComponentBasedVertxGenerator() {
     }
@@ -44,7 +50,7 @@ class ComponentBasedVertxGenerator extends VertxGenerator {
         this.overwriteDAODelegate = copy.overwriteDAODelegate;
         this.writeDAOClassAnnotationDelegate = copy.writeDAOClassAnnotationDelegate;
         this.writeDAOConstructorAnnotationDelegate = copy.writeDAOConstructorAnnotationDelegate;
-        this.writeExtraDataDelegate = copy.writeExtraDataDelegate;
+        this.writeExtraDataDelegates = copy.writeExtraDataDelegates;
     }
 
     @Override
@@ -113,8 +119,8 @@ class ComponentBasedVertxGenerator extends VertxGenerator {
     }
 
     @Override
-    protected JavaWriter writeExtraData(SchemaDefinition definition, Function<File, JavaWriter> writerGenerator) {
-        return writeExtraDataDelegate.apply(definition,writerGenerator);
+    protected Collection<JavaWriter> writeExtraData(SchemaDefinition definition, Function<File, JavaWriter> writerGenerator) {
+        return writeExtraDataDelegates.stream().map(d->d.apply(definition,writerGenerator)).collect(Collectors.toList());
     }
 
     ComponentBasedVertxGenerator setWriteConstructorDelegate(WriteConstructorComponent writeConstructorDelegate) {
@@ -172,8 +178,8 @@ class ComponentBasedVertxGenerator extends VertxGenerator {
         return this;
     }
 
-    ComponentBasedVertxGenerator setWriteExtraDataDelegate(BiFunction<SchemaDefinition, Function<File, JavaWriter>, JavaWriter> writeExtraDataDelegate) {
-        this.writeExtraDataDelegate = writeExtraDataDelegate;
+    ComponentBasedVertxGenerator addWriteExtraDataDelegate(BiFunction<SchemaDefinition, Function<File, JavaWriter>, JavaWriter> writeExtraDataDelegate) {
+        this.writeExtraDataDelegates.add(writeExtraDataDelegate);
         return this;
     }
 }

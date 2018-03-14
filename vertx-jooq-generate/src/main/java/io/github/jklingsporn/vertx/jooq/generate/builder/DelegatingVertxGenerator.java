@@ -6,7 +6,9 @@ import org.jooq.util.JavaWriter;
 import org.jooq.util.SchemaDefinition;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * A {@code VertxGenerator} that delegates all methods to another {@code VertxGenerator}.
@@ -82,8 +84,8 @@ public class DelegatingVertxGenerator extends VertxGenerator {
     }
 
     @Override
-    protected JavaWriter writeExtraData(SchemaDefinition definition, Function<File, JavaWriter> writerGenerator) {
-        return delegate.writeExtraDataDelegate.apply(definition,writerGenerator);
+    protected Collection<JavaWriter> writeExtraData(SchemaDefinition definition, Function<File, JavaWriter> writerGenerator) {
+        return delegate.writeExtraDataDelegates.stream().map(d->d.apply(definition,writerGenerator)).collect(Collectors.toList());
     }
 
     @Override
