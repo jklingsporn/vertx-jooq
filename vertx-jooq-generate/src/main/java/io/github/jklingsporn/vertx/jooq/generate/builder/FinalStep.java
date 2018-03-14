@@ -4,5 +4,4 @@ public interface FinalStep {
 
     public ComponentBasedVertxGenerator build();
 
-    public ComponentBasedVertxGenerator buildWithGuice(boolean generateGuiceModules);
 }

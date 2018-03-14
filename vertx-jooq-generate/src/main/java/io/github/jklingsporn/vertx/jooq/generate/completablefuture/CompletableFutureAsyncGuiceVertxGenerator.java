@@ -9,6 +9,6 @@ import io.github.jklingsporn.vertx.jooq.generate.builder.VertxGeneratorBuilder;
 public class CompletableFutureAsyncGuiceVertxGenerator extends DelegatingVertxGenerator {
 
     public CompletableFutureAsyncGuiceVertxGenerator() {
-        super(VertxGeneratorBuilder.init().withCompletableFutureAPI().withAsyncDriver().buildWithGuice(true));
+        super(VertxGeneratorBuilder.init().withCompletableFutureAPI().withAsyncDriver().withGuice(true).build());
     }
 }

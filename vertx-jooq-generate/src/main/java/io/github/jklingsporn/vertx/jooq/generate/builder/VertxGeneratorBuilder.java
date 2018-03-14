@@ -153,11 +153,11 @@ public class VertxGeneratorBuilder {
         }
 
         @Override
-        public FinalStep withJDBCDriver() {
+        public DIStep withJDBCDriver() {
             base.setRenderDAOExtendsDelegate(AbstractVertxDAO.class::getName);
             switch(base.apiType){
                 case CLASSIC:
-                    return new FinalStepImpl(base
+                    return new DIStepImpl(base
                             .setWriteDAOImportsDelegate(base.writeDAOImportsDelegate.andThen(out -> out.println("import io.github.jklingsporn.vertx.jooq.classic.jdbc.JDBCClassicQueryExecutor;")))
                             .setRenderQueryExecutorDelegate((rType, pType, tType) -> String.format("JDBCClassicQueryExecutor<%s,%s,%s>", rType, pType, tType))
                             .setWriteConstructorDelegate((out, className, tableIdentifier, tableRecord, pType, tType) -> {
@@ -168,7 +168,7 @@ public class VertxGeneratorBuilder {
                             })
                     );
                 case COMPLETABLE_FUTURE:
-                    return new FinalStepImpl(base
+                    return new DIStepImpl(base
                             .setWriteDAOImportsDelegate(base.writeDAOImportsDelegate.andThen(out -> out.println("import io.github.jklingsporn.vertx.jooq.completablefuture.jdbc.JDBCCompletableFutureQueryExecutor;")))
                             .setRenderQueryExecutorDelegate((rType, pType, tType) -> String.format("JDBCCompletableFutureQueryExecutor<%s,%s,%s>", rType, pType, tType))
                             .setWriteConstructorDelegate((out, className, tableIdentifier, tableRecord, pType, tType) -> {
@@ -179,7 +179,7 @@ public class VertxGeneratorBuilder {
                             })
                     );
                 case RX:
-                    return new FinalStepImpl(base
+                    return new DIStepImpl(base
                             .setWriteDAOImportsDelegate(base.writeDAOImportsDelegate.andThen(out -> out.println("import io.github.jklingsporn.vertx.jooq.rx.jdbc.JDBCRXQueryExecutor;")))
                             .setRenderQueryExecutorDelegate((rType, pType, tType) -> String.format("JDBCRXQueryExecutor<%s,%s,%s>", rType, pType, tType))
                             .setWriteConstructorDelegate((out, className, tableIdentifier, tableRecord, pType, tType) -> {
@@ -195,7 +195,7 @@ public class VertxGeneratorBuilder {
         }
 
         @Override
-        public FinalStep withAsyncDriver() {
+        public DIStep withAsyncDriver() {
             base.setRenderDAOExtendsDelegate(AbstractAsyncVertxDAO.class::getName);
             base.setOverwriteDAODelegate((out, className, tableIdentifier, tableRecord, pType, tType) -> {
                 if (SUPPORTED_INSERT_RETURNING_TYPES_MAP.containsKey(tType)) {
@@ -228,7 +228,7 @@ public class VertxGeneratorBuilder {
             });
             switch (base.apiType) {
                 case CLASSIC:
-                    return new FinalStepImpl(base
+                    return new DIStepImpl(base
                             .setWriteDAOImportsDelegate(base.writeDAOImportsDelegate.andThen(out -> out.println("import io.github.jklingsporn.vertx.jooq.classic.async.AsyncClassicQueryExecutor;")))
                             .setRenderQueryExecutorDelegate((rType, pType, tType) -> String.format("AsyncClassicQueryExecutor<%s,%s,%s>", rType, pType, tType))
                             .setWriteConstructorDelegate((out, className, tableIdentifier, tableRecord, pType, tType) -> {
@@ -240,7 +240,7 @@ public class VertxGeneratorBuilder {
 
                     );
                 case COMPLETABLE_FUTURE:
-                    return new FinalStepImpl(base
+                    return new DIStepImpl(base
                             .setWriteDAOImportsDelegate(base.writeDAOImportsDelegate.andThen(out -> out.println("import io.github.jklingsporn.vertx.jooq.completablefuture.async.AsyncCompletableFutureQueryExecutor;")))
                             .setRenderQueryExecutorDelegate((rType, pType, tType) -> String.format("AsyncCompletableFutureQueryExecutor<%s,%s,%s>", rType, pType, tType))
                             .setWriteConstructorDelegate((out, className, tableIdentifier, tableRecord, pType, tType) -> {
@@ -253,7 +253,7 @@ public class VertxGeneratorBuilder {
 
                     );
                 case RX:
-                    return new FinalStepImpl(base
+                    return new DIStepImpl(base
                             .setWriteDAOImportsDelegate(base.writeDAOImportsDelegate.andThen(out -> out.println("import io.github.jklingsporn.vertx.jooq.rx.async.AsyncRXQueryExecutor;")))
                             .setRenderQueryExecutorDelegate((rType, pType, tType) -> String.format("AsyncRXQueryExecutor<%s,%s,%s>", rType, pType, tType))
                             .setWriteConstructorDelegate((out, className, tableIdentifier, tableRecord, pType, tType) -> {
@@ -269,9 +269,31 @@ public class VertxGeneratorBuilder {
         }
     }
 
+    static class DIStepImpl extends FinalStepImpl implements DIStep{
+
+        public DIStepImpl(ComponentBasedVertxGenerator base) {
+            super(base);
+        }
+
+        @Override
+        public FinalStep withGuice(boolean generateGuiceModules) {
+            ComponentBasedGuiceVertxGenerator guiceVertxGenerator = new ComponentBasedGuiceVertxGenerator(base);
+            guiceVertxGenerator.setWriteDAOConstructorAnnotationDelegate((out)->out.tab(1).println("@javax.inject.Inject"));
+            guiceVertxGenerator.setWriteDAOClassAnnotationDelegate((out)-> out.println("@javax.inject.Singleton"));
+            return new FinalStepImpl(guiceVertxGenerator.setWriteExtraDataDelegate((schema,writerGen) -> {
+                if (generateGuiceModules) {
+                    return guiceVertxGenerator.generateDAOModule(schema,writerGen);
+                }
+                return null;
+            }));
+        }
+
+
+    }
+
     static class FinalStepImpl implements FinalStep{
 
-        private final ComponentBasedVertxGenerator base;
+        protected final ComponentBasedVertxGenerator base;
 
         FinalStepImpl(ComponentBasedVertxGenerator base) {
             this.base = base;
@@ -282,18 +304,6 @@ public class VertxGeneratorBuilder {
             return base;
         }
 
-        @Override
-        public ComponentBasedVertxGenerator buildWithGuice(boolean generateGuiceModules) {
-            base.setWriteDAOConstructorAnnotationDelegate((out)->out.tab(1).println("@javax.inject.Inject"));
-            base.setWriteDAOClassAnnotationDelegate((out)-> out.println("@javax.inject.Singleton"));
-            ComponentBasedGuiceVertxGenerator guiceVertxGenerator = new ComponentBasedGuiceVertxGenerator(base);
-            return guiceVertxGenerator.setWriteExtraDataDelegate((schema,writerGen) -> {
-                        if (generateGuiceModules) {
-                            return guiceVertxGenerator.generateDAOModule(schema,writerGen);
-                        }
-                        return null;
-                    });
-        }
 
     }
 

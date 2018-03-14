@@ -9,6 +9,6 @@ import io.github.jklingsporn.vertx.jooq.generate.builder.VertxGeneratorBuilder;
 public class RXAsyncGuiceVertxGenerator extends DelegatingVertxGenerator {
 
     public RXAsyncGuiceVertxGenerator() {
-        super(VertxGeneratorBuilder.init().withRXAPI().withAsyncDriver().buildWithGuice(true));
+        super(VertxGeneratorBuilder.init().withRXAPI().withAsyncDriver().withGuice(true).build());
     }
 }

@@ -9,7 +9,7 @@ import io.github.jklingsporn.vertx.jooq.generate.builder.VertxGeneratorBuilder;
 public class CompletableFutureJDBCGuiceVertxGenerator extends DelegatingVertxGenerator {
 
     public CompletableFutureJDBCGuiceVertxGenerator() {
-        super(VertxGeneratorBuilder.init().withCompletableFutureAPI().withJDBCDriver().buildWithGuice(true));
+        super(VertxGeneratorBuilder.init().withCompletableFutureAPI().withJDBCDriver().withGuice(true).build());
     }
 
 }

@@ -9,6 +9,6 @@ import io.github.jklingsporn.vertx.jooq.generate.builder.VertxGeneratorBuilder;
 public class ClassicJDBCGuiceVertxGenerator extends DelegatingVertxGenerator {
 
     public ClassicJDBCGuiceVertxGenerator() {
-        super(VertxGeneratorBuilder.init().withClassicAPI().withJDBCDriver().buildWithGuice(true));
+        super(VertxGeneratorBuilder.init().withClassicAPI().withJDBCDriver().withGuice(true).build());
     }
 }
