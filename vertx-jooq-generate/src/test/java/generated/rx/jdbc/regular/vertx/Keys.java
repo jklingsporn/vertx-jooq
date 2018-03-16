@@ -40,8 +40,8 @@ public class Keys {
     // UNIQUE and PRIMARY KEY definitions
     // -------------------------------------------------------------------------
 
-    public static final UniqueKey<SomethingRecord> SYS_PK_10463 = UniqueKeys0.SYS_PK_10463;
-    public static final UniqueKey<SomethingcompositeRecord> SYS_PK_10467 = UniqueKeys0.SYS_PK_10467;
+    public static final UniqueKey<SomethingRecord> SYS_PK_10434 = UniqueKeys0.SYS_PK_10434;
+    public static final UniqueKey<SomethingcompositeRecord> SYS_PK_10438 = UniqueKeys0.SYS_PK_10438;
 
     // -------------------------------------------------------------------------
     // FOREIGN KEY definitions
@@ -57,7 +57,7 @@ public class Keys {
     }
 
     private static class UniqueKeys0 {
-        public static final UniqueKey<SomethingRecord> SYS_PK_10463 = Internal.createUniqueKey(Something.SOMETHING, "SYS_PK_10463", Something.SOMETHING.SOMEID);
-        public static final UniqueKey<SomethingcompositeRecord> SYS_PK_10467 = Internal.createUniqueKey(Somethingcomposite.SOMETHINGCOMPOSITE, "SYS_PK_10467", Somethingcomposite.SOMETHINGCOMPOSITE.SOMEID, Somethingcomposite.SOMETHINGCOMPOSITE.SOMESECONDID);
+        public static final UniqueKey<SomethingRecord> SYS_PK_10434 = Internal.createUniqueKey(Something.SOMETHING, "SYS_PK_10434", Something.SOMETHING.SOMEID);
+        public static final UniqueKey<SomethingcompositeRecord> SYS_PK_10438 = Internal.createUniqueKey(Somethingcomposite.SOMETHINGCOMPOSITE, "SYS_PK_10438", Somethingcomposite.SOMETHINGCOMPOSITE.SOMEID, Somethingcomposite.SOMETHINGCOMPOSITE.SOMESECONDID);
     }
 }

@@ -12,7 +12,7 @@ import javax.annotation.Generated;
 
 
 /**
- * Convenience access to all tables in 
+ * Convenience access to all tables in vertx
  */
 @Generated(
     value = {
@@ -25,17 +25,17 @@ import javax.annotation.Generated;
 public class Tables {
 
     /**
-     * The table <code>something</code>.
+     * The table <code>vertx.something</code>.
      */
     public static final Something SOMETHING = generated.rx.async.guice.tables.Something.SOMETHING;
 
     /**
-     * The table <code>somethingComposite</code>.
+     * The table <code>vertx.somethingComposite</code>.
      */
     public static final Somethingcomposite SOMETHINGCOMPOSITE = generated.rx.async.guice.tables.Somethingcomposite.SOMETHINGCOMPOSITE;
 
     /**
-     * The table <code>somethingWithoutJson</code>.
+     * The table <code>vertx.somethingWithoutJson</code>.
      */
     public static final Somethingwithoutjson SOMETHINGWITHOUTJSON = generated.rx.async.guice.tables.Somethingwithoutjson.SOMETHINGWITHOUTJSON;
 }

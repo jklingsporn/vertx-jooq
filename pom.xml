@@ -18,6 +18,7 @@
         <module>vertx-jooq-rx-async</module>
         <module>vertx-jooq-generate</module>
         <module>vertx-jooq-classic-reactive-pg</module>
+        <module>vertx-jooq-shared-reactive</module>
     </modules>
     <properties>
         <jooq.version>3.10.5</jooq.version>
@@ -32,6 +33,8 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <postgresql.driver.version>42.2.1</postgresql.driver.version>
+        <reactivepg.client.version>0.6.0-SNAPSHOT</reactivepg.client.version>
     </properties>
     <groupId>io.github.jklingsporn</groupId>
     <version>4.0.0-BETA</version>
@@ -94,6 +97,13 @@
             <version>${logback.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>${postgresql.driver.version}</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
     <build>
         <plugins>

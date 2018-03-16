@@ -4,9 +4,9 @@
 package generated.classic.async.regular.tables;
 
 
-import generated.classic.async.regular.DefaultSchema;
 import generated.classic.async.regular.Indexes;
 import generated.classic.async.regular.Keys;
+import generated.classic.async.regular.Vertx;
 import generated.classic.async.regular.tables.records.SomethingwithoutjsonRecord;
 
 import java.util.Arrays;
@@ -39,10 +39,10 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Somethingwithoutjson extends TableImpl<SomethingwithoutjsonRecord> {
 
-    private static final long serialVersionUID = -908981661;
+    private static final long serialVersionUID = -1701276491;
 
     /**
-     * The reference instance of <code>somethingWithoutJson</code>
+     * The reference instance of <code>vertx.somethingWithoutJson</code>
      */
     public static final Somethingwithoutjson SOMETHINGWITHOUTJSON = new Somethingwithoutjson();
 
@@ -55,31 +55,31 @@ public class Somethingwithoutjson extends TableImpl<SomethingwithoutjsonRecord> 
     }
 
     /**
-     * The column <code>somethingWithoutJson.someId</code>.
+     * The column <code>vertx.somethingWithoutJson.someId</code>.
      */
     public final TableField<SomethingwithoutjsonRecord, Integer> SOMEID = createField("someId", org.jooq.impl.SQLDataType.INTEGER.nullable(false).identity(true), this, "");
 
     /**
-     * The column <code>somethingWithoutJson.someString</code>.
+     * The column <code>vertx.somethingWithoutJson.someString</code>.
      */
     public final TableField<SomethingwithoutjsonRecord, String> SOMESTRING = createField("someString", org.jooq.impl.SQLDataType.VARCHAR(45), this, "");
 
     /**
-     * Create a <code>somethingWithoutJson</code> table reference
+     * Create a <code>vertx.somethingWithoutJson</code> table reference
      */
     public Somethingwithoutjson() {
         this(DSL.name("somethingWithoutJson"), null);
     }
 
     /**
-     * Create an aliased <code>somethingWithoutJson</code> table reference
+     * Create an aliased <code>vertx.somethingWithoutJson</code> table reference
      */
     public Somethingwithoutjson(String alias) {
         this(DSL.name(alias), SOMETHINGWITHOUTJSON);
     }
 
     /**
-     * Create an aliased <code>somethingWithoutJson</code> table reference
+     * Create an aliased <code>vertx.somethingWithoutJson</code> table reference
      */
     public Somethingwithoutjson(Name alias) {
         this(alias, SOMETHINGWITHOUTJSON);
@@ -98,7 +98,7 @@ public class Somethingwithoutjson extends TableImpl<SomethingwithoutjsonRecord> 
      */
     @Override
     public Schema getSchema() {
-        return DefaultSchema.DEFAULT_SCHEMA;
+        return Vertx.VERTX;
     }
 
     /**

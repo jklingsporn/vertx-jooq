@@ -31,10 +31,10 @@ import org.jooq.impl.UpdatableRecordImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class SomethingwithoutjsonRecord extends UpdatableRecordImpl<SomethingwithoutjsonRecord> implements VertxPojo, Record2<Integer, String>, ISomethingwithoutjson {
 
-    private static final long serialVersionUID = -508533776;
+    private static final long serialVersionUID = 121090370;
 
     /**
-     * Setter for <code>somethingWithoutJson.someId</code>.
+     * Setter for <code>vertx.somethingWithoutJson.someId</code>.
      */
     @Override
     public SomethingwithoutjsonRecord setSomeid(Integer value) {
@@ -43,7 +43,7 @@ public class SomethingwithoutjsonRecord extends UpdatableRecordImpl<Somethingwit
     }
 
     /**
-     * Getter for <code>somethingWithoutJson.someId</code>.
+     * Getter for <code>vertx.somethingWithoutJson.someId</code>.
      */
     @Override
     public Integer getSomeid() {
@@ -51,7 +51,7 @@ public class SomethingwithoutjsonRecord extends UpdatableRecordImpl<Somethingwit
     }
 
     /**
-     * Setter for <code>somethingWithoutJson.someString</code>.
+     * Setter for <code>vertx.somethingWithoutJson.someString</code>.
      */
     @Override
     public SomethingwithoutjsonRecord setSomestring(String value) {
@@ -60,7 +60,7 @@ public class SomethingwithoutjsonRecord extends UpdatableRecordImpl<Somethingwit
     }
 
     /**
-     * Getter for <code>somethingWithoutJson.someString</code>.
+     * Getter for <code>vertx.somethingWithoutJson.someString</code>.
      */
     @Override
     public String getSomestring() {

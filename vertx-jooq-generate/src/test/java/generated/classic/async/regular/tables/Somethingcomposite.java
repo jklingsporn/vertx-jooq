@@ -4,9 +4,9 @@
 package generated.classic.async.regular.tables;
 
 
-import generated.classic.async.regular.DefaultSchema;
 import generated.classic.async.regular.Indexes;
 import generated.classic.async.regular.Keys;
+import generated.classic.async.regular.Vertx;
 import generated.classic.async.regular.tables.records.SomethingcompositeRecord;
 
 import io.github.jklingsporn.vertx.jooq.shared.JsonObjectConverter;
@@ -41,10 +41,10 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Somethingcomposite extends TableImpl<SomethingcompositeRecord> {
 
-    private static final long serialVersionUID = -506822120;
+    private static final long serialVersionUID = 751074251;
 
     /**
-     * The reference instance of <code>somethingComposite</code>
+     * The reference instance of <code>vertx.somethingComposite</code>
      */
     public static final Somethingcomposite SOMETHINGCOMPOSITE = new Somethingcomposite();
 
@@ -57,36 +57,36 @@ public class Somethingcomposite extends TableImpl<SomethingcompositeRecord> {
     }
 
     /**
-     * The column <code>somethingComposite.someId</code>.
+     * The column <code>vertx.somethingComposite.someId</code>.
      */
     public final TableField<SomethingcompositeRecord, Integer> SOMEID = createField("someId", org.jooq.impl.SQLDataType.INTEGER.nullable(false), this, "");
 
     /**
-     * The column <code>somethingComposite.someSecondId</code>.
+     * The column <code>vertx.somethingComposite.someSecondId</code>.
      */
     public final TableField<SomethingcompositeRecord, Integer> SOMESECONDID = createField("someSecondId", org.jooq.impl.SQLDataType.INTEGER.nullable(false), this, "");
 
     /**
-     * The column <code>somethingComposite.someJsonObject</code>.
+     * The column <code>vertx.somethingComposite.someJsonObject</code>.
      */
     public final TableField<SomethingcompositeRecord, JsonObject> SOMEJSONOBJECT = createField("someJsonObject", org.jooq.impl.SQLDataType.VARCHAR(45), this, "", new JsonObjectConverter());
 
     /**
-     * Create a <code>somethingComposite</code> table reference
+     * Create a <code>vertx.somethingComposite</code> table reference
      */
     public Somethingcomposite() {
         this(DSL.name("somethingComposite"), null);
     }
 
     /**
-     * Create an aliased <code>somethingComposite</code> table reference
+     * Create an aliased <code>vertx.somethingComposite</code> table reference
      */
     public Somethingcomposite(String alias) {
         this(DSL.name(alias), SOMETHINGCOMPOSITE);
     }
 
     /**
-     * Create an aliased <code>somethingComposite</code> table reference
+     * Create an aliased <code>vertx.somethingComposite</code> table reference
      */
     public Somethingcomposite(Name alias) {
         this(alias, SOMETHINGCOMPOSITE);
@@ -105,7 +105,7 @@ public class Somethingcomposite extends TableImpl<SomethingcompositeRecord> {
      */
     @Override
     public Schema getSchema() {
-        return DefaultSchema.DEFAULT_SCHEMA;
+        return Vertx.VERTX;
     }
 
     /**

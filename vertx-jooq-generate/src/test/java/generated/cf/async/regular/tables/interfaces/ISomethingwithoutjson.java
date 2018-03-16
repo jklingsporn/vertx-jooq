@@ -25,22 +25,22 @@ import javax.annotation.Generated;
 public interface ISomethingwithoutjson extends VertxPojo, Serializable {
 
     /**
-     * Setter for <code>somethingWithoutJson.someId</code>.
+     * Setter for <code>vertx.somethingWithoutJson.someId</code>.
      */
     public ISomethingwithoutjson setSomeid(Integer value);
 
     /**
-     * Getter for <code>somethingWithoutJson.someId</code>.
+     * Getter for <code>vertx.somethingWithoutJson.someId</code>.
      */
     public Integer getSomeid();
 
     /**
-     * Setter for <code>somethingWithoutJson.someString</code>.
+     * Setter for <code>vertx.somethingWithoutJson.someString</code>.
      */
     public ISomethingwithoutjson setSomestring(String value);
 
     /**
-     * Getter for <code>somethingWithoutJson.someString</code>.
+     * Getter for <code>vertx.somethingWithoutJson.someString</code>.
      */
     public String getSomestring();
 

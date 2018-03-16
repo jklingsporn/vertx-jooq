@@ -26,32 +26,32 @@ import javax.annotation.Generated;
 public interface ISomethingcomposite extends VertxPojo, Serializable {
 
     /**
-     * Setter for <code>somethingComposite.someId</code>.
+     * Setter for <code>vertx.somethingComposite.someId</code>.
      */
     public ISomethingcomposite setSomeid(Integer value);
 
     /**
-     * Getter for <code>somethingComposite.someId</code>.
+     * Getter for <code>vertx.somethingComposite.someId</code>.
      */
     public Integer getSomeid();
 
     /**
-     * Setter for <code>somethingComposite.someSecondId</code>.
+     * Setter for <code>vertx.somethingComposite.someSecondId</code>.
      */
     public ISomethingcomposite setSomesecondid(Integer value);
 
     /**
-     * Getter for <code>somethingComposite.someSecondId</code>.
+     * Getter for <code>vertx.somethingComposite.someSecondId</code>.
      */
     public Integer getSomesecondid();
 
     /**
-     * Setter for <code>somethingComposite.someJsonObject</code>.
+     * Setter for <code>vertx.somethingComposite.someJsonObject</code>.
      */
     public ISomethingcomposite setSomejsonobject(JsonObject value);
 
     /**
-     * Getter for <code>somethingComposite.someJsonObject</code>.
+     * Getter for <code>vertx.somethingComposite.someJsonObject</code>.
      */
     public JsonObject getSomejsonobject();
 

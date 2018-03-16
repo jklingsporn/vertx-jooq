@@ -36,10 +36,10 @@ import org.jooq.impl.UpdatableRecordImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class SomethingRecord extends UpdatableRecordImpl<SomethingRecord> implements VertxPojo, Record10<Integer, String, Long, Short, Integer, Double, SomethingSomeenum, JsonObject, JsonArray, LocalDateTime>, ISomething {
 
-    private static final long serialVersionUID = -1313664338;
+    private static final long serialVersionUID = -334805658;
 
     /**
-     * Setter for <code>something.someId</code>.
+     * Setter for <code>vertx.something.someId</code>.
      */
     @Override
     public SomethingRecord setSomeid(Integer value) {
@@ -48,7 +48,7 @@ public class SomethingRecord extends UpdatableRecordImpl<SomethingRecord> implem
     }
 
     /**
-     * Getter for <code>something.someId</code>.
+     * Getter for <code>vertx.something.someId</code>.
      */
     @Override
     public Integer getSomeid() {
@@ -56,7 +56,7 @@ public class SomethingRecord extends UpdatableRecordImpl<SomethingRecord> implem
     }
 
     /**
-     * Setter for <code>something.someString</code>.
+     * Setter for <code>vertx.something.someString</code>.
      */
     @Override
     public SomethingRecord setSomestring(String value) {
@@ -65,7 +65,7 @@ public class SomethingRecord extends UpdatableRecordImpl<SomethingRecord> implem
     }
 
     /**
-     * Getter for <code>something.someString</code>.
+     * Getter for <code>vertx.something.someString</code>.
      */
     @Override
     public String getSomestring() {
@@ -73,7 +73,7 @@ public class SomethingRecord extends UpdatableRecordImpl<SomethingRecord> implem
     }
 
     /**
-     * Setter for <code>something.someHugeNumber</code>.
+     * Setter for <code>vertx.something.someHugeNumber</code>.
      */
     @Override
     public SomethingRecord setSomehugenumber(Long value) {
@@ -82,7 +82,7 @@ public class SomethingRecord extends UpdatableRecordImpl<SomethingRecord> implem
     }
 
     /**
-     * Getter for <code>something.someHugeNumber</code>.
+     * Getter for <code>vertx.something.someHugeNumber</code>.
      */
     @Override
     public Long getSomehugenumber() {
@@ -90,7 +90,7 @@ public class SomethingRecord extends UpdatableRecordImpl<SomethingRecord> implem
     }
 
     /**
-     * Setter for <code>something.someSmallNumber</code>.
+     * Setter for <code>vertx.something.someSmallNumber</code>.
      */
     @Override
     public SomethingRecord setSomesmallnumber(Short value) {
@@ -99,7 +99,7 @@ public class SomethingRecord extends UpdatableRecordImpl<SomethingRecord> implem
     }
 
     /**
-     * Getter for <code>something.someSmallNumber</code>.
+     * Getter for <code>vertx.something.someSmallNumber</code>.
      */
     @Override
     public Short getSomesmallnumber() {
@@ -107,7 +107,7 @@ public class SomethingRecord extends UpdatableRecordImpl<SomethingRecord> implem
     }
 
     /**
-     * Setter for <code>something.someRegularNumber</code>.
+     * Setter for <code>vertx.something.someRegularNumber</code>.
      */
     @Override
     public SomethingRecord setSomeregularnumber(Integer value) {
@@ -116,7 +116,7 @@ public class SomethingRecord extends UpdatableRecordImpl<SomethingRecord> implem
     }
 
     /**
-     * Getter for <code>something.someRegularNumber</code>.
+     * Getter for <code>vertx.something.someRegularNumber</code>.
      */
     @Override
     public Integer getSomeregularnumber() {
@@ -124,7 +124,7 @@ public class SomethingRecord extends UpdatableRecordImpl<SomethingRecord> implem
     }
 
     /**
-     * Setter for <code>something.someDouble</code>.
+     * Setter for <code>vertx.something.someDouble</code>.
      */
     @Override
     public SomethingRecord setSomedouble(Double value) {
@@ -133,7 +133,7 @@ public class SomethingRecord extends UpdatableRecordImpl<SomethingRecord> implem
     }
 
     /**
-     * Getter for <code>something.someDouble</code>.
+     * Getter for <code>vertx.something.someDouble</code>.
      */
     @Override
     public Double getSomedouble() {
@@ -141,7 +141,7 @@ public class SomethingRecord extends UpdatableRecordImpl<SomethingRecord> implem
     }
 
     /**
-     * Setter for <code>something.someEnum</code>.
+     * Setter for <code>vertx.something.someEnum</code>.
      */
     @Override
     public SomethingRecord setSomeenum(SomethingSomeenum value) {
@@ -150,7 +150,7 @@ public class SomethingRecord extends UpdatableRecordImpl<SomethingRecord> implem
     }
 
     /**
-     * Getter for <code>something.someEnum</code>.
+     * Getter for <code>vertx.something.someEnum</code>.
      */
     @Override
     public SomethingSomeenum getSomeenum() {
@@ -158,7 +158,7 @@ public class SomethingRecord extends UpdatableRecordImpl<SomethingRecord> implem
     }
 
     /**
-     * Setter for <code>something.someJsonObject</code>.
+     * Setter for <code>vertx.something.someJsonObject</code>.
      */
     @Override
     public SomethingRecord setSomejsonobject(JsonObject value) {
@@ -167,7 +167,7 @@ public class SomethingRecord extends UpdatableRecordImpl<SomethingRecord> implem
     }
 
     /**
-     * Getter for <code>something.someJsonObject</code>.
+     * Getter for <code>vertx.something.someJsonObject</code>.
      */
     @Override
     public JsonObject getSomejsonobject() {
@@ -175,7 +175,7 @@ public class SomethingRecord extends UpdatableRecordImpl<SomethingRecord> implem
     }
 
     /**
-     * Setter for <code>something.someJsonArray</code>.
+     * Setter for <code>vertx.something.someJsonArray</code>.
      */
     @Override
     public SomethingRecord setSomejsonarray(JsonArray value) {
@@ -184,7 +184,7 @@ public class SomethingRecord extends UpdatableRecordImpl<SomethingRecord> implem
     }
 
     /**
-     * Getter for <code>something.someJsonArray</code>.
+     * Getter for <code>vertx.something.someJsonArray</code>.
      */
     @Override
     public JsonArray getSomejsonarray() {
@@ -192,7 +192,7 @@ public class SomethingRecord extends UpdatableRecordImpl<SomethingRecord> implem
     }
 
     /**
-     * Setter for <code>something.someTimestamp</code>.
+     * Setter for <code>vertx.something.someTimestamp</code>.
      */
     @Override
     public SomethingRecord setSometimestamp(LocalDateTime value) {
@@ -201,7 +201,7 @@ public class SomethingRecord extends UpdatableRecordImpl<SomethingRecord> implem
     }
 
     /**
-     * Getter for <code>something.someTimestamp</code>.
+     * Getter for <code>vertx.something.someTimestamp</code>.
      */
     @Override
     public LocalDateTime getSometimestamp() {

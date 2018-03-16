@@ -1,7 +1,7 @@
-package io.github.jklingsporn.vertx.jooq.generate.classic.reactive;
+package io.github.jklingsporn.vertx.jooq.generate.classic.reactive.guice;
 
 import io.github.jklingsporn.vertx.jooq.generate.AbstractVertxGeneratorTest;
-import io.github.jklingsporn.vertx.jooq.generate.JDBCDatabaseConfigurationProvider;
+import io.github.jklingsporn.vertx.jooq.generate.ReactiveDatabaseConfigurationProvider;
 import io.github.jklingsporn.vertx.jooq.generate.VertxGeneratorStrategy;
 import io.github.jklingsporn.vertx.jooq.generate.classic.ClassicReactiveGuiceVertxGenerator;
 
@@ -12,7 +12,7 @@ public class ClassicReactiveGuiceVertxGeneratorTest extends AbstractVertxGenerat
 
 
     public ClassicReactiveGuiceVertxGeneratorTest() {
-        super(ClassicReactiveGuiceVertxGenerator.class, VertxGeneratorStrategy.class,"classic.reactive.guice", JDBCDatabaseConfigurationProvider.getInstance());
+        super(ClassicReactiveGuiceVertxGenerator.class, VertxGeneratorStrategy.class,"classic.reactive.guice", ReactiveDatabaseConfigurationProvider.getInstance());
     }
 
 }

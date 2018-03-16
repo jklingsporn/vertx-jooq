@@ -226,7 +226,6 @@ public abstract class AbstractVertxDAO<R extends UpdatableRecord<R>, P, T, FIND_
                 if (!field.getDataType().nullable() && !field.getDataType().identity())
                     record.set(field, DSL.defaultValue());
             }
-
         return record;
     }
 

@@ -16,7 +16,7 @@ import org.jooq.impl.Internal;
 
 
 /**
- * A class modelling indexes of tables of the <code></code> schema.
+ * A class modelling indexes of tables of the <code>vertx</code> schema.
  */
 @Generated(
     value = {

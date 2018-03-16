@@ -4,9 +4,9 @@
 package generated.classic.async.guice.tables;
 
 
-import generated.classic.async.guice.DefaultSchema;
 import generated.classic.async.guice.Indexes;
 import generated.classic.async.guice.Keys;
+import generated.classic.async.guice.Vertx;
 import generated.classic.async.guice.enums.SomethingSomeenum;
 import generated.classic.async.guice.tables.records.SomethingRecord;
 
@@ -46,10 +46,10 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Something extends TableImpl<SomethingRecord> {
 
-    private static final long serialVersionUID = 1736483180;
+    private static final long serialVersionUID = 1206322522;
 
     /**
-     * The reference instance of <code>something</code>
+     * The reference instance of <code>vertx.something</code>
      */
     public static final Something SOMETHING = new Something();
 
@@ -62,71 +62,71 @@ public class Something extends TableImpl<SomethingRecord> {
     }
 
     /**
-     * The column <code>something.someId</code>.
+     * The column <code>vertx.something.someId</code>.
      */
     public final TableField<SomethingRecord, Integer> SOMEID = createField("someId", org.jooq.impl.SQLDataType.INTEGER.nullable(false).identity(true), this, "");
 
     /**
-     * The column <code>something.someString</code>.
+     * The column <code>vertx.something.someString</code>.
      */
     public final TableField<SomethingRecord, String> SOMESTRING = createField("someString", org.jooq.impl.SQLDataType.VARCHAR(45), this, "");
 
     /**
-     * The column <code>something.someHugeNumber</code>.
+     * The column <code>vertx.something.someHugeNumber</code>.
      */
     public final TableField<SomethingRecord, Long> SOMEHUGENUMBER = createField("someHugeNumber", org.jooq.impl.SQLDataType.BIGINT, this, "");
 
     /**
-     * The column <code>something.someSmallNumber</code>.
+     * The column <code>vertx.something.someSmallNumber</code>.
      */
     public final TableField<SomethingRecord, Short> SOMESMALLNUMBER = createField("someSmallNumber", org.jooq.impl.SQLDataType.SMALLINT, this, "");
 
     /**
-     * The column <code>something.someRegularNumber</code>.
+     * The column <code>vertx.something.someRegularNumber</code>.
      */
     public final TableField<SomethingRecord, Integer> SOMEREGULARNUMBER = createField("someRegularNumber", org.jooq.impl.SQLDataType.INTEGER, this, "");
 
     /**
-     * The column <code>something.someDouble</code>.
+     * The column <code>vertx.something.someDouble</code>.
      */
     public final TableField<SomethingRecord, Double> SOMEDOUBLE = createField("someDouble", org.jooq.impl.SQLDataType.DOUBLE, this, "");
 
     /**
-     * The column <code>something.someEnum</code>.
+     * The column <code>vertx.something.someEnum</code>.
      */
     public final TableField<SomethingRecord, SomethingSomeenum> SOMEENUM = createField("someEnum", org.jooq.util.mysql.MySQLDataType.VARCHAR.asEnumDataType(generated.classic.async.guice.enums.SomethingSomeenum.class).nullable(false).defaultValue(generated.classic.async.guice.enums.SomethingSomeenum.FOO), this, "");
 
     /**
-     * The column <code>something.someJsonObject</code>.
+     * The column <code>vertx.something.someJsonObject</code>.
      */
     public final TableField<SomethingRecord, JsonObject> SOMEJSONOBJECT = createField("someJsonObject", org.jooq.impl.SQLDataType.VARCHAR(45), this, "", new JsonObjectConverter());
 
     /**
-     * The column <code>something.someJsonArray</code>.
+     * The column <code>vertx.something.someJsonArray</code>.
      */
     public final TableField<SomethingRecord, JsonArray> SOMEJSONARRAY = createField("someJsonArray", org.jooq.impl.SQLDataType.VARCHAR(45), this, "", new JsonArrayConverter());
 
     /**
-     * The column <code>something.someTimestamp</code>.
+     * The column <code>vertx.something.someTimestamp</code>.
      */
     public final TableField<SomethingRecord, LocalDateTime> SOMETIMESTAMP = createField("someTimestamp", org.jooq.impl.SQLDataType.LOCALDATETIME, this, "");
 
     /**
-     * Create a <code>something</code> table reference
+     * Create a <code>vertx.something</code> table reference
      */
     public Something() {
         this(DSL.name("something"), null);
     }
 
     /**
-     * Create an aliased <code>something</code> table reference
+     * Create an aliased <code>vertx.something</code> table reference
      */
     public Something(String alias) {
         this(DSL.name(alias), SOMETHING);
     }
 
     /**
-     * Create an aliased <code>something</code> table reference
+     * Create an aliased <code>vertx.something</code> table reference
      */
     public Something(Name alias) {
         this(alias, SOMETHING);
@@ -145,7 +145,7 @@ public class Something extends TableImpl<SomethingRecord> {
      */
     @Override
     public Schema getSchema() {
-        return DefaultSchema.DEFAULT_SCHEMA;
+        return Vertx.VERTX;
     }
 
     /**

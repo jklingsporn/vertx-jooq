@@ -14,13 +14,8 @@
     <dependencies>
         <dependency>
             <groupId>io.github.jklingsporn</groupId>
-            <artifactId>vertx-jooq-shared</artifactId>
+            <artifactId>vertx-jooq-shared-reactive</artifactId>
             <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.julienviet</groupId>
-            <artifactId>reactive-pg-client</artifactId>
-            <version>0.5.2</version>
         </dependency>
     </dependencies>
 

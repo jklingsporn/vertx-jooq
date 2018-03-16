@@ -20,7 +20,7 @@ import org.jooq.impl.Internal;
 
 /**
  * A class modelling foreign key relationships and constraints of tables of 
- * the <code></code> schema.
+ * the <code>vertx</code> schema.
  */
 @Generated(
     value = {

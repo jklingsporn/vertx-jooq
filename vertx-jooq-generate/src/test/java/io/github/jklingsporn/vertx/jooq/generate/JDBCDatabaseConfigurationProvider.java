@@ -57,7 +57,8 @@ public class JDBCDatabaseConfigurationProvider extends AbstractDatabaseConfigura
         jdbcConfig.setUrl("jdbc:hsqldb:mem:test");
         jdbcConfig.setUser("test");
         jdbcConfig.setPassword("");
-        return createGeneratorConfig(generatorName,packageName,generatorStrategy,jdbcConfig, HSQLDBDatabase.class.getName());
+        Configuration generatorConfig = createGeneratorConfig(generatorName, packageName, generatorStrategy, jdbcConfig, HSQLDBDatabase.class.getName());
+        return generatorConfig;
     }
 
     @Override

@@ -280,7 +280,7 @@ public class VertxGeneratorBuilder {
 
         @Override
         public DIStep withPostgresReactiveDriver() {
-            base.setRenderDAOExtendsDelegate(AbstractVertxDAO.class::getName);
+            base.setRenderDAOExtendsDelegate(()->"io.github.jklingspon.vertx.jooq.shared.reactive.AbstractReactiveVertxDAO");
             base.addWriteExtraDataDelegate((schema, writerGen) -> {
                 ComponentBasedVertxGenerator.logger.info("Generate RowMappers ... ");
                 String packageName = (base.getStrategy().getTargetDirectory() + "/" + base.getStrategy().getJavaPackageName(schema) + ".tables.mappers").replaceAll("\\.", "/");
@@ -354,14 +354,18 @@ public class VertxGeneratorBuilder {
             switch(base.apiType){
                 case CLASSIC:
                     return new DIStepImpl(base
-                            .setWriteDAOImportsDelegate(base.writeDAOImportsDelegate.andThen(out -> out.println("import io.github.jklingsporn.vertx.jooq.classic.jdbc.JDBCClassicQueryExecutor;")))
-                            .setRenderQueryExecutorDelegate((rType, pType, tType) -> String.format("JDBCClassicQueryExecutor<%s,%s,%s>", rType, pType, tType))
+                            .setWriteDAOImportsDelegate(base.writeDAOImportsDelegate.andThen(out -> out.println("import io.github.jklingsporn.vertx.jooq.classic.reactivepg.ReactiveClassicQueryExecutor;")))
+                            .setRenderQueryExecutorDelegate((rType, pType, tType) -> String.format("ReactiveClassicQueryExecutor<%s,%s,%s>", rType, pType, tType))
                             .setWriteConstructorDelegate((out, className, tableIdentifier, tableRecord, pType, tType) -> {
-                                out.tab(1).javadoc("@param configuration The Configuration used for rendering and query execution.\n     * @param vertx the vertx instance");
-                                out.tab(1).println("public %s(%s configuration, %s vertx) {", className, Configuration.class, base.renderFQVertxName());
-                                out.tab(2).println("super(%s, %s.class, new %s(%s.class,configuration,vertx), configuration);", tableIdentifier, pType, base.renderQueryExecutor(tableRecord, pType, tType), pType);
+                                //pType = foo.bar.pojos.Somepojo -> split[0]=foo.bar. -> split[1]=Somepojo
+                                String[] split = pType.split("pojos.");
+                                String mapperFactory = String.format("%smappers.RowMappers.get%sMapper()",split[0],split[1]);
+                                out.tab(1).javadoc("@param configuration Used for rendering, so only SQLDialect must be set and must be one of the POSTGREs types.\n     * @param delegate A configured AsyncSQLClient that is used for query execution");
+                                out.tab(1).println("public %s(%s configuration, com.julienviet.pgclient.PgClient delegate) {", className, Configuration.class);
+                                out.tab(2).println("super(%s, %s.class, new %s(delegate,%s), configuration);", tableIdentifier, pType, base.renderQueryExecutor(tableRecord, pType, tType),mapperFactory);
                                 out.tab(1).println("}");
                             })
+
                     );
                 case COMPLETABLE_FUTURE:
                     return new DIStepImpl(base

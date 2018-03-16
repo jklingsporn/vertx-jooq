@@ -30,102 +30,102 @@ import javax.annotation.Generated;
 public interface ISomething extends VertxPojo, Serializable {
 
     /**
-     * Setter for <code>something.someId</code>.
+     * Setter for <code>vertx.something.someId</code>.
      */
     public ISomething setSomeid(Integer value);
 
     /**
-     * Getter for <code>something.someId</code>.
+     * Getter for <code>vertx.something.someId</code>.
      */
     public Integer getSomeid();
 
     /**
-     * Setter for <code>something.someString</code>.
+     * Setter for <code>vertx.something.someString</code>.
      */
     public ISomething setSomestring(String value);
 
     /**
-     * Getter for <code>something.someString</code>.
+     * Getter for <code>vertx.something.someString</code>.
      */
     public String getSomestring();
 
     /**
-     * Setter for <code>something.someHugeNumber</code>.
+     * Setter for <code>vertx.something.someHugeNumber</code>.
      */
     public ISomething setSomehugenumber(Long value);
 
     /**
-     * Getter for <code>something.someHugeNumber</code>.
+     * Getter for <code>vertx.something.someHugeNumber</code>.
      */
     public Long getSomehugenumber();
 
     /**
-     * Setter for <code>something.someSmallNumber</code>.
+     * Setter for <code>vertx.something.someSmallNumber</code>.
      */
     public ISomething setSomesmallnumber(Short value);
 
     /**
-     * Getter for <code>something.someSmallNumber</code>.
+     * Getter for <code>vertx.something.someSmallNumber</code>.
      */
     public Short getSomesmallnumber();
 
     /**
-     * Setter for <code>something.someRegularNumber</code>.
+     * Setter for <code>vertx.something.someRegularNumber</code>.
      */
     public ISomething setSomeregularnumber(Integer value);
 
     /**
-     * Getter for <code>something.someRegularNumber</code>.
+     * Getter for <code>vertx.something.someRegularNumber</code>.
      */
     public Integer getSomeregularnumber();
 
     /**
-     * Setter for <code>something.someDouble</code>.
+     * Setter for <code>vertx.something.someDouble</code>.
      */
     public ISomething setSomedouble(Double value);
 
     /**
-     * Getter for <code>something.someDouble</code>.
+     * Getter for <code>vertx.something.someDouble</code>.
      */
     public Double getSomedouble();
 
     /**
-     * Setter for <code>something.someEnum</code>.
+     * Setter for <code>vertx.something.someEnum</code>.
      */
     public ISomething setSomeenum(SomethingSomeenum value);
 
     /**
-     * Getter for <code>something.someEnum</code>.
+     * Getter for <code>vertx.something.someEnum</code>.
      */
     public SomethingSomeenum getSomeenum();
 
     /**
-     * Setter for <code>something.someJsonObject</code>.
+     * Setter for <code>vertx.something.someJsonObject</code>.
      */
     public ISomething setSomejsonobject(JsonObject value);
 
     /**
-     * Getter for <code>something.someJsonObject</code>.
+     * Getter for <code>vertx.something.someJsonObject</code>.
      */
     public JsonObject getSomejsonobject();
 
     /**
-     * Setter for <code>something.someJsonArray</code>.
+     * Setter for <code>vertx.something.someJsonArray</code>.
      */
     public ISomething setSomejsonarray(JsonArray value);
 
     /**
-     * Getter for <code>something.someJsonArray</code>.
+     * Getter for <code>vertx.something.someJsonArray</code>.
      */
     public JsonArray getSomejsonarray();
 
     /**
-     * Setter for <code>something.someTimestamp</code>.
+     * Setter for <code>vertx.something.someTimestamp</code>.
      */
     public ISomething setSometimestamp(LocalDateTime value);
 
     /**
-     * Getter for <code>something.someTimestamp</code>.
+     * Getter for <code>vertx.something.someTimestamp</code>.
      */
     public LocalDateTime getSometimestamp();
 

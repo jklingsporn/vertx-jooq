@@ -6,7 +6,10 @@ import com.julienviet.pgclient.Row;
 import com.julienviet.pgclient.Tuple;
 import io.github.jklingsporn.vertx.jooq.shared.internal.QueryExecutor;
 import io.vertx.core.Future;
+import io.vertx.core.logging.Logger;
+import io.vertx.core.logging.LoggerFactory;
 import org.jooq.*;
+import org.jooq.conf.ParamType;
 import org.jooq.exception.TooManyRowsException;
 
 import java.util.ArrayList;
@@ -20,6 +23,8 @@ import java.util.stream.StreamSupport;
  */
 public class ReactiveClassicQueryExecutor<R extends UpdatableRecord<R>,P,T> implements QueryExecutor<R,T,Future<List<P>>,Future<P>,Future<Integer>,Future<T>>{
 
+    private static final Logger logger = LoggerFactory.getLogger(ReactiveClassicQueryExecutor.class);
+
     private final Function<Row,P> pojoMapper;
     private final PgClient delegate;
 
@@ -30,8 +35,9 @@ public class ReactiveClassicQueryExecutor<R extends UpdatableRecord<R>,P,T> impl
 
     @Override
     public Future<List<P>> findMany(ResultQuery<R> query) {
+        log(query);
         Future<PgResult<Row>> rowFuture = Future.future();
-        delegate.preparedQuery(query.getSQL(),getBindValues(query),rowFuture);
+        delegate.preparedQuery(toPreparedQuery(query),getBindValues(query),rowFuture);
         return rowFuture.map(res-> StreamSupport
                 .stream(res.spliterator(),false)
                 .map(pojoMapper::apply)
@@ -40,8 +46,9 @@ public class ReactiveClassicQueryExecutor<R extends UpdatableRecord<R>,P,T> impl
 
     @Override
     public Future<P> findOne(ResultQuery<R> query) {
+        log(query);
         Future<PgResult<Row>> rowFuture = Future.future();
-        delegate.preparedQuery(query.getSQL(),getBindValues(query),rowFuture);
+        delegate.preparedQuery(toPreparedQuery(query),getBindValues(query),rowFuture);
         return rowFuture.map(res-> {
             switch (res.size()) {
                 case 0: return null;
@@ -53,14 +60,21 @@ public class ReactiveClassicQueryExecutor<R extends UpdatableRecord<R>,P,T> impl
 
     @Override
     public Future<Integer> execute(Query query) {
+        log(query);
         Future<PgResult<Row>> rowFuture = Future.future();
-        delegate.preparedQuery(query.getSQL(),getBindValues(query),rowFuture);
+        delegate.preparedQuery(toPreparedQuery(query),getBindValues(query),rowFuture);
         return rowFuture.map(PgResult::updatedCount);
     }
 
     @Override
     public Future<T> insertReturning(InsertResultStep<R> query, Function<Object, T> keyMapper) {
-        return null;
+        log(query);
+        Future<PgResult<Row>> rowFuture = Future.future();
+        delegate.preparedQuery(toPreparedQuery(query),getBindValues(query),rowFuture);
+        return rowFuture
+                .map(rows ->
+                        rows.iterator().next())
+                .map(keyMapper::apply);
     }
 
 
@@ -75,6 +89,17 @@ public class ReactiveClassicQueryExecutor<R extends UpdatableRecord<R>,P,T> impl
 
     protected <U> Object convertToDatabaseType(Param<U> param) {
         return (param.getBinding().converter().to(param.getValue()));
+    }
+
+    protected void log(Query query){
+        if(logger.isDebugEnabled()){
+            logger.debug("Executing {}", query.getSQL(ParamType.INLINED));
+        }
+    }
+
+    protected String toPreparedQuery(Query query){
+        String namedQuery = query.getSQL(ParamType.NAMED);
+        return namedQuery.replaceAll("\\:", "\\$");
     }
 
 

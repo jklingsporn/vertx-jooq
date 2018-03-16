@@ -32,10 +32,10 @@ import org.jooq.impl.UpdatableRecordImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class SomethingcompositeRecord extends UpdatableRecordImpl<SomethingcompositeRecord> implements VertxPojo, Record3<Integer, Integer, JsonObject>, ISomethingcomposite {
 
-    private static final long serialVersionUID = -936025820;
+    private static final long serialVersionUID = 1639944004;
 
     /**
-     * Setter for <code>somethingComposite.someId</code>.
+     * Setter for <code>vertx.somethingComposite.someId</code>.
      */
     @Override
     public SomethingcompositeRecord setSomeid(Integer value) {
@@ -44,7 +44,7 @@ public class SomethingcompositeRecord extends UpdatableRecordImpl<Somethingcompo
     }
 
     /**
-     * Getter for <code>somethingComposite.someId</code>.
+     * Getter for <code>vertx.somethingComposite.someId</code>.
      */
     @Override
     public Integer getSomeid() {
@@ -52,7 +52,7 @@ public class SomethingcompositeRecord extends UpdatableRecordImpl<Somethingcompo
     }
 
     /**
-     * Setter for <code>somethingComposite.someSecondId</code>.
+     * Setter for <code>vertx.somethingComposite.someSecondId</code>.
      */
     @Override
     public SomethingcompositeRecord setSomesecondid(Integer value) {
@@ -61,7 +61,7 @@ public class SomethingcompositeRecord extends UpdatableRecordImpl<Somethingcompo
     }
 
     /**
-     * Getter for <code>somethingComposite.someSecondId</code>.
+     * Getter for <code>vertx.somethingComposite.someSecondId</code>.
      */
     @Override
     public Integer getSomesecondid() {
@@ -69,7 +69,7 @@ public class SomethingcompositeRecord extends UpdatableRecordImpl<Somethingcompo
     }
 
     /**
-     * Setter for <code>somethingComposite.someJsonObject</code>.
+     * Setter for <code>vertx.somethingComposite.someJsonObject</code>.
      */
     @Override
     public SomethingcompositeRecord setSomejsonobject(JsonObject value) {
@@ -78,7 +78,7 @@ public class SomethingcompositeRecord extends UpdatableRecordImpl<Somethingcompo
     }
 
     /**
-     * Getter for <code>somethingComposite.someJsonObject</code>.
+     * Getter for <code>vertx.somethingComposite.someJsonObject</code>.
      */
     @Override
     public JsonObject getSomejsonobject() {
