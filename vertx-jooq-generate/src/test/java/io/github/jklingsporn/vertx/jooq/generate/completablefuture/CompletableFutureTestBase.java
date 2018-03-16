@@ -17,6 +17,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
@@ -57,16 +58,20 @@ public abstract class CompletableFutureTestBase<P,T,O, DAO extends GenericVertxD
      * @param cause
      */
     protected void assertException(Class<? extends Throwable> expected, Throwable cause){
+        assertException(expected, cause, c->{});
+    }
+
+    protected <X extends Throwable> void assertException(Class<X> expected, Throwable cause, Consumer<X> checker){
         if(!expected.equals(cause.getClass())){
             if(cause.getCause()!=null){
-                assertException(expected,cause.getCause());
+                assertException(expected,cause.getCause(),checker);
             }else{
                 Assert.assertEquals(expected, cause.getClass());
+                checker.accept(expected.cast(cause));
             }
         }
         //Cool, same class
     }
-
 
     protected <T> BiConsumer<T,Throwable> countdownLatchHandler(final CountDownLatch latch){
         return (res,x)->{

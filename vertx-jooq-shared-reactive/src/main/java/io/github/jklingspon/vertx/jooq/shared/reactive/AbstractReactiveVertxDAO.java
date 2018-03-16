@@ -6,12 +6,11 @@ import io.vertx.core.impl.Arguments;
 import org.jooq.*;
 import org.jooq.impl.DSL;
 
-import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.function.Function;
 
 /**
- * Abstract base class for all async DAOs.
+ * Abstract base class for all reactive DAOs.
  * @param <R> the <code>Record</code> type.
  * @param <P> the POJO-type
  * @param <T> the Key-Type
@@ -29,11 +28,6 @@ public abstract class AbstractReactiveVertxDAO<R extends UpdatableRecord<R>, P, 
         Arguments.require(SUPPORTED_DIALECTS.contains(configuration.dialect()),"Only Postgres supported");
     }
 
-    /**
-     * @return the converter used to convert the returned primary key to type T. Since the input argument of the Function
-     * is always a Long, only non-compound numeric keys can be returned. This method gets automatically overridden during
-     * DAO-creation depending on T.
-     */
     @SuppressWarnings("unchecked")
     protected Function<Object,T> keyConverter(){
         return o -> {
@@ -42,10 +36,11 @@ public abstract class AbstractReactiveVertxDAO<R extends UpdatableRecord<R>, P, 
             if(fields.length == 1){
                 return (T)row.getValue(fields[0].getName());
             }
-            //compound key is of type Record
-            Record record = DSL.using(configuration()).newRecord(fields);
-            Arrays.stream(fields).forEach(f -> record.set((TableField<R,Object>)f,row.getValue(f.getName())));
-            return (T)record;
+            Object[] values = new Object[row.size()];
+            for(int i=0;i<row.size();i++){
+                values[i] = row.getValue(i);
+            }
+            return compositeKeyRecord(values);
         };
     }
 

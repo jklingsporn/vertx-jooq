@@ -3,16 +3,14 @@ package io.github.jklingsporn.vertx.jooq.classic.reactivepg;
 import com.julienviet.pgclient.PgClient;
 import com.julienviet.pgclient.PgResult;
 import com.julienviet.pgclient.Row;
-import com.julienviet.pgclient.Tuple;
-import io.github.jklingsporn.vertx.jooq.shared.internal.QueryExecutor;
+import io.github.jklingspon.vertx.jooq.shared.reactive.AbstractReactiveQueryExecutor;
 import io.vertx.core.Future;
-import io.vertx.core.logging.Logger;
-import io.vertx.core.logging.LoggerFactory;
-import org.jooq.*;
-import org.jooq.conf.ParamType;
+import org.jooq.InsertResultStep;
+import org.jooq.Query;
+import org.jooq.ResultQuery;
+import org.jooq.UpdatableRecord;
 import org.jooq.exception.TooManyRowsException;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -21,9 +19,7 @@ import java.util.stream.StreamSupport;
 /**
  * Created by jensklingsporn on 01.03.18.
  */
-public class ReactiveClassicQueryExecutor<R extends UpdatableRecord<R>,P,T> implements QueryExecutor<R,T,Future<List<P>>,Future<P>,Future<Integer>,Future<T>>{
-
-    private static final Logger logger = LoggerFactory.getLogger(ReactiveClassicQueryExecutor.class);
+public class ReactiveClassicQueryExecutor<R extends UpdatableRecord<R>,P,T> extends AbstractReactiveQueryExecutor<R,T,Future<List<P>>,Future<P>,Future<Integer>,Future<T>>{
 
     private final Function<Row,P> pojoMapper;
     private final PgClient delegate;
@@ -72,34 +68,8 @@ public class ReactiveClassicQueryExecutor<R extends UpdatableRecord<R>,P,T> impl
         Future<PgResult<Row>> rowFuture = Future.future();
         delegate.preparedQuery(toPreparedQuery(query),getBindValues(query),rowFuture);
         return rowFuture
-                .map(rows ->
-                        rows.iterator().next())
+                .map(rows -> rows.iterator().next())
                 .map(keyMapper::apply);
-    }
-
-
-    protected Tuple getBindValues(Query query) {
-        ArrayList<Object> bindValues = new ArrayList<>();
-        for (Param<?> param : query.getParams().values()) {
-            Object value = convertToDatabaseType(param);
-            bindValues.add(value);
-        }
-        return Tuple.of(bindValues.toArray());
-    }
-
-    protected <U> Object convertToDatabaseType(Param<U> param) {
-        return (param.getBinding().converter().to(param.getValue()));
-    }
-
-    protected void log(Query query){
-        if(logger.isDebugEnabled()){
-            logger.debug("Executing {}", query.getSQL(ParamType.INLINED));
-        }
-    }
-
-    protected String toPreparedQuery(Query query){
-        String namedQuery = query.getSQL(ParamType.NAMED);
-        return namedQuery.replaceAll("\\:", "\\$");
     }
 
 

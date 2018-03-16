@@ -288,7 +288,11 @@ public class VertxGeneratorBuilder {
                 JavaWriter out = writerGen.apply(moduleFile);
                 out.println("package " + base.getStrategy().getJavaPackageName(schema) + ".tables.mappers;");
                 out.println();
-                out.println("import com.julienviet.pgclient.Row;");
+                if(base.apiType.equals(APIType.RX)){
+                    out.println("import com.julienviet.reactivex.pgclient.Row;");
+                }else{
+                    out.println("import com.julienviet.pgclient.Row;");
+                }
                 out.println("import %s;", Function.class.getName());
                 out.println();
                 out.println("public class RowMappers {");
@@ -369,12 +373,15 @@ public class VertxGeneratorBuilder {
                     );
                 case COMPLETABLE_FUTURE:
                     return new DIStepImpl(base
-                            .setWriteDAOImportsDelegate(base.writeDAOImportsDelegate.andThen(out -> out.println("import io.github.jklingsporn.vertx.jooq.completablefuture.jdbc.JDBCCompletableFutureQueryExecutor;")))
-                            .setRenderQueryExecutorDelegate((rType, pType, tType) -> String.format("JDBCCompletableFutureQueryExecutor<%s,%s,%s>", rType, pType, tType))
+                            .setWriteDAOImportsDelegate(base.writeDAOImportsDelegate.andThen(out -> out.println("import io.github.jklingsporn.vertx.jooq.completablefuture.reactivepg.ReactiveCompletableFutureQueryExecutor;")))
+                            .setRenderQueryExecutorDelegate((rType, pType, tType) -> String.format("ReactiveCompletableFutureQueryExecutor<%s,%s,%s>", rType, pType, tType))
                             .setWriteConstructorDelegate((out, className, tableIdentifier, tableRecord, pType, tType) -> {
+                                //pType = foo.bar.pojos.Somepojo -> split[0]=foo.bar. -> split[1]=Somepojo
+                                String[] split = pType.split("pojos.");
+                                String mapperFactory = String.format("%smappers.RowMappers.get%sMapper()",split[0],split[1]);
                                 out.tab(1).javadoc("@param configuration The Configuration used for rendering and query execution.\n     * @param vertx the vertx instance");
-                                out.tab(1).println("public %s(%s configuration, %s vertx) {", className, Configuration.class, base.renderFQVertxName());
-                                out.tab(2).println("super(%s, %s.class, new %s(%s.class,configuration,vertx), configuration);", tableIdentifier, pType, base.renderQueryExecutor(tableRecord, pType, tType), pType);
+                                out.tab(1).println("public %s(%s configuration, com.julienviet.pgclient.PgClient delegate, %s vertx) {", className, Configuration.class, base.renderFQVertxName());
+                                out.tab(2).println("super(%s, %s.class, new %s(delegate,%s,vertx), configuration);", tableIdentifier, pType, base.renderQueryExecutor(tableRecord, pType, tType), mapperFactory);
                                 out.tab(1).println("}");
                             })
                     );
