@@ -59,18 +59,18 @@ public class DelegatingVertxGenerator extends VertxGenerator {
     }
 
     @Override
-    protected void writeConstructor(JavaWriter out, String className, String tableIdentifier, String tableRecord, String pType, String tType) {
-        delegate.writeConstructor(out, className, tableIdentifier, tableRecord, pType, tType);
+    protected void writeDAOConstructor(JavaWriter out, String className, String tableIdentifier, String rType, String pType, String tType) {
+        delegate.writeDAOConstructor(out, className, tableIdentifier, rType, pType, tType);
     }
 
     @Override
-    protected void overwrite(JavaWriter out, String className, String tableIdentifier, String tableRecord, String pType, String tType) {
-        delegate.overwrite(out, className, tableIdentifier, tableRecord, pType, tType);
+    protected void overwriteDAOMethods(JavaWriter out, String className, String tableIdentifier, String rType, String pType, String tType) {
+        delegate.overwriteDAOMethods(out, className, tableIdentifier, rType, pType, tType);
     }
 
     @Override
-    protected String renderDaoExtends() {
-        return delegate.renderDaoExtends();
+    protected String renderDaoExtendsClassName() {
+        return delegate.renderDaoExtendsClassName();
     }
 
     @Override

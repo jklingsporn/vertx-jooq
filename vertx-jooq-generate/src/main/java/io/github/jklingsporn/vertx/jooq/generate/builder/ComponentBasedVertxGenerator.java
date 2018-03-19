@@ -76,17 +76,17 @@ class ComponentBasedVertxGenerator extends VertxGenerator {
     }
 
     @Override
-    public void writeConstructor(JavaWriter out, String className, String tableIdentifier, String tableRecord, String pType, String tType) {
-        writeConstructorDelegate.writeConstructor(out, className, tableIdentifier, tableRecord, pType, tType);
+    public void writeDAOConstructor(JavaWriter out, String className, String tableIdentifier, String rType, String pType, String tType) {
+        writeConstructorDelegate.writeConstructor(out, className, tableIdentifier, rType, pType, tType);
     }
 
     @Override
-    public void overwrite(JavaWriter out, String className, String tableIdentifier, String tableRecord, String pType, String tType) {
-        overwriteDAODelegate.overwrite(out, className, tableIdentifier, tableRecord, pType, tType);
+    public void overwriteDAOMethods(JavaWriter out, String className, String tableIdentifier, String rType, String pType, String tType) {
+        overwriteDAODelegate.overwrite(out, className, tableIdentifier, rType, pType, tType);
     }
 
     @Override
-    public String renderDaoExtends() {
+    public String renderDaoExtendsClassName() {
         return renderDAOExtendsDelegate.get();
     }
 

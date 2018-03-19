@@ -22,32 +22,32 @@ public class JDBCDatabaseConfigurationProvider extends AbstractDatabaseConfigura
 
     @Override
     public void setupDatabase() throws Exception {
-        Connection connection = DriverManager.getConnection("jdbc:hsqldb:mem:test", "test", "");
-        connection.prepareStatement("DROP SCHEMA IF EXISTS vertx CASCADE").execute();
-        connection.prepareStatement("CREATE SCHEMA vertx").execute();
-        connection.prepareStatement("SET SCHEMA vertx").execute();
-        connection.prepareStatement("DROP TABLE IF EXISTS something");
-        connection.prepareStatement("\n" +
-                "CREATE TABLE something (\n" +
-                "  someId INTEGER IDENTITY PRIMARY KEY,\n" +
-                "  someString varchar(45),\n" +
-                "  someHugeNumber bigint ,\n" +
-                "  someSmallNumber smallint ,\n" +
-                "  someRegularNumber int ,\n" +
-                "  someBoolean boolean default false not null,\n" +
-                "  someDouble double ,\n" +
-                "  someJsonObject varchar(45) ,\n" +
-                "  someJsonArray varchar(45), \n" +
-                "  someTimestamp timestamp(2) \n" +
-                ");").execute();
-        connection.prepareStatement("DROP TABLE IF EXISTS somethingComposite");
-        connection.prepareStatement("\n" +
-                "CREATE TABLE somethingComposite (\n" +
-                "  someId INTEGER,\n" +
-                "  someSecondId INTEGER,\n" +
-                "  someJsonObject varchar(45), PRIMARY KEY (someId,someSecondId)\n" +
-                ");").execute();
-        connection.close();
+        try(Connection connection = DriverManager.getConnection("jdbc:hsqldb:mem:test", "test", "")){
+            connection.prepareStatement("DROP SCHEMA IF EXISTS vertx CASCADE").execute();
+            connection.prepareStatement("CREATE SCHEMA vertx").execute();
+            connection.prepareStatement("SET SCHEMA vertx").execute();
+            connection.prepareStatement("DROP TABLE IF EXISTS something");
+            connection.prepareStatement("\n" +
+                    "CREATE TABLE something (\n" +
+                    "  someId INTEGER IDENTITY PRIMARY KEY,\n" +
+                    "  someString varchar(45),\n" +
+                    "  someHugeNumber bigint ,\n" +
+                    "  someSmallNumber smallint ,\n" +
+                    "  someRegularNumber int ,\n" +
+                    "  someBoolean boolean default false not null,\n" +
+                    "  someDouble double ,\n" +
+                    "  someJsonObject varchar(45) ,\n" +
+                    "  someJsonArray varchar(45), \n" +
+                    "  someTimestamp timestamp(2) \n" +
+                    ");").execute();
+            connection.prepareStatement("DROP TABLE IF EXISTS somethingComposite");
+            connection.prepareStatement("\n" +
+                    "CREATE TABLE somethingComposite (\n" +
+                    "  someId INTEGER,\n" +
+                    "  someSecondId INTEGER,\n" +
+                    "  someJsonObject varchar(45), PRIMARY KEY (someId,someSecondId)\n" +
+                    ");").execute();
+        }
     }
 
     @Override

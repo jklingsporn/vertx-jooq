@@ -42,17 +42,17 @@ public class VertxGeneratorBuilder {
     private VertxGeneratorBuilder() {}
 
     /**
-     * @return an {@code APIInitStep} to init the build of a {@code VertxGeneratorStrategy}.
+     * @return an {@code APIStep} to init the build of a {@code VertxGeneratorStrategy}.
      */
-    public static APIInitStep init(){
-        return new APIInitStepImpl(new ComponentBasedVertxGenerator().setRenderFQVertxNameDelegate(() -> "io.vertx.core.Vertx"));
+    public static APIStep init(){
+        return new APIStepImpl(new ComponentBasedVertxGenerator().setRenderFQVertxNameDelegate(() -> "io.vertx.core.Vertx"));
     }
 
-    static class APIInitStepImpl implements APIInitStep {
+    static class APIStepImpl implements APIStep {
 
         private final ComponentBasedVertxGenerator base;
 
-        APIInitStepImpl(ComponentBasedVertxGenerator base) {
+        APIStepImpl(ComponentBasedVertxGenerator base) {
             this.base = base;
         }
 

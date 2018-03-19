@@ -3,6 +3,7 @@ package io.github.jklingsporn.vertx.jooq.generate;
 import io.github.jklingsporn.vertx.jooq.shared.JsonArrayConverter;
 import io.github.jklingsporn.vertx.jooq.shared.JsonObjectConverter;
 import io.github.jklingsporn.vertx.jooq.shared.internal.AbstractVertxDAO;
+import io.vertx.core.Vertx;
 import io.vertx.core.impl.Arguments;
 import org.jooq.Constants;
 import org.jooq.Name;
@@ -14,6 +15,7 @@ import org.jooq.util.*;
 import java.io.File;
 import java.time.Instant;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 
@@ -23,8 +25,7 @@ import java.util.function.Function;
  * By default, it generates POJO's that have a <code>#fromJson</code> and a <code>#toJson</code>-method which takes/generates a <code>JsonObject</code> out of the generated POJO.
  * When you've enabled Interface-generation, these methods are added to the generated Interface as default-methods.
  * Besides these method there is also a constructor generated which takes a <code>JsonObject</code>.
- * It also generates DAOs which implement
- * <code>VertxDAO</code> and allow you to execute CRUD-operations asynchronously.
+ * It also generates DAOs which implement <code>VertxDAO</code> and allow you to execute CRUD-operations asynchronously.
  */
 public abstract class VertxGenerator extends JavaGenerator {
 
@@ -40,6 +41,142 @@ public abstract class VertxGenerator extends JavaGenerator {
     public VertxGenerator(boolean generateJson) {
         this.generateJson = generateJson;
         this.setGeneratePojos(true);
+    }
+
+    /**
+     * Overwrite this method to handle your custom type. This is needed especially when you have custom converters.
+     * @param column the column definition
+     * @param setter the setter name
+     * @param columnType the type of the column
+     * @param javaMemberName the java member name
+     * @param out the JavaWriter
+     * @return <code>true</code> if the column was handled.
+     * @see #generateFromJson(TableDefinition, JavaWriter, org.jooq.util.GeneratorStrategy.Mode)
+     */
+    protected boolean handleCustomTypeFromJson(TypedElementDefinition<?> column, String setter, String columnType, String javaMemberName, JavaWriter out){
+        return false;
+    }
+
+    /**
+     * Overwrite this method to handle your custom type. This is needed especially when you have custom converters.
+     * @param column the column definition
+     * @param getter the getter name
+     * @param columnType the type of the column
+     * @param javaMemberName the java member name
+     * @param out the JavaWriter
+     * @return <code>true</code> if the column was handled.
+     * @see #generateToJson(TableDefinition, JavaWriter, org.jooq.util.GeneratorStrategy.Mode)
+     */
+    protected boolean handleCustomTypeToJson(TypedElementDefinition<?> column, String getter, String columnType, String javaMemberName, JavaWriter out) {
+        return false;
+    }
+
+
+    /**
+     * @param pType the POJO type
+     * @return the type returned by {@code QueryExecutor#insertReturningPrimary}.
+     */
+    protected abstract String renderFindOneType(String pType);
+
+    /**
+     *
+     * @param pType the POJO type
+     * @return the type returned by {@code QueryExecutor#findMany}.
+     */
+    protected abstract String renderFindManyType(String pType);
+
+    /**
+     * @return the type returned by {@code QueryExecutor#execute}.
+     */
+    protected abstract String renderExecType();
+
+    /**
+     * @param tType the primary key type
+     * @return the type returned by {@code QueryExecutor#insertReturningPrimary}.
+     */
+    protected abstract String renderInsertReturningType(String tType);
+
+    /**
+     *
+     * @param rType the record type
+     * @param pType the POJO type
+     * @param tType the primary key type
+     * @return the {@code QueryExecutor} used for query execution.
+     */
+    protected abstract String renderQueryExecutor(String rType, String pType, String tType);
+
+    /**
+     * @param rType the record type
+     * @param pType the POJO type
+     * @param tType the primary key type
+     * @return the interface implemented by the generated DAO.
+     */
+    protected abstract String renderDAOInterface(String rType, String pType, String tType);
+
+    /**
+     * Write the DAO constructor.
+     * @param out the JavaWriter
+     * @param className the class name of the generated DAO
+     * @param tableIdentifier the table identifier
+     * @param rType the record type
+     * @param pType the POJO type
+     * @param tType the primary key type
+     */
+    protected abstract void writeDAOConstructor(JavaWriter out, String className, String tableIdentifier, String rType, String pType, String tType);
+
+    /**
+     * Write imports in the DAO.
+     * @param out the JavaWriter
+     */
+    protected void writeDAOImports(JavaWriter out){}
+
+    /**
+     * Write annotations on the DAOs class signature.
+     * @param out the JavaWriter
+     */
+    protected void writeDAOClassAnnotation(JavaWriter out){}
+
+    /**
+     * Write annotations on the DAOs constructor.
+     * @param out the JavaWriter
+     */
+    protected void writeDAOConstructorAnnotation(JavaWriter out){}
+
+    /**
+     * Can be used to overwrite certain methods, e.g. AsyncXYZ-strategies shouldn't
+     * allow insertReturning for non-numeric or compound primary keys due to limitations
+     * of the AsyncMySQL/Postgres client.
+     * @param out the JavaWriter
+     * @param className the class name of the generated DAO
+     * @param tableIdentifier the table identifier
+     * @param rType the record type
+     * @param pType the POJO type
+     * @param tType the primary key type
+     */
+    protected void overwriteDAOMethods(JavaWriter out, String className, String tableIdentifier, String rType, String pType, String tType){}
+
+    /**
+     * @return the fully qualified class name of the DAO's extension
+     */
+    protected String renderDaoExtendsClassName(){
+        return AbstractVertxDAO.class.getName();
+    }
+
+    /**
+     * @return the fully qualified class name of the vertx instance
+     */
+    protected String renderFQVertxName(){
+        return Vertx.class.getName();
+    }
+
+    /**
+     * Write some extra data during code generation
+     * @param definition the schema
+     * @param writerGenerator a Function that returns a new JavaWriter based on a File.
+     * @return a Collection of JavaWriters with data init.
+     */
+    protected Collection<JavaWriter> writeExtraData(SchemaDefinition definition, Function<File,JavaWriter> writerGenerator){
+        return Collections.emptyList();
     }
 
     @Override
@@ -93,6 +230,11 @@ public abstract class VertxGenerator extends JavaGenerator {
     protected void generateDaos(SchemaDefinition schema) {
         super.generateDaos(schema);
         writeExtraData(schema);
+    }
+
+    private void writeExtraData(SchemaDefinition definition){
+        Collection<JavaWriter> writers = writeExtraData(definition, this::newJavaWriter);
+        writers.forEach(this::closeJavaWriter);
     }
 
     private void generateFromJson(TableDefinition table, JavaWriter out, GeneratorStrategy.Mode mode){
@@ -155,27 +297,6 @@ public abstract class VertxGenerator extends JavaGenerator {
         return super.getJavaType(type);
     }
 
-    public void printIfType(Class<?> clazz, TypedElementDefinition<?> column, String setterName, JavaWriter out) {
-        boolean isType = getJavaType(column.getType()).equals(clazz.getName());
-        if(isType){
-            out.tab(3).println("%s(row.get%s(\"%s\"));", setterName, clazz.getSimpleName(),  column.getName());
-        }
-    }
-
-    /**
-     * Overwrite this method to handle your custom type. This is needed especially when you have custom converters.
-     * @param column the column definition
-     * @param setter the setter name
-     * @param columnType the type of the column
-     * @param javaMemberName the java member name
-     * @param out the writer
-     * @return <code>true</code> if the column was handled.
-     * @see #generateFromJson(TableDefinition, JavaWriter, org.jooq.util.GeneratorStrategy.Mode)
-     */
-    protected boolean handleCustomTypeFromJson(TypedElementDefinition<?> column, String setter, String columnType, String javaMemberName, JavaWriter out){
-        return false;
-    }
-
     private void generateToJson(TableDefinition table, JavaWriter out, GeneratorStrategy.Mode mode){
         out.println();
         out.tab(1).override();
@@ -220,20 +341,6 @@ public abstract class VertxGenerator extends JavaGenerator {
                 columnType.equals(byte.class.getName()+"[]") || (column.getType().getConverter() != null &&
                 (isType(column.getType().getConverter(),JsonObjectConverter.class) || isType(column.getType().getConverter(),JsonArrayConverter.class)))
                 ;
-    }
-
-    /**
-     * Overwrite this method to handle your custom type. This is needed especially when you have custom converters.
-     * @param column the column definition
-     * @param getter the getter name
-     * @param columnType the type of the column
-     * @param javaMemberName the java member name
-     * @param out the writer
-     * @return <code>true</code> if the column was handled.
-     * @see #generateToJson(TableDefinition, JavaWriter, org.jooq.util.GeneratorStrategy.Mode)
-     */
-    protected boolean handleCustomTypeToJson(TypedElementDefinition<?> column, String getter, String columnType, String javaMemberName, JavaWriter out) {
-        return false;
     }
 
     @Override
@@ -373,12 +480,10 @@ public abstract class VertxGenerator extends JavaGenerator {
     }
 
     private void generateDAO(UniqueKeyDefinition key, TableDefinition table, VertxJavaWriter out) {
-
-
         final String className = getStrategy().getJavaClassName(table, GeneratorStrategy.Mode.DAO);
         final List<String> interfaces = out.ref(getStrategy().getJavaClassImplements(table, GeneratorStrategy.Mode.DAO));
         final String tableRecord = out.ref(getStrategy().getFullJavaClassName(table, GeneratorStrategy.Mode.RECORD));
-        final String daoImpl = out.ref(renderDaoExtends());
+        final String daoImpl = out.ref(renderDaoExtendsClassName());
         final String tableIdentifier = out.ref(getStrategy().getFullJavaIdentifier(table), 2);
 
         String tType = "Void";
@@ -434,7 +539,7 @@ public abstract class VertxGenerator extends JavaGenerator {
         }
 
         writeDAOConstructorAnnotation(out);
-        writeConstructor(out, className, tableIdentifier, tableRecord, pType, tType);
+        writeDAOConstructor(out, className, tableIdentifier, tableRecord, pType, tType);
 
         // Template method implementations
         // -------------------------------
@@ -462,7 +567,7 @@ public abstract class VertxGenerator extends JavaGenerator {
         out.tab(1).println("}");
         generateFetchMethods(table,out);
         generateDaoClassFooter(table, out);
-        overwrite(out, className, tableIdentifier, tableRecord, pType, tType);
+        overwriteDAOMethods(out, className, tableIdentifier, tableRecord, pType, tType);
         out.println("}");
     }
 
@@ -512,51 +617,4 @@ public abstract class VertxGenerator extends JavaGenerator {
         }
     }
 
-    /**
-     * Can be used to overwrite certain methods, e.g. AsyncXYZ-strategies shouldn't
-     * allow insertReturning for non-numeric or compound primary keys due to limitations
-     * of the AsyncMySQL/Postgres client.
-     * @param out
-     * @param className
-     * @param tableIdentifier
-     * @param tableRecord
-     * @param pType
-     * @param tType
-     */
-    protected void overwrite(JavaWriter out, String className, String tableIdentifier, String tableRecord, String pType, String tType){}
-
-    protected String renderDaoExtends(){
-        return AbstractVertxDAO.class.getName();
-    }
-
-    protected String renderFQVertxName(){
-        return "io.vertx.core.Vertx";
-    }
-
-    protected abstract String renderFindOneType(String pType);
-
-    protected abstract String renderFindManyType(String pType);
-
-    protected abstract String renderExecType();
-
-    protected abstract String renderInsertReturningType(String tType);
-
-    protected abstract String renderQueryExecutor(String rType, String pType, String tType);
-
-    protected abstract String renderDAOInterface(String rType, String pType, String tType);
-
-    protected abstract void writeDAOImports(JavaWriter out);
-
-    protected abstract void writeConstructor(JavaWriter out, String className, String tableIdentifier, String tableRecord, String pType, String tType);
-
-    protected abstract void writeDAOClassAnnotation(JavaWriter out);
-
-    protected abstract void writeDAOConstructorAnnotation(JavaWriter out);
-
-    private void writeExtraData(SchemaDefinition definition){
-        Collection<JavaWriter> writers = writeExtraData(definition, this::newJavaWriter);
-        writers.forEach(this::closeJavaWriter);
-    }
-
-    protected abstract Collection<JavaWriter> writeExtraData(SchemaDefinition definition, Function<File,JavaWriter> writerGenerator);
 }

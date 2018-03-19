@@ -22,35 +22,36 @@ public class AsyncDatabaseConfigurationProvider extends AbstractDatabaseConfigur
 
     @Override
     public void setupDatabase() throws Exception {
-        Connection connection = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/", "vertx", "");
-        connection.prepareStatement("DROP DATABASE IF EXISTS `vertx`;").execute();
-        connection.prepareStatement("CREATE SCHEMA `vertx` DEFAULT CHARACTER SET utf8 COLLATE utf8_bin ;").execute();
-        connection.prepareStatement("USE vertx;").execute();
-        connection.prepareStatement("DROP TABLE IF EXISTS something;").execute();
-        connection.prepareStatement("CREATE TABLE `vertx`.`something` (\n" +
-                "  `someId` INT NOT NULL AUTO_INCREMENT,\n" +
-                "  `someString` VARCHAR(45) NULL,\n" +
-                "  `someHugeNumber` BIGINT(20) NULL,\n" +
-                "  `someSmallNumber` SMALLINT(5) NULL,\n" +
-                "  `someRegularNumber` INT(10) NULL,\n" +
-                "  `someDouble` DOUBLE NULL,\n" +
-                "  `someEnum` ENUM('FOO', 'BAR', 'BAZ') DEFAULT 'FOO' NOT NULL,\n" +
-                "  `someJsonObject` VARCHAR(45) NULL,\n" +
-                "  `someJsonArray` VARCHAR(45) NULL,\n" +
-                "  `someTimestamp` TIMESTAMP NULL,\n" +
-                "  PRIMARY KEY (`someId`));").execute();
-        connection.prepareStatement("DROP TABLE IF EXISTS somethingComposite;").execute();
-        connection.prepareStatement("CREATE TABLE `somethingComposite` (\n" +
-                "  `someId` INT NOT NULL,\n" +
-                "  `someSecondId` INT NOT NULL,\n" +
-                "  `someJsonObject` VARCHAR(45) NULL,\n" +
-                "  PRIMARY KEY (`someId`, `someSecondId`));\n").execute();
-        connection.prepareStatement("DROP TABLE IF EXISTS somethingWithoutJson;").execute();
-        connection.prepareStatement("CREATE TABLE `somethingWithoutJson` (\n" +
-                "  `someId` int(11) NOT NULL AUTO_INCREMENT,\n" +
-                "  `someString` varchar(45) COLLATE utf8_bin DEFAULT NULL,\n" +
-                "  PRIMARY KEY (`someId`));\n").execute();
-        connection.close();
+        try(Connection connection = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/", "vertx", "")){
+            connection.prepareStatement("DROP DATABASE IF EXISTS `vertx`;").execute();
+            connection.prepareStatement("CREATE SCHEMA `vertx` DEFAULT CHARACTER SET utf8 COLLATE utf8_bin ;").execute();
+            connection.prepareStatement("USE vertx;").execute();
+            connection.prepareStatement("DROP TABLE IF EXISTS something;").execute();
+            connection.prepareStatement("CREATE TABLE `vertx`.`something` (\n" +
+                    "  `someId` INT NOT NULL AUTO_INCREMENT,\n" +
+                    "  `someString` VARCHAR(45) NULL,\n" +
+                    "  `someHugeNumber` BIGINT(20) NULL,\n" +
+                    "  `someSmallNumber` SMALLINT(5) NULL,\n" +
+                    "  `someRegularNumber` INT(10) NULL,\n" +
+                    "  `someDouble` DOUBLE NULL,\n" +
+                    "  `someEnum` ENUM('FOO', 'BAR', 'BAZ') DEFAULT 'FOO' NOT NULL,\n" +
+                    "  `someJsonObject` VARCHAR(45) NULL,\n" +
+                    "  `someJsonArray` VARCHAR(45) NULL,\n" +
+                    "  `someTimestamp` TIMESTAMP NULL,\n" +
+                    "  PRIMARY KEY (`someId`));").execute();
+            connection.prepareStatement("DROP TABLE IF EXISTS somethingComposite;").execute();
+            connection.prepareStatement("CREATE TABLE `somethingComposite` (\n" +
+                    "  `someId` INT NOT NULL,\n" +
+                    "  `someSecondId` INT NOT NULL,\n" +
+                    "  `someJsonObject` VARCHAR(45) NULL,\n" +
+                    "  PRIMARY KEY (`someId`, `someSecondId`));\n").execute();
+            connection.prepareStatement("DROP TABLE IF EXISTS somethingWithoutJson;").execute();
+            connection.prepareStatement("CREATE TABLE `somethingWithoutJson` (\n" +
+                    "  `someId` int(11) NOT NULL AUTO_INCREMENT,\n" +
+                    "  `someString` varchar(45) COLLATE utf8_bin DEFAULT NULL,\n" +
+                    "  PRIMARY KEY (`someId`));\n").execute();
+            connection.close();
+        }
     }
 
     @Override
