@@ -288,11 +288,7 @@ public class VertxGeneratorBuilder {
                 JavaWriter out = writerGen.apply(moduleFile);
                 out.println("package " + base.getStrategy().getJavaPackageName(schema) + ".tables.mappers;");
                 out.println();
-                if(base.apiType.equals(APIType.RX)){
-                    out.println("import com.julienviet.reactivex.pgclient.Row;");
-                }else{
-                    out.println("import com.julienviet.pgclient.Row;");
-                }
+                out.println("import com.julienviet.pgclient.Row;");
                 out.println("import %s;", Function.class.getName());
                 out.println();
                 out.println("public class RowMappers {");
@@ -387,13 +383,16 @@ public class VertxGeneratorBuilder {
                     );
                 case RX:
                     return new DIStepImpl(base
-                            .setWriteDAOImportsDelegate(base.writeDAOImportsDelegate.andThen(out -> out.println("import io.github.jklingsporn.vertx.jooq.rx.jdbc.JDBCRXQueryExecutor;")))
-                            .setRenderQueryExecutorDelegate((rType, pType, tType) -> String.format("JDBCRXQueryExecutor<%s,%s,%s>", rType, pType, tType))
+                            .setWriteDAOImportsDelegate(base.writeDAOImportsDelegate.andThen(out -> out.println("import io.github.jklingsporn.vertx.jooq.rx.reactivepg.ReactiveRXQueryExecutor;")))
+                            .setRenderQueryExecutorDelegate((rType, pType, tType) -> String.format("ReactiveRXQueryExecutor<%s,%s,%s>", rType, pType, tType))
                             .setWriteConstructorDelegate((out, className, tableIdentifier, tableRecord, pType, tType) -> {
+                                //pType = foo.bar.pojos.Somepojo -> split[0]=foo.bar. -> split[1]=Somepojo
+                                String[] split = pType.split("pojos.");
+                                String mapperFactory = String.format("%smappers.RowMappers.get%sMapper()",split[0],split[1]);
                                 out.tab(1).javadoc("@param configuration The Configuration used for rendering and query execution.\n" +
                                         "     * @param vertx the vertx instance");
-                                out.tab(1).println("public %s(%s configuration, %s vertx) {", className, Configuration.class, base.renderFQVertxName());
-                                out.tab(2).println("super(%s, %s.class, new %s(%s.class,configuration,vertx), configuration);", tableIdentifier, pType, base.renderQueryExecutor(tableRecord, pType, tType),pType);
+                                out.tab(1).println("public %s(%s configuration, com.julienviet.reactivex.pgclient.PgClient delegate) {", className, Configuration.class);
+                                out.tab(2).println("super(%s, %s.class, new %s(delegate,%s), configuration);", tableIdentifier, pType, base.renderQueryExecutor(tableRecord, pType, tType), mapperFactory);
                                 out.tab(1).println("}");
                             })
                     );

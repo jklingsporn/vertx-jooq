@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
@@ -58,11 +59,16 @@ public abstract class RXTestBase<P,T,O, DAO extends GenericVertxDAO<P, T, Single
      * @param cause
      */
     protected void assertException(Class<? extends Throwable> expected, Throwable cause){
+        assertException(expected, cause, c->{});
+    }
+
+    protected <X extends Throwable> void assertException(Class<X> expected, Throwable cause, Consumer<X> checker){
         if(!expected.equals(cause.getClass())){
             if(cause.getCause()!=null){
-                assertException(expected,cause.getCause());
+                assertException(expected,cause.getCause(),checker);
             }else{
                 Assert.assertEquals(expected, cause.getClass());
+                checker.accept(expected.cast(cause));
             }
         }
         //Cool, same class
