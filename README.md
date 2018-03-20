@@ -3,30 +3,13 @@ A [jOOQ](http://www.jooq.org/)-CodeGenerator to create [vertx](http://vertx.io/)
 Perform all CRUD-operations asynchronously and convert your POJOs from/into a `io.vertx.core.json.JsonObject` using the API and
 driver of your choice.
 
-## new in version 3.0
-A lot has changed - not only under the hood.
-- Starting from this version on, `vertx-jooq` both includes the JDBC
-and the async variant (formerly known as [`vertx-jooq-async`](https://github.com/jklingsporn/vertx-jooq-async/)). This
- avoids duplicate code and thus provides better stability.
-- Say good bye callback-API: everybody who has written code that is more complex than a simple `HelloWorld` application
- hates callback-APIs. That is why I decided to let the classic-module now return Vertx `Futures` instead of accepting a
- `Handler` to deal with the result.
-- `vertx-jooq-future` becomes `vertx-jooq-completablefuture`: that was more or less a consequence of the decision to let the
-classic API return `Futures` now.
-- Consistent naming: I decided to prefix any DAO-method that is based on a `SELECT` with `find`, followed by `One` if
-it returns one value, or `Many` if it is capable to return many values, followed by a condition to define how the value is
-obtained, eg `byId`. If you are upgrading from a previous version, you will have to run some search and replace sessions in your favorite IDE.
-- DAOs are no longer capable of executing arbitrary SQL. There were two main drivers for this decision: 1. joining the JDBC
- and the async API did not allow it. 2. DAOs are bound to a POJO and should only operate on the POJO's type. With the option to execute any
-  SQL one could easily join on POJOs of other types and thus break boundaries. You can still execute type-safe SQL asynchronously
-  using one of the `QueryExecutors` though.
-- Never again call blocking DAO-methods by accident: in previous vertx-jooq versions every `VertxDAO` extended from jOOQ's `DAOImpl` class.
-This made it easy to just wrap the blocking variant of a CRUD-operation in a `Vertx.executeBlocking` block to get the async variant
-  of it. The downside however was that the blocking CRUD-operations were still visible in the DAO-API and it was up to the user
-  to call the correct (async) method. The blocking variants have been removed from the API - all calls are now asynchronous.
-- All insert (except `insertReturningPrimary`), update and delete-methods now contain information about the number of affected rows.
-The result is a cleaner, thinner API.
-- Guice finally available for all async APIs.
+## new in version 4.0
+Fast, faster, reactive.
+- Starting from this version on, `vertx-jooq` adds support for [this high performance postgres driver](https://github.com/reactiverse/reactive-pg-client).
+- Move away from GeneratorStrategies to generate DAOs: it was a misconception to use `GeneratorStrategies` to distinguish
+between the APIs, drivers and injection-support. Instead, there is now a Builder-API to create the `VertxGenerator` of your choice.
+This comes in handy if you configure your jOOQ code generator programmatically.
+- Added support for `DAO#insertReturning` in async postgres-mode.
 
 ## different needs, different apis
 ![What do you want](https://media.giphy.com/media/E87jjnSCANThe/giphy.gif)
@@ -40,6 +23,7 @@ Before you start generating code using vertx-jooq, you have to answer these ques
 - How do you want to communicate with the database? There are two options:
   - Using good old JDBC, check for the modules with `-jdbc` suffix.
   - Using this [asynchronous](https://github.com/mauricio/postgresql-async) database driver, check for `-async` modules.
+  - Using this [reactive](https://github.com/reactiverse/reactive-pg-client) postgres database driver, check for `-reactive` modules.
 - Do you use [Guice](https://github.com/google/guice) for dependency injection?
 
 When you made your choice, you can start to configure the code-generator. This can be either done programmatically or
@@ -47,10 +31,13 @@ When you made your choice, you can start to configure the code-generator. This c
 
 - [`vertx-jooq-classic-async`](vertx-jooq-classic-async)
 - [`vertx-jooq-classic-jdbc`](vertx-jooq-classic-jdbc)
+- [`vertx-jooq-classic-reactive`](vertx-jooq-classic-reactive)
 - [`vertx-jooq-rx-async`](vertx-jooq-rx-async)
 - [`vertx-jooq-rx-jdbc`](vertx-jooq-rx-jdbc)
+- [`vertx-jooq-rx-reactive`](vertx-jooq-rx-reactive)
 - [`vertx-jooq-completablefuture-async`](vertx-jooq-completablefuture-async)
 - [`vertx-jooq-completablefuture-jdbc`](vertx-jooq-completablefuture-jdbc)
+- [`vertx-jooq-completablefuture-reactive`](vertx-jooq-completablefuture-reactive)
 
 
 ## example

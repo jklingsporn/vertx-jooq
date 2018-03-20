@@ -78,8 +78,8 @@ If you are new to jOOQ, I recommend to read the awesome [jOOQ documentation](htt
 
               <!-- Generator parameters -->
               <generator>
-                  <name>io.github.jklingsporn.vertx.jooq.generate.VertxGenerator</name>
-              		<!-- use 'io.github.jklingsporn.vertx.jooq.generate.classic.VertxGuiceClassicGenerator' to enable Guice DI -->
+                  <name>io.github.jklingsporn.vertx.jooq.generate.classic.ClassicJDBCVertxGenerator</name>
+              		<!-- use 'io.github.jklingsporn.vertx.jooq.generate.classic.ClassicJDBCGuiceVertxGenerator' to enable Guice DI -->
                   <database>
                       <name>org.jooq.util.mysql.MySQLDatabase</name>
                       <includes>.*</includes>
@@ -121,7 +121,7 @@ If you are new to jOOQ, I recommend to read the awesome [jOOQ documentation](htt
 
 
                   <strategy>
-                      <name>io.github.jklingsporn.vertx.jooq.generate.classic.JDBCClassicVertxGeneratorStrategy</name>
+                      <name>io.github.jklingsporn.vertx.jooq.generate.VertxGeneratorStrategy</name>
                   </strategy>
               </generator>
 
@@ -139,7 +139,7 @@ The following code-snippet can be copy-pasted into your `build.gradle` to genera
 buildscript {
     ext {
         vertx_jooq_version = '3.1.0'
-        postgresql_version = '42.1.4'
+        postgresql_version = '42.2.2'
     }
     repositories {
         mavenLocal()
@@ -178,7 +178,7 @@ task jooqGenerate {
                 password('YOUR_PASSWORD')
             }
             generator {
-                name('io.github.jklingsporn.vertx.jooq.generate.VertxGenerator')
+                name('io.github.jklingsporn.vertx.jooq.generate.classic.ClassicJDBCVertxGenerator')
                 database {
                     name('org.jooq.util.postgres.PostgresDatabase')
                     include('.*')
@@ -203,7 +203,7 @@ task jooqGenerate {
                     directory("$projectDir/src/main/java")
                 }
                 strategy {
-                    name('io.github.jklingsporn.vertx.jooq.generate.classic.JDBCClassicVertxGeneratorStrategy')
+                    name('io.github.jklingsporn.vertx.jooq.generate.VertxGeneratorStrategy')
                 }
             }
         }

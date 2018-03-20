@@ -2,12 +2,12 @@
 ```
 <dependency>
   <groupId>io.github.jklingsporn</groupId>
-  <artifactId>vertx-jooq-completablefuture-jdbc</artifactId>
+  <artifactId>vertx-jooq-classic-reactive</artifactId>
   <version>4.0.0-BETA</version>
 </dependency>
 ```
 
-# maven code generator configuration example for mysql
+# maven code generator configuration example for postgres
 The following code-snippet can be copy-pasted into your pom.xml to generate code from your MySQL database schema.
 
 **Watch out for placeholders beginning with 'YOUR_xyz' though! E.g. you have to define credentials for DB access and specify the target directory where jOOQ
@@ -31,7 +31,7 @@ If you are new to jOOQ, I recommend to read the awesome [jOOQ documentation](htt
     </dependency>
     <dependency>
       <groupId>io.github.jklingsporn</groupId>
-      <artifactId>vertx-jooq-completablefuture-jdbc</artifactId>
+      <artifactId>vertx-jooq-classic-reactive</artifactId>
       <version>4.0.0-BETA</version>
     </dependency>
   </dependencies>
@@ -54,10 +54,10 @@ If you are new to jOOQ, I recommend to read the awesome [jOOQ documentation](htt
 
           <dependencies>
               <dependency>
-                  <groupId>mysql</groupId>
-                  <artifactId>mysql-connector-java</artifactId>
-                  <version>5.1.37</version>
-              </dependency>
+									<groupId>org.postgresql</groupId>
+									<artifactId>postgresql</artifactId>
+									<version>42.2.2</version>
+							</dependency>
               <dependency>
                   <groupId>io.github.jklingsporn</groupId>
                   <artifactId>vertx-jooq-generate</artifactId>
@@ -78,8 +78,8 @@ If you are new to jOOQ, I recommend to read the awesome [jOOQ documentation](htt
 
               <!-- Generator parameters -->
               <generator>
-                  <name>io.github.jklingsporn.vertx.jooq.generate.completablefuture.CompletableFutureJDBCVertxGenerator</name>
-              		<!-- use 'io.github.jklingsporn.vertx.jooq.generate.completablefuture.CompletableFutureJDBCGuiceVertxGenerator' to enable Guice DI -->
+                  <name>io.github.jklingsporn.vertx.jooq.generate.classic.ClassicReactiveVertxGenerator</name>
+              		<!-- use 'io.github.jklingsporn.vertx.jooq.generate.classic.ClassicReactiveGuiceVertxGenerator' to enable Guice DI -->
                   <database>
                       <name>org.jooq.util.mysql.MySQLDatabase</name>
                       <includes>.*</includes>
@@ -162,7 +162,7 @@ version 'your project version'
 apply plugin: 'java'
 
 dependencies {
-    compile "io.github.jklingsporn:vertx-jooq-completablefuture:$vertx_jooq_version"
+    compile "io.github.jklingsporn:vertx-jooq-classic:$vertx_jooq_version"
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
 
@@ -178,7 +178,7 @@ task jooqGenerate {
                 password('YOUR_PASSWORD')
             }
             generator {
-                name('io.github.jklingsporn.vertx.jooq.generate.completablefuture.CompletableFutureJDBCVertxGenerator')
+                name('io.github.jklingsporn.vertx.jooq.generate.classic.ClassicReactiveVertxGenerator')
                 database {
                     name('org.jooq.util.postgres.PostgresDatabase')
                     include('.*')
@@ -221,23 +221,28 @@ of how to setup the generator programmatically.
 ## usage
 ```
 //Setup your jOOQ configuration
-Configuration configuration = ...
+Configuration configuration = new DefaultConfiguration();
+configuration.set(SQLDialect.POSTGRES);
+//no other DB-Configuration necessary because jOOQ is only used to render our statements - not for excecution
 
 //setup Vertx
 Vertx vertx = Vertx.vertx();
+//setup the client
+PgPoolOptions config = new PgPoolOptions().setHost("127.0.0.1").setPort(5432).setUsername("vertx").setDatabase("postgres").setPassword("password");
+PgClient client = PgClient.pool(vertx, config);
 
 //instantiate a DAO (which is generated for you)
-SomethingDao dao = new SomethingDao(configuration,vertx);
+SomethingDao dao = new SomethingDao(configuration, client);
 
 //fetch something with ID 123...
 dao.findOneById(123)
-    .whenComplete((something,x)->{
-				if(x==null){
-						vertx.eventBus().send("sendSomething",something.toJson());
-				}else{
-						System.err.println("Something failed badly: "+x.getMessage());
-				}
-		});
+    .setHandler(res->{
+        		if(res.succeeded()){
+            		vertx.eventBus().send("sendSomething", res.result().toJson());
+        		}else{
+        				System.err.println("Something failed badly: "+res.cause().getMessage());
+        		}
+        });
 
 //maybe consume it in another verticle
 vertx.eventBus().<JsonObject>consumer("sendSomething", jsonEvent->{
@@ -247,31 +252,26 @@ vertx.eventBus().<JsonObject>consumer("sendSomething", jsonEvent->{
     //... change some values
     something.setSomeregularnumber(456);
     //... and update it into the DB
-    CompletableFuture<Integer> updatedFuture = dao.update(something);
+    Future<Integer> updatedFuture = dao.update(something);
+
 });
 
 //or do you prefer writing your own type-safe SQL?
-JDBCCompletableFutureGenericQueryExecutor queryExecutor = new JDBCCompletableFutureGenericQueryExecutor(configuration,vertx);
-CompletableFuture<Integer> updatedCustom = queryExecutor.execute(dslContext ->
-				dslContext
-				.update(Tables.SOMETHING)
-				.set(Tables.SOMETHING.SOMEREGULARNUMBER,456)
-				.where(Tables.SOMETHING.SOMEID.eq(something.getSomeid()))
-				.execute()
-);
+AsyncClassicGenericQueryExecutor queryExecutor = new AsyncClassicGenericQueryExecutor(client);
+Future<Integer> updatedCustom = queryExecutor.execute(DSL.using(configuration)
+			.update(Tables.SOMETHING)
+			.set(Tables.SOMETHING.SOMEREGULARNUMBER,456)
+			.where(Tables.SOMETHING.SOMEID.eq(something.getSomeid())));
 
 //check for completion
-updatedCustom.whenComplete((updated,x)->{
-				if(x==null){
-						System.out.println("Rows updated: "+updated);
-				}else{
-						System.err.println("Something failed badly: "+x.getMessage());
-				}
-		 });
+updatedCustom.setHandler(res->{
+		if(res.succeeded()){
+				System.out.println("Rows updated: "+res.result());
+		}else{
+				System.err.println("Something failed badly: "+res.cause().getMessage());
+		}
+});
 ```
 
 # known issues
-- The [`VertxCompletableFuture`](https://github.com/cescoffier/vertx-completable-future) is not part of the vertx-core package.
-The reason behind this is that it violates the contract of `CompletableFuture#XXXAsync` methods which states that those methods should
-run on the ForkJoin-Pool if no Executor is provided. This can not be done, because it would break the threading model of Vertx. Please
-keep that in mind. If you can not tolerate this, please use the [`classic`](../vertx-jooq-classic-jdbc) or [`rx`](../vertx-jooq-rx-jdbc) API instead.
+- Since jOOQ is using JDBC under the hood, the non-blocking fashion is achieved by using the `Vertx.executeBlocking` method.

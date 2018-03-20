@@ -139,7 +139,7 @@ The following code-snippet can be copy-pasted into your `build.gradle` to genera
 buildscript {
     ext {
         vertx_jooq_version = '3.1.0'
-        postgresql_version = '42.1.4'
+        postgresql_version = '42.2.2'
     }
     repositories {
         mavenLocal()
