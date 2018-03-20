@@ -13,12 +13,12 @@ public class RowMappers {
             pojo.setSomeid(row.getInteger("someId"));
             pojo.setSomestring(row.getString("someString"));
             pojo.setSomehugenumber(row.getLong("someHugeNumber"));
-            // Omitting unrecognized type DataType [ t=smallint; p=16; s=0; u="pg_catalog"."int2"; j=null ] for column someSmallNumber!
+            // Omitting unrecognized type DataType [ t=smallint; p=16; s=0; u="pg_catalog"."int2"; j=null ] (java.lang.Short) for column someSmallNumber!
             pojo.setSomeregularnumber(row.getInteger("someRegularNumber"));
             pojo.setSomedouble(row.getDouble("someDouble"));
             pojo.setSomejsonobject(row.getJsonObject("someJsonObject"));
             pojo.setSomejsonarray(row.getJsonArray("someJsonArray"));
-            // Omitting unrecognized type DataType [ t=timestamp without time zone; p=0; s=0; u="pg_catalog"."timestamp"; j=null ] for column someTimestamp!
+            pojo.setSometimestamp(row.getLocalDateTime("someTimestamp"));
             return pojo;
         };
     }

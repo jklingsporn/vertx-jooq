@@ -34,6 +34,7 @@ class ComponentBasedVertxGenerator extends VertxGenerator {
     Consumer<JavaWriter> writeDAOClassAnnotationDelegate = (w)->{};
     Consumer<JavaWriter> writeDAOConstructorAnnotationDelegate = (w)->{};
     Collection<BiFunction<SchemaDefinition,Function<File,JavaWriter>,JavaWriter>> writeExtraDataDelegates = new ArrayList<>();
+    VertxGenerator activeGenerator = this;
 
     @Override
     public String renderFQVertxName() {
@@ -162,6 +163,20 @@ class ComponentBasedVertxGenerator extends VertxGenerator {
 
     ComponentBasedVertxGenerator addWriteExtraDataDelegate(BiFunction<SchemaDefinition, Function<File, JavaWriter>, JavaWriter> writeExtraDataDelegate) {
         this.writeExtraDataDelegates.add(writeExtraDataDelegate);
+        return this;
+    }
+
+    /**
+     *
+     * @return The {@code VertxGenerator} that is actually used. When using a {@code ComponentBasedVertxGenerator} inside a {@code DelegatingVertxGenerator}
+     * the {@code VertxGenerator}-methods accessed by the delegating components are referring to a generator that is not used.
+     */
+    public VertxGenerator getActiveGenerator() {
+        return activeGenerator;
+    }
+
+    ComponentBasedVertxGenerator setActiveGenerator(VertxGenerator activeGenerator) {
+        this.activeGenerator = activeGenerator;
         return this;
     }
 }

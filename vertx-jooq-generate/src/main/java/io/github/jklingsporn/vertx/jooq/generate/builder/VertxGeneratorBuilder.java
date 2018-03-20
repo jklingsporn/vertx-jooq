@@ -283,10 +283,10 @@ public class VertxGeneratorBuilder {
             base.setRenderDAOExtendsDelegate(()->"io.github.jklingspon.vertx.jooq.shared.reactive.AbstractReactiveVertxDAO");
             base.addWriteExtraDataDelegate((schema, writerGen) -> {
                 ComponentBasedVertxGenerator.logger.info("Generate RowMappers ... ");
-                String packageName = (base.getStrategy().getTargetDirectory() + "/" + base.getStrategy().getJavaPackageName(schema) + ".tables.mappers").replaceAll("\\.", "/");
+                String packageName = (base.getActiveGenerator().getStrategy().getTargetDirectory() + "/" + base.getActiveGenerator().getStrategy().getJavaPackageName(schema) + ".tables.mappers").replaceAll("\\.", "/");
                 File moduleFile = new File(packageName, "RowMappers.java");
                 JavaWriter out = writerGen.apply(moduleFile);
-                out.println("package " + base.getStrategy().getJavaPackageName(schema) + ".tables.mappers;");
+                out.println("package " + base.getActiveGenerator().getStrategy().getJavaPackageName(schema) + ".tables.mappers;");
                 out.println();
                 out.println("import com.julienviet.pgclient.Row;");
                 out.println("import %s;", Function.class.getName());
@@ -321,26 +321,26 @@ public class VertxGeneratorBuilder {
                         ComponentBasedVertxGenerator.logger.info("{} has no primary key. Skipping...", out.file().getName());
                         continue;
                     }
-                    final String pType = base.getStrategy().getFullJavaClassName(table, GeneratorStrategy.Mode.POJO);
-                    out.tab(1).println("public static Function<Row,%s> get%sMapper() {",pType,base.getStrategy().getJavaClassName(table, GeneratorStrategy.Mode.POJO));
+                    final String pType = base.getActiveGenerator().getStrategy().getFullJavaClassName(table, GeneratorStrategy.Mode.POJO);
+                    out.tab(1).println("public static Function<Row,%s> get%sMapper() {",pType,base.getActiveGenerator().getStrategy().getJavaClassName(table, GeneratorStrategy.Mode.POJO));
                     out.tab(2).println("return row -> {");
                     out.tab(3).println("%s pojo = new %s();",pType,pType);
                     for (TypedElementDefinition<?> column : table.getColumns()) {
-                        String setter = base.getStrategy().getJavaSetterName(column, GeneratorStrategy.Mode.INTERFACE);
-                        String javaType = base.getJavaType(column.getType());
-                        if(supportedRowTypes.contains(javaType)){
+                        String setter = base.getActiveGenerator().getStrategy().getJavaSetterName(column, GeneratorStrategy.Mode.INTERFACE);
+                        String javaType = base.getActiveGenerator().getJavaType(column.getType());
+                        if(supportedRowTypes.contains(javaType)) {
                             try {
-                                out.tab(3).println("pojo.%s(row.get%s(\"%s\"));", setter, Class.forName(javaType).getSimpleName(),  column.getName());
+                                out.tab(3).println("pojo.%s(row.get%s(\"%s\"));", setter, Class.forName(javaType).getSimpleName(), column.getName());
                             } catch (ClassNotFoundException e) {
-                                ComponentBasedVertxGenerator.logger.error(e.getMessage(),e);
+                                ComponentBasedVertxGenerator.logger.error(e.getMessage(), e);
                             }
                         }else if(column.getType().getConverter() != null && column.getType().getConverter().equalsIgnoreCase(JsonObjectConverter.class.getName())){
                             out.tab(3).println("pojo.%s(row.getJsonObject(\"%s\"));", setter, column.getName());
                         }else if(column.getType().getConverter() != null && column.getType().getConverter().equalsIgnoreCase(JsonArrayConverter.class.getName())){
                             out.tab(3).println("pojo.%s(row.getJsonArray(\"%s\"));", setter, column.getName());
                         }else{
-                            ComponentBasedVertxGenerator.logger.warn(String.format("Omitting unrecognized type %s for column %s in table %s!",column.getType(),column.getName(),table.getName()));
-                            out.tab(3).println(String.format("// Omitting unrecognized type %s for column %s!",column.getType(),column.getName()));
+                            ComponentBasedVertxGenerator.logger.warn(String.format("Omitting unrecognized type %s (%s) for column %s in table %s!",column.getType(),javaType,column.getName(),table.getName()));
+                            out.tab(3).println(String.format("// Omitting unrecognized type %s (%s) for column %s!",column.getType(),javaType, column.getName()));
                         }
                     }
                     out.tab(3).println("return pojo;");
@@ -428,10 +428,10 @@ public class VertxGeneratorBuilder {
                         default:
                             throw new UnsupportedOperationException(base.apiType.toString());
                     }
-                    String packageName = (base.getStrategy().getTargetDirectory() + "/" + base.getStrategy().getJavaPackageName(schema) + ".tables.modules").replaceAll("\\.", "/");
+                    String packageName = (base.getActiveGenerator().getStrategy().getTargetDirectory() + "/" + base.getActiveGenerator().getStrategy().getJavaPackageName(schema) + ".tables.modules").replaceAll("\\.", "/");
                     File moduleFile = new File(packageName, "DaoModule.java");
                     JavaWriter out = writerGen.apply(moduleFile);
-                    out.println("package " + base.getStrategy().getJavaPackageName(schema) + ".tables.modules;");
+                    out.println("package " + base.getActiveGenerator().getStrategy().getJavaPackageName(schema) + ".tables.modules;");
                     out.println();
                     out.println("import com.google.inject.AbstractModule;");
                     out.println("import com.google.inject.TypeLiteral;");
@@ -446,12 +446,12 @@ public class VertxGeneratorBuilder {
                             ComponentBasedVertxGenerator.logger.info("{} has no primary key. Skipping...", out.file().getName());
                             continue;
                         }
-                        final String keyType = base.getKeyType(key);
-                        final String tableRecord = base.getStrategy().getFullJavaClassName(table, GeneratorStrategy.Mode.RECORD);
-                        final String pType = base.getStrategy().getFullJavaClassName(table, GeneratorStrategy.Mode.POJO);
-                        final String className = base.getStrategy().getFullJavaClassName(table, GeneratorStrategy.Mode.DAO);
+                        final String keyType = base.getActiveGenerator().getKeyType(key);
+                        final String tableRecord = base.getActiveGenerator().getStrategy().getFullJavaClassName(table, GeneratorStrategy.Mode.RECORD);
+                        final String pType = base.getActiveGenerator().getStrategy().getFullJavaClassName(table, GeneratorStrategy.Mode.POJO);
+                        final String className = base.getActiveGenerator().getStrategy().getFullJavaClassName(table, GeneratorStrategy.Mode.DAO);
                         if (base.generateInterfaces()) {
-                            String iType = base.getStrategy().getFullJavaClassName(table, GeneratorStrategy.Mode.INTERFACE);
+                            String iType = base.getActiveGenerator().getStrategy().getFullJavaClassName(table, GeneratorStrategy.Mode.INTERFACE);
                             out.tab(2).println("bind(new TypeLiteral<VertxDAO<%s, ? extends %s, %s>>() {}).to(%s.class).asEagerSingleton();",
                                     tableRecord, iType, keyType, className);
                         }

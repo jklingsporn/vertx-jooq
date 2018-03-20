@@ -1,7 +1,6 @@
 package io.github.jklingsporn.vertx.jooq.generate.builder;
 
 import io.github.jklingsporn.vertx.jooq.generate.VertxGenerator;
-import org.jooq.util.GeneratorStrategy;
 import org.jooq.util.JavaWriter;
 import org.jooq.util.SchemaDefinition;
 
@@ -20,6 +19,7 @@ public class DelegatingVertxGenerator extends VertxGenerator {
 
     public DelegatingVertxGenerator(ComponentBasedVertxGenerator delegate) {
         this.delegate = delegate;
+        delegate.setActiveGenerator(this);
     }
 
 
@@ -86,12 +86,6 @@ public class DelegatingVertxGenerator extends VertxGenerator {
     @Override
     protected Collection<JavaWriter> writeExtraData(SchemaDefinition definition, Function<File, JavaWriter> writerGenerator) {
         return delegate.writeExtraDataDelegates.stream().map(d->d.apply(definition,writerGenerator)).collect(Collectors.toList());
-    }
-
-    @Override
-    public void setStrategy(GeneratorStrategy strategy) {
-        super.setStrategy(strategy);
-        delegate.setStrategy(strategy);
     }
 
 }
