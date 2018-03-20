@@ -22,10 +22,13 @@ import java.util.function.Function;
  */
 public class AsyncClassicGenericQueryExecutor extends AbstractAsyncQueryExecutor<Future<List<JsonObject>>, Future<JsonObject>, Future<Integer>> {
 
-    protected final AsyncSQLClient delegate;
 
     public AsyncClassicGenericQueryExecutor(AsyncSQLClient delegate) {
-        this.delegate = delegate;
+        super(delegate);
+    }
+
+    public AsyncClassicGenericQueryExecutor(AsyncSQLClient delegate, boolean isMysql) {
+        super(delegate,isMysql);
     }
 
     @Override

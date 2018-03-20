@@ -5,7 +5,7 @@ import generated.rx.reactive.guice.vertx.Tables;
 import generated.rx.reactive.guice.vertx.tables.daos.SomethingDao;
 import generated.rx.reactive.guice.vertx.tables.pojos.Something;
 import io.github.jklingsporn.vertx.jooq.generate.ReactiveDatabaseClientProvider;
-import io.github.jklingsporn.vertx.jooq.generate.ReactiveDatabaseConfigurationProvider;
+import io.github.jklingsporn.vertx.jooq.generate.PostgresConfigurationProvider;
 import io.github.jklingsporn.vertx.jooq.generate.rx.RXTestBase;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
@@ -22,12 +22,12 @@ import java.util.Random;
 public class SomethingDaoTest extends RXTestBase<Something, Integer, Long, SomethingDao> {
 
     public SomethingDaoTest() {
-        super(Tables.SOMETHING.SOMEHUGENUMBER, new SomethingDao(ReactiveDatabaseConfigurationProvider.getInstance().createDAOConfiguration(), ReactiveDatabaseClientProvider.getInstance().rxGetClient()));
+        super(Tables.SOMETHING.SOMEHUGENUMBER, new SomethingDao(PostgresConfigurationProvider.getInstance().createDAOConfiguration(), ReactiveDatabaseClientProvider.getInstance().rxGetClient()));
     }
 
     @BeforeClass
     public static void beforeClass() throws Exception {
-        ReactiveDatabaseConfigurationProvider.getInstance().setupDatabase();
+        PostgresConfigurationProvider.getInstance().setupDatabase();
     }
 
     @Override

@@ -5,6 +5,7 @@ import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
+import io.vertx.ext.asyncsql.AsyncSQLClient;
 import org.joda.time.DateTimeZone;
 import org.jooq.*;
 import org.jooq.conf.ParamType;
@@ -24,6 +25,18 @@ import java.util.stream.Collectors;
 public abstract class AbstractAsyncQueryExecutor<FIND_MANY_JSON, FIND_ONE_JSON, EXECUTE> implements AsyncQueryExecutor<FIND_MANY_JSON, FIND_ONE_JSON, EXECUTE> {
 
     private static final Logger logger = LoggerFactory.getLogger(AbstractAsyncQueryExecutor.class);
+
+    protected final AsyncSQLClient delegate;
+    protected final boolean isMysql;
+
+    public AbstractAsyncQueryExecutor(AsyncSQLClient delegate, boolean isMysql) {
+        this.delegate = delegate;
+        this.isMysql = isMysql;
+    }
+
+    public AbstractAsyncQueryExecutor(AsyncSQLClient delegate) {
+        this(delegate,true);
+    }
 
     /**
      * The <code>AsyncSQLClient</code> does not know anything about converters you may have set for your entities,

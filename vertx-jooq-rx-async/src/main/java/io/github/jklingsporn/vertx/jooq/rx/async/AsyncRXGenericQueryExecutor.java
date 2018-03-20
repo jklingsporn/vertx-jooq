@@ -23,6 +23,12 @@ public class AsyncRXGenericQueryExecutor extends AbstractAsyncQueryExecutor<Sing
     protected final AsyncSQLClient delegate;
 
     public AsyncRXGenericQueryExecutor(AsyncSQLClient delegate) {
+        super(delegate.getDelegate());
+        this.delegate = delegate;
+    }
+
+    public AsyncRXGenericQueryExecutor(AsyncSQLClient delegate, boolean isMysql) {
+        super(delegate.getDelegate(),isMysql);
         this.delegate = delegate;
     }
 

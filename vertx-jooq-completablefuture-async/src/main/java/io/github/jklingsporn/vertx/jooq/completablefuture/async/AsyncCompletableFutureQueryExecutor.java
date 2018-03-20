@@ -4,6 +4,7 @@ import io.github.jklingsporn.vertx.jooq.shared.internal.QueryExecutor;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.asyncsql.AsyncSQLClient;
+import io.vertx.ext.sql.ResultSet;
 import io.vertx.ext.sql.UpdateResult;
 import me.escoffier.vertx.completablefuture.VertxCompletableFuture;
 import org.jooq.InsertResultStep;
@@ -28,6 +29,11 @@ public class AsyncCompletableFutureQueryExecutor <R extends UpdatableRecord<R>,P
         this.pojoMapper =  convertFromSQL(table).andThen(pojoMapper);
     }
 
+    public AsyncCompletableFutureQueryExecutor(Vertx vertx, AsyncSQLClient delegate, Function<JsonObject, P> pojoMapper, Table<R> table, boolean isMysql) {
+        super(vertx,delegate,isMysql);
+        this.pojoMapper =  convertFromSQL(table).andThen(pojoMapper);
+    }
+
 
     @Override
     public CompletableFuture<List<P>> findMany(ResultQuery<R> query) {
@@ -45,13 +51,23 @@ public class AsyncCompletableFutureQueryExecutor <R extends UpdatableRecord<R>,P
         return getConnection().thenCompose(sqlConnection -> {
             log(query);
             CompletableFuture<Object> cf = new VertxCompletableFuture<>(vertx);
-            sqlConnection.updateWithParams(
-                    query.getSQL(),
-                    getBindValues(query),
-                    this.<UpdateResult, Object>executeAndClose(res -> res.getKeys().getLong(0),
-                            sqlConnection,
-                            cf)
-            );
+            if(isMysql){
+                sqlConnection.updateWithParams(
+                        query.getSQL(),
+                        getBindValues(query),
+                        this.<UpdateResult, Object>executeAndClose(UpdateResult::getKeys,
+                                sqlConnection,
+                                cf)
+                );
+            }else{
+                sqlConnection.queryWithParams(
+                        query.getSQL(),
+                        getBindValues(query),
+                        this.<ResultSet, Object>executeAndClose(res -> res.getResults().get(0),
+                                sqlConnection,
+                                cf)
+                );
+            }
             return cf.thenApply(keyMapper);
         });
     }

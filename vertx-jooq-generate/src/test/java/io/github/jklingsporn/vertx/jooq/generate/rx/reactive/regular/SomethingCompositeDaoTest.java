@@ -6,7 +6,7 @@ import generated.rx.reactive.regular.vertx.tables.daos.SomethingcompositeDao;
 import generated.rx.reactive.regular.vertx.tables.pojos.Somethingcomposite;
 import generated.rx.reactive.regular.vertx.tables.records.SomethingcompositeRecord;
 import io.github.jklingsporn.vertx.jooq.generate.ReactiveDatabaseClientProvider;
-import io.github.jklingsporn.vertx.jooq.generate.ReactiveDatabaseConfigurationProvider;
+import io.github.jklingsporn.vertx.jooq.generate.PostgresConfigurationProvider;
 import io.github.jklingsporn.vertx.jooq.generate.rx.RXTestBase;
 import io.vertx.core.json.JsonObject;
 import org.jooq.Condition;
@@ -23,12 +23,12 @@ public class SomethingCompositeDaoTest extends RXTestBase<Somethingcomposite, Re
 
 
     public SomethingCompositeDaoTest() {
-        super(Tables.SOMETHINGCOMPOSITE.SOMEJSONOBJECT, new SomethingcompositeDao(ReactiveDatabaseConfigurationProvider.getInstance().createDAOConfiguration(), ReactiveDatabaseClientProvider.getInstance().rxGetClient()));
+        super(Tables.SOMETHINGCOMPOSITE.SOMEJSONOBJECT, new SomethingcompositeDao(PostgresConfigurationProvider.getInstance().createDAOConfiguration(), ReactiveDatabaseClientProvider.getInstance().rxGetClient()));
     }
 
     @BeforeClass
     public static void beforeClass() throws Exception {
-        ReactiveDatabaseConfigurationProvider.getInstance().setupDatabase();
+        PostgresConfigurationProvider.getInstance().setupDatabase();
     }
 
     @Override

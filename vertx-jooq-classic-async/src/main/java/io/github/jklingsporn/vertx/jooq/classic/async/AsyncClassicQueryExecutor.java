@@ -4,6 +4,7 @@ import io.github.jklingsporn.vertx.jooq.shared.internal.QueryExecutor;
 import io.vertx.core.Future;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.asyncsql.AsyncSQLClient;
+import io.vertx.ext.sql.ResultSet;
 import io.vertx.ext.sql.UpdateResult;
 import org.jooq.InsertResultStep;
 import org.jooq.ResultQuery;
@@ -26,6 +27,10 @@ public class AsyncClassicQueryExecutor<R extends UpdatableRecord<R>,P,T> extends
         this.pojoMapper = convertFromSQL(table).andThen(pojoMapper);
     }
 
+    public AsyncClassicQueryExecutor(AsyncSQLClient delegate, Function<JsonObject, P> pojoMapper, Table<R> table, boolean isMysql) {
+        super(delegate,isMysql);
+        this.pojoMapper = convertFromSQL(table).andThen(pojoMapper);
+    }
 
     @Override
     public Future<List<P>> findMany(ResultQuery<R> query) {
@@ -38,18 +43,27 @@ public class AsyncClassicQueryExecutor<R extends UpdatableRecord<R>,P,T> extends
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public Future<T> insertReturning(InsertResultStep<R> query, Function<Object, T> keyMapper) {
         return getConnection().compose(sqlConnection->{
             log(query);
             Future<Object> future = Future.future();
-            sqlConnection.updateWithParams(
-                    query.getSQL(),
-                    getBindValues(query),
-                    this.<UpdateResult,Object>executeAndClose(res -> res.getKeys().getLong(0),
-                            sqlConnection,
-                            future)
-            );
+            if(isMysql){
+                sqlConnection.updateWithParams(
+                        query.getSQL(),
+                        getBindValues(query),
+                        this.<UpdateResult,Object>executeAndClose(UpdateResult::getKeys,
+                                sqlConnection,
+                                future)
+                );
+            }else{
+                sqlConnection.queryWithParams(
+                        query.getSQL(),
+                        getBindValues(query),
+                        this.<ResultSet, Object>executeAndClose(res -> res.getResults().get(0),
+                                sqlConnection,
+                                future)
+                );
+            }
             return future.map(keyMapper);
         });
     }

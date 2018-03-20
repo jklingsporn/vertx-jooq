@@ -4,6 +4,7 @@ import io.github.jklingsporn.vertx.jooq.shared.internal.QueryExecutor;
 import io.reactivex.Single;
 import io.vertx.core.json.JsonObject;
 import io.vertx.reactivex.ext.asyncsql.AsyncSQLClient;
+import io.vertx.reactivex.ext.sql.SQLConnection;
 import org.jooq.InsertResultStep;
 import org.jooq.ResultQuery;
 import org.jooq.Table;
@@ -26,6 +27,11 @@ public class AsyncRXQueryExecutor<R extends UpdatableRecord<R>,P,T> extends Asyn
         this.pojoMapper = convertFromSQL(table).andThen(pojoMapper);
     }
 
+    public AsyncRXQueryExecutor(AsyncSQLClient delegate, Function<JsonObject, P> pojoMapper, Table<R> table, boolean isMysql) {
+        super(delegate,isMysql);
+        this.pojoMapper = convertFromSQL(table).andThen(pojoMapper);
+    }
+
     @Override
     public Single<List<P>> findMany(ResultQuery<R> query) {
         return findManyJson(query).map(rs -> rs.stream().map(pojoMapper).collect(Collectors.toList()));
@@ -40,13 +46,19 @@ public class AsyncRXQueryExecutor<R extends UpdatableRecord<R>,P,T> extends Asyn
     @SuppressWarnings("unchecked")
     public Single<T> insertReturning(InsertResultStep<R> query, Function<Object, T> keyMapper) {
         log(query);
-        return getConnection()
-                .flatMap(executeAndClose(sqlConnection ->
-                                        sqlConnection
-                                                .rxUpdateWithParams(query.getSQL(), getBindValues(query))
-                                                .map(updateResult -> keyMapper.apply(updateResult.getKeys().getLong(0)))
-                        )
-                );
+        Function<SQLConnection, Single<? extends T>> runInsertReturning;
+        if(isMysql){
+            runInsertReturning = sqlConnection ->
+                    sqlConnection
+                            .rxUpdateWithParams(query.getSQL(), getBindValues(query))
+                            .map(updateResult -> keyMapper.apply(updateResult.getKeys()));
+        }else{
+            runInsertReturning = sqlConnection ->
+                    sqlConnection
+                            .rxQueryWithParams(query.getSQL(), getBindValues(query))
+                            .map(queryResult -> keyMapper.apply(queryResult.getResults().get(0)));
+        }
+        return getConnection().flatMap(executeAndClose(runInsertReturning));
     }
 
 }

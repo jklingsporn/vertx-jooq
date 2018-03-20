@@ -1,7 +1,7 @@
 package io.github.jklingsporn.vertx.jooq.generate.completablefuture.reactive.guice;
 
 import io.github.jklingsporn.vertx.jooq.generate.AbstractVertxGeneratorTest;
-import io.github.jklingsporn.vertx.jooq.generate.ReactiveDatabaseConfigurationProvider;
+import io.github.jklingsporn.vertx.jooq.generate.PostgresConfigurationProvider;
 import io.github.jklingsporn.vertx.jooq.generate.VertxGeneratorStrategy;
 import io.github.jklingsporn.vertx.jooq.generate.completablefuture.CompletableFutureReactiveGuiceVertxGenerator;
 
@@ -12,7 +12,7 @@ public class GeneratorTest extends AbstractVertxGeneratorTest{
 
 
     public GeneratorTest() {
-        super(CompletableFutureReactiveGuiceVertxGenerator.class, VertxGeneratorStrategy.class,"cf.reactive.guice", ReactiveDatabaseConfigurationProvider.getInstance());
+        super(CompletableFutureReactiveGuiceVertxGenerator.class, VertxGeneratorStrategy.class,"cf.reactive.guice", PostgresConfigurationProvider.getInstance());
     }
 
 }

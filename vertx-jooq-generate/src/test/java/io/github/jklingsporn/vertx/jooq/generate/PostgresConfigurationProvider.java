@@ -12,17 +12,17 @@ import java.sql.DriverManager;
 /**
  * Created by jensklingsporn on 02.11.16.
  */
-public class ReactiveDatabaseConfigurationProvider extends AbstractDatabaseConfigurationProvider {
+public class PostgresConfigurationProvider extends AbstractDatabaseConfigurationProvider {
 
-    private static ReactiveDatabaseConfigurationProvider INSTANCE;
-    public static ReactiveDatabaseConfigurationProvider getInstance() {
-        return INSTANCE == null ? INSTANCE = new ReactiveDatabaseConfigurationProvider() : INSTANCE;
+    private static PostgresConfigurationProvider INSTANCE;
+    public static PostgresConfigurationProvider getInstance() {
+        return INSTANCE == null ? INSTANCE = new PostgresConfigurationProvider() : INSTANCE;
     }
 
     @Override
     public void setupDatabase() throws Exception {
         try
-            (Connection connection = DriverManager.getConnection("jdbc:postgresql://127.0.0.1:5432/postgres", "vertx", "password")) {
+            (Connection connection = DriverManager.getConnection("jdbc:postgresql://127.0.0.1:5432/postgres", Credentials.POSTGRES.getUser(), Credentials.POSTGRES.getPassword())) {
             connection.prepareStatement("DROP SCHEMA IF EXISTS vertx CASCADE;").execute();
             connection.prepareStatement("CREATE SCHEMA vertx;").execute();
             connection.prepareStatement("SET SCHEMA 'vertx';").execute();
@@ -56,8 +56,8 @@ public class ReactiveDatabaseConfigurationProvider extends AbstractDatabaseConfi
         Jdbc jdbcConfig = new Jdbc();
         jdbcConfig.setDriver("org.postgresql.Driver");
         jdbcConfig.setUrl("jdbc:postgresql://127.0.0.1:5432/postgres");
-        jdbcConfig.setUser("vertx");
-        jdbcConfig.setPassword("password");
+        jdbcConfig.setUser(Credentials.POSTGRES.getUser());
+        jdbcConfig.setPassword(Credentials.POSTGRES.getPassword());
         return createGeneratorConfig(generatorName,packageName,generatorStrategy,jdbcConfig, PostgresDatabase.class.getName());
     }
 

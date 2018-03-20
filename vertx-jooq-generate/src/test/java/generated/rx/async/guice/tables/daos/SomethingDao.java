@@ -43,7 +43,7 @@ public class SomethingDao extends AbstractAsyncVertxDAO<SomethingRecord, generat
      * @param delegate A configured AsyncSQLClient that is used for query execution
      */
     public SomethingDao(Configuration configuration,io.vertx.reactivex.ext.asyncsql.AsyncSQLClient delegate) {
-        super(Something.SOMETHING, generated.rx.async.guice.tables.pojos.Something.class, new AsyncRXQueryExecutor<SomethingRecord,generated.rx.async.guice.tables.pojos.Something,Integer>(delegate,generated.rx.async.guice.tables.pojos.Something::new, Something.SOMETHING), configuration);
+        super(Something.SOMETHING, generated.rx.async.guice.tables.pojos.Something.class, new AsyncRXQueryExecutor<SomethingRecord,generated.rx.async.guice.tables.pojos.Something,Integer>(delegate,generated.rx.async.guice.tables.pojos.Something::new, Something.SOMETHING, isMysql(configuration)), configuration);
     }
 
     /**
@@ -119,6 +119,6 @@ public class SomethingDao extends AbstractAsyncVertxDAO<SomethingRecord, generat
 
     @Override
     protected java.util.function.Function<Object,Integer> keyConverter(){
-        return lastId -> Integer.valueOf(((Long)lastId).intValue());
+        return lastId -> Integer.valueOf(((io.vertx.core.json.JsonArray)lastId).getLong(0).intValue());
     }
 }

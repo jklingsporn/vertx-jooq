@@ -1,10 +1,11 @@
 package io.github.jklingsporn.vertx.jooq.generate.rx.async.guice;
 
-import generated.rx.async.guice.enums.SomethingSomeenum;
 import generated.rx.async.guice.Tables;
+import generated.rx.async.guice.enums.SomethingSomeenum;
 import generated.rx.async.guice.tables.daos.SomethingDao;
 import generated.rx.async.guice.tables.pojos.Something;
-import io.github.jklingsporn.vertx.jooq.generate.AsyncDatabaseConfigurationProvider;
+import io.github.jklingsporn.vertx.jooq.generate.Credentials;
+import io.github.jklingsporn.vertx.jooq.generate.MySQLConfigurationProvider;
 import io.github.jklingsporn.vertx.jooq.generate.rx.RXTestBase;
 import io.github.jklingsporn.vertx.jooq.generate.rx.async.AsyncRXDatabaseClientProvider;
 import io.vertx.core.json.JsonArray;
@@ -21,12 +22,12 @@ import java.util.Random;
 public class SomethingDaoNoDefaultValueTest extends RXTestBase<Something, Integer, Long, SomethingDao> {
 
     public SomethingDaoNoDefaultValueTest() {
-        super(Tables.SOMETHING.SOMEHUGENUMBER, new SomethingDao(AsyncDatabaseConfigurationProvider.getInstance().createDAOConfiguration(), AsyncRXDatabaseClientProvider.getInstance().getClient()));
+        super(Tables.SOMETHING.SOMEHUGENUMBER, new SomethingDao(MySQLConfigurationProvider.getInstance().createDAOConfiguration(), AsyncRXDatabaseClientProvider.getInstance().getClient(Credentials.MYSQL)));
     }
 
     @BeforeClass
     public static void beforeClass() throws Exception {
-        AsyncDatabaseConfigurationProvider.getInstance().setupDatabase();
+        MySQLConfigurationProvider.getInstance().setupDatabase();
     }
 
     @Override

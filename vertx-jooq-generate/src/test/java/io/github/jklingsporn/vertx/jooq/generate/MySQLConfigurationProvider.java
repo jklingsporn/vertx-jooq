@@ -12,17 +12,17 @@ import java.sql.DriverManager;
 /**
  * Created by jensklingsporn on 02.11.16.
  */
-public class AsyncDatabaseConfigurationProvider extends AbstractDatabaseConfigurationProvider {
+public class MySQLConfigurationProvider extends AbstractDatabaseConfigurationProvider {
 
 
-    private static AsyncDatabaseConfigurationProvider INSTANCE;
-    public static AsyncDatabaseConfigurationProvider getInstance() {
-        return INSTANCE == null ? INSTANCE = new AsyncDatabaseConfigurationProvider() : INSTANCE;
+    private static MySQLConfigurationProvider INSTANCE;
+    public static MySQLConfigurationProvider getInstance() {
+        return INSTANCE == null ? INSTANCE = new MySQLConfigurationProvider() : INSTANCE;
     }
 
     @Override
     public void setupDatabase() throws Exception {
-        try(Connection connection = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/", "vertx", "")){
+        try(Connection connection = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/", Credentials.MYSQL.getUser(), Credentials.MYSQL.getPassword())){
             connection.prepareStatement("DROP DATABASE IF EXISTS `vertx`;").execute();
             connection.prepareStatement("CREATE SCHEMA `vertx` DEFAULT CHARACTER SET utf8 COLLATE utf8_bin ;").execute();
             connection.prepareStatement("USE vertx;").execute();
@@ -59,8 +59,8 @@ public class AsyncDatabaseConfigurationProvider extends AbstractDatabaseConfigur
         Jdbc jdbcConfig = new Jdbc();
         jdbcConfig.setDriver("com.mysql.jdbc.Driver");
         jdbcConfig.setUrl("jdbc:mysql://127.0.0.1:3306/");
-        jdbcConfig.setUser("vertx");
-        jdbcConfig.setPassword("");
+        jdbcConfig.setUser(Credentials.MYSQL.getUser());
+        jdbcConfig.setPassword(Credentials.MYSQL.getPassword());
         jdbcConfig.setSchema("vertx");
         return createGeneratorConfig(generatorName,packageName,generatorStrategy,jdbcConfig, MySQLDatabase.class.getName());
     }

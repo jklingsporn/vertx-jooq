@@ -5,7 +5,8 @@ import generated.classic.async.guice.tables.daos.SomethingcompositeDao;
 import generated.classic.async.guice.tables.pojos.Somethingcomposite;
 import generated.classic.async.guice.tables.records.SomethingcompositeRecord;
 import io.github.jklingsporn.vertx.jooq.generate.AsyncDatabaseClientProvider;
-import io.github.jklingsporn.vertx.jooq.generate.AsyncDatabaseConfigurationProvider;
+import io.github.jklingsporn.vertx.jooq.generate.Credentials;
+import io.github.jklingsporn.vertx.jooq.generate.MySQLConfigurationProvider;
 import io.github.jklingsporn.vertx.jooq.generate.classic.ClassicTestBase;
 import io.vertx.core.Future;
 import io.vertx.core.json.JsonObject;
@@ -25,12 +26,12 @@ public class SomethingCompositeDaoTest extends ClassicTestBase<Somethingcomposit
 
 
     public SomethingCompositeDaoTest() {
-        super(Tables.SOMETHINGCOMPOSITE.SOMEJSONOBJECT, new SomethingcompositeDao(AsyncDatabaseConfigurationProvider.getInstance().createDAOConfiguration(), AsyncDatabaseClientProvider.getInstance().getClient()));
+        super(Tables.SOMETHINGCOMPOSITE.SOMEJSONOBJECT, new SomethingcompositeDao(MySQLConfigurationProvider.getInstance().createDAOConfiguration(), AsyncDatabaseClientProvider.getInstance().getClient(Credentials.MYSQL)));
     }
 
     @BeforeClass
     public static void beforeClass() throws Exception {
-        AsyncDatabaseConfigurationProvider.getInstance().setupDatabase();
+        MySQLConfigurationProvider.getInstance().setupDatabase();
     }
 
     @Override

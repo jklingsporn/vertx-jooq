@@ -3,7 +3,8 @@ package io.github.jklingsporn.vertx.jooq.generate.rx.async.guice;
 import generated.rx.async.guice.Tables;
 import generated.rx.async.guice.tables.daos.SomethingwithoutjsonDao;
 import generated.rx.async.guice.tables.pojos.Somethingwithoutjson;
-import io.github.jklingsporn.vertx.jooq.generate.AsyncDatabaseConfigurationProvider;
+import io.github.jklingsporn.vertx.jooq.generate.Credentials;
+import io.github.jklingsporn.vertx.jooq.generate.MySQLConfigurationProvider;
 import io.github.jklingsporn.vertx.jooq.generate.rx.RXTestBase;
 import io.github.jklingsporn.vertx.jooq.generate.rx.async.AsyncRXDatabaseClientProvider;
 import org.jooq.Condition;
@@ -17,12 +18,12 @@ import java.util.Random;
 public class SomethingWithoutJsonDaoTest extends RXTestBase<Somethingwithoutjson, Integer, String, SomethingwithoutjsonDao> {
 
     public SomethingWithoutJsonDaoTest() {
-        super(Tables.SOMETHINGWITHOUTJSON.SOMESTRING, new SomethingwithoutjsonDao(AsyncDatabaseConfigurationProvider.getInstance().createDAOConfiguration(), AsyncRXDatabaseClientProvider.getInstance().getClient()));
+        super(Tables.SOMETHINGWITHOUTJSON.SOMESTRING, new SomethingwithoutjsonDao(MySQLConfigurationProvider.getInstance().createDAOConfiguration(), AsyncRXDatabaseClientProvider.getInstance().getClient(Credentials.MYSQL)));
     }
 
     @BeforeClass
     public static void beforeClass() throws Exception {
-        AsyncDatabaseConfigurationProvider.getInstance().setupDatabase();
+        MySQLConfigurationProvider.getInstance().setupDatabase();
     }
 
     @Override

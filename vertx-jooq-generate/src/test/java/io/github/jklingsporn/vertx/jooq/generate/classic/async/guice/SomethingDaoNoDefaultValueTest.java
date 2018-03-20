@@ -5,7 +5,8 @@ import generated.classic.async.guice.Tables;
 import generated.classic.async.guice.tables.daos.SomethingDao;
 import generated.classic.async.guice.tables.pojos.Something;
 import io.github.jklingsporn.vertx.jooq.generate.AsyncDatabaseClientProvider;
-import io.github.jklingsporn.vertx.jooq.generate.AsyncDatabaseConfigurationProvider;
+import io.github.jklingsporn.vertx.jooq.generate.Credentials;
+import io.github.jklingsporn.vertx.jooq.generate.MySQLConfigurationProvider;
 import io.github.jklingsporn.vertx.jooq.generate.classic.ClassicTestBase;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
@@ -22,12 +23,12 @@ import java.util.Random;
 public class SomethingDaoNoDefaultValueTest extends ClassicTestBase<Something, Integer, Long, SomethingDao> {
 
     public SomethingDaoNoDefaultValueTest() {
-        super(Tables.SOMETHING.SOMEHUGENUMBER, new SomethingDao(AsyncDatabaseConfigurationProvider.getInstance().createDAOConfiguration(), AsyncDatabaseClientProvider.getInstance().getClient()));
+        super(Tables.SOMETHING.SOMEHUGENUMBER, new SomethingDao(MySQLConfigurationProvider.getInstance().createDAOConfiguration(), AsyncDatabaseClientProvider.getInstance().getClient(Credentials.MYSQL)));
     }
 
     @BeforeClass
     public static void beforeClass() throws Exception {
-        AsyncDatabaseConfigurationProvider.getInstance().setupDatabase();
+        MySQLConfigurationProvider.getInstance().setupDatabase();
     }
 
     @Override

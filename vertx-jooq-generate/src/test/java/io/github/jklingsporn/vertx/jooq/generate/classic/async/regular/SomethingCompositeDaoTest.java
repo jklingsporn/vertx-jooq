@@ -5,7 +5,8 @@ import generated.classic.async.regular.tables.daos.SomethingcompositeDao;
 import generated.classic.async.regular.tables.pojos.Somethingcomposite;
 import generated.classic.async.regular.tables.records.SomethingcompositeRecord;
 import io.github.jklingsporn.vertx.jooq.generate.AsyncDatabaseClientProvider;
-import io.github.jklingsporn.vertx.jooq.generate.AsyncDatabaseConfigurationProvider;
+import io.github.jklingsporn.vertx.jooq.generate.Credentials;
+import io.github.jklingsporn.vertx.jooq.generate.MySQLConfigurationProvider;
 import io.github.jklingsporn.vertx.jooq.generate.classic.ClassicTestBase;
 import io.vertx.core.Future;
 import io.vertx.core.json.JsonObject;
@@ -24,12 +25,12 @@ import java.util.concurrent.CountDownLatch;
 public class SomethingCompositeDaoTest extends ClassicTestBase<Somethingcomposite, Record2<Integer,Integer>, JsonObject, SomethingcompositeDao> {
 
     public SomethingCompositeDaoTest() {
-        super(Tables.SOMETHINGCOMPOSITE.SOMEJSONOBJECT, new SomethingcompositeDao(AsyncDatabaseConfigurationProvider.getInstance().createDAOConfiguration(), AsyncDatabaseClientProvider.getInstance().getClient()));
+        super(Tables.SOMETHINGCOMPOSITE.SOMEJSONOBJECT, new SomethingcompositeDao(MySQLConfigurationProvider.getInstance().createDAOConfiguration(), AsyncDatabaseClientProvider.getInstance().getClient(Credentials.MYSQL)));
     }
 
     @BeforeClass
     public static void beforeClass() throws Exception {
-        AsyncDatabaseConfigurationProvider.getInstance().setupDatabase();
+        MySQLConfigurationProvider.getInstance().setupDatabase();
     }
 
     @Override

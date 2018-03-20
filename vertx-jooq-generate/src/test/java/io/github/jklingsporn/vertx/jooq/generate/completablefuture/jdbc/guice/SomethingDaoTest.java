@@ -3,7 +3,7 @@ package io.github.jklingsporn.vertx.jooq.generate.completablefuture.jdbc.guice;
 import generated.cf.jdbc.guice.vertx.Tables;
 import generated.cf.jdbc.guice.vertx.tables.daos.SomethingDao;
 import generated.cf.jdbc.guice.vertx.tables.pojos.Something;
-import io.github.jklingsporn.vertx.jooq.generate.JDBCDatabaseConfigurationProvider;
+import io.github.jklingsporn.vertx.jooq.generate.HsqldbConfigurationProvider;
 import io.github.jklingsporn.vertx.jooq.generate.completablefuture.CompletableFutureTestBase;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonArray;
@@ -21,12 +21,12 @@ import java.util.Random;
 public class SomethingDaoTest extends CompletableFutureTestBase<Something, Integer, Long, SomethingDao> {
 
     public SomethingDaoTest() {
-        super(Tables.SOMETHING.SOMEHUGENUMBER, new SomethingDao(JDBCDatabaseConfigurationProvider.getInstance().createDAOConfiguration(), Vertx.vertx()));
+        super(Tables.SOMETHING.SOMEHUGENUMBER, new SomethingDao(HsqldbConfigurationProvider.getInstance().createDAOConfiguration(), Vertx.vertx()));
     }
 
     @BeforeClass
     public static void beforeClass() throws Exception {
-        JDBCDatabaseConfigurationProvider.getInstance().setupDatabase();
+        HsqldbConfigurationProvider.getInstance().setupDatabase();
     }
 
     @Override

@@ -4,7 +4,7 @@ import generated.rx.jdbc.regular.vertx.Tables;
 import generated.rx.jdbc.regular.vertx.tables.daos.SomethingcompositeDao;
 import generated.rx.jdbc.regular.vertx.tables.pojos.Somethingcomposite;
 import generated.rx.jdbc.regular.vertx.tables.records.SomethingcompositeRecord;
-import io.github.jklingsporn.vertx.jooq.generate.JDBCDatabaseConfigurationProvider;
+import io.github.jklingsporn.vertx.jooq.generate.HsqldbConfigurationProvider;
 import io.github.jklingsporn.vertx.jooq.generate.rx.RXTestBase;
 import io.vertx.core.json.JsonObject;
 import io.vertx.reactivex.core.Vertx;
@@ -22,12 +22,12 @@ public class SomethingCompositeDaoTest extends RXTestBase<Somethingcomposite, Re
 
 
     public SomethingCompositeDaoTest() {
-        super(Tables.SOMETHINGCOMPOSITE.SOMEJSONOBJECT, new SomethingcompositeDao(JDBCDatabaseConfigurationProvider.getInstance().createDAOConfiguration(), Vertx.vertx()));
+        super(Tables.SOMETHINGCOMPOSITE.SOMEJSONOBJECT, new SomethingcompositeDao(HsqldbConfigurationProvider.getInstance().createDAOConfiguration(), Vertx.vertx()));
     }
 
     @BeforeClass
     public static void beforeClass() throws Exception {
-        JDBCDatabaseConfigurationProvider.getInstance().setupDatabase();
+        HsqldbConfigurationProvider.getInstance().setupDatabase();
     }
 
     @Override

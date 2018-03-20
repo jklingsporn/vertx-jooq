@@ -47,6 +47,10 @@ public abstract class AbstractReactiveVertxDAO<R extends UpdatableRecord<R>, P, 
     @Override
     public INSERT_RETURNING insertReturningPrimary(P object) {
         DSLContext dslContext = DSL.using(configuration());
-        return queryExecutor().insertReturning(dslContext.insertInto(getTable()).set(newRecord(dslContext, object)).returning(getTable().getPrimaryKey().getFieldsArray()), keyConverter());
+        return queryExecutor().insertReturning(dslContext
+                .insertInto(getTable())
+                .set(newRecord(dslContext, object))
+                .returning(getTable().getPrimaryKey().getFieldsArray()),
+                keyConverter());
     }
 }

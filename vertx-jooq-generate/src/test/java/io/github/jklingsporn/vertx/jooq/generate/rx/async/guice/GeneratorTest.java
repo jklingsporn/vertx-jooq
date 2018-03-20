@@ -1,7 +1,7 @@
 package io.github.jklingsporn.vertx.jooq.generate.rx.async.guice;
 
 import io.github.jklingsporn.vertx.jooq.generate.AbstractVertxGeneratorTest;
-import io.github.jklingsporn.vertx.jooq.generate.AsyncDatabaseConfigurationProvider;
+import io.github.jklingsporn.vertx.jooq.generate.MySQLConfigurationProvider;
 import io.github.jklingsporn.vertx.jooq.generate.VertxGeneratorStrategy;
 import io.github.jklingsporn.vertx.jooq.generate.rx.RXAsyncGuiceVertxGenerator;
 
@@ -12,7 +12,7 @@ public class GeneratorTest extends AbstractVertxGeneratorTest{
 
 
     public GeneratorTest() {
-        super(RXAsyncGuiceVertxGenerator.class, VertxGeneratorStrategy.class,"rx.async.guice", AsyncDatabaseConfigurationProvider.getInstance());
+        super(RXAsyncGuiceVertxGenerator.class, VertxGeneratorStrategy.class,"rx.async.guice", MySQLConfigurationProvider.getInstance());
     }
 
 }

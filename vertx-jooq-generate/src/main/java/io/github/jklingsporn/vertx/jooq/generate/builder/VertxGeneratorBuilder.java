@@ -212,7 +212,7 @@ public class VertxGeneratorBuilder {
                     out.println();
                     out.tab(1).override();
                     out.tab(1).println("protected java.util.function.Function<Object,%s> keyConverter(){", tType);
-                    out.tab(2).println("return lastId -> %s.valueOf(((Long)lastId).%sValue());", tType, SUPPORTED_INSERT_RETURNING_TYPES_MAP.get(tType));
+                    out.tab(2).println("return lastId -> %s.valueOf(((%s)lastId).getLong(0).%sValue());", tType, JsonArray.class.getName(), SUPPORTED_INSERT_RETURNING_TYPES_MAP.get(tType));
                     out.tab(1).println("}");
                 } else {
                     out.println();
@@ -244,7 +244,7 @@ public class VertxGeneratorBuilder {
                             .setWriteConstructorDelegate((out, className, tableIdentifier, tableRecord, pType, tType) -> {
                                 out.tab(1).javadoc("@param configuration Used for rendering, so only SQLDialect must be set and must be one of the MYSQL types or POSTGRES.\n     * @param delegate A configured AsyncSQLClient that is used for query execution");
                                 out.tab(1).println("public %s(%s configuration, io.vertx.ext.asyncsql.AsyncSQLClient delegate) {", className, Configuration.class);
-                                out.tab(2).println("super(%s, %s.class, new %s(delegate,%s::new, %s), configuration);", tableIdentifier, pType, base.renderQueryExecutor(tableRecord, pType, tType),pType, tableIdentifier);
+                                out.tab(2).println("super(%s, %s.class, new %s(delegate,%s::new, %s, isMysql(configuration)), configuration);", tableIdentifier, pType, base.renderQueryExecutor(tableRecord, pType, tType),pType, tableIdentifier);
                                 out.tab(1).println("}");
                             })
 
@@ -257,7 +257,7 @@ public class VertxGeneratorBuilder {
                                 out.tab(1).javadoc("@param configuration Used for rendering, so only SQLDialect must be set and must be one of the MYSQL types or POSTGRES.\n" +
                                         "     * @param vertx the vertx instance\n     * @param delegate A configured AsyncSQLClient that is used for query execution");
                                 out.tab(1).println("public %s(%s configuration, %s vertx, io.vertx.ext.asyncsql.AsyncSQLClient delegate) {", className, Configuration.class, base.renderFQVertxName());
-                                out.tab(2).println("super(%s, %s.class, new %s(vertx,delegate,%s::new, %s), configuration);", tableIdentifier, pType, base.renderQueryExecutor(tableRecord, pType, tType),pType,tableIdentifier);
+                                out.tab(2).println("super(%s, %s.class, new %s(vertx,delegate,%s::new, %s, isMysql(configuration)), configuration);", tableIdentifier, pType, base.renderQueryExecutor(tableRecord, pType, tType),pType,tableIdentifier);
                                 out.tab(1).println("}");
                             })
 
@@ -269,7 +269,7 @@ public class VertxGeneratorBuilder {
                             .setWriteConstructorDelegate((out, className, tableIdentifier, tableRecord, pType, tType) -> {
                                 out.tab(1).javadoc("@param configuration Used for rendering, so only SQLDialect must be set and must be one of the MYSQL types or POSTGRES.\n     * @param delegate A configured AsyncSQLClient that is used for query execution");
                                 out.tab(1).println("public %s(%s configuration,io.vertx.reactivex.ext.asyncsql.AsyncSQLClient delegate) {", className, Configuration.class);
-                                out.tab(2).println("super(%s, %s.class, new %s(delegate,%s::new, %s), configuration);", tableIdentifier, pType, base.renderQueryExecutor(tableRecord, pType, tType),pType,tableIdentifier);
+                                out.tab(2).println("super(%s, %s.class, new %s(delegate,%s::new, %s, isMysql(configuration)), configuration);", tableIdentifier, pType, base.renderQueryExecutor(tableRecord, pType, tType),pType,tableIdentifier);
                                 out.tab(1).println("}");
                             })
 

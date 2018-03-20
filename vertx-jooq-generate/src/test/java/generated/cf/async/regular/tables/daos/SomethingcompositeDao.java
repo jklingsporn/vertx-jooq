@@ -40,7 +40,7 @@ public class SomethingcompositeDao extends AbstractAsyncVertxDAO<Somethingcompos
      * @param delegate A configured AsyncSQLClient that is used for query execution
      */
     public SomethingcompositeDao(Configuration configuration, io.vertx.core.Vertx vertx, io.vertx.ext.asyncsql.AsyncSQLClient delegate) {
-        super(Somethingcomposite.SOMETHINGCOMPOSITE, generated.cf.async.regular.tables.pojos.Somethingcomposite.class, new AsyncCompletableFutureQueryExecutor<SomethingcompositeRecord,generated.cf.async.regular.tables.pojos.Somethingcomposite,Record2<Integer, Integer>>(vertx,delegate,generated.cf.async.regular.tables.pojos.Somethingcomposite::new, Somethingcomposite.SOMETHINGCOMPOSITE), configuration);
+        super(Somethingcomposite.SOMETHINGCOMPOSITE, generated.cf.async.regular.tables.pojos.Somethingcomposite.class, new AsyncCompletableFutureQueryExecutor<SomethingcompositeRecord,generated.cf.async.regular.tables.pojos.Somethingcomposite,Record2<Integer, Integer>>(vertx,delegate,generated.cf.async.regular.tables.pojos.Somethingcomposite::new, Somethingcomposite.SOMETHINGCOMPOSITE, isMysql(configuration)), configuration);
     }
 
     /**

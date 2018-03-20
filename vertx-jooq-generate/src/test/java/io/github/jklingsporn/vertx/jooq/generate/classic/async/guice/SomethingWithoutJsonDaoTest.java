@@ -4,7 +4,8 @@ import generated.classic.async.guice.Tables;
 import generated.classic.async.guice.tables.daos.SomethingwithoutjsonDao;
 import generated.classic.async.guice.tables.pojos.Somethingwithoutjson;
 import io.github.jklingsporn.vertx.jooq.generate.AsyncDatabaseClientProvider;
-import io.github.jklingsporn.vertx.jooq.generate.AsyncDatabaseConfigurationProvider;
+import io.github.jklingsporn.vertx.jooq.generate.Credentials;
+import io.github.jklingsporn.vertx.jooq.generate.MySQLConfigurationProvider;
 import io.github.jklingsporn.vertx.jooq.generate.classic.ClassicTestBase;
 import org.jooq.Condition;
 import org.junit.Assert;
@@ -18,12 +19,12 @@ import java.util.Random;
 public class SomethingWithoutJsonDaoTest extends ClassicTestBase<Somethingwithoutjson, Integer, String, SomethingwithoutjsonDao> {
 
     public SomethingWithoutJsonDaoTest() {
-        super(Tables.SOMETHINGWITHOUTJSON.SOMESTRING, new SomethingwithoutjsonDao(AsyncDatabaseConfigurationProvider.getInstance().createDAOConfiguration(), AsyncDatabaseClientProvider.getInstance().getClient()));
+        super(Tables.SOMETHINGWITHOUTJSON.SOMESTRING, new SomethingwithoutjsonDao(MySQLConfigurationProvider.getInstance().createDAOConfiguration(), AsyncDatabaseClientProvider.getInstance().getClient(Credentials.MYSQL)));
     }
 
     @BeforeClass
     public static void beforeClass() throws Exception {
-        AsyncDatabaseConfigurationProvider.getInstance().setupDatabase();
+        MySQLConfigurationProvider.getInstance().setupDatabase();
     }
 
     @Override

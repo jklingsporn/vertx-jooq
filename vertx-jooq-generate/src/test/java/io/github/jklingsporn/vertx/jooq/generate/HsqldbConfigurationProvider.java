@@ -13,16 +13,16 @@ import java.sql.SQLException;
 /**
  * Created by jensklingsporn on 02.11.16.
  */
-public class JDBCDatabaseConfigurationProvider extends AbstractDatabaseConfigurationProvider {
+public class HsqldbConfigurationProvider extends AbstractDatabaseConfigurationProvider {
 
-    private static JDBCDatabaseConfigurationProvider INSTANCE;
-    public static JDBCDatabaseConfigurationProvider getInstance() {
-        return INSTANCE == null ? INSTANCE = new JDBCDatabaseConfigurationProvider() : INSTANCE;
+    private static HsqldbConfigurationProvider INSTANCE;
+    public static HsqldbConfigurationProvider getInstance() {
+        return INSTANCE == null ? INSTANCE = new HsqldbConfigurationProvider() : INSTANCE;
     }
 
     @Override
     public void setupDatabase() throws Exception {
-        try(Connection connection = DriverManager.getConnection("jdbc:hsqldb:mem:test", "test", "")){
+        try(Connection connection = DriverManager.getConnection("jdbc:hsqldb:mem:test", Credentials.HSQLDB.getUser(), Credentials.HSQLDB.getPassword())){
             connection.prepareStatement("DROP SCHEMA IF EXISTS vertx CASCADE").execute();
             connection.prepareStatement("CREATE SCHEMA vertx").execute();
             connection.prepareStatement("SET SCHEMA vertx").execute();
@@ -55,10 +55,9 @@ public class JDBCDatabaseConfigurationProvider extends AbstractDatabaseConfigura
         Jdbc jdbcConfig = new Jdbc();
         jdbcConfig.setDriver("org.hsqldb.jdbcDriver");
         jdbcConfig.setUrl("jdbc:hsqldb:mem:test");
-        jdbcConfig.setUser("test");
-        jdbcConfig.setPassword("");
-        Configuration generatorConfig = createGeneratorConfig(generatorName, packageName, generatorStrategy, jdbcConfig, HSQLDBDatabase.class.getName());
-        return generatorConfig;
+        jdbcConfig.setUser(Credentials.HSQLDB.getUser());
+        jdbcConfig.setPassword(Credentials.HSQLDB.getPassword());
+        return createGeneratorConfig(generatorName, packageName, generatorStrategy, jdbcConfig, HSQLDBDatabase.class.getName());
     }
 
     @Override

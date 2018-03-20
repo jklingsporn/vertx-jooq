@@ -26,13 +26,16 @@ import java.util.function.Function;
 public class AsyncCompletableFutureGenericQueryExecutor extends AbstractAsyncQueryExecutor<CompletableFuture<List<JsonObject>>, CompletableFuture<JsonObject>, CompletableFuture<Integer>> {
 
     protected final Vertx vertx;
-    protected final AsyncSQLClient delegate;
 
     public AsyncCompletableFutureGenericQueryExecutor(Vertx vertx, AsyncSQLClient delegate) {
+        super(delegate);
         this.vertx = vertx;
-        this.delegate = delegate;
     }
 
+    public AsyncCompletableFutureGenericQueryExecutor(Vertx vertx, AsyncSQLClient delegate, boolean isMysql) {
+        super(delegate,isMysql);
+        this.vertx = vertx;
+    }
 
 
     /**

@@ -4,7 +4,7 @@ import generated.cf.jdbc.regular.vertx.Tables;
 import generated.cf.jdbc.regular.vertx.tables.daos.SomethingcompositeDao;
 import generated.cf.jdbc.regular.vertx.tables.pojos.Somethingcomposite;
 import generated.cf.jdbc.regular.vertx.tables.records.SomethingcompositeRecord;
-import io.github.jklingsporn.vertx.jooq.generate.JDBCDatabaseConfigurationProvider;
+import io.github.jklingsporn.vertx.jooq.generate.HsqldbConfigurationProvider;
 import io.github.jklingsporn.vertx.jooq.generate.completablefuture.CompletableFutureTestBase;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
@@ -22,12 +22,12 @@ public class SomethingCompositeDaoTest extends CompletableFutureTestBase<Somethi
 
 
     public SomethingCompositeDaoTest() {
-        super(Tables.SOMETHINGCOMPOSITE.SOMEJSONOBJECT, new SomethingcompositeDao(JDBCDatabaseConfigurationProvider.getInstance().createDAOConfiguration(), Vertx.vertx()));
+        super(Tables.SOMETHINGCOMPOSITE.SOMEJSONOBJECT, new SomethingcompositeDao(HsqldbConfigurationProvider.getInstance().createDAOConfiguration(), Vertx.vertx()));
     }
 
     @BeforeClass
     public static void beforeClass() throws Exception {
-        JDBCDatabaseConfigurationProvider.getInstance().setupDatabase();
+        HsqldbConfigurationProvider.getInstance().setupDatabase();
     }
 
     @Override

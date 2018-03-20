@@ -36,7 +36,7 @@ public class SomethingwithoutjsonDao extends AbstractAsyncVertxDAO<Somethingwith
      * @param delegate A configured AsyncSQLClient that is used for query execution
      */
     public SomethingwithoutjsonDao(Configuration configuration, io.vertx.ext.asyncsql.AsyncSQLClient delegate) {
-        super(Somethingwithoutjson.SOMETHINGWITHOUTJSON, generated.classic.async.regular.tables.pojos.Somethingwithoutjson.class, new AsyncClassicQueryExecutor<SomethingwithoutjsonRecord,generated.classic.async.regular.tables.pojos.Somethingwithoutjson,Integer>(delegate,generated.classic.async.regular.tables.pojos.Somethingwithoutjson::new, Somethingwithoutjson.SOMETHINGWITHOUTJSON), configuration);
+        super(Somethingwithoutjson.SOMETHINGWITHOUTJSON, generated.classic.async.regular.tables.pojos.Somethingwithoutjson.class, new AsyncClassicQueryExecutor<SomethingwithoutjsonRecord,generated.classic.async.regular.tables.pojos.Somethingwithoutjson,Integer>(delegate,generated.classic.async.regular.tables.pojos.Somethingwithoutjson::new, Somethingwithoutjson.SOMETHINGWITHOUTJSON, isMysql(configuration)), configuration);
     }
 
     /**
@@ -56,6 +56,6 @@ public class SomethingwithoutjsonDao extends AbstractAsyncVertxDAO<Somethingwith
 
     @Override
     protected java.util.function.Function<Object,Integer> keyConverter(){
-        return lastId -> Integer.valueOf(((Long)lastId).intValue());
+        return lastId -> Integer.valueOf(((io.vertx.core.json.JsonArray)lastId).getLong(0).intValue());
     }
 }
