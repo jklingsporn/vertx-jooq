@@ -7,7 +7,6 @@ import io.vertx.core.json.JsonArray;
 import org.jooq.*;
 import org.jooq.impl.DSL;
 
-import java.util.EnumSet;
 import java.util.function.Function;
 
 /**
@@ -22,13 +21,11 @@ import java.util.function.Function;
  */
 public abstract class AbstractAsyncVertxDAO<R extends UpdatableRecord<R>, P, T, FIND_MANY, FIND_ONE,EXECUTE, INSERT_RETURNING> extends AbstractVertxDAO<R,P,T,FIND_MANY,FIND_ONE, EXECUTE, INSERT_RETURNING>{
 
-    static EnumSet<SQLDialect> SUPPORTED_DIALECTS = EnumSet.of(SQLDialect.MYSQL,SQLDialect.MYSQL_5_7,SQLDialect.MYSQL_8_0,SQLDialect.POSTGRES,SQLDialect.POSTGRES_9_3,SQLDialect.POSTGRES_9_4,SQLDialect.POSTGRES_9_5);
-
     private final Function<Object,T> keyConverter;
 
     protected AbstractAsyncVertxDAO(Table<R> table, Class<P> type, QueryExecutor<R, T, FIND_MANY, FIND_ONE, EXECUTE, INSERT_RETURNING> queryExecutor, Configuration configuration) {
         super(table, type, queryExecutor, configuration);
-        Arguments.require(SUPPORTED_DIALECTS.contains(configuration.dialect()),"Only Postgres and MySQL supported");
+        Arguments.require(isMysql(configuration) || isPostgres(configuration),"Only Postgres and MySQL supported");
         if(isMysql(configuration)){
             keyConverter = keyConverter();
         }else{
@@ -60,6 +57,10 @@ public abstract class AbstractAsyncVertxDAO<R extends UpdatableRecord<R>, P, T, 
 
     protected static boolean isMysql(Configuration configuration){
         return SQLDialect.MYSQL.equals(configuration.dialect().family());
+    }
+
+    protected static boolean isPostgres(Configuration configuration){
+        return SQLDialect.POSTGRES.equals(configuration.dialect().family());
     }
 
     @Override

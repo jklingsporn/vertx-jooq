@@ -63,9 +63,4 @@ public class SomethingcompositeDao extends AbstractAsyncVertxDAO<Somethingcompos
     public Single<List<generated.rx.async.regular.tables.pojos.Somethingcomposite>> findManyBySomejsonobject(List<JsonObject> values) {
         return findManyByCondition(Somethingcomposite.SOMETHINGCOMPOSITE.SOMEJSONOBJECT.in(values));
     }
-
-    @Override
-    public Single<Record2<Integer, Integer>> insertReturningPrimary(generated.rx.async.regular.tables.pojos.Somethingcomposite pojo){
-        return Single.<Record2<Integer, Integer>>error(new UnsupportedOperationException("PK not numeric"));
-    }
 }

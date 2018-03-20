@@ -23,13 +23,13 @@ import java.util.function.Function;
  */
 public class VertxGeneratorBuilder {
 
-    static final Map<String,String> SUPPORTED_INSERT_RETURNING_TYPES_MAP;
+    static final Map<String,String> SUPPORTED_MYSQL_INSERT_RETURNING_TYPES_MAP;
     static{
-        SUPPORTED_INSERT_RETURNING_TYPES_MAP = new HashMap<>();
-        SUPPORTED_INSERT_RETURNING_TYPES_MAP.put(Byte.class.getSimpleName(), byte.class.getSimpleName());
-        SUPPORTED_INSERT_RETURNING_TYPES_MAP.put(Short.class.getSimpleName(), short.class.getSimpleName());
-        SUPPORTED_INSERT_RETURNING_TYPES_MAP.put(Integer.class.getSimpleName(), int.class.getSimpleName());
-        SUPPORTED_INSERT_RETURNING_TYPES_MAP.put(Long.class.getSimpleName(), long.class.getSimpleName());
+        SUPPORTED_MYSQL_INSERT_RETURNING_TYPES_MAP = new HashMap<>();
+        SUPPORTED_MYSQL_INSERT_RETURNING_TYPES_MAP.put(Byte.class.getSimpleName(), byte.class.getSimpleName());
+        SUPPORTED_MYSQL_INSERT_RETURNING_TYPES_MAP.put(Short.class.getSimpleName(), short.class.getSimpleName());
+        SUPPORTED_MYSQL_INSERT_RETURNING_TYPES_MAP.put(Integer.class.getSimpleName(), int.class.getSimpleName());
+        SUPPORTED_MYSQL_INSERT_RETURNING_TYPES_MAP.put(Long.class.getSimpleName(), long.class.getSimpleName());
     }
 
     enum APIType{
@@ -208,31 +208,11 @@ public class VertxGeneratorBuilder {
         public DIStep withAsyncDriver() {
             base.setRenderDAOExtendsDelegate(AbstractAsyncVertxDAO.class::getName);
             base.setOverwriteDAODelegate((out, className, tableIdentifier, tableRecord, pType, tType) -> {
-                if (SUPPORTED_INSERT_RETURNING_TYPES_MAP.containsKey(tType)) {
+                if (SUPPORTED_MYSQL_INSERT_RETURNING_TYPES_MAP.containsKey(tType)) {
                     out.println();
                     out.tab(1).override();
                     out.tab(1).println("protected java.util.function.Function<Object,%s> keyConverter(){", tType);
-                    out.tab(2).println("return lastId -> %s.valueOf(((%s)lastId).getLong(0).%sValue());", tType, JsonArray.class.getName(), SUPPORTED_INSERT_RETURNING_TYPES_MAP.get(tType));
-                    out.tab(1).println("}");
-                } else {
-                    out.println();
-                    out.tab(1).override();
-                    out.tab(1).println("public %s insertReturningPrimary(%s pojo){", base.renderInsertReturningType(tType), pType);
-                    switch (base.apiType) {
-                        case CLASSIC:
-                            out.tab(2).println("return Future.failedFuture(new UnsupportedOperationException(\"PK not numeric\"));");
-                            break;
-                        case COMPLETABLE_FUTURE:
-                            out.tab(2).println("CompletableFuture<%s> failed = new CompletableFuture<>();", tType);
-                            out.tab(2).println("failed.completeExceptionally(new UnsupportedOperationException(\"PK not numeric\"));", tType);
-                            out.tab(2).println("return failed;");
-                            break;
-                        case RX:
-                            out.tab(2).println("return Single.<%s>error(new UnsupportedOperationException(\"PK not numeric\"));", tType);
-                            break;
-                        default:
-                            throw new UnsupportedOperationException(base.apiType.toString());
-                    }
+                    out.tab(2).println("return lastId -> %s.valueOf(((%s)lastId).getLong(0).%sValue());", tType, JsonArray.class.getName(), SUPPORTED_MYSQL_INSERT_RETURNING_TYPES_MAP.get(tType));
                     out.tab(1).println("}");
                 }
             });

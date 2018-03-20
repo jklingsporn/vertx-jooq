@@ -64,11 +64,4 @@ public class SomethingcompositeDao extends AbstractAsyncVertxDAO<Somethingcompos
     public CompletableFuture<List<generated.cf.async.regular.tables.pojos.Somethingcomposite>> findManyBySomejsonobject(List<JsonObject> values) {
         return findManyByCondition(Somethingcomposite.SOMETHINGCOMPOSITE.SOMEJSONOBJECT.in(values));
     }
-
-    @Override
-    public CompletableFuture<Record2<Integer, Integer>> insertReturningPrimary(generated.cf.async.regular.tables.pojos.Somethingcomposite pojo){
-        CompletableFuture<Record2<Integer, Integer>> failed = new CompletableFuture<>();
-        failed.completeExceptionally(new UnsupportedOperationException("PK not numeric"));
-        return failed;
-    }
 }

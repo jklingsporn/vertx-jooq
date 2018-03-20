@@ -64,9 +64,4 @@ public class SomethingcompositeDao extends AbstractAsyncVertxDAO<Somethingcompos
     public Future<List<generated.classic.async.guice.tables.pojos.Somethingcomposite>> findManyBySomejsonobject(List<JsonObject> values) {
         return findManyByCondition(Somethingcomposite.SOMETHINGCOMPOSITE.SOMEJSONOBJECT.in(values));
     }
-
-    @Override
-    public Future<Record2<Integer, Integer>> insertReturningPrimary(generated.classic.async.guice.tables.pojos.Somethingcomposite pojo){
-        return Future.failedFuture(new UnsupportedOperationException("PK not numeric"));
-    }
 }
