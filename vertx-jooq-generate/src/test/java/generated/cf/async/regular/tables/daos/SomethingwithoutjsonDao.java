@@ -7,7 +7,7 @@ package generated.cf.async.regular.tables.daos;
 import generated.cf.async.regular.tables.Somethingwithoutjson;
 import generated.cf.async.regular.tables.records.SomethingwithoutjsonRecord;
 
-import io.github.jklingsporn.vertx.jooq.shared.internal.async.AbstractAsyncVertxDAO;
+import io.github.jklingsporn.vertx.jooq.shared.async.AbstractAsyncVertxDAO;
 
 import java.util.List;
 

@@ -3,7 +3,6 @@ package io.github.jklingsporn.vertx.jooq.generate.builder;
 import io.github.jklingsporn.vertx.jooq.shared.JsonArrayConverter;
 import io.github.jklingsporn.vertx.jooq.shared.JsonObjectConverter;
 import io.github.jklingsporn.vertx.jooq.shared.internal.AbstractVertxDAO;
-import io.github.jklingsporn.vertx.jooq.shared.internal.async.AbstractAsyncVertxDAO;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
@@ -206,14 +205,14 @@ public class VertxGeneratorBuilder {
 
         @Override
         public DIStep withAsyncDriver() {
-            base.setRenderDAOExtendsDelegate(AbstractAsyncVertxDAO.class::getName);
-            base.setOverwriteDAODelegate((out, className, tableIdentifier, tableRecord, pType, tType) -> {
-                if (SUPPORTED_MYSQL_INSERT_RETURNING_TYPES_MAP.containsKey(tType)) {
-                    out.println();
-                    out.tab(1).override();
-                    out.tab(1).println("protected java.util.function.Function<Object,%s> keyConverter(){", tType);
-                    out.tab(2).println("return lastId -> %s.valueOf(((%s)lastId).getLong(0).%sValue());", tType, JsonArray.class.getName(), SUPPORTED_MYSQL_INSERT_RETURNING_TYPES_MAP.get(tType));
-                    out.tab(1).println("}");
+            base.setRenderDAOExtendsDelegate(()->"io.github.jklingsporn.vertx.jooq.shared.async.AbstractAsyncVertxDAO");
+                    base.setOverwriteDAODelegate((out, className, tableIdentifier, tableRecord, pType, tType) -> {
+                        if (SUPPORTED_MYSQL_INSERT_RETURNING_TYPES_MAP.containsKey(tType)) {
+                            out.println();
+                            out.tab(1).override();
+                            out.tab(1).println("protected java.util.function.Function<Object,%s> keyConverter(){", tType);
+                            out.tab(2).println("return lastId -> %s.valueOf(((%s)lastId).getLong(0).%sValue());", tType, JsonArray.class.getName(), SUPPORTED_MYSQL_INSERT_RETURNING_TYPES_MAP.get(tType));
+                            out.tab(1).println("}");
                 }
             });
             switch (base.apiType) {

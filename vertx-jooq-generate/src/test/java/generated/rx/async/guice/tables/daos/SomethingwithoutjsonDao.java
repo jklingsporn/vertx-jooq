@@ -7,7 +7,7 @@ package generated.rx.async.guice.tables.daos;
 import generated.rx.async.guice.tables.Somethingwithoutjson;
 import generated.rx.async.guice.tables.records.SomethingwithoutjsonRecord;
 
-import io.github.jklingsporn.vertx.jooq.shared.internal.async.AbstractAsyncVertxDAO;
+import io.github.jklingsporn.vertx.jooq.shared.async.AbstractAsyncVertxDAO;
 
 import java.util.List;
 

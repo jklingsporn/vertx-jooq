@@ -6,7 +6,6 @@ import io.vertx.core.impl.Arguments;
 import org.jooq.*;
 import org.jooq.impl.DSL;
 
-import java.util.EnumSet;
 import java.util.function.Function;
 
 /**
@@ -21,11 +20,9 @@ import java.util.function.Function;
  */
 public abstract class AbstractReactiveVertxDAO<R extends UpdatableRecord<R>, P, T, FIND_MANY, FIND_ONE,EXECUTE, INSERT_RETURNING> extends AbstractVertxDAO<R,P,T,FIND_MANY,FIND_ONE, EXECUTE, INSERT_RETURNING>{
 
-    static EnumSet<SQLDialect> SUPPORTED_DIALECTS = EnumSet.of(SQLDialect.POSTGRES,SQLDialect.POSTGRES_9_3,SQLDialect.POSTGRES_9_4,SQLDialect.POSTGRES_9_5);
-
     protected AbstractReactiveVertxDAO(Table<R> table, Class<P> type, QueryExecutor<R, T, FIND_MANY, FIND_ONE, EXECUTE, INSERT_RETURNING> queryExecutor, Configuration configuration) {
         super(table, type, queryExecutor, configuration);
-        Arguments.require(SUPPORTED_DIALECTS.contains(configuration.dialect()),"Only Postgres supported");
+        Arguments.require(SQLDialect.POSTGRES.equals(configuration.dialect().family()),"Only Postgres supported");
     }
 
     @SuppressWarnings("unchecked")

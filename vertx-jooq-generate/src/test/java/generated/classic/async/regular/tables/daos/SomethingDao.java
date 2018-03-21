@@ -8,7 +8,7 @@ import generated.classic.async.regular.enums.SomethingSomeenum;
 import generated.classic.async.regular.tables.Something;
 import generated.classic.async.regular.tables.records.SomethingRecord;
 
-import io.github.jklingsporn.vertx.jooq.shared.internal.async.AbstractAsyncVertxDAO;
+import io.github.jklingsporn.vertx.jooq.shared.async.AbstractAsyncVertxDAO;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 

@@ -1,4 +1,4 @@
-package io.github.jklingsporn.vertx.jooq.shared.internal.async;
+package io.github.jklingsporn.vertx.jooq.shared.async;
 
 import io.github.jklingsporn.vertx.jooq.shared.internal.AbstractVertxDAO;
 import io.github.jklingsporn.vertx.jooq.shared.internal.QueryExecutor;

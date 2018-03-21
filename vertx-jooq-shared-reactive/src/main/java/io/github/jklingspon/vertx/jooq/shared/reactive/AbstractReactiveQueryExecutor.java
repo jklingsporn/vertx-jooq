@@ -1,12 +1,10 @@
 package io.github.jklingspon.vertx.jooq.shared.reactive;
 
 import com.julienviet.pgclient.Tuple;
-import io.github.jklingsporn.vertx.jooq.shared.internal.QueryExecutor;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 import org.jooq.Param;
 import org.jooq.Query;
-import org.jooq.UpdatableRecord;
 import org.jooq.conf.ParamType;
 
 import java.util.ArrayList;
@@ -14,7 +12,7 @@ import java.util.ArrayList;
 /**
  * @author jensklingsporn
  */
-public abstract class AbstractReactiveQueryExecutor<R extends UpdatableRecord<R>, T, FIND_MANY, FIND_ONE,EXECUTE, INSERT_RETURNING> implements QueryExecutor<R, T, FIND_MANY, FIND_ONE,EXECUTE, INSERT_RETURNING> {
+public abstract class AbstractReactiveQueryExecutor {
 
     private static final Logger logger = LoggerFactory.getLogger(AbstractReactiveQueryExecutor.class);
 

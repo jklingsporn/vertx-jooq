@@ -1,4 +1,4 @@
-package io.github.jklingsporn.vertx.jooq.shared.internal.async;
+package io.github.jklingsporn.vertx.jooq.shared.async;
 
 import org.jooq.Query;
 import org.jooq.Record;

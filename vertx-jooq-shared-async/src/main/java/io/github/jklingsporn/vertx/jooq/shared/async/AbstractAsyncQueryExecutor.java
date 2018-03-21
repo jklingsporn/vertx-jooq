@@ -1,6 +1,5 @@
 package io.github.jklingsporn.vertx.jooq.shared.async;
 
-import io.github.jklingsporn.vertx.jooq.shared.internal.async.AsyncQueryExecutor;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
