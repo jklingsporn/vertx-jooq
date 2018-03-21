@@ -8,8 +8,6 @@ import org.jooq.exception.TooManyRowsException;
 import org.jooq.impl.DSL;
 import org.junit.Assert;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.List;
@@ -24,8 +22,6 @@ import java.util.stream.Collectors;
  * Created by jensklingsporn on 09.02.18.
  */
 public abstract class CompletableFutureTestBase<P,T,O, DAO extends GenericVertxDAO<P, T, CompletableFuture<List<P>>, CompletableFuture<P>, CompletableFuture<Integer>, CompletableFuture<T>>> {
-
-    private static final Logger logger = LoggerFactory.getLogger(CompletableFutureTestBase.class);
 
     private final TableField<?,O> otherfield;
     protected final DAO dao;
@@ -76,7 +72,7 @@ public abstract class CompletableFutureTestBase<P,T,O, DAO extends GenericVertxD
     protected <T> BiConsumer<T,Throwable> countdownLatchHandler(final CountDownLatch latch){
         return (res,x)->{
             if(x!=null){
-                logger.error(x.getMessage(),x);
+                x.printStackTrace();
                 Assert.fail(x.getMessage());
             }
             latch.countDown();

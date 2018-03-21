@@ -78,8 +78,8 @@ If you are new to jOOQ, I recommend to read the awesome [jOOQ documentation](htt
 
               <!-- Generator parameters -->
               <generator>
-                  <name>io.github.jklingsporn.vertx.jooq.generate.VertxGenerator</name>
-                  <!-- use 'io.github.jklingsporn.vertx.jooq.generate.rx.VertxGuiceRXGenerator' to enable Guice DI -->
+                  <name>io.github.jklingsporn.vertx.jooq.generate.rx.RXAsyncVertxGenerator</name>
+                  <!-- use 'io.github.jklingsporn.vertx.jooq.generate.rx.RXAsyncGuiceVertxGenerator' to enable Guice DI -->
                   <database>
                       <name>org.jooq.util.mysql.MySQLDatabase</name>
                       <includes>.*</includes>
@@ -121,7 +121,7 @@ If you are new to jOOQ, I recommend to read the awesome [jOOQ documentation](htt
 
 
                   <strategy>
-                      <name>io.github.jklingsporn.vertx.jooq.generate.rx.AsyncRXVertxGeneratorStrategy</name>
+                      <name>io.github.jklingsporn.vertx.jooq.generate.VertxGeneratorStrategy</name>
                   </strategy>
               </generator>
 
@@ -178,7 +178,7 @@ task jooqGenerate {
                 password('YOUR_PASSWORD')
             }
             generator {
-                name('io.github.jklingsporn.vertx.jooq.generate.VertxGenerator')
+                name('io.github.jklingsporn.vertx.jooq.generate.rx.RXAsyncVertxGenerator')
                 database {
                     name('org.jooq.util.postgres.PostgresDatabase')
                     include('.*')
@@ -203,7 +203,7 @@ task jooqGenerate {
                     directory("$projectDir/src/main/java")
                 }
                 strategy {
-                    name('io.github.jklingsporn.vertx.jooq.generate.rx.AsyncRXVertxGeneratorStrategy')
+                    name('io.github.jklingsporn.vertx.jooq.generate.VertxGeneratorStrategy')
                 }
             }
         }

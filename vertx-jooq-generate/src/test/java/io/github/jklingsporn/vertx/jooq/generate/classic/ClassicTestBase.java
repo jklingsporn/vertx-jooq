@@ -11,8 +11,6 @@ import org.jooq.exception.TooManyRowsException;
 import org.jooq.impl.DSL;
 import org.junit.Assert;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.List;
@@ -26,8 +24,6 @@ import java.util.stream.Collectors;
  * Created by jensklingsporn on 09.02.18.
  */
 public abstract class ClassicTestBase<P,T,O, DAO extends GenericVertxDAO<P, T, Future<List<P>>, Future<P>, Future<Integer>, Future<T>>> {
-
-    private static final Logger logger = LoggerFactory.getLogger(ClassicTestBase.class);
 
     private final TableField<?,O> otherfield;
     protected final DAO dao;
@@ -58,7 +54,7 @@ public abstract class ClassicTestBase<P,T,O, DAO extends GenericVertxDAO<P, T, F
     protected <T> Handler<AsyncResult<T>> countdownLatchHandler(final CountDownLatch latch){
         return h->{
             if(h.failed()){
-                logger.error(h.cause().getMessage(),h.cause());
+                h.cause().printStackTrace();
                 Assert.fail(h.cause().getMessage());
             }
             latch.countDown();

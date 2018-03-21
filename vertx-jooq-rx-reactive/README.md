@@ -2,7 +2,7 @@
 ```
 <dependency>
   <groupId>io.github.jklingsporn</groupId>
-  <artifactId>vertx-jooq-rx-jdbc</artifactId>
+  <artifactId>vertx-jooq-rx-reactive</artifactId>
   <version>4.0.0-BETA</version>
 </dependency>
 ```
@@ -31,7 +31,7 @@ If you are new to jOOQ, I recommend to read the awesome [jOOQ documentation](htt
     </dependency>
     <dependency>
       <groupId>io.github.jklingsporn</groupId>
-      <artifactId>vertx-jooq-rx-jdbc</artifactId>
+      <artifactId>vertx-jooq-rx-reactive</artifactId>
       <version>4.0.0-BETA</version>
     </dependency>
   </dependencies>
@@ -78,8 +78,8 @@ If you are new to jOOQ, I recommend to read the awesome [jOOQ documentation](htt
 
               <!-- Generator parameters -->
               <generator>
-                  <name>io.github.jklingsporn.vertx.jooq.generate.rx.RXJDBCVertxGenerator</name>
-              		<!-- use 'io.github.jklingsporn.vertx.jooq.generate.rx.RXJDBCGuiceVertxGenerator' to enable Guice DI -->
+                  <name>io.github.jklingsporn.vertx.jooq.generate.rx.RXReactiveVertxGenerator</name>
+                  <!-- use 'io.github.jklingsporn.vertx.jooq.generate.rx.RXReactiveGuiceVertxGenerator' to enable Guice DI -->
                   <database>
                       <name>org.jooq.util.mysql.MySQLDatabase</name>
                       <includes>.*</includes>
@@ -178,7 +178,7 @@ task jooqGenerate {
                 password('YOUR_PASSWORD')
             }
             generator {
-                name('io.github.jklingsporn.vertx.jooq.generate.rx.RXJDBCVertxGenerator')
+                name('io.github.jklingsporn.vertx.jooq.generate.rx.RXReactiveVertxGenerator')
                 database {
                     name('org.jooq.util.postgres.PostgresDatabase')
                     include('.*')
@@ -221,24 +221,28 @@ of how to setup the generator programmatically.
 ## usage
 ```
 //Setup your jOOQ configuration
-Configuration configuration = ...
+Configuration configuration = new DefaultConfiguration();
+configuration.set(SQLDialect.POSTGRES);
+//no other DB-Configuration necessary because jOOQ is only used to render our statements - not for excecution
 
 //setup Vertx
 Vertx vertx = Vertx.vertx();
+//setup the client
+PgPoolOptions config = new PgPoolOptions().setHost("127.0.0.1").setPort(5432).setUsername("vertx").setDatabase("postgres").setPassword("password");
+PgClient client = PgClient.pool(vertx, config);
 
 //instantiate a DAO (which is generated for you)
-SomethingDao dao = new SomethingDao(configuration,vertx);
+SomethingDao dao = new SomethingDao(configuration, client);
 
 //fetch something with ID 123...
 dao.findOneById(123)
-    .doOnEvent((opt,x)->{
-				if(x==null){
-    				//findOne returns Optional for RX
-						opt.ifPresent(something -> vertx.eventBus().send("sendSomething",something.toJson()));
-				}else{
-						System.err.println("Something failed badly: "+x.getMessage());
-				}
-		});
+    .doOnEvent((something,x)->{
+        		if(x==null){
+            		opt.ifPresent(something -> vertx.eventBus().send("sendSomething",something.toJson()));
+        		}else{
+        				System.err.println("Something failed badly: "+x.getMessage());
+        		}
+        });
 
 //maybe consume it in another verticle
 vertx.eventBus().<JsonObject>consumer("sendSomething", jsonEvent->{
@@ -249,27 +253,22 @@ vertx.eventBus().<JsonObject>consumer("sendSomething", jsonEvent->{
     something.setSomeregularnumber(456);
     //... and update it into the DB
     Single<Integer> updatedFuture = dao.update(something);
+
 });
 
 //or do you prefer writing your own type-safe SQL?
-JDBCRXGenericQueryExecutor queryExecutor = new JDBCRXGenericQueryExecutor(configuration,vertx);
-Single<Integer> updatedCustom = queryExecutor.execute(dslContext ->
-				dslContext
-				.update(Tables.SOMETHING)
-				.set(Tables.SOMETHING.SOMEREGULARNUMBER,456)
-				.where(Tables.SOMETHING.SOMEID.eq(something.getSomeid()))
-				.execute()
-);
+ReactiveRXGenericQueryExecutor queryExecutor = new ReactiveRXGenericQueryExecutor(client);
+Single<Integer> updatedCustomFuture = queryExecutor.execute(DSL.using(configuration)
+			.update(Tables.SOMETHING)
+			.set(Tables.SOMETHING.SOMEREGULARNUMBER,456)
+			.where(Tables.SOMETHING.SOMEID.eq(something.getSomeid())));
 
 //check for completion
-updatedCustom.doOnEvent((updated,x)->{
-				if(x==null){
-						System.out.println("Rows updated: "+updated);
-				}else{
-						System.err.println("Something failed badly: "+x.getMessage());
-				}
-		 });
+updatedCustomFuture.doOnEvent((updated,x)->{
+			if(x==null){
+					System.out.println("Rows updated: "+updated);
+			}else{
+					System.err.println("Something failed badly: "+x.getMessage());
+			}
+	 });
 ```
-
-# known issues
-- Since jOOQ is using JDBC under the hood, the non-blocking fashion is achieved by using the `Vertx.executeBlocking` method.

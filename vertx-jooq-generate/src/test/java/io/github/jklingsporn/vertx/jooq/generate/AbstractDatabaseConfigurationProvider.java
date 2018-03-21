@@ -84,6 +84,8 @@ abstract class AbstractDatabaseConfigurationProvider {
 
         configuration.setJdbc(config);
 
+        configuration.setLogging(Logging.FATAL);
+
         return configuration;
     }
 

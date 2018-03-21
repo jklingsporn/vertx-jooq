@@ -61,19 +61,19 @@
         </dependency>
         <dependency>
             <groupId>io.github.jklingsporn</groupId>
-            <artifactId>vertx-jooq-classic-reactive-pg</artifactId>
+            <artifactId>vertx-jooq-classic-reactive</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>io.github.jklingsporn</groupId>
-            <artifactId>vertx-jooq-completablefuture-reactive-pg</artifactId>
+            <artifactId>vertx-jooq-completablefuture-reactive</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>io.github.jklingsporn</groupId>
-            <artifactId>vertx-jooq-rx-reactive-pg</artifactId>
+            <artifactId>vertx-jooq-rx-reactive</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
