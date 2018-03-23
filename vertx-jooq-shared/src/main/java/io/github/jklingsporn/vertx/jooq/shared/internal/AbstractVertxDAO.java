@@ -71,9 +71,18 @@ public abstract class AbstractVertxDAO<R extends UpdatableRecord<R>, P, T, FIND_
         return queryExecutor().execute(dslContext.update(getTable()).set(valuesToUpdate).where(where));
     }
 
+    private SelectConditionStep<R> selectQuery(Condition condition) {
+        return using(configuration()).selectFrom(getTable()).where(condition);
+    }
+
     @Override
-    public FIND_MANY findManyByCondition(Condition condition){
-        return queryExecutor().findMany(using(configuration()).selectFrom(getTable()).where(condition));
+    public FIND_MANY findManyByCondition(Condition condition) {
+        return queryExecutor().findMany(selectQuery(condition));
+    }
+
+    @Override
+    public FIND_MANY findManyByCondition(Condition condition, OrderField<?>... orderField) {
+        return queryExecutor().findMany(selectQuery(condition).orderBy(orderField));
     }
 
     @Override
