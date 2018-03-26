@@ -58,7 +58,7 @@ public abstract class ClassicTestBase<P,T,O, DAO extends GenericVertxDAO<P, T, F
     protected <T> Handler<AsyncResult<T>> countdownLatchHandler(final CountDownLatch latch){
         return h->{
             if(h.failed()){
-                logger.error(h.cause().getMessage(),h.cause());
+                logger.error(h.cause().getMessage(), h.cause());
                 Assert.fail(h.cause().getMessage());
             }
             latch.countDown();
@@ -212,5 +212,23 @@ public abstract class ClassicTestBase<P,T,O, DAO extends GenericVertxDAO<P, T, F
         await(latch);
     }
 
+    @Test
+    public void insertPojoOnDuplicateKeyShouldSucceedOnDuplicateEntry() throws InterruptedException {
+        CountDownLatch latch = new CountDownLatch(1);
+        P withId = createWithId();
+        dao
+                .insert(withId)
+                .compose(i -> {
+                    Assert.assertEquals(1L, i.longValue());
+                    return dao.insert(withId, true);
+                })
+                .compose(i -> {
+                    Assert.assertEquals(0L, i.longValue());
+                    return dao.deleteById(getId(withId));
+                })
+                .setHandler(countdownLatchHandler(latch))
+                ;
+        await(latch);
+    }
 
 }

@@ -18,11 +18,20 @@ public interface GenericVertxDAO<P, T, FIND_MANY, FIND_ONE, EXECUTE, INSERT_RETU
 
 
     /**
-     * Performs an async <code>INSERT</code> statement for a given POJO
+     * Performs an async <code>INSERT</code> statement for a given POJO. This is the same as calling
+     * #insert(pojo,false).
      * @param pojo
      * @return the result type returned for all insert, update and delete-operations.
      */
     public EXECUTE insert(P pojo);
+
+    /**
+     * Performs an async <code>INSERT</code> statement for a given POJO.
+     * @param pojo
+     * @param onDuplicateKeyIgnore whether or not to set onDuplicateKeyIgnore option
+     * @return the result type returned for all insert, update and delete-operations.
+     */
+    public EXECUTE insert(P pojo, boolean onDuplicateKeyIgnore);
 
     /**
      * Performs an async <code>INSERT</code> statement for all given POJOs
@@ -30,6 +39,15 @@ public interface GenericVertxDAO<P, T, FIND_MANY, FIND_ONE, EXECUTE, INSERT_RETU
      * @return the result type returned for all insert, update and delete-operations.
      */
     public EXECUTE insert(Collection<P> pojos);
+
+    /**
+     * Performs an async <code>INSERT</code> statement for all given POJOs. This is the same as calling
+     * #insert(pojos,false).
+     * @param pojos
+     * @param onDuplicateKeyIgnore whether or not to set onDuplicateKeyIgnore option
+     * @return the result type returned for all insert, update and delete-operations.
+     */
+    public EXECUTE insert(Collection<P> pojos, boolean onDuplicateKeyIgnore);
 
     /**
      * Performs an async <code>INSERT</code> statement for a given POJO and returns it's primary key.
