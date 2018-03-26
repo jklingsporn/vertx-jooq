@@ -7,7 +7,7 @@ import org.jooq.ResultQuery;
 /**
  * @param <FIND_MANY_ROW> a type to represent many <code>Row</code>s.
  * @param <FIND_ONE_ROW> a type to represent one <code>Row</code>.
- * @param <EXECUTE> the result type returned for all insert, update and delete-operations. This varies on the AsyncQueryExecutor-subtypes, e.g. {@code Future<Integer>}.
+ * @param <EXECUTE> the result type returned for all insert, update and delete-operations. This varies on the ReactiveQueryExecutor-subtypes, e.g. {@code Future<Integer>}.
  */
 public interface ReactiveQueryExecutor<FIND_MANY_ROW, FIND_ONE_ROW, EXECUTE> {
 

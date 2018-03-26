@@ -7,9 +7,14 @@
             <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
         </encoder>
     </appender>
+    <appender name="STDERR" class="ch.qos.logback.core.ConsoleAppender">
+        <target>System.out</target>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
 
-    <root level="debug">
+    <root level="off">
         <appender-ref ref="STDOUT" />
     </root>
-    <logger name="com.zaxxer.hikari.pool" level="info"/>
 </configuration>

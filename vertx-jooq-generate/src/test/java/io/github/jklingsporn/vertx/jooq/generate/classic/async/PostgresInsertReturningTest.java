@@ -99,6 +99,9 @@ public class PostgresInsertReturningTest extends AbstractPostgresInsertReturning
         );
         Configuration configuration = new DefaultConfiguration();
         configuration.set(SQLDialect.POSTGRES);
+//        AsyncCompletableFutureQueryExecutor2 asyncCompletableFutureQueryExecutor2 = new AsyncCompletableFutureQueryExecutor2(AsyncDatabaseClientProvider.getInstance().getVertx(), AsyncDatabaseClientProvider.getInstance().getClient(Credentials.POSTGRES), configuration);
+//        CompletableFuture<List<Record1<Long>>> manyRaw = asyncCompletableFutureQueryExecutor2.findManyRaw(dslContext -> dslContext.select(Tables.SOMETHING.SOMEHUGENUMBER).from(Tables.SOMETHING));
+
         Future<T> insertReturning = queryExecutor.insertReturning(DSL
                 .using(configuration)
                 .insertInto(table)

@@ -46,7 +46,7 @@ public abstract class AbstractAsyncVertxDAO<R extends UpdatableRecord<R>, P, T, 
 
     /**
      * @return the converter used to convert the returned primary key to type T. Since the input argument of the Function
-     * is always a Long, only non-compound numeric keys can be returned. This method gets automatically overridden during
+     * is always a {@code Long} (in MYSQL mode), only non-compound numeric keys can be returned. This method gets automatically overridden during
      * DAO-creation depending on T.
      */
     protected Function<Object,T> keyConverter(){

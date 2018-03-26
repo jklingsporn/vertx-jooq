@@ -3,7 +3,7 @@
 <dependency>
   <groupId>io.github.jklingsporn</groupId>
   <artifactId>vertx-jooq-classic-reactive</artifactId>
-  <version>4.0.0-BETA</version>
+  <version>4.0.0</version>
 </dependency>
 ```
 
@@ -32,7 +32,7 @@ If you are new to jOOQ, I recommend to read the awesome [jOOQ documentation](htt
     <dependency>
       <groupId>io.github.jklingsporn</groupId>
       <artifactId>vertx-jooq-classic-reactive</artifactId>
-      <version>4.0.0-BETA</version>
+      <version>4.0.0</version>
     </dependency>
   </dependencies>
   <build>
@@ -61,7 +61,7 @@ If you are new to jOOQ, I recommend to read the awesome [jOOQ documentation](htt
               <dependency>
                   <groupId>io.github.jklingsporn</groupId>
                   <artifactId>vertx-jooq-generate</artifactId>
-                  <version>4.0.0-BETA</version>
+                  <version>4.0.0</version>
               </dependency>
           </dependencies>
 
@@ -70,7 +70,7 @@ If you are new to jOOQ, I recommend to read the awesome [jOOQ documentation](htt
           <configuration>
               <!-- JDBC connection parameters -->
               <jdbc>
-                  <driver>com.mysql.jdbc.Driver</driver>
+                  <driver>org.postgresql.Driver</driver>
                   <url>YOUR_JDBC_URL_HERE</url>
                   <user>YOUR_DB_USER_HERE</user>
                   <password>YOUR_DB_PASSWORD_HERE</password>
@@ -138,7 +138,7 @@ The following code-snippet can be copy-pasted into your `build.gradle` to genera
 ```gradle
 buildscript {
     ext {
-        vertx_jooq_version = '3.1.0'
+        vertx_jooq_version = '4.0.0'
         postgresql_version = '42.2.2'
     }
     repositories {
