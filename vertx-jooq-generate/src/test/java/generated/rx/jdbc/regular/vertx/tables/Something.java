@@ -8,28 +8,18 @@ import generated.rx.jdbc.regular.vertx.Indexes;
 import generated.rx.jdbc.regular.vertx.Keys;
 import generated.rx.jdbc.regular.vertx.Vertx;
 import generated.rx.jdbc.regular.vertx.tables.records.SomethingRecord;
-
 import io.github.jklingsporn.vertx.jooq.shared.JsonArrayConverter;
 import io.github.jklingsporn.vertx.jooq.shared.JsonObjectConverter;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+import org.jooq.*;
+import org.jooq.impl.DSL;
+import org.jooq.impl.TableImpl;
 
+import javax.annotation.Generated;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-
-import javax.annotation.Generated;
-
-import org.jooq.Field;
-import org.jooq.Identity;
-import org.jooq.Index;
-import org.jooq.Name;
-import org.jooq.Schema;
-import org.jooq.Table;
-import org.jooq.TableField;
-import org.jooq.UniqueKey;
-import org.jooq.impl.DSL;
-import org.jooq.impl.TableImpl;
 
 
 /**
@@ -45,7 +35,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Something extends TableImpl<SomethingRecord> {
 
-    private static final long serialVersionUID = -694642523;
+    private static final long serialVersionUID = 1247178661;
 
     /**
      * The reference instance of <code>VERTX.SOMETHING</code>
@@ -152,7 +142,7 @@ public class Something extends TableImpl<SomethingRecord> {
      */
     @Override
     public List<Index> getIndexes() {
-        return Arrays.<Index>asList(Indexes.SYS_IDX_SYS_PK_10434_10436);
+        return Arrays.<Index>asList(Indexes.SYS_IDX_SYS_PK_10474_10476);
     }
 
     /**
@@ -168,7 +158,7 @@ public class Something extends TableImpl<SomethingRecord> {
      */
     @Override
     public UniqueKey<SomethingRecord> getPrimaryKey() {
-        return Keys.SYS_PK_10434;
+        return Keys.SYS_PK_10474;
     }
 
     /**
@@ -176,7 +166,7 @@ public class Something extends TableImpl<SomethingRecord> {
      */
     @Override
     public List<UniqueKey<SomethingRecord>> getKeys() {
-        return Arrays.<UniqueKey<SomethingRecord>>asList(Keys.SYS_PK_10434);
+        return Arrays.<UniqueKey<SomethingRecord>>asList(Keys.SYS_PK_10474);
     }
 
     /**

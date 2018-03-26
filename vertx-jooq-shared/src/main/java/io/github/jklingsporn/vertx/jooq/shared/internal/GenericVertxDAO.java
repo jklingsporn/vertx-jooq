@@ -34,15 +34,15 @@ public interface GenericVertxDAO<P, T, FIND_MANY, FIND_ONE, EXECUTE, INSERT_RETU
     public EXECUTE insert(P pojo, boolean onDuplicateKeyIgnore);
 
     /**
-     * Performs an async <code>INSERT</code> statement for all given POJOs
+     * Performs an async <code>INSERT</code> statement for all given POJOs. This is the same as calling
+     * #insert(pojos,false).
      * @param pojos
      * @return the result type returned for all insert, update and delete-operations.
      */
     public EXECUTE insert(Collection<P> pojos);
 
     /**
-     * Performs an async <code>INSERT</code> statement for all given POJOs. This is the same as calling
-     * #insert(pojos,false).
+     * Performs an async <code>INSERT</code> statement for all given POJOs.
      * @param pojos
      * @param onDuplicateKeyIgnore whether or not to set onDuplicateKeyIgnore option
      * @return the result type returned for all insert, update and delete-operations.
