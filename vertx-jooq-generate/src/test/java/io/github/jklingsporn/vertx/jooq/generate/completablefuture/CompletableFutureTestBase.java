@@ -216,4 +216,24 @@ public abstract class CompletableFutureTestBase<P,T,O, DAO extends GenericVertxD
         await(latch);
     }
 
+    @Test
+    public void insertPojoOnDuplicateKeyShouldSucceedOnDuplicateEntry() throws InterruptedException {
+        CountDownLatch latch = new CountDownLatch(1);
+        P withId = createWithId();
+        dao
+                .insert(withId)
+                .thenCompose(i -> {
+                    Assert.assertEquals(1L, i.longValue());
+                    return dao.insert(withId, true);
+                })
+                .thenCompose(i -> {
+                    Assert.assertEquals(0L, i.longValue());
+                    return dao.deleteById(getId(withId));
+                })
+                .whenComplete(countdownLatchHandler(latch))
+        ;
+        await(latch);
+    }
+
+
 }

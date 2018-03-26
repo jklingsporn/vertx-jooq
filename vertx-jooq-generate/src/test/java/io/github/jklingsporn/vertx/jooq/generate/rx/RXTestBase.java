@@ -234,5 +234,20 @@ public abstract class RXTestBase<P,T,O, DAO extends GenericVertxDAO<P, T, Single
         await(latch);
     }
 
+    @Test
+    public void insertPojoOnDuplicateKeyShouldSucceedOnDuplicateEntry() throws InterruptedException {
+        CountDownLatch latch = new CountDownLatch(1);
+        P withId = createWithId();
+        dao
+                .insert(withId)
+                .doOnSuccess(i -> Assert.assertEquals(1L, i.longValue()))
+                .flatMap(v -> dao.insert(withId, true))
+                .doOnSuccess(i -> Assert.assertEquals(0L, i.longValue()))
+                .flatMap(v->dao.deleteById(getId(withId)))
+                .subscribe(countdownLatchHandler(latch));
+        await(latch);
+
+    }
+
 
 }

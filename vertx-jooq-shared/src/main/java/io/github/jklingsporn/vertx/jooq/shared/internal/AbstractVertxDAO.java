@@ -71,9 +71,18 @@ public abstract class AbstractVertxDAO<R extends UpdatableRecord<R>, P, T, FIND_
         return queryExecutor().execute(dslContext.update(getTable()).set(valuesToUpdate).where(where));
     }
 
+    private SelectConditionStep<R> selectQuery(Condition condition) {
+        return using(configuration()).selectFrom(getTable()).where(condition);
+    }
+
     @Override
-    public FIND_MANY findManyByCondition(Condition condition){
-        return queryExecutor().findMany(using(configuration()).selectFrom(getTable()).where(condition));
+    public FIND_MANY findManyByCondition(Condition condition) {
+        return queryExecutor().findMany(selectQuery(condition));
+    }
+
+    @Override
+    public FIND_MANY findManyByCondition(Condition condition, OrderField<?>... orderField) {
+        return queryExecutor().findMany(selectQuery(condition).orderBy(orderField));
     }
 
     @Override
@@ -113,13 +122,24 @@ public abstract class AbstractVertxDAO<R extends UpdatableRecord<R>, P, T, FIND_
 
     @Override
     public EXECUTE insert(P pojo){
+        return insert(pojo,false);
+    }
+
+    @Override
+    public EXECUTE insert(P pojo, boolean onDuplicateKeyIgnore) {
         Objects.requireNonNull(pojo);
         DSLContext dslContext = using(configuration());
-        return queryExecutor().execute(dslContext.insertInto(getTable()).set(newRecord(dslContext,pojo)));
+        InsertSetMoreStep<R> insertStep = dslContext.insertInto(getTable()).set(newRecord(dslContext, pojo));
+        return queryExecutor().execute(onDuplicateKeyIgnore?insertStep.onDuplicateKeyIgnore():insertStep);
     }
 
     @Override
     public EXECUTE insert(Collection<P> pojos){
+        return insert(pojos,false);
+    }
+
+    @Override
+    public EXECUTE insert(Collection<P> pojos, boolean onDuplicateKeyIgnore) {
         Arguments.require(!pojos.isEmpty(), "No elements");
         DSLContext dslContext = using(configuration());
         InsertSetStep<R> insertSetStep = dslContext.insertInto(getTable());
@@ -127,7 +147,7 @@ public abstract class AbstractVertxDAO<R extends UpdatableRecord<R>, P, T, FIND_
         for (P pojo : pojos) {
             insertValuesStepN = insertSetStep.values(newRecord(dslContext, pojo).intoArray());
         }
-        return queryExecutor().execute(insertValuesStepN);
+        return queryExecutor().execute(onDuplicateKeyIgnore?insertValuesStepN.onDuplicateKeyIgnore():insertValuesStepN);
     }
 
     @SuppressWarnings("unchecked")
