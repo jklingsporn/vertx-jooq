@@ -2,10 +2,12 @@ package io.github.jklingsporn.vertx.jooq.shared.internal;
 
 import org.jooq.Condition;
 import org.jooq.OrderField;
+import org.jooq.UpdatableRecord;
 
 import java.util.Collection;
 
 /**
+ * @param <R> the Record-type
  * @param <P> the POJO-type
  * @param <T> the Key-Type
  * @param <FIND_MANY> the result type returned for all findManyXYZ-operations. This varies on the VertxDAO-subtypes, e.g. {@code Future<List<P>>}.
@@ -14,7 +16,7 @@ import java.util.Collection;
  * @param <INSERT_RETURNING> the result type returned for the insertReturning-operation. This varies on the VertxDAO-subtypes, e.g. {@code Future<T>}.
  * @see QueryExecutor
  */
-public interface GenericVertxDAO<P, T, FIND_MANY, FIND_ONE, EXECUTE, INSERT_RETURNING>  {
+public interface GenericVertxDAO<R extends UpdatableRecord<R>,P, T, FIND_MANY, FIND_ONE, EXECUTE, INSERT_RETURNING>  {
 
 
     /**
@@ -128,4 +130,8 @@ public interface GenericVertxDAO<P, T, FIND_MANY, FIND_ONE, EXECUTE, INSERT_RETU
      */
     public FIND_MANY findAll();
 
+    /**
+     * @return the underlying {@code QueryExecutor}
+     */
+    public QueryExecutor<R,T,FIND_MANY,FIND_ONE,EXECUTE,INSERT_RETURNING> queryExecutor();
 }

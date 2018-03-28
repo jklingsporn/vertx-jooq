@@ -1,9 +1,6 @@
 package io.github.jklingsporn.vertx.jooq.shared.internal;
 
-import org.jooq.InsertResultStep;
-import org.jooq.Query;
-import org.jooq.ResultQuery;
-import org.jooq.UpdatableRecord;
+import org.jooq.*;
 
 import java.util.function.Function;
 
@@ -18,36 +15,36 @@ import java.util.function.Function;
  * @param <EXECUTE> the result type returned for all insert, update and delete-operations. This varies on the VertxDAO-subtypes, e.g. {@code Future<Integer>}.
  * @param <INSERT_RETURNING> the result type returned for the insertReturning-operation. This varies on the VertxDAO-subtypes, e.g. {@code Future<T>}.
  */
-public interface QueryExecutor<R extends UpdatableRecord<R>, T, FIND_MANY, FIND_ONE,EXECUTE, INSERT_RETURNING> {
+public interface QueryExecutor<R extends UpdatableRecord<R>, T, FIND_MANY, FIND_ONE, EXECUTE, INSERT_RETURNING> extends Attachable{//extends GenericQueryExecutor<EXECUTE,Object>{
 
     /**
      * Runs and returns a query to return many values.
-     * @param query
+     * @param queryFunction
      * @return the result type returned for all find-many-values-operations.
      */
-    FIND_MANY findMany(ResultQuery<R> query);
+    FIND_MANY findMany(Function<DSLContext, ? extends ResultQuery<R>> queryFunction);
 
     /**
      * Runs a query and returns at most one value or <code>null</code>.
-     * @param query
+     * @param queryFunction
      * @return the result type returned for all find-one-value-operations.
      */
-    FIND_ONE findOne(ResultQuery<R> query);
+    FIND_ONE findOne(Function<DSLContext, ? extends ResultQuery<R>> queryFunction);
 
     /**
      * Executes a query and returns the result of the execution (usually an <code>Integer</code>-value)
-     * @param query
+     * @param queryFunction
      * @return the result type returned for all insert, update and delete-operations.
      * @see Query#execute()
      */
-    EXECUTE execute(Query query);
+    EXECUTE execute(Function<DSLContext, ? extends Query> queryFunction);
 
     /**
      * Performs an async <code>INSERT</code> statement for a given POJO and returns it's primary key.
-     * @param query
+     * @param queryFunction
      * @param keyMapper a function to map the result returned by the underlying executor into the key type.
      * @return the result type returned for INSERT_RETURNING.
      */
-    INSERT_RETURNING insertReturning(InsertResultStep<R> query,Function<Object,T> keyMapper);
+    INSERT_RETURNING insertReturning(Function<DSLContext, ? extends InsertResultStep<R>> queryFunction,Function<Object,T> keyMapper);
 
 }

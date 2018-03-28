@@ -4,36 +4,40 @@ import com.julienviet.pgclient.PgClient;
 import com.julienviet.pgclient.PgResult;
 import com.julienviet.pgclient.Row;
 import io.github.jklingspon.vertx.jooq.shared.reactive.AbstractReactiveQueryExecutor;
+import io.github.jklingspon.vertx.jooq.shared.reactive.ReactiveDatabaseResult;
 import io.github.jklingspon.vertx.jooq.shared.reactive.ReactiveQueryExecutor;
+import io.github.jklingsporn.vertx.jooq.completablefuture.CompletableFutureQueryExecutor;
+import io.github.jklingsporn.vertx.jooq.shared.internal.DatabaseResult;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import me.escoffier.vertx.completablefuture.VertxCompletableFuture;
-import org.jooq.Query;
-import org.jooq.Record;
-import org.jooq.ResultQuery;
+import org.jooq.*;
 import org.jooq.exception.TooManyRowsException;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 /**
  * Created by jensklingsporn on 01.03.18.
  */
-public class ReactiveCompletableFutureGenericQueryExecutor extends AbstractReactiveQueryExecutor implements ReactiveQueryExecutor<CompletableFuture<List<Row>>,CompletableFuture<Row>,CompletableFuture<Integer>> {
+public class ReactiveCompletableFutureGenericQueryExecutor extends AbstractReactiveQueryExecutor implements ReactiveQueryExecutor<CompletableFuture<List<Row>>,CompletableFuture<Row>,CompletableFuture<Integer>>, CompletableFutureQueryExecutor {
 
     protected final PgClient delegate;
     protected final Vertx vertx;
 
-    public ReactiveCompletableFutureGenericQueryExecutor(PgClient delegate,  Vertx vertx) {
+    public ReactiveCompletableFutureGenericQueryExecutor(Configuration configuration, PgClient delegate,  Vertx vertx) {
+        super(configuration);
         this.delegate = delegate;
         this.vertx = vertx;
     }
 
     @Override
-    public <Q extends Record> CompletableFuture<List<Row>> findManyRow(ResultQuery<Q> query) {
+    public <Q extends Record> CompletableFuture<List<Row>> findManyRow(Function<DSLContext, ? extends ResultQuery<Q>> queryFunction) {
+        Query query = createQuery(queryFunction);
         log(query);
         CompletableFuture<PgResult<Row>> rowFuture = new VertxCompletableFuture<>(vertx);
         delegate.preparedQuery(toPreparedQuery(query),getBindValues(query),createCompletionHandler(rowFuture));
@@ -43,7 +47,8 @@ public class ReactiveCompletableFutureGenericQueryExecutor extends AbstractReact
     }
 
     @Override
-    public <Q extends Record> CompletableFuture<Row> findOneRow(ResultQuery<Q> query) {
+    public <Q extends Record> CompletableFuture<Row> findOneRow(Function<DSLContext, ? extends ResultQuery<Q>> queryFunction) {
+        Query query = createQuery(queryFunction);
         log(query);
         CompletableFuture<PgResult<Row>> rowFuture = new VertxCompletableFuture<>(vertx);
         delegate.preparedQuery(toPreparedQuery(query),getBindValues(query),createCompletionHandler(rowFuture));
@@ -58,7 +63,8 @@ public class ReactiveCompletableFutureGenericQueryExecutor extends AbstractReact
 
 
     @Override
-    public CompletableFuture<Integer> execute(Query query) {
+    public CompletableFuture<Integer> execute(Function<DSLContext, ? extends Query> queryFunction) {
+        Query query = createQuery(queryFunction);
         log(query);
         CompletableFuture<PgResult<Row>> rowFuture = new VertxCompletableFuture<>(vertx);
         delegate.preparedQuery(toPreparedQuery(query),getBindValues(query),createCompletionHandler(rowFuture));
@@ -82,4 +88,21 @@ public class ReactiveCompletableFutureGenericQueryExecutor extends AbstractReact
     }
 
 
+    @Override
+    public CompletableFuture<Integer> exec(Function<DSLContext, Query> queryFunction) {
+        Query query = createQuery(queryFunction);
+        log(query);
+        CompletableFuture<PgResult<Row>> rowFuture = new VertxCompletableFuture<>(vertx);
+        delegate.preparedQuery(toPreparedQuery(query),getBindValues(query),createCompletionHandler(rowFuture));
+        return rowFuture.thenApply(PgResult::updatedCount);
+    }
+
+    @Override
+    public <R extends Record> CompletableFuture<DatabaseResult> query(Function<DSLContext, ResultQuery<R>> queryFunction) {
+        Query query = createQuery(queryFunction);
+        log(query);
+        CompletableFuture<PgResult<Row>> rowFuture = new VertxCompletableFuture<>(vertx);
+        delegate.preparedQuery(toPreparedQuery(query),getBindValues(query),createCompletionHandler(rowFuture));
+        return rowFuture.thenApply(ReactiveDatabaseResult::new);
+    }
 }

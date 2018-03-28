@@ -1,5 +1,6 @@
 package io.github.jklingsporn.vertx.jooq.shared.async;
 
+import io.github.jklingsporn.vertx.jooq.shared.internal.AbstractQueryExecutor;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
@@ -21,20 +22,17 @@ import java.util.stream.Collectors;
  * @param <FIND_ONE_JSON> a type to represent one <code>JsonObject</code>.
  * @param <EXECUTE> the result type returned for all insert, update and delete-operations. This varies on the AsyncQueryExecutor-subtypes, e.g. {@code Future<Integer>}.
  */
-public abstract class AbstractAsyncQueryExecutor<FIND_MANY_JSON, FIND_ONE_JSON, EXECUTE> implements AsyncQueryExecutor<FIND_MANY_JSON, FIND_ONE_JSON, EXECUTE> {
+public abstract class AbstractAsyncQueryExecutor<FIND_MANY_JSON, FIND_ONE_JSON, EXECUTE> extends AbstractQueryExecutor implements AsyncQueryExecutor<FIND_MANY_JSON, FIND_ONE_JSON, EXECUTE> {
 
     private static final Logger logger = LoggerFactory.getLogger(AbstractAsyncQueryExecutor.class);
 
     protected final AsyncSQLClient delegate;
     protected final boolean isMysql;
 
-    public AbstractAsyncQueryExecutor(AsyncSQLClient delegate, boolean isMysql) {
+    public AbstractAsyncQueryExecutor(Configuration configuration, AsyncSQLClient delegate) {
+        super(configuration);
+        this.isMysql = configuration.dialect().family().equals(SQLDialect.MYSQL);
         this.delegate = delegate;
-        this.isMysql = isMysql;
-    }
-
-    public AbstractAsyncQueryExecutor(AsyncSQLClient delegate) {
-        this(delegate,true);
     }
 
     /**

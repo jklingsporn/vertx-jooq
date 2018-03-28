@@ -17,6 +17,11 @@
             <artifactId>vertx-jooq-shared-reactive</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>io.github.jklingsporn</groupId>
+            <artifactId>vertx-jooq-classic</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 
 </project>

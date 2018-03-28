@@ -1,0 +1,69 @@
+package io.github.jklingsporn.vertx.jooq.shared.async;
+
+import io.github.jklingsporn.vertx.jooq.shared.internal.DatabaseResult;
+import io.vertx.core.json.JsonObject;
+import io.vertx.ext.sql.ResultSet;
+import org.jooq.Field;
+import org.jooq.tools.Convert;
+
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+/**
+ * @author jensklingsporn
+ */
+public class AsyncDatabaseResult implements DatabaseResult {
+
+    private final ResultSet resultSet;
+    private final int index;
+
+    public AsyncDatabaseResult(ResultSet resultSet) {
+        this(resultSet,0);
+    }
+
+    private AsyncDatabaseResult(ResultSet resultSet, int index) {
+        this.resultSet = resultSet;
+        this.index = index;
+    }
+
+    @Override
+    public <T> T get(Field<T> field) {
+        return Convert.convert(getCurrent().getValue(field.getName()),field.getConverter());
+    }
+
+    @Override
+    public <T> T get(int index, Class<T> type) {
+        return Convert.convert(this.resultSet.getResults().get(this.index).getValue(index),type);
+    }
+
+    @Override
+    public <T> T get(String columnName, Class<T> type) {
+        return Convert.convert(getCurrent().getValue(columnName),type);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public <T> T unwrap() {
+        return (T) this.resultSet;
+    }
+
+    @Override
+    public boolean hasResults() {
+        return this.resultSet.getNumRows()>0;
+    }
+
+    @Override
+    public List<DatabaseResult> asList() {
+        return IntStream
+                .range(0, resultSet.getNumRows())
+                .mapToObj(i -> new AsyncDatabaseResult(resultSet, i))
+                .collect(Collectors.toList());
+    }
+
+    private JsonObject getCurrent(){
+        return this.resultSet.getRows().get(index);
+    }
+
+
+}

@@ -4,9 +4,7 @@ import generated.classic.reactive.regular.vertx.tables.pojos.Something;
 import generated.classic.reactive.regular.vertx.tables.pojos.Somethingcomposite;
 import generated.classic.reactive.regular.vertx.tables.records.SomethingRecord;
 import generated.classic.reactive.regular.vertx.tables.records.SomethingcompositeRecord;
-import io.github.jklingsporn.vertx.jooq.completablefuture.CompletableFutureQueryExecutor;
 import io.github.jklingsporn.vertx.jooq.completablefuture.async.AsyncCompletableFutureQueryExecutor;
-import io.github.jklingsporn.vertx.jooq.completablefuture.async.AsyncCompletableFutureQueryExecutor2;
 import io.github.jklingsporn.vertx.jooq.generate.AbstractPostgresInsertReturningTest;
 import io.github.jklingsporn.vertx.jooq.generate.AsyncDatabaseClientProvider;
 import io.github.jklingsporn.vertx.jooq.generate.Credentials;
@@ -16,13 +14,11 @@ import io.vertx.core.Handler;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import org.jooq.*;
-import org.jooq.impl.DSL;
 import org.jooq.impl.DefaultConfiguration;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
@@ -106,11 +102,7 @@ public class PostgresInsertReturningTest extends AbstractPostgresInsertReturning
         Configuration configuration = new DefaultConfiguration();
         configuration.set(SQLDialect.POSTGRES);
 
-        CompletableFutureQueryExecutor two = new AsyncCompletableFutureQueryExecutor2(AsyncDatabaseClientProvider.getInstance().getVertx(),AsyncDatabaseClientProvider.getInstance().getClient(Credentials.POSTGRES),configuration);
-        CompletableFuture<List<Record1<Integer>>> manyRaw = two.findManyRaw(dslContext -> dslContext.select(generated.classic.reactive.regular.vertx.tables.Something.SOMETHING.SOMEID).from(generated.classic.reactive.regular.vertx.tables.Something.SOMETHING));
-
-        CompletableFuture<T> insertReturning = queryExecutor.insertReturning(DSL
-                .using(configuration)
+        CompletableFuture<T> insertReturning = queryExecutor.insertReturning(dslContext -> dslContext
                 .insertInto(table)
                 .set(record)
                 .returning(table.getPrimaryKey().getFieldsArray())

@@ -1,6 +1,9 @@
 package io.github.jklingsporn.vertx.jooq.completablefuture.async;
 
+import io.github.jklingsporn.vertx.jooq.completablefuture.CompletableFutureQueryExecutor;
 import io.github.jklingsporn.vertx.jooq.shared.async.AbstractAsyncQueryExecutor;
+import io.github.jklingsporn.vertx.jooq.shared.async.AsyncDatabaseResult;
+import io.github.jklingsporn.vertx.jooq.shared.internal.DatabaseResult;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
@@ -11,9 +14,7 @@ import io.vertx.ext.sql.ResultSet;
 import io.vertx.ext.sql.SQLConnection;
 import io.vertx.ext.sql.UpdateResult;
 import me.escoffier.vertx.completablefuture.VertxCompletableFuture;
-import org.jooq.Query;
-import org.jooq.Record;
-import org.jooq.ResultQuery;
+import org.jooq.*;
 import org.jooq.exception.TooManyRowsException;
 
 import java.util.List;
@@ -23,17 +24,12 @@ import java.util.function.Function;
 /**
  * Created by jensklingsporn on 07.02.18.
  */
-public class AsyncCompletableFutureGenericQueryExecutor extends AbstractAsyncQueryExecutor<CompletableFuture<List<JsonObject>>, CompletableFuture<JsonObject>, CompletableFuture<Integer>> {
+public class AsyncCompletableFutureGenericQueryExecutor extends AbstractAsyncQueryExecutor<CompletableFuture<List<JsonObject>>, CompletableFuture<JsonObject>, CompletableFuture<Integer>> implements CompletableFutureQueryExecutor {
 
     protected final Vertx vertx;
 
-    public AsyncCompletableFutureGenericQueryExecutor(Vertx vertx, AsyncSQLClient delegate) {
-        super(delegate);
-        this.vertx = vertx;
-    }
-
-    public AsyncCompletableFutureGenericQueryExecutor(Vertx vertx, AsyncSQLClient delegate, boolean isMysql) {
-        super(delegate,isMysql);
+    public AsyncCompletableFutureGenericQueryExecutor(Configuration configuration,Vertx vertx, AsyncSQLClient delegate) {
+        super(configuration,delegate);
         this.vertx = vertx;
     }
 
@@ -68,8 +64,9 @@ public class AsyncCompletableFutureGenericQueryExecutor extends AbstractAsyncQue
     }
 
     @Override
-    public CompletableFuture<Integer> execute(Query query) {
+    public CompletableFuture<Integer> execute(Function<DSLContext, ? extends Query> queryFunction) {
         return getConnection().thenCompose(sqlConnection -> {
+            Query query = createQuery(queryFunction);
             log(query);
             CompletableFuture<Integer> cf = new VertxCompletableFuture<>(vertx);
             JsonArray bindValues = getBindValues(query);
@@ -79,8 +76,9 @@ public class AsyncCompletableFutureGenericQueryExecutor extends AbstractAsyncQue
     }
 
     @Override
-    public <Q extends Record> CompletableFuture<List<JsonObject>> findManyJson(ResultQuery<Q> query) {
+    public <Q extends Record> CompletableFuture<List<JsonObject>> findManyJson(Function<DSLContext, ? extends ResultQuery<Q>> queryFunction) {
         return getConnection().thenCompose(sqlConnection -> {
+            Query query = createQuery(queryFunction);
             log(query);
             CompletableFuture<List<JsonObject>> cf = new VertxCompletableFuture<>(vertx);
             sqlConnection.queryWithParams(
@@ -95,8 +93,9 @@ public class AsyncCompletableFutureGenericQueryExecutor extends AbstractAsyncQue
     }
 
     @Override
-    public <Q extends Record> CompletableFuture<JsonObject> findOneJson(ResultQuery<Q> query) {
+    public <Q extends Record> CompletableFuture<JsonObject> findOneJson(Function<DSLContext, ? extends ResultQuery<Q>> queryFunction) {
         return getConnection().thenCompose(sqlConnection -> {
+            Query query = createQuery(queryFunction);
             log(query);
             CompletableFuture<JsonObject> cf = new VertxCompletableFuture<>(vertx);
             sqlConnection.queryWithParams(query.getSQL(), getBindValues(query), executeAndClose(rs -> {
@@ -107,6 +106,34 @@ public class AsyncCompletableFutureGenericQueryExecutor extends AbstractAsyncQue
                     default: throw new TooManyRowsException(String.format("Found more than one row: %d", rows.size()));
                 }
             }, sqlConnection, cf));
+            return cf;
+        });
+    }
+
+    @Override
+    public CompletableFuture<Integer> exec(Function<DSLContext, Query> queryFunction) {
+        return getConnection().thenCompose(sqlConnection -> {
+            Query query = createQuery(queryFunction);
+            log(query);
+            CompletableFuture<Integer> cf = new VertxCompletableFuture<>(vertx);
+            JsonArray bindValues = getBindValues(query);
+            sqlConnection.updateWithParams(query.getSQL(), bindValues, executeAndClose(UpdateResult::getUpdated,sqlConnection,cf));
+            return cf;
+        });
+    }
+
+
+    @Override
+    public <R extends Record> CompletableFuture<DatabaseResult> query(Function<DSLContext, ResultQuery<R>> queryFunction) {
+        return getConnection().thenCompose(sqlConnection -> {
+            Query query = createQuery(queryFunction);
+            log(query);
+            CompletableFuture<DatabaseResult> cf = new VertxCompletableFuture<>(vertx);
+            sqlConnection.queryWithParams(
+                    query.getSQL(),
+                    getBindValues(query),
+                    executeAndClose(AsyncDatabaseResult::new,sqlConnection,cf)
+            );
             return cf;
         });
     }

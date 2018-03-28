@@ -12,9 +12,6 @@ import java.util.concurrent.CompletableFuture;
  * @param <P> The POJO
  * @param <T> The primary key.
  */
-public interface VertxDAO<R extends UpdatableRecord<R>, P, T> extends GenericVertxDAO<P,T,CompletableFuture<List<P>>,CompletableFuture<P>,CompletableFuture<Integer>,CompletableFuture<T>> {
-
-
-
+public interface VertxDAO<R extends UpdatableRecord<R>, P, T> extends GenericVertxDAO<R,P,T,CompletableFuture<List<P>>,CompletableFuture<P>,CompletableFuture<Integer>,CompletableFuture<T>> {
 
 }

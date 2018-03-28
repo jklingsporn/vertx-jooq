@@ -1,5 +1,7 @@
 package io.github.jklingsporn.vertx.jooq.generate.completablefuture;
 
+import io.github.jklingsporn.vertx.jooq.completablefuture.CompletableFutureQueryExecutor;
+import io.github.jklingsporn.vertx.jooq.shared.internal.AbstractVertxDAO;
 import io.github.jklingsporn.vertx.jooq.shared.internal.GenericVertxDAO;
 import me.escoffier.vertx.completablefuture.VertxCompletableFuture;
 import org.jooq.Condition;
@@ -21,7 +23,7 @@ import java.util.stream.Collectors;
 /**
  * Created by jensklingsporn on 09.02.18.
  */
-public abstract class CompletableFutureTestBase<P,T,O, DAO extends GenericVertxDAO<P, T, CompletableFuture<List<P>>, CompletableFuture<P>, CompletableFuture<Integer>, CompletableFuture<T>>> {
+public abstract class CompletableFutureTestBase<P,T,O, DAO extends GenericVertxDAO<?,P, T, CompletableFuture<List<P>>, CompletableFuture<P>, CompletableFuture<Integer>, CompletableFuture<T>>> {
 
     private final TableField<?,O> otherfield;
     protected final DAO dao;
@@ -77,6 +79,10 @@ public abstract class CompletableFutureTestBase<P,T,O, DAO extends GenericVertxD
             }
             latch.countDown();
         };
+    }
+
+    protected CompletableFutureQueryExecutor queryExecutor(){
+        return (CompletableFutureQueryExecutor) dao.queryExecutor();
     }
 
     protected CompletableFuture<T> insertAndReturn(P something) {
@@ -235,5 +241,19 @@ public abstract class CompletableFutureTestBase<P,T,O, DAO extends GenericVertxD
         await(latch);
     }
 
+//    @Test
+    public void queryExecutorCRUDTest(){
+        AbstractVertxDAO<?,P, T, CompletableFuture<List<P>>, CompletableFuture<P>, CompletableFuture<Integer>, CompletableFuture<T>> abstractVertxDAO = (AbstractVertxDAO<?,P, T, CompletableFuture<List<P>>, CompletableFuture<P>, CompletableFuture<Integer>, CompletableFuture<T>>) dao;
+        P pojo = createWithId();
+        CompletableFuture<Integer> exec = queryExecutor().exec(dslContext -> dslContext
+                .insertInto(abstractVertxDAO.getTable())
+                .set(dslContext.newRecord(abstractVertxDAO.getTable(), pojo)));
+        exec
+                .thenAccept(i->Assert.assertEquals(1L,i.longValue()))
+                .thenCompose(v->queryExecutor().query(dslContext -> dslContext
+                        .selectFrom(abstractVertxDAO.getTable())
+                        .where(eqPrimaryKey(getId(pojo)))));
+
+    }
 
 }

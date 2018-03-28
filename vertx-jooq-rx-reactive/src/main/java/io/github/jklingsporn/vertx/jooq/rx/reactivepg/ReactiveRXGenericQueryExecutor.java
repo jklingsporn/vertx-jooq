@@ -5,33 +5,36 @@ import com.julienviet.reactivex.pgclient.PgResult;
 import com.julienviet.reactivex.pgclient.Row;
 import com.julienviet.reactivex.pgclient.Tuple;
 import io.github.jklingspon.vertx.jooq.shared.reactive.AbstractReactiveQueryExecutor;
+import io.github.jklingspon.vertx.jooq.shared.reactive.ReactiveDatabaseResult;
 import io.github.jklingspon.vertx.jooq.shared.reactive.ReactiveQueryExecutor;
+import io.github.jklingsporn.vertx.jooq.rx.RXQueryExecutor;
+import io.github.jklingsporn.vertx.jooq.shared.internal.DatabaseResult;
 import io.reactivex.Single;
-import org.jooq.Param;
-import org.jooq.Query;
-import org.jooq.Record;
-import org.jooq.ResultQuery;
+import org.jooq.*;
 import org.jooq.exception.TooManyRowsException;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 /**
  * Created by jensklingsporn on 01.03.18.
  */
-public class ReactiveRXGenericQueryExecutor extends AbstractReactiveQueryExecutor implements ReactiveQueryExecutor<Single<List<com.julienviet.pgclient.Row>>,Single<Optional<com.julienviet.pgclient.Row>>,Single<Integer>> {
+public class ReactiveRXGenericQueryExecutor extends AbstractReactiveQueryExecutor implements ReactiveQueryExecutor<Single<List<com.julienviet.pgclient.Row>>,Single<Optional<com.julienviet.pgclient.Row>>,Single<Integer>>, RXQueryExecutor {
 
     protected final PgClient delegate;
 
-    public ReactiveRXGenericQueryExecutor(PgClient delegate) {
+    public ReactiveRXGenericQueryExecutor(Configuration configuration, PgClient delegate) {
+        super(configuration);
         this.delegate = delegate;
     }
 
     @Override
-    public <Q extends Record> Single<List<com.julienviet.pgclient.Row>> findManyRow(ResultQuery<Q> query) {
+    public <Q extends Record> Single<List<com.julienviet.pgclient.Row>> findManyRow(Function<DSLContext, ? extends ResultQuery<Q>> queryFunction) {
+        Query query = createQuery(queryFunction);
         log(query);
         Single<PgResult<Row>> rowFuture  = delegate.rxPreparedQuery(toPreparedQuery(query), rxGetBindValues(query));
         return rowFuture.map(res -> StreamSupport
@@ -40,7 +43,8 @@ public class ReactiveRXGenericQueryExecutor extends AbstractReactiveQueryExecuto
     }
 
     @Override
-    public <Q extends Record> Single<Optional<com.julienviet.pgclient.Row>> findOneRow(ResultQuery<Q> query) {
+    public <Q extends Record> Single<Optional<com.julienviet.pgclient.Row>> findOneRow(Function<DSLContext, ? extends ResultQuery<Q>> queryFunction) {
+        Query query = createQuery(queryFunction);
         log(query);
         Single<PgResult<Row>> rowFuture = delegate.rxPreparedQuery(toPreparedQuery(query), rxGetBindValues(query));
         return rowFuture.map(res-> {
@@ -53,7 +57,8 @@ public class ReactiveRXGenericQueryExecutor extends AbstractReactiveQueryExecuto
     }
 
     @Override
-    public Single<Integer> execute(Query query) {
+    public Single<Integer> execute(Function<DSLContext, ? extends Query> queryFunction) {
+        Query query = createQuery(queryFunction);
         log(query);
         Single<PgResult<Row>> rowFuture = delegate.rxPreparedQuery(toPreparedQuery(query), rxGetBindValues(query));
         return rowFuture.map(PgResult::updatedCount);
@@ -75,4 +80,20 @@ public class ReactiveRXGenericQueryExecutor extends AbstractReactiveQueryExecuto
         return (com.julienviet.pgclient.PgResult<com.julienviet.pgclient.Row>)generic;
     }
 
+    @Override
+    public Single<Integer> exec(Function<DSLContext, Query> queryFunction) {
+        Query query = createQuery(queryFunction);
+        log(query);
+        Single<PgResult<Row>> rowFuture = delegate.rxPreparedQuery(toPreparedQuery(query), rxGetBindValues(query));
+        return rowFuture.map(PgResult::updatedCount);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public <R extends Record> Single<DatabaseResult> query(Function<DSLContext, ResultQuery<R>> queryFunction) {
+        Query query = createQuery(queryFunction);
+        log(query);
+        Single<PgResult<Row>> rowFuture  = delegate.rxPreparedQuery(toPreparedQuery(query), rxGetBindValues(query));
+        return rowFuture.map(res -> new ReactiveDatabaseResult(res.getDelegate()));
+    }
 }

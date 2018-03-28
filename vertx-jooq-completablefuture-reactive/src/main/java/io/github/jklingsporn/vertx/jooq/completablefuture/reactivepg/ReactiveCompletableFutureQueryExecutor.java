@@ -8,9 +8,8 @@ import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import me.escoffier.vertx.completablefuture.VertxCompletableFuture;
-import org.jooq.InsertResultStep;
-import org.jooq.ResultQuery;
-import org.jooq.UpdatableRecord;
+import org.jooq.*;
+import org.jooq.impl.DefaultConfiguration;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -25,22 +24,27 @@ public class ReactiveCompletableFutureQueryExecutor<R extends UpdatableRecord<R>
     private final Function<Row,P> pojoMapper;
 
     public ReactiveCompletableFutureQueryExecutor(PgClient delegate, Function<Row, P> pojoMapper, Vertx vertx) {
-        super(delegate,vertx);
+        this(new DefaultConfiguration().set(SQLDialect.POSTGRES),delegate, pojoMapper, vertx);
+    }
+
+    public ReactiveCompletableFutureQueryExecutor(Configuration configuration, PgClient delegate, Function<Row, P> pojoMapper, Vertx vertx) {
+        super(configuration, delegate,vertx);
         this.pojoMapper = pojoMapper;
     }
 
     @Override
-    public CompletableFuture<List<P>> findMany(ResultQuery<R> query) {
-        return findManyRow(query).thenApply(ls -> ls.stream().map(pojoMapper).collect(Collectors.toList()));
+    public CompletableFuture<List<P>> findMany(Function<DSLContext, ? extends ResultQuery<R>> queryFunction) {
+        return findManyRow(queryFunction).thenApply(ls -> ls.stream().map(pojoMapper).collect(Collectors.toList()));
     }
 
     @Override
-    public CompletableFuture<P> findOne(ResultQuery<R> query) {
-        return findOneRow(query).thenApply(val -> val == null?null:pojoMapper.apply(val));
+    public CompletableFuture<P> findOne(Function<DSLContext, ? extends ResultQuery<R>> queryFunction) {
+        return findOneRow(queryFunction).thenApply(val -> val == null?null:pojoMapper.apply(val));
     }
 
     @Override
-    public CompletableFuture<T> insertReturning(InsertResultStep<R> query, Function<Object, T> keyMapper) {
+    public CompletableFuture<T> insertReturning(Function<DSLContext, ? extends InsertResultStep<R>> queryFunction, Function<Object, T> keyMapper) {
+        Query query = createQuery(queryFunction);
         log(query);
         CompletableFuture<PgResult<Row>> rowFuture = new VertxCompletableFuture<>(vertx);
         delegate.preparedQuery(toPreparedQuery(query),getBindValues(query),createCompletionHandler(rowFuture));

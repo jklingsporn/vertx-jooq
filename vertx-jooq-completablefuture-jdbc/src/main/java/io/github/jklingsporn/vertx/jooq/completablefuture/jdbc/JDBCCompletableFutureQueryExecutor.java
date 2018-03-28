@@ -22,23 +22,23 @@ public class JDBCCompletableFutureQueryExecutor<R extends UpdatableRecord<R>,P,T
 
 
     @Override
-    public CompletableFuture<List<P>> findMany(ResultQuery<R> query) {
-        return executeBlocking(h -> h.complete(query.fetchInto(daoType)));
+    public CompletableFuture<List<P>> findMany(Function<DSLContext, ? extends ResultQuery<R>> queryFunction) {
+        return executeBlocking(h -> h.complete(createQuery(queryFunction).fetchInto(daoType)));
     }
 
     @Override
-    public CompletableFuture<P> findOne(ResultQuery<R> query) {
-        return executeBlocking(h -> h.complete(query.fetchOneInto(daoType)));
+    public CompletableFuture<P> findOne(Function<DSLContext, ? extends ResultQuery<R>> queryFunction) {
+        return executeBlocking(h -> h.complete(createQuery(queryFunction).fetchOneInto(daoType)));
     }
 
     @Override
-    public CompletableFuture<Integer> execute(Query query) {
-        return executeBlocking(h -> h.complete(query.execute()));
+    public CompletableFuture<Integer> execute(Function<DSLContext, ? extends Query> queryFunction) {
+        return executeBlocking(h -> h.complete(createQuery(queryFunction).execute()));
     }
 
     @Override
-    public CompletableFuture<T> insertReturning(InsertResultStep<R> query,Function<Object,T> keyMapper) {
-        return executeBlocking(h -> h.complete(keyMapper.apply(query.fetchOne())));
+    public CompletableFuture<T> insertReturning(Function<DSLContext, ? extends InsertResultStep<R>> queryFunction,Function<Object,T> keyMapper) {
+        return executeBlocking(h -> h.complete(keyMapper.apply(createQuery(queryFunction).fetchOne())));
     }
 
 }

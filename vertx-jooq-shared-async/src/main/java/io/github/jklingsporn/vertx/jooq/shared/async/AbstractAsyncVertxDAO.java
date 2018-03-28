@@ -4,8 +4,10 @@ import io.github.jklingsporn.vertx.jooq.shared.internal.AbstractVertxDAO;
 import io.github.jklingsporn.vertx.jooq.shared.internal.QueryExecutor;
 import io.vertx.core.impl.Arguments;
 import io.vertx.core.json.JsonArray;
-import org.jooq.*;
-import org.jooq.impl.DSL;
+import org.jooq.Configuration;
+import org.jooq.SQLDialect;
+import org.jooq.Table;
+import org.jooq.UpdatableRecord;
 
 import java.util.function.Function;
 
@@ -23,6 +25,7 @@ public abstract class AbstractAsyncVertxDAO<R extends UpdatableRecord<R>, P, T, 
 
     private final Function<Object,T> keyConverter;
 
+    @SuppressWarnings("unchecked")
     protected AbstractAsyncVertxDAO(Table<R> table, Class<P> type, QueryExecutor<R, T, FIND_MANY, FIND_ONE, EXECUTE, INSERT_RETURNING> queryExecutor, Configuration configuration) {
         super(table, type, queryExecutor, configuration);
         Arguments.require(isMysql(configuration) || isPostgres(configuration),"Only Postgres and MySQL supported");
@@ -65,11 +68,10 @@ public abstract class AbstractAsyncVertxDAO<R extends UpdatableRecord<R>, P, T, 
 
     @Override
     public INSERT_RETURNING insertReturningPrimary(P object) {
-        DSLContext dslContext = DSL.using(configuration());
-        return queryExecutor().insertReturning(dslContext
-                .insertInto(getTable())
-                .set(newRecord(dslContext, object))
-                .returning(getTable().getPrimaryKey().getFieldsArray()),
+        return queryExecutor().insertReturning(dslContext -> dslContext
+                        .insertInto(getTable())
+                        .set(newRecord(dslContext, object))
+                        .returning(getTable().getPrimaryKey().getFieldsArray()),
                 keyConverter);
     }
 }

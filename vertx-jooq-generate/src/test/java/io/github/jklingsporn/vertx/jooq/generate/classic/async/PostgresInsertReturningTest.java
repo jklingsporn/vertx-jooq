@@ -14,7 +14,6 @@ import io.vertx.core.Handler;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import org.jooq.*;
-import org.jooq.impl.DSL;
 import org.jooq.impl.DefaultConfiguration;
 import org.junit.Assert;
 import org.junit.Test;
@@ -100,10 +99,9 @@ public class PostgresInsertReturningTest extends AbstractPostgresInsertReturning
         Configuration configuration = new DefaultConfiguration();
         configuration.set(SQLDialect.POSTGRES);
 //        AsyncCompletableFutureQueryExecutor2 asyncCompletableFutureQueryExecutor2 = new AsyncCompletableFutureQueryExecutor2(AsyncDatabaseClientProvider.getInstance().getVertx(), AsyncDatabaseClientProvider.getInstance().getClient(Credentials.POSTGRES), configuration);
-//        CompletableFuture<List<Record1<Long>>> manyRaw = asyncCompletableFutureQueryExecutor2.findManyRaw(dslContext -> dslContext.select(Tables.SOMETHING.SOMEHUGENUMBER).from(Tables.SOMETHING));
+//        CompletableFuture<List<Record1<Long>>> manyRaw = asyncCompletableFutureQueryExecutor2.findMany(dslContext -> dslContext.select(Tables.SOMETHING.SOMEHUGENUMBER).from(Tables.SOMETHING));
 
-        Future<T> insertReturning = queryExecutor.insertReturning(DSL
-                .using(configuration)
+        Future<T> insertReturning = queryExecutor.insertReturning(dslContext -> dslContext
                 .insertInto(table)
                 .set(record)
                 .returning(table.getPrimaryKey().getFieldsArray())

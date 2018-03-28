@@ -4,7 +4,6 @@ import io.github.jklingsporn.vertx.jooq.shared.internal.AbstractVertxDAO;
 import io.github.jklingsporn.vertx.jooq.shared.internal.QueryExecutor;
 import io.vertx.core.impl.Arguments;
 import org.jooq.*;
-import org.jooq.impl.DSL;
 
 import java.util.function.Function;
 
@@ -43,8 +42,7 @@ public abstract class AbstractReactiveVertxDAO<R extends UpdatableRecord<R>, P, 
 
     @Override
     public INSERT_RETURNING insertReturningPrimary(P object) {
-        DSLContext dslContext = DSL.using(configuration());
-        return queryExecutor().insertReturning(dslContext
+        return queryExecutor().insertReturning(dslContext->dslContext
                 .insertInto(getTable())
                 .set(newRecord(dslContext, object))
                 .returning(getTable().getPrimaryKey().getFieldsArray()),

@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 /**
  * Created by jensklingsporn on 09.02.18.
  */
-public abstract class ClassicTestBase<P,T,O, DAO extends GenericVertxDAO<P, T, Future<List<P>>, Future<P>, Future<Integer>, Future<T>>> {
+public abstract class ClassicTestBase<P,T,O, DAO extends GenericVertxDAO<?,P, T, Future<List<P>>, Future<P>, Future<Integer>, Future<T>>> {
 
     private final TableField<?,O> otherfield;
     protected final DAO dao;

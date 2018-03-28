@@ -12,7 +12,7 @@ import java.util.List;
  * @param <P> The POJO
  * @param <T> The primary key.
  */
-public interface VertxDAO<R extends UpdatableRecord<R>, P, T> extends GenericVertxDAO<P,T,Future<List<P>>,Future<P>,Future<Integer>,Future<T>>{
+public interface VertxDAO<R extends UpdatableRecord<R>, P, T> extends GenericVertxDAO<R,P,T,Future<List<P>>,Future<P>,Future<Integer>,Future<T>>{
 
 
 }

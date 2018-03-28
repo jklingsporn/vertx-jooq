@@ -5,10 +5,8 @@ import io.reactivex.Single;
 import io.vertx.core.json.JsonObject;
 import io.vertx.reactivex.ext.asyncsql.AsyncSQLClient;
 import io.vertx.reactivex.ext.sql.SQLConnection;
-import org.jooq.InsertResultStep;
-import org.jooq.ResultQuery;
-import org.jooq.Table;
-import org.jooq.UpdatableRecord;
+import org.jooq.*;
+import org.jooq.impl.DefaultConfiguration;
 
 import java.util.List;
 import java.util.Optional;
@@ -22,29 +20,29 @@ public class AsyncRXQueryExecutor<R extends UpdatableRecord<R>,P,T> extends Asyn
 
     private final Function<JsonObject,P> pojoMapper;
 
-    public AsyncRXQueryExecutor(AsyncSQLClient delegate, Function<JsonObject, P> pojoMapper, Table<R> table) {
-        super(delegate);
+    public AsyncRXQueryExecutor(Configuration configuration, AsyncSQLClient delegate, Function<JsonObject, P> pojoMapper, Table<R> table) {
+        super(configuration, delegate);
         this.pojoMapper = convertFromSQL(table).andThen(pojoMapper);
     }
 
     public AsyncRXQueryExecutor(AsyncSQLClient delegate, Function<JsonObject, P> pojoMapper, Table<R> table, boolean isMysql) {
-        super(delegate,isMysql);
-        this.pojoMapper = convertFromSQL(table).andThen(pojoMapper);
+        this( new DefaultConfiguration().set(isMysql? SQLDialect.MYSQL:SQLDialect.POSTGRES), delegate, pojoMapper, table);
     }
 
     @Override
-    public Single<List<P>> findMany(ResultQuery<R> query) {
-        return findManyJson(query).map(rs -> rs.stream().map(pojoMapper).collect(Collectors.toList()));
+    public Single<List<P>> findMany(Function<DSLContext, ? extends ResultQuery<R>> queryFunction) {
+        return findManyJson(queryFunction).map(rs -> rs.stream().map(pojoMapper).collect(Collectors.toList()));
     }
 
     @Override
-    public Single<Optional<P>> findOne(ResultQuery<R> query) {
-        return findOneJson(query).map(val->val.map(pojoMapper));
+    public Single<Optional<P>> findOne(Function<DSLContext, ? extends ResultQuery<R>> queryFunction) {
+        return findOneJson(queryFunction).map(val->val.map(pojoMapper));
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public Single<T> insertReturning(InsertResultStep<R> query, Function<Object, T> keyMapper) {
+    public Single<T> insertReturning(Function<DSLContext, ? extends InsertResultStep<R>> queryFunction, Function<Object, T> keyMapper) {
+        Query query = createQuery(queryFunction);
         log(query);
         Function<SQLConnection, Single<? extends T>> runInsertReturning;
         if(isMysql){

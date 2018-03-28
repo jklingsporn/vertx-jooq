@@ -2,10 +2,12 @@ package io.github.jklingsporn.vertx.jooq.shared.internal;
 
 import org.jooq.Field;
 
+import java.util.List;
+
 /**
  * Created by jensklingsporn on 24.03.18.
  */
-public interface DatabaseResultWrapper<R> extends Iterable<R> {
+public interface DatabaseResult {
 
     public <T> T get(Field<T> field);
 
@@ -18,4 +20,8 @@ public interface DatabaseResultWrapper<R> extends Iterable<R> {
      * @return
      */
     public <T> T unwrap();
+
+    public boolean hasResults();
+
+    public List<DatabaseResult> asList();
 }

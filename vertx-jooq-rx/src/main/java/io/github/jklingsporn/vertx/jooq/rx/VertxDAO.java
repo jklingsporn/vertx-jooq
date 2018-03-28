@@ -15,7 +15,7 @@ import java.util.Optional;
  * @param <P> The POJO
  * @param <T> The primary key.
  */
-public interface VertxDAO<R extends UpdatableRecord<R>, P, T> extends GenericVertxDAO<P, T, Single<List<P>>, Single<Optional<P>>, Single<Integer>, Single<T>> {
+public interface VertxDAO<R extends UpdatableRecord<R>, P, T> extends GenericVertxDAO<R, P, T, Single<List<P>>, Single<Optional<P>>, Single<Integer>, Single<T>> {
 
 
 }

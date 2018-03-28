@@ -5,9 +5,9 @@ import org.jooq.*;
 import org.jooq.impl.DSL;
 
 import java.util.*;
+import java.util.function.Function;
 
 import static org.jooq.impl.DSL.row;
-import static org.jooq.impl.DSL.using;
 
 /**
  * Abstract base class to reduce duplicate code in the different VertxDAO implementations.
@@ -19,13 +19,12 @@ import static org.jooq.impl.DSL.using;
  * @param <EXECUTE> the result type returned for all insert, update and delete-operations. This varies on the VertxDAO-subtypes, e.g. {@code Future<Integer>}.
  * @param <INSERT_RETURNING> the result type returned for the insertReturning-operation. This varies on the VertxDAO-subtypes, e.g. {@code Future<T>}.
  */
-public abstract class AbstractVertxDAO<R extends UpdatableRecord<R>, P, T, FIND_MANY, FIND_ONE,EXECUTE, INSERT_RETURNING> implements GenericVertxDAO<P,T, FIND_MANY, FIND_ONE,EXECUTE, INSERT_RETURNING>
+public abstract class AbstractVertxDAO<R extends UpdatableRecord<R>, P, T, FIND_MANY, FIND_ONE,EXECUTE, INSERT_RETURNING> implements GenericVertxDAO<R,P,T, FIND_MANY, FIND_ONE,EXECUTE, INSERT_RETURNING>
 {
 
     private final Class<P> type;
     private final Table<R> table;
     private final QueryExecutor<R, T, FIND_MANY, FIND_ONE, EXECUTE, INSERT_RETURNING> queryExecutor;
-    private Configuration configuration;
 
 
     protected AbstractVertxDAO(Table<R> table, Class<P> type, QueryExecutor<R, T, FIND_MANY, FIND_ONE, EXECUTE, INSERT_RETURNING> queryExecutor, Configuration configuration) {
@@ -36,7 +35,7 @@ public abstract class AbstractVertxDAO<R extends UpdatableRecord<R>, P, T, FIND_
     }
 
     public AbstractVertxDAO setConfiguration(Configuration configuration) {
-        this.configuration = configuration;
+        this.queryExecutor().attach(configuration);
         return this;
     }
 
@@ -45,10 +44,11 @@ public abstract class AbstractVertxDAO<R extends UpdatableRecord<R>, P, T, FIND_
     }
 
     public Configuration configuration() {
-        return configuration;
+        return queryExecutor().configuration();
     }
 
-    protected QueryExecutor<R, T, FIND_MANY, FIND_ONE, EXECUTE, INSERT_RETURNING> queryExecutor(){
+    @Override
+    public QueryExecutor<R, T, FIND_MANY, FIND_ONE, EXECUTE, INSERT_RETURNING> queryExecutor(){
         return this.queryExecutor;
     }
 
@@ -56,23 +56,27 @@ public abstract class AbstractVertxDAO<R extends UpdatableRecord<R>, P, T, FIND_
     @Override
     public EXECUTE update(P object){
         Objects.requireNonNull(object);
-        DSLContext dslContext = using(configuration());
-        R record = dslContext.newRecord(getTable(), object);
-        Condition where = DSL.trueCondition();
-        UniqueKey<R> pk = getTable().getPrimaryKey();
-        for (TableField<R,?> tableField : pk.getFields()) {
-            //exclude primary keys from update
-            record.changed(tableField,false);
-            where = where.and(((TableField<R,Object>)tableField).eq(record.get(tableField)));
-        }
-        Map<String, Object> valuesToUpdate =
-                Arrays.stream(record.fields())
-                        .collect(HashMap::new, (m, f) -> m.put(f.getName(), f.getValue(record)), HashMap::putAll);
-        return queryExecutor().execute(dslContext.update(getTable()).set(valuesToUpdate).where(where));
+        return queryExecutor().execute(dslContext -> {
+            R record = dslContext.newRecord(getTable(), object);
+            Condition where = DSL.trueCondition();
+            UniqueKey<R> pk = getTable().getPrimaryKey();
+            for (TableField<R,?> tableField : pk.getFields()) {
+                //exclude primary keys from update
+                record.changed(tableField,false);
+                where = where.and(((TableField<R,Object>)tableField).eq(record.get(tableField)));
+            }
+            Map<String, Object> valuesToUpdate =
+                    Arrays.stream(record.fields())
+                            .collect(HashMap::new, (m, f) -> m.put(f.getName(), f.getValue(record)), HashMap::putAll);
+            return dslContext
+                    .update(getTable())
+                    .set(valuesToUpdate)
+                    .where(where);
+        });
     }
 
-    private SelectConditionStep<R> selectQuery(Condition condition) {
-        return using(configuration()).selectFrom(getTable()).where(condition);
+    private Function<DSLContext,SelectConditionStep<R>> selectQuery(Condition condition) {
+        return dslContext -> dslContext.selectFrom(getTable()).where(condition);
     }
 
     @Override
@@ -82,7 +86,7 @@ public abstract class AbstractVertxDAO<R extends UpdatableRecord<R>, P, T, FIND_
 
     @Override
     public FIND_MANY findManyByCondition(Condition condition, OrderField<?>... orderField) {
-        return queryExecutor().findMany(selectQuery(condition).orderBy(orderField));
+        return queryExecutor().findMany(selectQuery(condition).andThen(sel->sel.orderBy(orderField)));
     }
 
     @Override
@@ -102,12 +106,12 @@ public abstract class AbstractVertxDAO<R extends UpdatableRecord<R>, P, T, FIND_
 
     @Override
     public FIND_ONE findOneByCondition(Condition condition){
-        return queryExecutor().findOne(using(configuration()).selectFrom(getTable()).where(condition));
+        return queryExecutor().findOne(dslContext -> dslContext.selectFrom(getTable()).where(condition));
     }
 
     @Override
     public EXECUTE deleteByCondition(Condition condition){
-        return queryExecutor().execute(using(configuration()).deleteFrom(getTable()).where(condition));
+        return queryExecutor().execute(dslContext -> dslContext.deleteFrom(getTable()).where(condition));
     }
 
     @Override
@@ -128,9 +132,10 @@ public abstract class AbstractVertxDAO<R extends UpdatableRecord<R>, P, T, FIND_
     @Override
     public EXECUTE insert(P pojo, boolean onDuplicateKeyIgnore) {
         Objects.requireNonNull(pojo);
-        DSLContext dslContext = using(configuration());
-        InsertSetMoreStep<R> insertStep = dslContext.insertInto(getTable()).set(newRecord(dslContext, pojo));
-        return queryExecutor().execute(onDuplicateKeyIgnore?insertStep.onDuplicateKeyIgnore():insertStep);
+        return queryExecutor().execute(dslContext -> {
+            InsertSetMoreStep<R> insertStep = dslContext.insertInto(getTable()).set(newRecord(dslContext, pojo));
+            return onDuplicateKeyIgnore?insertStep.onDuplicateKeyIgnore():insertStep;
+        });
     }
 
     @Override
@@ -141,13 +146,14 @@ public abstract class AbstractVertxDAO<R extends UpdatableRecord<R>, P, T, FIND_
     @Override
     public EXECUTE insert(Collection<P> pojos, boolean onDuplicateKeyIgnore) {
         Arguments.require(!pojos.isEmpty(), "No elements");
-        DSLContext dslContext = using(configuration());
-        InsertSetStep<R> insertSetStep = dslContext.insertInto(getTable());
-        InsertValuesStepN<R> insertValuesStepN = null;
-        for (P pojo : pojos) {
-            insertValuesStepN = insertSetStep.values(newRecord(dslContext, pojo).intoArray());
-        }
-        return queryExecutor().execute(onDuplicateKeyIgnore?insertValuesStepN.onDuplicateKeyIgnore():insertValuesStepN);
+        return queryExecutor().execute(dslContext -> {
+            InsertSetStep<R> insertSetStep = dslContext.insertInto(getTable());
+            InsertValuesStepN<R> insertValuesStepN = null;
+            for (P pojo : pojos) {
+                insertValuesStepN = insertSetStep.values(newRecord(dslContext, pojo).intoArray());
+            }
+            return onDuplicateKeyIgnore?insertValuesStepN.onDuplicateKeyIgnore():insertValuesStepN;
+        });
     }
 
     @SuppressWarnings("unchecked")
@@ -155,9 +161,8 @@ public abstract class AbstractVertxDAO<R extends UpdatableRecord<R>, P, T, FIND_
         UniqueKey<?> key = getTable().getPrimaryKey();
         //usually key shouldn't be null because DAO generation is omitted in such cases
         Objects.requireNonNull(key,()->"No primary key");
-        DSLContext dslContext = using(configuration());
         return queryExecutor().insertReturning(
-                dslContext.insertInto(getTable()).set(newRecord(dslContext, object)).returning(key.getFields()),
+                dslContext -> dslContext.insertInto(getTable()).set(newRecord(dslContext, object)).returning(key.getFields()),
                 record->{
                     Objects.requireNonNull(record, () -> "Failed inserting record or no key");
                     Record key1 = ((R)record).key();
@@ -214,7 +219,7 @@ public abstract class AbstractVertxDAO<R extends UpdatableRecord<R>, P, T, FIND_
             return null;
 
         TableField<R, Object>[] fields = (TableField<R, Object>[]) key.getFieldsArray();
-        Record result = DSL.using(configuration)
+        Record result = DSL.using(configuration())
                 .newRecord(fields);
 
         for (int i = 0; i < values.length; i++)

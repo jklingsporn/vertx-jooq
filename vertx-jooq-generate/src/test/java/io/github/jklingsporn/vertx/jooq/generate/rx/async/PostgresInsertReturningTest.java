@@ -16,7 +16,6 @@ import io.vertx.core.Handler;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import org.jooq.*;
-import org.jooq.impl.DSL;
 import org.jooq.impl.DefaultConfiguration;
 import org.junit.Assert;
 import org.junit.Test;
@@ -101,8 +100,7 @@ public class PostgresInsertReturningTest extends AbstractPostgresInsertReturning
         );
         Configuration configuration = new DefaultConfiguration();
         configuration.set(SQLDialect.POSTGRES);
-        Single<T> insertReturning = queryExecutor.insertReturning(DSL
-                .using(configuration)
+        Single<T> insertReturning = queryExecutor.insertReturning(dslContext -> dslContext
                 .insertInto(table)
                 .set(record)
                 .returning(table.getPrimaryKey().getFieldsArray())

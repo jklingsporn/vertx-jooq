@@ -16,5 +16,5 @@ public interface JDBCQueryExecutor<T> {
      * @param <X>
      * @return the result of this operation.
      */
-    public <X> T execute(Function<DSLContext, X> function);
+    public <X> T executeAny(Function<DSLContext, X> function);
 }

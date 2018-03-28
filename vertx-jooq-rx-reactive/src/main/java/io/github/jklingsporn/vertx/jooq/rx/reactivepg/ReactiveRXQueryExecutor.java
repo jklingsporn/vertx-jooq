@@ -6,6 +6,7 @@ import com.julienviet.reactivex.pgclient.Row;
 import io.github.jklingsporn.vertx.jooq.shared.internal.QueryExecutor;
 import io.reactivex.Single;
 import org.jooq.*;
+import org.jooq.impl.DefaultConfiguration;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,22 +21,27 @@ public class ReactiveRXQueryExecutor<R extends UpdatableRecord<R>,P,T> extends R
     private final Function<com.julienviet.pgclient.Row,P> pojoMapper;
 
     public ReactiveRXQueryExecutor(PgClient delegate, Function<com.julienviet.pgclient.Row, P> pojoMapper) {
-        super(delegate);
+        this(new DefaultConfiguration().set(SQLDialect.POSTGRES),delegate,pojoMapper);
+    }
+
+    public ReactiveRXQueryExecutor(Configuration configuration, PgClient delegate, Function<com.julienviet.pgclient.Row, P> pojoMapper) {
+        super(configuration,delegate);
         this.pojoMapper = pojoMapper;
     }
 
     @Override
-    public Single<List<P>> findMany(ResultQuery<R> query) {
-        return findManyRow(query).map(rs -> rs.stream().map(pojoMapper).collect(Collectors.toList()));
+    public Single<List<P>> findMany(Function<DSLContext, ? extends ResultQuery<R>> queryFunction) {
+        return findManyRow(queryFunction).map(rs -> rs.stream().map(pojoMapper).collect(Collectors.toList()));
     }
 
     @Override
-    public Single<Optional<P>> findOne(ResultQuery<R> query) {
-        return findOneRow(query).map(val -> val.map(pojoMapper));
+    public Single<Optional<P>> findOne(Function<DSLContext, ? extends ResultQuery<R>> queryFunction) {
+        return findOneRow(queryFunction).map(val -> val.map(pojoMapper));
     }
 
     @Override
-    public Single<T> insertReturning(InsertResultStep<R> query, Function<Object, T> keyMapper) {
+    public Single<T> insertReturning(Function<DSLContext, ? extends InsertResultStep<R>> queryFunction, Function<Object, T> keyMapper) {
+        InsertResultStep<R> query = createQuery(queryFunction);
         log(query);
         Single<PgResult<Row>> rowFuture = delegate.rxPreparedQuery(toPreparedQuery(query), rxGetBindValues(query));
         return rowFuture

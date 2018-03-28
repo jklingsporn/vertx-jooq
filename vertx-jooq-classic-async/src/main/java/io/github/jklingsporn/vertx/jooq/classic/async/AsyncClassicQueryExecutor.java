@@ -4,12 +4,9 @@ import io.github.jklingsporn.vertx.jooq.shared.internal.QueryExecutor;
 import io.vertx.core.Future;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.asyncsql.AsyncSQLClient;
-import io.vertx.ext.sql.ResultSet;
 import io.vertx.ext.sql.UpdateResult;
-import org.jooq.InsertResultStep;
-import org.jooq.ResultQuery;
-import org.jooq.Table;
-import org.jooq.UpdatableRecord;
+import org.jooq.*;
+import org.jooq.impl.DefaultConfiguration;
 
 import java.util.List;
 import java.util.function.Function;
@@ -22,36 +19,36 @@ public class AsyncClassicQueryExecutor<R extends UpdatableRecord<R>,P,T> extends
 
     private final Function<JsonObject,P> pojoMapper;
 
-    public AsyncClassicQueryExecutor(AsyncSQLClient delegate, Function<JsonObject, P> pojoMapper, Table<R> table) {
-        super(delegate);
-        this.pojoMapper = convertFromSQL(table).andThen(pojoMapper);
-    }
-
     public AsyncClassicQueryExecutor(AsyncSQLClient delegate, Function<JsonObject, P> pojoMapper, Table<R> table, boolean isMysql) {
-        super(delegate,isMysql);
+        this(new DefaultConfiguration().set(isMysql ? SQLDialect.MYSQL : SQLDialect.POSTGRES), delegate,pojoMapper,table);
+    }
+
+    public AsyncClassicQueryExecutor(Configuration configuration,AsyncSQLClient delegate, Function<JsonObject, P> pojoMapper, Table<R> table) {
+        super(configuration,delegate);
         this.pojoMapper = convertFromSQL(table).andThen(pojoMapper);
     }
 
     @Override
-    public Future<List<P>> findMany(ResultQuery<R> query) {
-        return findManyJson(query).map(ls -> ls.stream().map(pojoMapper).collect(Collectors.toList()));
+    public Future<List<P>> findMany(Function<DSLContext, ? extends ResultQuery<R>> queryFunction) {
+        return findManyJson(queryFunction).map(ls -> ls.stream().map(pojoMapper).collect(Collectors.toList()));
     }
 
     @Override
-    public Future<P> findOne(ResultQuery<R> query) {
-        return findOneJson(query).map(val -> val == null?null:pojoMapper.apply(val));
+    public Future<P> findOne(Function<DSLContext, ? extends ResultQuery<R>> queryFunction) {
+        return findOneJson(queryFunction).map(val -> val == null ? null : pojoMapper.apply(val));
     }
 
     @Override
-    public Future<T> insertReturning(InsertResultStep<R> query, Function<Object, T> keyMapper) {
+    public Future<T> insertReturning(Function<DSLContext, ? extends InsertResultStep<R>> queryFunction, Function<Object, T> keyMapper) {
         return getConnection().compose(sqlConnection->{
+            Query query = createQuery(queryFunction);
             log(query);
             Future<Object> future = Future.future();
             if(isMysql){
                 sqlConnection.updateWithParams(
                         query.getSQL(),
                         getBindValues(query),
-                        this.<UpdateResult,Object>executeAndClose(UpdateResult::getKeys,
+                        this.executeAndClose(UpdateResult::getKeys,
                                 sqlConnection,
                                 future)
                 );
@@ -59,7 +56,7 @@ public class AsyncClassicQueryExecutor<R extends UpdatableRecord<R>,P,T> extends
                 sqlConnection.queryWithParams(
                         query.getSQL(),
                         getBindValues(query),
-                        this.<ResultSet, Object>executeAndClose(res -> res.getResults().get(0),
+                        this.executeAndClose(res -> res.getResults().get(0),
                                 sqlConnection,
                                 future)
                 );

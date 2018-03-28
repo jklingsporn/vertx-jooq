@@ -1,6 +1,9 @@
 package io.github.jklingsporn.vertx.jooq.classic.async;
 
+import io.github.jklingsporn.vertx.jooq.classic.ClassicQueryExecutor;
 import io.github.jklingsporn.vertx.jooq.shared.async.AbstractAsyncQueryExecutor;
+import io.github.jklingsporn.vertx.jooq.shared.async.AsyncDatabaseResult;
+import io.github.jklingsporn.vertx.jooq.shared.internal.DatabaseResult;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
@@ -9,9 +12,7 @@ import io.vertx.ext.asyncsql.AsyncSQLClient;
 import io.vertx.ext.sql.ResultSet;
 import io.vertx.ext.sql.SQLConnection;
 import io.vertx.ext.sql.UpdateResult;
-import org.jooq.Query;
-import org.jooq.Record;
-import org.jooq.ResultQuery;
+import org.jooq.*;
 import org.jooq.exception.TooManyRowsException;
 
 import java.util.List;
@@ -20,20 +21,17 @@ import java.util.function.Function;
 /**
  * Created by jensklingsporn on 07.02.18.
  */
-public class AsyncClassicGenericQueryExecutor extends AbstractAsyncQueryExecutor<Future<List<JsonObject>>, Future<JsonObject>, Future<Integer>> {
+public class AsyncClassicGenericQueryExecutor extends AbstractAsyncQueryExecutor<Future<List<JsonObject>>, Future<JsonObject>, Future<Integer>> implements ClassicQueryExecutor{
 
 
-    public AsyncClassicGenericQueryExecutor(AsyncSQLClient delegate) {
-        super(delegate);
-    }
-
-    public AsyncClassicGenericQueryExecutor(AsyncSQLClient delegate, boolean isMysql) {
-        super(delegate,isMysql);
+    public AsyncClassicGenericQueryExecutor(Configuration configuration,AsyncSQLClient delegate) {
+        super(configuration,delegate);
     }
 
     @Override
-    public Future<Integer> execute(Query query) {
+    public Future<Integer> execute(Function<DSLContext, ? extends Query> queryFunction) {
         return getConnection().compose(sqlConnection -> {
+            Query query = createQuery(queryFunction);
             log(query);
             Future<Integer> future = Future.future();
             sqlConnection.updateWithParams(
@@ -49,8 +47,9 @@ public class AsyncClassicGenericQueryExecutor extends AbstractAsyncQueryExecutor
 
 
     @Override
-    public <Q extends Record> Future<List<JsonObject>> findManyJson(ResultQuery<Q> query) {
+    public <Q extends Record> Future<List<JsonObject>> findManyJson(Function<DSLContext, ? extends ResultQuery<Q>> queryFunction) {
         return getConnection().compose(sqlConnection -> {
+            Query query = createQuery(queryFunction);
             log(query);
             Future<List<JsonObject>> future = Future.future();
             sqlConnection.queryWithParams(
@@ -63,8 +62,9 @@ public class AsyncClassicGenericQueryExecutor extends AbstractAsyncQueryExecutor
     }
 
     @Override
-    public <Q extends Record> Future<JsonObject> findOneJson(ResultQuery<Q> query) {
+    public <Q extends Record> Future<JsonObject> findOneJson(Function<DSLContext, ? extends ResultQuery<Q>> queryFunction) {
         return getConnection().compose(sqlConnection -> {
+            Query query = createQuery(queryFunction);
             log(query);
             Future<JsonObject> future = Future.future();
             sqlConnection.queryWithParams(
@@ -109,5 +109,37 @@ public class AsyncClassicGenericQueryExecutor extends AbstractAsyncQueryExecutor
                 sqlConnection.close();
             }
         };
+    }
+
+    @Override
+    public Future<Integer> exec(Function<DSLContext, Query> queryFunction) {
+        return getConnection().compose(sqlConnection -> {
+            Query query = createQuery(queryFunction);
+            log(query);
+            Future<Integer> future = Future.future();
+            sqlConnection.updateWithParams(
+                    query.getSQL(),
+                    getBindValues(query),
+                    this.<UpdateResult,Integer>executeAndClose(UpdateResult::getUpdated,
+                            sqlConnection,
+                            future)
+            );
+            return future;
+        });
+    }
+
+    @Override
+    public <R extends Record> Future<DatabaseResult> query(Function<DSLContext, ResultQuery<R>> queryFunction) {
+        return getConnection().compose(sqlConnection -> {
+            Query query = createQuery(queryFunction);
+            log(query);
+            Future<DatabaseResult> future = Future.future();
+            sqlConnection.queryWithParams(
+                    query.getSQL(),
+                    getBindValues(query),
+                    this.executeAndClose(AsyncDatabaseResult::new,sqlConnection,future)
+            );
+            return future;
+        });
     }
 }
