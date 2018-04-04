@@ -5,10 +5,10 @@ import com.julienviet.reactivex.pgclient.PgResult;
 import com.julienviet.reactivex.pgclient.Row;
 import com.julienviet.reactivex.pgclient.Tuple;
 import io.github.jklingspon.vertx.jooq.shared.reactive.AbstractReactiveQueryExecutor;
-import io.github.jklingspon.vertx.jooq.shared.reactive.ReactiveDatabaseResult;
+import io.github.jklingspon.vertx.jooq.shared.reactive.ReactiveQueryResult;
 import io.github.jklingspon.vertx.jooq.shared.reactive.ReactiveQueryExecutor;
 import io.github.jklingsporn.vertx.jooq.rx.RXQueryExecutor;
-import io.github.jklingsporn.vertx.jooq.shared.internal.DatabaseResult;
+import io.github.jklingsporn.vertx.jooq.shared.internal.QueryResult;
 import io.reactivex.Single;
 import org.jooq.*;
 import org.jooq.exception.TooManyRowsException;
@@ -90,10 +90,10 @@ public class ReactiveRXGenericQueryExecutor extends AbstractReactiveQueryExecuto
 
     @Override
     @SuppressWarnings("unchecked")
-    public <R extends Record> Single<DatabaseResult> query(Function<DSLContext, ResultQuery<R>> queryFunction) {
+    public <R extends Record> Single<QueryResult> query(Function<DSLContext, ? extends ResultQuery<R>> queryFunction) {
         Query query = createQuery(queryFunction);
         log(query);
         Single<PgResult<Row>> rowFuture  = delegate.rxPreparedQuery(toPreparedQuery(query), rxGetBindValues(query));
-        return rowFuture.map(res -> new ReactiveDatabaseResult(res.getDelegate()));
+        return rowFuture.map(res -> new ReactiveQueryResult(res.getDelegate()));
     }
 }

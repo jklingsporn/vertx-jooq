@@ -14,6 +14,6 @@ public interface GenericQueryExecutor<EXEC_TYPE, QUERY_TYPE> {
 
     public EXEC_TYPE exec(Function<DSLContext, Query> queryFunction);
 
-    public <R extends Record> QUERY_TYPE query(Function<DSLContext, ResultQuery<R>> queryFunction);
+    public <R extends Record> QUERY_TYPE query(Function<DSLContext, ? extends ResultQuery<R>> queryFunction);
 
 }

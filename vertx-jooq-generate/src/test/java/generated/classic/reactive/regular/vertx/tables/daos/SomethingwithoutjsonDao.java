@@ -36,7 +36,7 @@ public class SomethingwithoutjsonDao extends AbstractReactiveVertxDAO<Somethingw
      * @param delegate A configured AsyncSQLClient that is used for query execution
      */
     public SomethingwithoutjsonDao(Configuration configuration, com.julienviet.pgclient.PgClient delegate) {
-        super(Somethingwithoutjson.SOMETHINGWITHOUTJSON, generated.classic.reactive.regular.vertx.tables.pojos.Somethingwithoutjson.class, new ReactiveClassicQueryExecutor<SomethingwithoutjsonRecord,generated.classic.reactive.regular.vertx.tables.pojos.Somethingwithoutjson,Integer>(delegate,generated.classic.reactive.regular.vertx.tables.mappers.RowMappers.getSomethingwithoutjsonMapper()), configuration);
+        super(Somethingwithoutjson.SOMETHINGWITHOUTJSON, generated.classic.reactive.regular.vertx.tables.pojos.Somethingwithoutjson.class, new ReactiveClassicQueryExecutor<SomethingwithoutjsonRecord,generated.classic.reactive.regular.vertx.tables.pojos.Somethingwithoutjson,Integer>(configuration,delegate,generated.classic.reactive.regular.vertx.tables.mappers.RowMappers.getSomethingwithoutjsonMapper()));
     }
 
     /**

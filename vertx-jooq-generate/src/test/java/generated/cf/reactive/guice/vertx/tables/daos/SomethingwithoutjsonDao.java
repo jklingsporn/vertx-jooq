@@ -39,7 +39,7 @@ public class SomethingwithoutjsonDao extends AbstractReactiveVertxDAO<Somethingw
      * @param vertx the vertx instance
      */
     public SomethingwithoutjsonDao(Configuration configuration, com.julienviet.pgclient.PgClient delegate, io.vertx.core.Vertx vertx) {
-        super(Somethingwithoutjson.SOMETHINGWITHOUTJSON, generated.cf.reactive.guice.vertx.tables.pojos.Somethingwithoutjson.class, new ReactiveCompletableFutureQueryExecutor<SomethingwithoutjsonRecord,generated.cf.reactive.guice.vertx.tables.pojos.Somethingwithoutjson,Integer>(delegate,generated.cf.reactive.guice.vertx.tables.mappers.RowMappers.getSomethingwithoutjsonMapper(),vertx), configuration);
+        super(Somethingwithoutjson.SOMETHINGWITHOUTJSON, generated.cf.reactive.guice.vertx.tables.pojos.Somethingwithoutjson.class, new ReactiveCompletableFutureQueryExecutor<SomethingwithoutjsonRecord,generated.cf.reactive.guice.vertx.tables.pojos.Somethingwithoutjson,Integer>(configuration,delegate,generated.cf.reactive.guice.vertx.tables.mappers.RowMappers.getSomethingwithoutjsonMapper(),vertx));
     }
 
     /**

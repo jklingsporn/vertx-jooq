@@ -26,12 +26,10 @@ public abstract class AbstractVertxDAO<R extends UpdatableRecord<R>, P, T, FIND_
     private final Table<R> table;
     private final QueryExecutor<R, T, FIND_MANY, FIND_ONE, EXECUTE, INSERT_RETURNING> queryExecutor;
 
-
-    protected AbstractVertxDAO(Table<R> table, Class<P> type, QueryExecutor<R, T, FIND_MANY, FIND_ONE, EXECUTE, INSERT_RETURNING> queryExecutor, Configuration configuration) {
+    protected AbstractVertxDAO(Table<R> table, Class<P> type, QueryExecutor<R, T, FIND_MANY, FIND_ONE, EXECUTE, INSERT_RETURNING> queryExecutor) {
         this.type = type;
         this.table = table;
         this.queryExecutor = queryExecutor;
-        setConfiguration(configuration);
     }
 
     public AbstractVertxDAO setConfiguration(Configuration configuration) {
@@ -43,7 +41,7 @@ public abstract class AbstractVertxDAO<R extends UpdatableRecord<R>, P, T, FIND_
         return table;
     }
 
-    public Configuration configuration() {
+    protected Configuration configuration() {
         return queryExecutor().configuration();
     }
 

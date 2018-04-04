@@ -4,10 +4,10 @@ import com.julienviet.pgclient.PgClient;
 import com.julienviet.pgclient.PgResult;
 import com.julienviet.pgclient.Row;
 import io.github.jklingspon.vertx.jooq.shared.reactive.AbstractReactiveQueryExecutor;
-import io.github.jklingspon.vertx.jooq.shared.reactive.ReactiveDatabaseResult;
+import io.github.jklingspon.vertx.jooq.shared.reactive.ReactiveQueryResult;
 import io.github.jklingspon.vertx.jooq.shared.reactive.ReactiveQueryExecutor;
 import io.github.jklingsporn.vertx.jooq.classic.ClassicQueryExecutor;
-import io.github.jklingsporn.vertx.jooq.shared.internal.DatabaseResult;
+import io.github.jklingsporn.vertx.jooq.shared.internal.QueryResult;
 import io.vertx.core.Future;
 import org.jooq.*;
 import org.jooq.exception.TooManyRowsException;
@@ -76,11 +76,11 @@ public class ReactiveClassicGenericQueryExecutor extends AbstractReactiveQueryEx
     }
 
     @Override
-    public <R extends Record> Future<DatabaseResult> query(Function<DSLContext, ResultQuery<R>> queryFunction) {
+    public <R extends Record> Future<QueryResult> query(Function<DSLContext, ? extends ResultQuery<R>> queryFunction) {
         Query query = createQuery(queryFunction);
         log(query);
         Future<PgResult<Row>> rowFuture = Future.future();
         delegate.preparedQuery(toPreparedQuery(query),getBindValues(query),rowFuture);
-        return rowFuture.map(ReactiveDatabaseResult::new);
+        return rowFuture.map(ReactiveQueryResult::new);
     }
 }

@@ -2,8 +2,8 @@ package io.github.jklingsporn.vertx.jooq.classic.async;
 
 import io.github.jklingsporn.vertx.jooq.classic.ClassicQueryExecutor;
 import io.github.jklingsporn.vertx.jooq.shared.async.AbstractAsyncQueryExecutor;
-import io.github.jklingsporn.vertx.jooq.shared.async.AsyncDatabaseResult;
-import io.github.jklingsporn.vertx.jooq.shared.internal.DatabaseResult;
+import io.github.jklingsporn.vertx.jooq.shared.async.AsyncQueryResult;
+import io.github.jklingsporn.vertx.jooq.shared.internal.QueryResult;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
@@ -129,15 +129,15 @@ public class AsyncClassicGenericQueryExecutor extends AbstractAsyncQueryExecutor
     }
 
     @Override
-    public <R extends Record> Future<DatabaseResult> query(Function<DSLContext, ResultQuery<R>> queryFunction) {
+    public <R extends Record> Future<QueryResult> query(Function<DSLContext, ? extends ResultQuery<R>> queryFunction) {
         return getConnection().compose(sqlConnection -> {
             Query query = createQuery(queryFunction);
             log(query);
-            Future<DatabaseResult> future = Future.future();
+            Future<QueryResult> future = Future.future();
             sqlConnection.queryWithParams(
                     query.getSQL(),
                     getBindValues(query),
-                    this.executeAndClose(AsyncDatabaseResult::new,sqlConnection,future)
+                    this.executeAndClose(AsyncQueryResult::new,sqlConnection,future)
             );
             return future;
         });

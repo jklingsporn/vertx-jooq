@@ -15,6 +15,11 @@ public class JDBCClassicQueryExecutor<R extends UpdatableRecord<R>,P,T> extends 
 
     private final Class<P> daoType;
 
+    public JDBCClassicQueryExecutor(Configuration configuration, Class<P> daoType, Vertx vertx) {
+        super(configuration,vertx);
+        this.daoType = daoType;
+    }
+
     public JDBCClassicQueryExecutor(Class<P> daoType, Configuration configuration, Vertx vertx) {
         super(configuration,vertx);
         this.daoType = daoType;

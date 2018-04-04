@@ -2,8 +2,8 @@ package io.github.jklingsporn.vertx.jooq.completablefuture.async;
 
 import io.github.jklingsporn.vertx.jooq.completablefuture.CompletableFutureQueryExecutor;
 import io.github.jklingsporn.vertx.jooq.shared.async.AbstractAsyncQueryExecutor;
-import io.github.jklingsporn.vertx.jooq.shared.async.AsyncDatabaseResult;
-import io.github.jklingsporn.vertx.jooq.shared.internal.DatabaseResult;
+import io.github.jklingsporn.vertx.jooq.shared.async.AsyncQueryResult;
+import io.github.jklingsporn.vertx.jooq.shared.internal.QueryResult;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
@@ -124,15 +124,15 @@ public class AsyncCompletableFutureGenericQueryExecutor extends AbstractAsyncQue
 
 
     @Override
-    public <R extends Record> CompletableFuture<DatabaseResult> query(Function<DSLContext, ResultQuery<R>> queryFunction) {
+    public <R extends Record> CompletableFuture<QueryResult> query(Function<DSLContext, ? extends ResultQuery<R>> queryFunction) {
         return getConnection().thenCompose(sqlConnection -> {
             Query query = createQuery(queryFunction);
             log(query);
-            CompletableFuture<DatabaseResult> cf = new VertxCompletableFuture<>(vertx);
+            CompletableFuture<QueryResult> cf = new VertxCompletableFuture<>(vertx);
             sqlConnection.queryWithParams(
                     query.getSQL(),
                     getBindValues(query),
-                    executeAndClose(AsyncDatabaseResult::new,sqlConnection,cf)
+                    executeAndClose(AsyncQueryResult::new,sqlConnection,cf)
             );
             return cf;
         });

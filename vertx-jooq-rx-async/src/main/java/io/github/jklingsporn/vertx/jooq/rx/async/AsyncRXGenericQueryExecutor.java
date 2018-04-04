@@ -2,8 +2,8 @@ package io.github.jklingsporn.vertx.jooq.rx.async;
 
 import io.github.jklingsporn.vertx.jooq.rx.RXQueryExecutor;
 import io.github.jklingsporn.vertx.jooq.shared.async.AbstractAsyncQueryExecutor;
-import io.github.jklingsporn.vertx.jooq.shared.async.AsyncDatabaseResult;
-import io.github.jklingsporn.vertx.jooq.shared.internal.DatabaseResult;
+import io.github.jklingsporn.vertx.jooq.shared.async.AsyncQueryResult;
+import io.github.jklingsporn.vertx.jooq.shared.internal.QueryResult;
 import io.reactivex.Single;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.sql.ResultSet;
@@ -85,11 +85,11 @@ public class AsyncRXGenericQueryExecutor extends AbstractAsyncQueryExecutor<Sing
     }
 
     @Override
-    public <R extends Record> Single<DatabaseResult> query(Function<DSLContext, ResultQuery<R>> queryFunction) {
+    public <R extends Record> Single<QueryResult> query(Function<DSLContext, ? extends ResultQuery<R>> queryFunction) {
         Query query = createQuery(queryFunction);
         log(query);
         return getConnection()
                 .flatMap(executeAndClose(sqlConnection ->
-                        sqlConnection.rxQueryWithParams(query.getSQL(), getBindValues(query)).map(AsyncDatabaseResult::new)));
+                        sqlConnection.rxQueryWithParams(query.getSQL(), getBindValues(query)).map(AsyncQueryResult::new)));
     }
 }

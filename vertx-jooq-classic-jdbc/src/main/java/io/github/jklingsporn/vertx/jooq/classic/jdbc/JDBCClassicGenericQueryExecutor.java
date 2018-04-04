@@ -2,8 +2,8 @@ package io.github.jklingsporn.vertx.jooq.classic.jdbc;
 
 import io.github.jklingsporn.vertx.jooq.classic.ClassicQueryExecutor;
 import io.github.jklingsporn.vertx.jooq.shared.internal.AbstractQueryExecutor;
-import io.github.jklingsporn.vertx.jooq.shared.internal.DatabaseResult;
-import io.github.jklingsporn.vertx.jooq.shared.internal.jdbc.JDBCDatabaseResult;
+import io.github.jklingsporn.vertx.jooq.shared.internal.QueryResult;
+import io.github.jklingsporn.vertx.jooq.shared.internal.jdbc.JDBCQueryResult;
 import io.github.jklingsporn.vertx.jooq.shared.internal.jdbc.JDBCQueryExecutor;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
@@ -42,7 +42,7 @@ public class JDBCClassicGenericQueryExecutor extends AbstractQueryExecutor imple
     }
 
     @Override
-    public <R extends Record> Future<DatabaseResult> query(Function<DSLContext, ResultQuery<R>> queryFunction) {
-        return executeBlocking(h -> h.complete(new JDBCDatabaseResult(createQuery(queryFunction).fetch())));
+    public <R extends Record> Future<QueryResult> query(Function<DSLContext, ? extends ResultQuery<R>> queryFunction) {
+        return executeBlocking(h -> h.complete(new JDBCQueryResult(createQuery(queryFunction).fetch())));
     }
 }

@@ -40,7 +40,7 @@ public class SomethingcompositeDao extends AbstractVertxDAO<SomethingcompositeRe
      * @param vertx the vertx instance
      */
     public SomethingcompositeDao(Configuration configuration, io.vertx.core.Vertx vertx) {
-        super(Somethingcomposite.SOMETHINGCOMPOSITE, generated.classic.jdbc.guice.vertx.tables.pojos.Somethingcomposite.class, new JDBCClassicQueryExecutor<SomethingcompositeRecord,generated.classic.jdbc.guice.vertx.tables.pojos.Somethingcomposite,Record2<Integer, Integer>>(generated.classic.jdbc.guice.vertx.tables.pojos.Somethingcomposite.class,configuration,vertx), configuration);
+        super(Somethingcomposite.SOMETHINGCOMPOSITE, generated.classic.jdbc.guice.vertx.tables.pojos.Somethingcomposite.class, new JDBCClassicQueryExecutor<SomethingcompositeRecord,generated.classic.jdbc.guice.vertx.tables.pojos.Somethingcomposite,Record2<Integer, Integer>>(configuration,generated.classic.jdbc.guice.vertx.tables.pojos.Somethingcomposite.class,vertx));
     }
 
     /**

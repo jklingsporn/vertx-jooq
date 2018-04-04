@@ -39,7 +39,7 @@ public class SomethingDao extends AbstractReactiveVertxDAO<SomethingRecord, gene
      * @param delegate A configured AsyncSQLClient that is used for query execution
      */
     public SomethingDao(Configuration configuration, com.julienviet.pgclient.PgClient delegate) {
-        super(Something.SOMETHING, generated.classic.reactive.regular.vertx.tables.pojos.Something.class, new ReactiveClassicQueryExecutor<SomethingRecord,generated.classic.reactive.regular.vertx.tables.pojos.Something,Integer>(delegate,generated.classic.reactive.regular.vertx.tables.mappers.RowMappers.getSomethingMapper()), configuration);
+        super(Something.SOMETHING, generated.classic.reactive.regular.vertx.tables.pojos.Something.class, new ReactiveClassicQueryExecutor<SomethingRecord,generated.classic.reactive.regular.vertx.tables.pojos.Something,Integer>(configuration,delegate,generated.classic.reactive.regular.vertx.tables.mappers.RowMappers.getSomethingMapper()));
     }
 
     /**

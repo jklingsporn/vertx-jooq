@@ -26,10 +26,10 @@ public abstract class AbstractAsyncVertxDAO<R extends UpdatableRecord<R>, P, T, 
     private final Function<Object,T> keyConverter;
 
     @SuppressWarnings("unchecked")
-    protected AbstractAsyncVertxDAO(Table<R> table, Class<P> type, QueryExecutor<R, T, FIND_MANY, FIND_ONE, EXECUTE, INSERT_RETURNING> queryExecutor, Configuration configuration) {
-        super(table, type, queryExecutor, configuration);
-        Arguments.require(isMysql(configuration) || isPostgres(configuration),"Only Postgres and MySQL supported");
-        if(isMysql(configuration)){
+    protected AbstractAsyncVertxDAO(Table<R> table, Class<P> type, QueryExecutor<R, T, FIND_MANY, FIND_ONE, EXECUTE, INSERT_RETURNING> queryExecutor) {
+        super(table, type, queryExecutor);
+        Arguments.require(isMysql(configuration()) || isPostgres(configuration()),"Only Postgres and MySQL supported");
+        if(isMysql(configuration())){
             keyConverter = keyConverter();
         }else{
             keyConverter = o -> {
@@ -46,6 +46,7 @@ public abstract class AbstractAsyncVertxDAO<R extends UpdatableRecord<R>, P, T, 
             };
         }
     }
+
 
     /**
      * @return the converter used to convert the returned primary key to type T. Since the input argument of the Function

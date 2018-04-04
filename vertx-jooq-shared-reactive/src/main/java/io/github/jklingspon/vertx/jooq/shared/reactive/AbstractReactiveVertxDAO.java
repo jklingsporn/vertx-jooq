@@ -19,9 +19,9 @@ import java.util.function.Function;
  */
 public abstract class AbstractReactiveVertxDAO<R extends UpdatableRecord<R>, P, T, FIND_MANY, FIND_ONE,EXECUTE, INSERT_RETURNING> extends AbstractVertxDAO<R,P,T,FIND_MANY,FIND_ONE, EXECUTE, INSERT_RETURNING>{
 
-    protected AbstractReactiveVertxDAO(Table<R> table, Class<P> type, QueryExecutor<R, T, FIND_MANY, FIND_ONE, EXECUTE, INSERT_RETURNING> queryExecutor, Configuration configuration) {
-        super(table, type, queryExecutor, configuration);
-        Arguments.require(SQLDialect.POSTGRES.equals(configuration.dialect().family()),"Only Postgres supported");
+    protected AbstractReactiveVertxDAO(Table<R> table, Class<P> type, QueryExecutor<R, T, FIND_MANY, FIND_ONE, EXECUTE, INSERT_RETURNING> queryExecutor) {
+        super(table, type, queryExecutor);
+        Arguments.require(SQLDialect.POSTGRES.equals(configuration().dialect().family()),"Only Postgres supported");
     }
 
     @SuppressWarnings("unchecked")
@@ -42,10 +42,10 @@ public abstract class AbstractReactiveVertxDAO<R extends UpdatableRecord<R>, P, 
 
     @Override
     public INSERT_RETURNING insertReturningPrimary(P object) {
-        return queryExecutor().insertReturning(dslContext->dslContext
-                .insertInto(getTable())
-                .set(newRecord(dslContext, object))
-                .returning(getTable().getPrimaryKey().getFieldsArray()),
+        return queryExecutor().insertReturning(dslContext -> dslContext
+                        .insertInto(getTable())
+                        .set(newRecord(dslContext, object))
+                        .returning(getTable().getPrimaryKey().getFieldsArray()),
                 keyConverter());
     }
 }

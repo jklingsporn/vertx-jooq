@@ -1,6 +1,6 @@
 package io.github.jklingsporn.vertx.jooq.shared.async;
 
-import io.github.jklingsporn.vertx.jooq.shared.internal.DatabaseResult;
+import io.github.jklingsporn.vertx.jooq.shared.internal.QueryResult;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.sql.ResultSet;
 import org.jooq.Field;
@@ -13,16 +13,16 @@ import java.util.stream.IntStream;
 /**
  * @author jensklingsporn
  */
-public class AsyncDatabaseResult implements DatabaseResult {
+public class AsyncQueryResult implements QueryResult {
 
     private final ResultSet resultSet;
     private final int index;
 
-    public AsyncDatabaseResult(ResultSet resultSet) {
+    public AsyncQueryResult(ResultSet resultSet) {
         this(resultSet,0);
     }
 
-    private AsyncDatabaseResult(ResultSet resultSet, int index) {
+    private AsyncQueryResult(ResultSet resultSet, int index) {
         this.resultSet = resultSet;
         this.index = index;
     }
@@ -54,10 +54,10 @@ public class AsyncDatabaseResult implements DatabaseResult {
     }
 
     @Override
-    public List<DatabaseResult> asList() {
+    public List<QueryResult> asList() {
         return IntStream
                 .range(0, resultSet.getNumRows())
-                .mapToObj(i -> new AsyncDatabaseResult(resultSet, i))
+                .mapToObj(i -> new AsyncQueryResult(resultSet, i))
                 .collect(Collectors.toList());
     }
 

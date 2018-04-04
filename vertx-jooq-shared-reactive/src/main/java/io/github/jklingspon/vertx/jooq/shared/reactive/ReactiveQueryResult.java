@@ -2,7 +2,7 @@ package io.github.jklingspon.vertx.jooq.shared.reactive;
 
 import com.julienviet.pgclient.PgResult;
 import com.julienviet.pgclient.Row;
-import io.github.jklingsporn.vertx.jooq.shared.internal.DatabaseResult;
+import io.github.jklingsporn.vertx.jooq.shared.internal.QueryResult;
 import org.jooq.Field;
 import org.jooq.tools.Convert;
 
@@ -14,17 +14,17 @@ import java.util.stream.StreamSupport;
 /**
  * @author jensklingsporn
  */
-public class ReactiveDatabaseResult implements DatabaseResult {
+public class ReactiveQueryResult implements QueryResult {
 
     private final Row current;
     private final PgResult<Row> result;
 
-    public ReactiveDatabaseResult(PgResult<Row> result) {
+    public ReactiveQueryResult(PgResult<Row> result) {
         this.result = result;
         this.current = result.iterator().next();
     }
 
-    private ReactiveDatabaseResult(Row row) {
+    private ReactiveQueryResult(Row row) {
         this.result = null;
         this.current = row;
     }
@@ -56,11 +56,11 @@ public class ReactiveDatabaseResult implements DatabaseResult {
     }
 
     @Override
-    public List<DatabaseResult> asList() {
+    public List<QueryResult> asList() {
         Objects.requireNonNull(result, ()->"asList() can only be called once");
         return StreamSupport
                 .stream(result.spliterator(), false)
-                .map(ReactiveDatabaseResult::new)
+                .map(ReactiveQueryResult::new)
                 .collect(Collectors.toList());
     }
 }

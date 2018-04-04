@@ -1,6 +1,6 @@
 package io.github.jklingsporn.vertx.jooq.shared.internal.jdbc;
 
-import io.github.jklingsporn.vertx.jooq.shared.internal.DatabaseResult;
+import io.github.jklingsporn.vertx.jooq.shared.internal.QueryResult;
 import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.Result;
@@ -12,16 +12,16 @@ import java.util.stream.IntStream;
 /**
  * @author jensklingsporn
  */
-public class JDBCDatabaseResult implements DatabaseResult {
+public class JDBCQueryResult implements QueryResult {
 
     private final Result<? extends Record> result;
     private final int index;
 
-    public JDBCDatabaseResult(Result<? extends Record> result) {
+    public JDBCQueryResult(Result<? extends Record> result) {
         this(result,0);
     }
 
-    private JDBCDatabaseResult(Result<? extends Record> result, int index) {
+    private JDBCQueryResult(Result<? extends Record> result, int index) {
         this.result = result;
         this.index = index;
     }
@@ -53,10 +53,10 @@ public class JDBCDatabaseResult implements DatabaseResult {
     }
 
     @Override
-    public List<DatabaseResult> asList() {
+    public List<QueryResult> asList() {
         return IntStream
-                .range(index,result.size())
-                .mapToObj(i->new JDBCDatabaseResult(result,i))
+                .range(index, result.size())
+                .mapToObj(i -> new JDBCQueryResult(result, i))
                 .collect(Collectors.toList());
     }
 }

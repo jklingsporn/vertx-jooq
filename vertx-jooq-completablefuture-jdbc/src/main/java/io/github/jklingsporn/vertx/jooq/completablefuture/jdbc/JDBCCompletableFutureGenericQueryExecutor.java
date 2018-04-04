@@ -2,8 +2,8 @@ package io.github.jklingsporn.vertx.jooq.completablefuture.jdbc;
 
 import io.github.jklingsporn.vertx.jooq.completablefuture.CompletableFutureQueryExecutor;
 import io.github.jklingsporn.vertx.jooq.shared.internal.AbstractQueryExecutor;
-import io.github.jklingsporn.vertx.jooq.shared.internal.DatabaseResult;
-import io.github.jklingsporn.vertx.jooq.shared.internal.jdbc.JDBCDatabaseResult;
+import io.github.jklingsporn.vertx.jooq.shared.internal.QueryResult;
+import io.github.jklingsporn.vertx.jooq.shared.internal.jdbc.JDBCQueryResult;
 import io.github.jklingsporn.vertx.jooq.shared.internal.jdbc.JDBCQueryExecutor;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
@@ -66,8 +66,8 @@ public class JDBCCompletableFutureGenericQueryExecutor extends AbstractQueryExec
     }
 
     @Override
-    public <R extends Record> CompletableFuture<DatabaseResult> query(Function<DSLContext, ResultQuery<R>> queryFunction) {
-        return executeBlocking(h -> h.complete(new JDBCDatabaseResult(createQuery(queryFunction).fetch())));
+    public <R extends Record> CompletableFuture<QueryResult> query(Function<DSLContext, ? extends ResultQuery<R>> queryFunction) {
+        return executeBlocking(h -> h.complete(new JDBCQueryResult(createQuery(queryFunction).fetch())));
     }
 
 }

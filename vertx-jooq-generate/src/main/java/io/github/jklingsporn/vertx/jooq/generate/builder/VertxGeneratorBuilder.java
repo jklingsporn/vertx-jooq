@@ -172,7 +172,7 @@ public class VertxGeneratorBuilder {
                             .setWriteConstructorDelegate((out, className, tableIdentifier, tableRecord, pType, tType) -> {
                                 out.tab(1).javadoc("@param configuration The Configuration used for rendering and query execution.\n     * @param vertx the vertx instance");
                                 out.tab(1).println("public %s(%s configuration, %s vertx) {", className, Configuration.class, base.renderFQVertxName());
-                                out.tab(2).println("super(%s, %s.class, new %s(%s.class,configuration,vertx), configuration);", tableIdentifier, pType, base.renderQueryExecutor(tableRecord, pType, tType), pType);
+                                out.tab(2).println("super(%s, %s.class, new %s(configuration,%s.class,vertx));", tableIdentifier, pType, base.renderQueryExecutor(tableRecord, pType, tType), pType);
                                 out.tab(1).println("}");
                             })
                     );
@@ -183,7 +183,7 @@ public class VertxGeneratorBuilder {
                             .setWriteConstructorDelegate((out, className, tableIdentifier, tableRecord, pType, tType) -> {
                                 out.tab(1).javadoc("@param configuration The Configuration used for rendering and query execution.\n     * @param vertx the vertx instance");
                                 out.tab(1).println("public %s(%s configuration, %s vertx) {", className, Configuration.class, base.renderFQVertxName());
-                                out.tab(2).println("super(%s, %s.class, new %s(%s.class,configuration,vertx), configuration);", tableIdentifier, pType, base.renderQueryExecutor(tableRecord, pType, tType), pType);
+                                out.tab(2).println("super(%s, %s.class, new %s(configuration,%s.class,vertx));", tableIdentifier, pType, base.renderQueryExecutor(tableRecord, pType, tType), pType);
                                 out.tab(1).println("}");
                             })
                     );
@@ -195,7 +195,7 @@ public class VertxGeneratorBuilder {
                                 out.tab(1).javadoc("@param configuration The Configuration used for rendering and query execution.\n" +
                                         "     * @param vertx the vertx instance");
                                 out.tab(1).println("public %s(%s configuration, %s vertx) {", className, Configuration.class, base.renderFQVertxName());
-                                out.tab(2).println("super(%s, %s.class, new %s(%s.class,configuration,vertx), configuration);", tableIdentifier, pType, base.renderQueryExecutor(tableRecord, pType, tType),pType);
+                                out.tab(2).println("super(%s, %s.class, new %s(configuration,%s.class,configuration,vertx));", tableIdentifier, pType, base.renderQueryExecutor(tableRecord, pType, tType),pType);
                                 out.tab(1).println("}");
                             })
                     );
@@ -223,7 +223,7 @@ public class VertxGeneratorBuilder {
                             .setWriteConstructorDelegate((out, className, tableIdentifier, tableRecord, pType, tType) -> {
                                 out.tab(1).javadoc("@param configuration Used for rendering, so only SQLDialect must be set and must be one of the MYSQL types or POSTGRES.\n     * @param delegate A configured AsyncSQLClient that is used for query execution");
                                 out.tab(1).println("public %s(%s configuration, io.vertx.ext.asyncsql.AsyncSQLClient delegate) {", className, Configuration.class);
-                                out.tab(2).println("super(%s, %s.class, new %s(delegate,%s::new, %s, isMysql(configuration)), configuration);", tableIdentifier, pType, base.renderQueryExecutor(tableRecord, pType, tType),pType, tableIdentifier);
+                                out.tab(2).println("super(%s, %s.class, new %s(configuration,delegate,%s::new, %s));", tableIdentifier, pType, base.renderQueryExecutor(tableRecord, pType, tType),pType, tableIdentifier);
                                 out.tab(1).println("}");
                             })
 
@@ -236,7 +236,7 @@ public class VertxGeneratorBuilder {
                                 out.tab(1).javadoc("@param configuration Used for rendering, so only SQLDialect must be set and must be one of the MYSQL types or POSTGRES.\n" +
                                         "     * @param vertx the vertx instance\n     * @param delegate A configured AsyncSQLClient that is used for query execution");
                                 out.tab(1).println("public %s(%s configuration, %s vertx, io.vertx.ext.asyncsql.AsyncSQLClient delegate) {", className, Configuration.class, base.renderFQVertxName());
-                                out.tab(2).println("super(%s, %s.class, new %s(vertx,delegate,%s::new, %s, isMysql(configuration)), configuration);", tableIdentifier, pType, base.renderQueryExecutor(tableRecord, pType, tType),pType,tableIdentifier);
+                                out.tab(2).println("super(%s, %s.class, new %s(configuration,vertx,delegate,%s::new, %s));", tableIdentifier, pType, base.renderQueryExecutor(tableRecord, pType, tType),pType,tableIdentifier);
                                 out.tab(1).println("}");
                             })
 
@@ -248,7 +248,7 @@ public class VertxGeneratorBuilder {
                             .setWriteConstructorDelegate((out, className, tableIdentifier, tableRecord, pType, tType) -> {
                                 out.tab(1).javadoc("@param configuration Used for rendering, so only SQLDialect must be set and must be one of the MYSQL types or POSTGRES.\n     * @param delegate A configured AsyncSQLClient that is used for query execution");
                                 out.tab(1).println("public %s(%s configuration,io.vertx.reactivex.ext.asyncsql.AsyncSQLClient delegate) {", className, Configuration.class);
-                                out.tab(2).println("super(%s, %s.class, new %s(delegate,%s::new, %s, isMysql(configuration)), configuration);", tableIdentifier, pType, base.renderQueryExecutor(tableRecord, pType, tType),pType,tableIdentifier);
+                                out.tab(2).println("super(%s, %s.class, new %s(configuration,delegate,%s::new, %s));", tableIdentifier, pType, base.renderQueryExecutor(tableRecord, pType, tType),pType,tableIdentifier);
                                 out.tab(1).println("}");
                             })
 
@@ -341,7 +341,7 @@ public class VertxGeneratorBuilder {
                                 String mapperFactory = String.format("%smappers.RowMappers.get%sMapper()",split[0],split[1]);
                                 out.tab(1).javadoc("@param configuration Used for rendering, so only SQLDialect must be set and must be one of the POSTGREs types.\n     * @param delegate A configured AsyncSQLClient that is used for query execution");
                                 out.tab(1).println("public %s(%s configuration, com.julienviet.pgclient.PgClient delegate) {", className, Configuration.class);
-                                out.tab(2).println("super(%s, %s.class, new %s(delegate,%s), configuration);", tableIdentifier, pType, base.renderQueryExecutor(tableRecord, pType, tType),mapperFactory);
+                                out.tab(2).println("super(%s, %s.class, new %s(configuration,delegate,%s));", tableIdentifier, pType, base.renderQueryExecutor(tableRecord, pType, tType),mapperFactory);
                                 out.tab(1).println("}");
                             })
 
@@ -356,7 +356,7 @@ public class VertxGeneratorBuilder {
                                 String mapperFactory = String.format("%smappers.RowMappers.get%sMapper()",split[0],split[1]);
                                 out.tab(1).javadoc("@param configuration The Configuration used for rendering and query execution.\n     * @param vertx the vertx instance");
                                 out.tab(1).println("public %s(%s configuration, com.julienviet.pgclient.PgClient delegate, %s vertx) {", className, Configuration.class, base.renderFQVertxName());
-                                out.tab(2).println("super(%s, %s.class, new %s(delegate,%s,vertx), configuration);", tableIdentifier, pType, base.renderQueryExecutor(tableRecord, pType, tType), mapperFactory);
+                                out.tab(2).println("super(%s, %s.class, new %s(configuration,delegate,%s,vertx));", tableIdentifier, pType, base.renderQueryExecutor(tableRecord, pType, tType), mapperFactory);
                                 out.tab(1).println("}");
                             })
                     );
@@ -371,7 +371,7 @@ public class VertxGeneratorBuilder {
                                 out.tab(1).javadoc("@param configuration The Configuration used for rendering and query execution.\n" +
                                         "     * @param vertx the vertx instance");
                                 out.tab(1).println("public %s(%s configuration, com.julienviet.reactivex.pgclient.PgClient delegate) {", className, Configuration.class);
-                                out.tab(2).println("super(%s, %s.class, new %s(delegate,%s), configuration);", tableIdentifier, pType, base.renderQueryExecutor(tableRecord, pType, tType), mapperFactory);
+                                out.tab(2).println("super(%s, %s.class, new %s(configuration,delegate,%s));", tableIdentifier, pType, base.renderQueryExecutor(tableRecord, pType, tType), mapperFactory);
                                 out.tab(1).println("}");
                             })
                     );

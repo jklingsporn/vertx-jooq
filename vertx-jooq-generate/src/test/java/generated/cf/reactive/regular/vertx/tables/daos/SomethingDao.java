@@ -40,7 +40,7 @@ public class SomethingDao extends AbstractReactiveVertxDAO<SomethingRecord, gene
      * @param vertx the vertx instance
      */
     public SomethingDao(Configuration configuration, com.julienviet.pgclient.PgClient delegate, io.vertx.core.Vertx vertx) {
-        super(Something.SOMETHING, generated.cf.reactive.regular.vertx.tables.pojos.Something.class, new ReactiveCompletableFutureQueryExecutor<SomethingRecord,generated.cf.reactive.regular.vertx.tables.pojos.Something,Integer>(delegate,generated.cf.reactive.regular.vertx.tables.mappers.RowMappers.getSomethingMapper(),vertx), configuration);
+        super(Something.SOMETHING, generated.cf.reactive.regular.vertx.tables.pojos.Something.class, new ReactiveCompletableFutureQueryExecutor<SomethingRecord,generated.cf.reactive.regular.vertx.tables.pojos.Something,Integer>(configuration,delegate,generated.cf.reactive.regular.vertx.tables.mappers.RowMappers.getSomethingMapper(),vertx));
     }
 
     /**

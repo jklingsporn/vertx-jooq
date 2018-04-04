@@ -37,7 +37,7 @@ public class SomethingwithoutjsonDao extends AbstractAsyncVertxDAO<Somethingwith
      * @param delegate A configured AsyncSQLClient that is used for query execution
      */
     public SomethingwithoutjsonDao(Configuration configuration,io.vertx.reactivex.ext.asyncsql.AsyncSQLClient delegate) {
-        super(Somethingwithoutjson.SOMETHINGWITHOUTJSON, generated.rx.async.regular.tables.pojos.Somethingwithoutjson.class, new AsyncRXQueryExecutor<SomethingwithoutjsonRecord,generated.rx.async.regular.tables.pojos.Somethingwithoutjson,Integer>(delegate,generated.rx.async.regular.tables.pojos.Somethingwithoutjson::new, Somethingwithoutjson.SOMETHINGWITHOUTJSON, isMysql(configuration)), configuration);
+        super(Somethingwithoutjson.SOMETHINGWITHOUTJSON, generated.rx.async.regular.tables.pojos.Somethingwithoutjson.class, new AsyncRXQueryExecutor<SomethingwithoutjsonRecord,generated.rx.async.regular.tables.pojos.Somethingwithoutjson,Integer>(configuration,delegate,generated.rx.async.regular.tables.pojos.Somethingwithoutjson::new, Somethingwithoutjson.SOMETHINGWITHOUTJSON));
     }
 
     /**

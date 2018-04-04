@@ -39,7 +39,7 @@ public class SomethingcompositeDao extends AbstractReactiveVertxDAO<Somethingcom
      * @param vertx the vertx instance
      */
     public SomethingcompositeDao(Configuration configuration, com.julienviet.pgclient.PgClient delegate, io.vertx.core.Vertx vertx) {
-        super(Somethingcomposite.SOMETHINGCOMPOSITE, generated.cf.reactive.regular.vertx.tables.pojos.Somethingcomposite.class, new ReactiveCompletableFutureQueryExecutor<SomethingcompositeRecord,generated.cf.reactive.regular.vertx.tables.pojos.Somethingcomposite,Record2<Integer, Integer>>(delegate,generated.cf.reactive.regular.vertx.tables.mappers.RowMappers.getSomethingcompositeMapper(),vertx), configuration);
+        super(Somethingcomposite.SOMETHINGCOMPOSITE, generated.cf.reactive.regular.vertx.tables.pojos.Somethingcomposite.class, new ReactiveCompletableFutureQueryExecutor<SomethingcompositeRecord,generated.cf.reactive.regular.vertx.tables.pojos.Somethingcomposite,Record2<Integer, Integer>>(configuration,delegate,generated.cf.reactive.regular.vertx.tables.mappers.RowMappers.getSomethingcompositeMapper(),vertx));
     }
 
     /**

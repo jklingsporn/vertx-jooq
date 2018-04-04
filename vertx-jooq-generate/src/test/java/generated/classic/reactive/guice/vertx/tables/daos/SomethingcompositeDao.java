@@ -40,7 +40,7 @@ public class SomethingcompositeDao extends AbstractReactiveVertxDAO<Somethingcom
      * @param delegate A configured AsyncSQLClient that is used for query execution
      */
     public SomethingcompositeDao(Configuration configuration, com.julienviet.pgclient.PgClient delegate) {
-        super(Somethingcomposite.SOMETHINGCOMPOSITE, generated.classic.reactive.guice.vertx.tables.pojos.Somethingcomposite.class, new ReactiveClassicQueryExecutor<SomethingcompositeRecord,generated.classic.reactive.guice.vertx.tables.pojos.Somethingcomposite,Record2<Integer, Integer>>(delegate,generated.classic.reactive.guice.vertx.tables.mappers.RowMappers.getSomethingcompositeMapper()), configuration);
+        super(Somethingcomposite.SOMETHINGCOMPOSITE, generated.classic.reactive.guice.vertx.tables.pojos.Somethingcomposite.class, new ReactiveClassicQueryExecutor<SomethingcompositeRecord,generated.classic.reactive.guice.vertx.tables.pojos.Somethingcomposite,Record2<Integer, Integer>>(configuration,delegate,generated.classic.reactive.guice.vertx.tables.mappers.RowMappers.getSomethingcompositeMapper()));
     }
 
     /**
