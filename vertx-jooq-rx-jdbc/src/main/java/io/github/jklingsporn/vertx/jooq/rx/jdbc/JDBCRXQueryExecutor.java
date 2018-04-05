@@ -16,7 +16,7 @@ public class JDBCRXQueryExecutor<R extends UpdatableRecord<R>,P,T> extends JDBCR
 
     private final Class<P> daoType;
 
-    public JDBCRXQueryExecutor(Class<P> daoType, Configuration configuration, Vertx vertx) {
+    public JDBCRXQueryExecutor(Configuration configuration, Class<P> daoType, Vertx vertx) {
         super(configuration,vertx);
         this.daoType = daoType;
     }

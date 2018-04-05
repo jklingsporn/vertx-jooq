@@ -15,7 +15,7 @@ public class JDBCCompletableFutureQueryExecutor<R extends UpdatableRecord<R>,P,T
 
     private final Class<P> daoType;
 
-    public JDBCCompletableFutureQueryExecutor(Class<P> daoType, Configuration configuration, Vertx vertx) {
+    public JDBCCompletableFutureQueryExecutor(Configuration configuration, Class<P> daoType, Vertx vertx) {
         super(configuration,vertx);
         this.daoType = daoType;
     }
