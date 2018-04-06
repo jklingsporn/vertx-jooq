@@ -1,7 +1,7 @@
 package io.github.jklingsporn.vertx.jooq.generate;
 
-import com.julienviet.pgclient.PgClient;
-import com.julienviet.pgclient.PgPoolOptions;
+import io.reactiverse.pgclient.PgClient;
+import io.reactiverse.pgclient.PgPoolOptions;
 import io.vertx.core.Vertx;
 
 /**
@@ -16,12 +16,12 @@ public class ReactiveDatabaseClientProvider {
 
     private final Vertx vertx;
     private final PgClient pgClient;
-    private final com.julienviet.reactivex.pgclient.PgClient rxPgClient;
+    private final io.reactiverse.reactivex.pgclient.PgClient rxPgClient;
 
     private ReactiveDatabaseClientProvider() {
         this.vertx = Vertx.vertx();
         this.pgClient = PgClient.pool(vertx, getOptions());
-        this.rxPgClient = com.julienviet.reactivex.pgclient.PgClient.pool(getOptions());
+        this.rxPgClient = io.reactiverse.reactivex.pgclient.PgClient.pool(getOptions());
     }
 
     public PgClient getClient() {
@@ -37,7 +37,7 @@ public class ReactiveDatabaseClientProvider {
                 .setPassword("password");
     }
 
-    public com.julienviet.reactivex.pgclient.PgClient rxGetClient() {
+    public io.reactiverse.reactivex.pgclient.PgClient rxGetClient() {
         return rxPgClient;
     }
 

@@ -1,6 +1,6 @@
 package io.github.jklingsporn.vertx.jooq.generate.rx.reactive.guice;
 
-import com.julienviet.pgclient.PgException;
+import io.reactiverse.pgclient.PgException;
 import generated.rx.reactive.guice.vertx.Tables;
 import generated.rx.reactive.guice.vertx.tables.daos.SomethingcompositeDao;
 import generated.rx.reactive.guice.vertx.tables.pojos.Somethingcomposite;

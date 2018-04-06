@@ -1,8 +1,8 @@
 package io.github.jklingsporn.vertx.jooq.completablefuture.reactivepg;
 
-import com.julienviet.pgclient.PgClient;
-import com.julienviet.pgclient.PgResult;
-import com.julienviet.pgclient.Row;
+import io.reactiverse.pgclient.PgClient;
+import io.reactiverse.pgclient.PgResult;
+import io.reactiverse.pgclient.Row;
 import io.github.jklingspon.vertx.jooq.shared.reactive.AbstractReactiveQueryExecutor;
 import io.github.jklingspon.vertx.jooq.shared.reactive.ReactiveQueryResult;
 import io.github.jklingspon.vertx.jooq.shared.reactive.ReactiveQueryExecutor;

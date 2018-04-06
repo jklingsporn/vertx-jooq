@@ -1,8 +1,8 @@
 package io.github.jklingsporn.vertx.jooq.rx.reactivepg;
 
-import com.julienviet.reactivex.pgclient.PgClient;
-import com.julienviet.reactivex.pgclient.PgResult;
-import com.julienviet.reactivex.pgclient.Row;
+import io.reactiverse.reactivex.pgclient.PgClient;
+import io.reactiverse.reactivex.pgclient.PgResult;
+import io.reactiverse.reactivex.pgclient.Row;
 import io.github.jklingsporn.vertx.jooq.shared.internal.QueryExecutor;
 import io.reactivex.Single;
 import org.jooq.*;
@@ -18,13 +18,13 @@ import java.util.stream.Collectors;
  */
 public class ReactiveRXQueryExecutor<R extends UpdatableRecord<R>,P,T> extends ReactiveRXGenericQueryExecutor implements QueryExecutor<R,T,Single<List<P>>,Single<Optional<P>>,Single<Integer>,Single<T>>{
 
-    private final Function<com.julienviet.pgclient.Row,P> pojoMapper;
+    private final Function<io.reactiverse.pgclient.Row,P> pojoMapper;
 
-    public ReactiveRXQueryExecutor(PgClient delegate, Function<com.julienviet.pgclient.Row, P> pojoMapper) {
+    public ReactiveRXQueryExecutor(PgClient delegate, Function<io.reactiverse.pgclient.Row, P> pojoMapper) {
         this(new DefaultConfiguration().set(SQLDialect.POSTGRES),delegate,pojoMapper);
     }
 
-    public ReactiveRXQueryExecutor(Configuration configuration, PgClient delegate, Function<com.julienviet.pgclient.Row, P> pojoMapper) {
+    public ReactiveRXQueryExecutor(Configuration configuration, PgClient delegate, Function<io.reactiverse.pgclient.Row, P> pojoMapper) {
         super(configuration,delegate);
         this.pojoMapper = pojoMapper;
     }

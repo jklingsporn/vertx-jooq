@@ -1,6 +1,6 @@
 package generated.classic.reactive.regular.vertx.tables.mappers;
 
-import com.julienviet.pgclient.Row;
+import io.reactiverse.pgclient.Row;
 import java.util.function.Function;
 
 public class RowMappers {

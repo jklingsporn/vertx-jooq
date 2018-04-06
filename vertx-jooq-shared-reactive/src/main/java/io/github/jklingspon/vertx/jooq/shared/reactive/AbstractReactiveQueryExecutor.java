@@ -1,6 +1,6 @@
 package io.github.jklingspon.vertx.jooq.shared.reactive;
 
-import com.julienviet.pgclient.Tuple;
+import io.reactiverse.pgclient.Tuple;
 import io.github.jklingsporn.vertx.jooq.shared.internal.AbstractQueryExecutor;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;

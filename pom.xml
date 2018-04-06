@@ -36,10 +36,10 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <postgresql.driver.version>42.2.2</postgresql.driver.version>
-        <reactivepg.client.version>0.6.0</reactivepg.client.version>
+        <reactivepg.client.version>0.7.0</reactivepg.client.version>
     </properties>
     <groupId>io.github.jklingsporn</groupId>
-    <version>4.0.0</version>
+    <version>4.0.0-BETA</version>
     <artifactId>vertx-jooq</artifactId>
     <name>${project.groupId}:${project.artifactId}</name>
     <description>A jOOQ-CodeGenerator to create vertxified DAOs and POJOs</description>

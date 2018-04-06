@@ -38,7 +38,7 @@ public class SomethingDao extends AbstractReactiveVertxDAO<SomethingRecord, gene
      * @param configuration Used for rendering, so only SQLDialect must be set and must be one of the POSTGREs types.
      * @param delegate A configured AsyncSQLClient that is used for query execution
      */
-    public SomethingDao(Configuration configuration, com.julienviet.pgclient.PgClient delegate) {
+    public SomethingDao(Configuration configuration, io.reactiverse.pgclient.PgClient delegate) {
         super(Something.SOMETHING, generated.classic.reactive.regular.vertx.tables.pojos.Something.class, new ReactiveClassicQueryExecutor<SomethingRecord,generated.classic.reactive.regular.vertx.tables.pojos.Something,Integer>(configuration,delegate,generated.classic.reactive.regular.vertx.tables.mappers.RowMappers.getSomethingMapper()));
     }
 

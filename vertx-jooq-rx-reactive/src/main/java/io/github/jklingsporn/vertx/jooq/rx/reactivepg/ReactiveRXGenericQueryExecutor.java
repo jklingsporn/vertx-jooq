@@ -1,9 +1,9 @@
 package io.github.jklingsporn.vertx.jooq.rx.reactivepg;
 
-import com.julienviet.reactivex.pgclient.PgClient;
-import com.julienviet.reactivex.pgclient.PgResult;
-import com.julienviet.reactivex.pgclient.Row;
-import com.julienviet.reactivex.pgclient.Tuple;
+import io.reactiverse.reactivex.pgclient.PgClient;
+import io.reactiverse.reactivex.pgclient.PgResult;
+import io.reactiverse.reactivex.pgclient.Row;
+import io.reactiverse.reactivex.pgclient.Tuple;
 import io.github.jklingspon.vertx.jooq.shared.reactive.AbstractReactiveQueryExecutor;
 import io.github.jklingspon.vertx.jooq.shared.reactive.ReactiveQueryResult;
 import io.github.jklingspon.vertx.jooq.shared.reactive.ReactiveQueryExecutor;
@@ -23,7 +23,7 @@ import java.util.stream.StreamSupport;
 /**
  * Created by jensklingsporn on 01.03.18.
  */
-public class ReactiveRXGenericQueryExecutor extends AbstractReactiveQueryExecutor implements ReactiveQueryExecutor<Single<List<com.julienviet.pgclient.Row>>,Single<Optional<com.julienviet.pgclient.Row>>,Single<Integer>>, RXQueryExecutor {
+public class ReactiveRXGenericQueryExecutor extends AbstractReactiveQueryExecutor implements ReactiveQueryExecutor<Single<List<io.reactiverse.pgclient.Row>>,Single<Optional<io.reactiverse.pgclient.Row>>,Single<Integer>>, RXQueryExecutor {
 
     protected final PgClient delegate;
 
@@ -33,7 +33,7 @@ public class ReactiveRXGenericQueryExecutor extends AbstractReactiveQueryExecuto
     }
 
     @Override
-    public <Q extends Record> Single<List<com.julienviet.pgclient.Row>> findManyRow(Function<DSLContext, ? extends ResultQuery<Q>> queryFunction) {
+    public <Q extends Record> Single<List<io.reactiverse.pgclient.Row>> findManyRow(Function<DSLContext, ? extends ResultQuery<Q>> queryFunction) {
         Query query = createQuery(queryFunction);
         log(query);
         Single<PgResult<Row>> rowFuture  = delegate.rxPreparedQuery(toPreparedQuery(query), rxGetBindValues(query));
@@ -43,7 +43,7 @@ public class ReactiveRXGenericQueryExecutor extends AbstractReactiveQueryExecuto
     }
 
     @Override
-    public <Q extends Record> Single<Optional<com.julienviet.pgclient.Row>> findOneRow(Function<DSLContext, ? extends ResultQuery<Q>> queryFunction) {
+    public <Q extends Record> Single<Optional<io.reactiverse.pgclient.Row>> findOneRow(Function<DSLContext, ? extends ResultQuery<Q>> queryFunction) {
         Query query = createQuery(queryFunction);
         log(query);
         Single<PgResult<Row>> rowFuture = delegate.rxPreparedQuery(toPreparedQuery(query), rxGetBindValues(query));
@@ -76,8 +76,8 @@ public class ReactiveRXGenericQueryExecutor extends AbstractReactiveQueryExecuto
     }
 
     @SuppressWarnings("unchecked")
-    protected com.julienviet.pgclient.PgResult<com.julienviet.pgclient.Row> unwrap(com.julienviet.pgclient.PgResult generic){
-        return (com.julienviet.pgclient.PgResult<com.julienviet.pgclient.Row>)generic;
+    protected io.reactiverse.pgclient.PgResult<io.reactiverse.pgclient.Row> unwrap(io.reactiverse.pgclient.PgResult generic){
+        return (io.reactiverse.pgclient.PgResult<io.reactiverse.pgclient.Row>)generic;
     }
 
     @Override

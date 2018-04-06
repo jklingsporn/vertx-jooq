@@ -275,7 +275,7 @@ public class VertxGeneratorBuilder {
                 JavaWriter out = writerGen.apply(moduleFile);
                 out.println("package " + base.getActiveGenerator().getStrategy().getJavaPackageName(schema) + ".tables.mappers;");
                 out.println();
-                out.println("import com.julienviet.pgclient.Row;");
+                out.println("import io.reactiverse.pgclient.Row;");
                 out.println("import %s;", Function.class.getName());
                 out.println();
                 out.println("public class RowMappers {");
@@ -348,7 +348,7 @@ public class VertxGeneratorBuilder {
                                 String[] split = pType.split("pojos.");
                                 String mapperFactory = String.format("%smappers.RowMappers.get%sMapper()",split[0],split[1]);
                                 out.tab(1).javadoc("@param configuration Used for rendering, so only SQLDialect must be set and must be one of the POSTGREs types.\n     * @param delegate A configured AsyncSQLClient that is used for query execution");
-                                out.tab(1).println("public %s(%s configuration, com.julienviet.pgclient.PgClient delegate) {", className, Configuration.class);
+                                out.tab(1).println("public %s(%s configuration, io.reactiverse.pgclient.PgClient delegate) {", className, Configuration.class);
                                 out.tab(2).println("super(%s, %s.class, new %s(configuration,delegate,%s));", tableIdentifier, pType, base.renderQueryExecutor(tableRecord, pType, tType),mapperFactory);
                                 out.tab(1).println("}");
                             })
@@ -363,7 +363,7 @@ public class VertxGeneratorBuilder {
                                 String[] split = pType.split("pojos.");
                                 String mapperFactory = String.format("%smappers.RowMappers.get%sMapper()",split[0],split[1]);
                                 out.tab(1).javadoc("@param configuration The Configuration used for rendering and query execution.\n     * @param vertx the vertx instance");
-                                out.tab(1).println("public %s(%s configuration, com.julienviet.pgclient.PgClient delegate, %s vertx) {", className, Configuration.class, base.renderFQVertxName());
+                                out.tab(1).println("public %s(%s configuration, io.reactiverse.pgclient.PgClient delegate, %s vertx) {", className, Configuration.class, base.renderFQVertxName());
                                 out.tab(2).println("super(%s, %s.class, new %s(configuration,delegate,%s,vertx));", tableIdentifier, pType, base.renderQueryExecutor(tableRecord, pType, tType), mapperFactory);
                                 out.tab(1).println("}");
                             })
@@ -378,7 +378,7 @@ public class VertxGeneratorBuilder {
                                 String mapperFactory = String.format("%smappers.RowMappers.get%sMapper()",split[0],split[1]);
                                 out.tab(1).javadoc("@param configuration The Configuration used for rendering and query execution.\n" +
                                         "     * @param vertx the vertx instance");
-                                out.tab(1).println("public %s(%s configuration, com.julienviet.reactivex.pgclient.PgClient delegate) {", className, Configuration.class);
+                                out.tab(1).println("public %s(%s configuration, io.reactiverse.reactivex.pgclient.PgClient delegate) {", className, Configuration.class);
                                 out.tab(2).println("super(%s, %s.class, new %s(configuration,delegate,%s));", tableIdentifier, pType, base.renderQueryExecutor(tableRecord, pType, tType), mapperFactory);
                                 out.tab(1).println("}");
                             })

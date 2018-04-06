@@ -28,7 +28,7 @@ public abstract class AbstractReactiveVertxDAO<R extends UpdatableRecord<R>, P, 
     @SuppressWarnings("unchecked")
     protected Function<Object,T> keyConverter(){
         return o -> {
-            com.julienviet.pgclient.Row row = (com.julienviet.pgclient.Row) o;
+            io.reactiverse.pgclient.Row row = (io.reactiverse.pgclient.Row) o;
             TableField<R, ?>[] fields = getTable().getPrimaryKey().getFieldsArray();
             if(fields.length == 1){
                 return (T)row.getValue(fields[0].getName());
