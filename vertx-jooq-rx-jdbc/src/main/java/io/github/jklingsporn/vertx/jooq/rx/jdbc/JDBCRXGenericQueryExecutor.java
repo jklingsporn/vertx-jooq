@@ -36,7 +36,7 @@ public class JDBCRXGenericQueryExecutor extends AbstractQueryExecutor implements
     }
 
     @Override
-    public Single<Integer> exec(Function<DSLContext, Query> queryFunction) {
+    public Single<Integer> execute(Function<DSLContext, ? extends Query> queryFunction) {
         return executeBlocking(h -> h.complete(createQuery(queryFunction).execute()));
     }
 

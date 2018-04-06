@@ -4,24 +4,20 @@ import generated.classic.reactive.regular.vertx.tables.pojos.Something;
 import generated.classic.reactive.regular.vertx.tables.pojos.Somethingcomposite;
 import generated.classic.reactive.regular.vertx.tables.records.SomethingRecord;
 import generated.classic.reactive.regular.vertx.tables.records.SomethingcompositeRecord;
-import io.github.jklingsporn.vertx.jooq.classic.async.AsyncClassicQueryExecutor;
 import io.github.jklingsporn.vertx.jooq.generate.AbstractPostgresInsertReturningTest;
-import io.github.jklingsporn.vertx.jooq.generate.AsyncDatabaseClientProvider;
-import io.github.jklingsporn.vertx.jooq.generate.Credentials;
 import io.vertx.core.AsyncResult;
-import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
-import org.jooq.*;
-import org.jooq.impl.DefaultConfiguration;
+import org.jooq.Record2;
+import org.jooq.Table;
+import org.jooq.UpdatableRecord;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.time.LocalDateTime;
 import java.util.Random;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 /**
@@ -90,24 +86,25 @@ public class PostgresInsertReturningTest extends AbstractPostgresInsertReturning
     }
 
     private <R extends UpdatableRecord<R>,P,T> void runInsertReturning(Table<R> table, R record, Function<JsonObject, P> pojoMapper, CountDownLatch latch, Handler<AsyncResult<T>> resultHandler) throws InterruptedException {
-        AsyncClassicQueryExecutor<R,P,T> queryExecutor = new AsyncClassicQueryExecutor<>(
-                AsyncDatabaseClientProvider.getInstance().getClient(Credentials.POSTGRES),
-                pojoMapper,
-                table,
-                false
-        );
-        Configuration configuration = new DefaultConfiguration();
-        configuration.set(SQLDialect.POSTGRES);
-//        AsyncCompletableFutureQueryExecutor2 asyncCompletableFutureQueryExecutor2 = new AsyncCompletableFutureQueryExecutor2(AsyncDatabaseClientProvider.getInstance().getVertx(), AsyncDatabaseClientProvider.getInstance().getClient(Credentials.POSTGRES), configuration);
-//        CompletableFuture<List<Record1<Long>>> manyRaw = asyncCompletableFutureQueryExecutor2.findMany(dslContext -> dslContext.select(Tables.SOMETHING.SOMEHUGENUMBER).from(Tables.SOMETHING));
-
-        Future<T> insertReturning = queryExecutor.insertReturning(dslContext -> dslContext
-                .insertInto(table)
-                .set(record)
-                .returning(table.getPrimaryKey().getFieldsArray())
-                , keyMapper(table, configuration));
-        insertReturning.setHandler(resultHandler);
-        Assert.assertTrue(latch.await(1, TimeUnit.SECONDS));
+//        Configuration configuration = new DefaultConfiguration();
+//        configuration.set(SQLDialect.POSTGRES);
+//        AsyncClassicQueryExecutor<R,P,T> queryExecutor = new AsyncClassicQueryExecutor<>(
+//                configuration,
+//                AsyncDatabaseClientProvider.getInstance().getClient(Credentials.POSTGRES),
+//                pojoMapper,
+//                table,
+//                false
+//        );
+////        AsyncCompletableFutureQueryExecutor2 asyncCompletableFutureQueryExecutor2 = new AsyncCompletableFutureQueryExecutor2(AsyncDatabaseClientProvider.getInstance().getVertx(), AsyncDatabaseClientProvider.getInstance().getClient(Credentials.POSTGRES), configuration);
+////        CompletableFuture<List<Record1<Long>>> manyRaw = asyncCompletableFutureQueryExecutor2.findMany(dslContext -> dslContext.select(Tables.SOMETHING.SOMEHUGENUMBER).from(Tables.SOMETHING));
+//
+//        Future<T> insertReturning = queryExecutor.insertReturning(dslContext -> dslContext
+//                .insertInto(table)
+//                .set(record)
+//                .returning(table.getPrimaryKey().getFieldsArray())
+//                , keyMapper(table, configuration));
+//        insertReturning.setHandler(resultHandler);
+//        Assert.assertTrue(latch.await(1, TimeUnit.SECONDS));
     }
 
 }

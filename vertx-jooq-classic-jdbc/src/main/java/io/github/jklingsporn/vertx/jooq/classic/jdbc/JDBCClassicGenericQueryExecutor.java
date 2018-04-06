@@ -37,8 +37,8 @@ public class JDBCClassicGenericQueryExecutor extends AbstractQueryExecutor imple
     }
 
     @Override
-    public Future<Integer> exec(Function<DSLContext, Query> queryFunction) {
-        return executeBlocking(h -> h.complete(createQuery(queryFunction).execute()));
+    public Future<Integer> execute(Function<DSLContext, ? extends Query> queryFunction) {
+        return executeBlocking(h->h.complete(createQuery(queryFunction).execute()));
     }
 
     @Override

@@ -53,6 +53,7 @@ public abstract class AbstractAsyncVertxDAO<R extends UpdatableRecord<R>, P, T, 
      * is always a {@code Long} (in MYSQL mode), only non-compound numeric keys can be returned. This method gets automatically overridden during
      * DAO-creation depending on T.
      */
+    @Override
     protected Function<Object,T> keyConverter(){
         return o -> {
             throw new UnsupportedOperationException(String.format("%s cannot be converted", o==null?"null":o.getClass()));

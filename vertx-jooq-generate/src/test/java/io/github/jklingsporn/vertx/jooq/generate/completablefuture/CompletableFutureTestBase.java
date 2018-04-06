@@ -241,7 +241,7 @@ public abstract class CompletableFutureTestBase<P,T,O, DAO extends GenericVertxD
         await(latch);
     }
 
-//    @Test
+    @Test
     public void queryExecutorCRUDTest(){
         AbstractVertxDAO<?,P, T, CompletableFuture<List<P>>, CompletableFuture<P>, CompletableFuture<Integer>, CompletableFuture<T>> abstractVertxDAO = (AbstractVertxDAO<?,P, T, CompletableFuture<List<P>>, CompletableFuture<P>, CompletableFuture<Integer>, CompletableFuture<T>>) dao;
         P pojo = createWithId();

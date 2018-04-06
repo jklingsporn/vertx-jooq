@@ -18,10 +18,6 @@ public class ReactiveClassicQueryExecutor<R extends UpdatableRecord<R>,P,T> exte
 
     private final Function<Row,P> pojoMapper;
 
-    public ReactiveClassicQueryExecutor(PgClient delegate, Function<Row, P> pojoMapper) {
-        this(null,delegate,pojoMapper);
-    }
-
     public ReactiveClassicQueryExecutor(Configuration configuration, PgClient delegate, Function<Row, P> pojoMapper) {
         super(configuration, delegate);
         this.pojoMapper = pojoMapper;

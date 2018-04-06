@@ -112,23 +112,6 @@ public class AsyncClassicGenericQueryExecutor extends AbstractAsyncQueryExecutor
     }
 
     @Override
-    public Future<Integer> exec(Function<DSLContext, Query> queryFunction) {
-        return getConnection().compose(sqlConnection -> {
-            Query query = createQuery(queryFunction);
-            log(query);
-            Future<Integer> future = Future.future();
-            sqlConnection.updateWithParams(
-                    query.getSQL(),
-                    getBindValues(query),
-                    this.<UpdateResult,Integer>executeAndClose(UpdateResult::getUpdated,
-                            sqlConnection,
-                            future)
-            );
-            return future;
-        });
-    }
-
-    @Override
     public <R extends Record> Future<QueryResult> query(Function<DSLContext, ? extends ResultQuery<R>> queryFunction) {
         return getConnection().compose(sqlConnection -> {
             Query query = createQuery(queryFunction);

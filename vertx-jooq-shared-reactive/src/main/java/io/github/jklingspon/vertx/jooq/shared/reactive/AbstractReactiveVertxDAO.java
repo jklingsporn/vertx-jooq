@@ -24,6 +24,7 @@ public abstract class AbstractReactiveVertxDAO<R extends UpdatableRecord<R>, P, 
         Arguments.require(SQLDialect.POSTGRES.equals(queryExecutor.configuration().dialect().family()),"Only Postgres supported");
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     protected Function<Object,T> keyConverter(){
         return o -> {

@@ -111,19 +111,6 @@ public class AsyncCompletableFutureGenericQueryExecutor extends AbstractAsyncQue
     }
 
     @Override
-    public CompletableFuture<Integer> exec(Function<DSLContext, Query> queryFunction) {
-        return getConnection().thenCompose(sqlConnection -> {
-            Query query = createQuery(queryFunction);
-            log(query);
-            CompletableFuture<Integer> cf = new VertxCompletableFuture<>(vertx);
-            JsonArray bindValues = getBindValues(query);
-            sqlConnection.updateWithParams(query.getSQL(), bindValues, executeAndClose(UpdateResult::getUpdated,sqlConnection,cf));
-            return cf;
-        });
-    }
-
-
-    @Override
     public <R extends Record> CompletableFuture<QueryResult> query(Function<DSLContext, ? extends ResultQuery<R>> queryFunction) {
         return getConnection().thenCompose(sqlConnection -> {
             Query query = createQuery(queryFunction);

@@ -87,16 +87,6 @@ public class ReactiveCompletableFutureGenericQueryExecutor extends AbstractReact
         };
     }
 
-
-    @Override
-    public CompletableFuture<Integer> exec(Function<DSLContext, Query> queryFunction) {
-        Query query = createQuery(queryFunction);
-        log(query);
-        CompletableFuture<PgResult<Row>> rowFuture = new VertxCompletableFuture<>(vertx);
-        delegate.preparedQuery(toPreparedQuery(query),getBindValues(query),createCompletionHandler(rowFuture));
-        return rowFuture.thenApply(PgResult::updatedCount);
-    }
-
     @Override
     public <R extends Record> CompletableFuture<QueryResult> query(Function<DSLContext, ? extends ResultQuery<R>> queryFunction) {
         Query query = createQuery(queryFunction);

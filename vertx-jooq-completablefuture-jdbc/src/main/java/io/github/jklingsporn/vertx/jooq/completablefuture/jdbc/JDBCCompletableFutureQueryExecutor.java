@@ -32,11 +32,6 @@ public class JDBCCompletableFutureQueryExecutor<R extends UpdatableRecord<R>,P,T
     }
 
     @Override
-    public CompletableFuture<Integer> execute(Function<DSLContext, ? extends Query> queryFunction) {
-        return executeBlocking(h -> h.complete(createQuery(queryFunction).execute()));
-    }
-
-    @Override
     public CompletableFuture<T> insertReturning(Function<DSLContext, ? extends InsertResultStep<R>> queryFunction,Function<Object,T> keyMapper) {
         return executeBlocking(h -> h.complete(keyMapper.apply(createQuery(queryFunction).fetchOne())));
     }

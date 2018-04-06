@@ -6,7 +6,6 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.ext.asyncsql.AsyncSQLClient;
 import io.vertx.ext.sql.UpdateResult;
 import org.jooq.*;
-import org.jooq.impl.DefaultConfiguration;
 
 import java.util.List;
 import java.util.function.Function;
@@ -19,11 +18,7 @@ public class AsyncClassicQueryExecutor<R extends UpdatableRecord<R>,P,T> extends
 
     private final Function<JsonObject,P> pojoMapper;
 
-    public AsyncClassicQueryExecutor(AsyncSQLClient delegate, Function<JsonObject, P> pojoMapper, Table<R> table, boolean isMysql) {
-        this(new DefaultConfiguration().set(isMysql ? SQLDialect.MYSQL : SQLDialect.POSTGRES), delegate,pojoMapper,table);
-    }
-
-    public AsyncClassicQueryExecutor(Configuration configuration,AsyncSQLClient delegate, Function<JsonObject, P> pojoMapper, Table<R> table) {
+    public AsyncClassicQueryExecutor(Configuration configuration, AsyncSQLClient delegate, Function<JsonObject, P> pojoMapper, Table<R> table) {
         super(configuration,delegate);
         this.pojoMapper = convertFromSQL(table).andThen(pojoMapper);
     }

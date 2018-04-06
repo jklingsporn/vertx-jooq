@@ -81,14 +81,6 @@ public class ReactiveRXGenericQueryExecutor extends AbstractReactiveQueryExecuto
     }
 
     @Override
-    public Single<Integer> exec(Function<DSLContext, Query> queryFunction) {
-        Query query = createQuery(queryFunction);
-        log(query);
-        Single<PgResult<Row>> rowFuture = delegate.rxPreparedQuery(toPreparedQuery(query), rxGetBindValues(query));
-        return rowFuture.map(PgResult::updatedCount);
-    }
-
-    @Override
     @SuppressWarnings("unchecked")
     public <R extends Record> Single<QueryResult> query(Function<DSLContext, ? extends ResultQuery<R>> queryFunction) {
         Query query = createQuery(queryFunction);

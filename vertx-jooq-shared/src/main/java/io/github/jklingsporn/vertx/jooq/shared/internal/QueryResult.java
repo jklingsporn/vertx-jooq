@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * A query result wrapper for those returned by the different drivers. It provides some methods to access the actual result
  * type. If the query was supposed to return more than one entry, call {@code QueryResult#asList()} once, which returns
- * a list with {@code QueryResults}.
+ * a list with {@code QueryResults} for each row returned.
  */
 public interface QueryResult {
 

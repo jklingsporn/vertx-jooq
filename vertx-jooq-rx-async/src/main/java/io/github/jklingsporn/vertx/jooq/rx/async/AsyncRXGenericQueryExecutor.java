@@ -73,18 +73,6 @@ public class AsyncRXGenericQueryExecutor extends AbstractAsyncQueryExecutor<Sing
     }
 
     @Override
-    public Single<Integer> exec(Function<DSLContext, Query> queryFunction) {
-        Query query = createQuery(queryFunction);
-        log(query);
-        return getConnection()
-                .flatMap(executeAndClose(sqlConnection ->
-                                sqlConnection
-                                        .rxUpdateWithParams(query.getSQL(), getBindValues(query))
-                                        .map(UpdateResult::getUpdated))
-                );
-    }
-
-    @Override
     public <R extends Record> Single<QueryResult> query(Function<DSLContext, ? extends ResultQuery<R>> queryFunction) {
         Query query = createQuery(queryFunction);
         log(query);

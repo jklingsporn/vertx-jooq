@@ -145,21 +145,25 @@ public abstract class AbstractVertxDAO<R extends UpdatableRecord<R>, P, T, FIND_
         });
     }
 
-    @SuppressWarnings("unchecked")
     public INSERT_RETURNING insertReturningPrimary(P object){
         UniqueKey<?> key = getTable().getPrimaryKey();
         //usually key shouldn't be null because DAO generation is omitted in such cases
         Objects.requireNonNull(key,()->"No primary key");
         return queryExecutor().insertReturning(
                 dslContext -> dslContext.insertInto(getTable()).set(newRecord(dslContext, object)).returning(key.getFields()),
-                record->{
-                    Objects.requireNonNull(record, () -> "Failed inserting record or no key");
-                    Record key1 = ((R)record).key();
-                    if(key1.size() == 1){
-                        return ((Record1<T>)key1).value1();
-                    }
-                    return (T) key1;
-                });
+                keyConverter());
+    }
+
+    @SuppressWarnings("unchecked")
+    protected Function<Object, T> keyConverter() {
+        return record->{
+            Objects.requireNonNull(record, () -> "Failed inserting record or no key");
+            Record key1 = ((R)record).key();
+            if(key1.size() == 1){
+                return ((Record1<T>)key1).value1();
+            }
+            return (T) key1;
+        };
     }
 
     @SuppressWarnings("unchecked")

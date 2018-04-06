@@ -44,6 +44,10 @@ public class JDBCCompletableFutureGenericQueryExecutor extends AbstractQueryExec
         return future;
     }
 
+    @Override
+    public CompletableFuture<Integer> execute(Function<DSLContext, ? extends Query> queryFunction) {
+        return executeBlocking(h -> h.complete(createQuery(queryFunction).execute()));
+    }
 
     /**
      * @param future
@@ -58,11 +62,6 @@ public class JDBCCompletableFutureGenericQueryExecutor extends AbstractQueryExec
                 future.completeExceptionally(h.cause());
             }
         };
-    }
-
-    @Override
-    public CompletableFuture<Integer> exec(Function<DSLContext, Query> queryFunction) {
-        return executeBlocking(h -> h.complete(createQuery(queryFunction).execute()));
     }
 
     @Override

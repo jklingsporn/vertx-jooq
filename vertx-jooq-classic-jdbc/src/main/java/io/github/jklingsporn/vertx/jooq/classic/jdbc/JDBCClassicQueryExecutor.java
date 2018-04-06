@@ -20,11 +20,6 @@ public class JDBCClassicQueryExecutor<R extends UpdatableRecord<R>,P,T> extends 
         this.daoType = daoType;
     }
 
-    public JDBCClassicQueryExecutor(Class<P> daoType, Configuration configuration, Vertx vertx) {
-        super(configuration,vertx);
-        this.daoType = daoType;
-    }
-
     @Override
     public Future<List<P>> findMany(Function<DSLContext, ? extends ResultQuery<R>> queryFunction) {
         return executeBlocking(h->h.complete(createQuery(queryFunction).fetchInto(daoType)));
@@ -33,11 +28,6 @@ public class JDBCClassicQueryExecutor<R extends UpdatableRecord<R>,P,T> extends 
     @Override
     public Future<P> findOne(Function<DSLContext, ? extends ResultQuery<R>> queryFunction) {
         return executeBlocking(h->h.complete(createQuery(queryFunction).fetchOneInto(daoType)));
-    }
-
-    @Override
-    public Future<Integer> execute(Function<DSLContext, ? extends Query> queryFunction) {
-        return executeBlocking(h->h.complete(createQuery(queryFunction).execute()));
     }
 
     @Override

@@ -67,15 +67,6 @@ public class ReactiveClassicGenericQueryExecutor extends AbstractReactiveQueryEx
 
 
     @Override
-    public Future<Integer> exec(Function<DSLContext, Query> queryFunction) {
-        Query query = createQuery(queryFunction);
-        log(query);
-        Future<PgResult<Row>> rowFuture = Future.future();
-        delegate.preparedQuery(toPreparedQuery(query),getBindValues(query),rowFuture);
-        return rowFuture.map(PgResult::updatedCount);
-    }
-
-    @Override
     public <R extends Record> Future<QueryResult> query(Function<DSLContext, ? extends ResultQuery<R>> queryFunction) {
         Query query = createQuery(queryFunction);
         log(query);
