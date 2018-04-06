@@ -1,13 +1,16 @@
 package io.github.jklingsporn.vertx.jooq.generate.rx;
 
+import io.github.jklingsporn.vertx.jooq.rx.RXQueryExecutor;
+import io.github.jklingsporn.vertx.jooq.shared.internal.AbstractVertxDAO;
 import io.github.jklingsporn.vertx.jooq.shared.internal.GenericVertxDAO;
+import io.github.jklingsporn.vertx.jooq.shared.internal.QueryResult;
 import io.reactivex.Single;
 import io.reactivex.SingleObserver;
 import io.reactivex.disposables.Disposable;
-import org.jooq.Condition;
-import org.jooq.TableField;
+import org.jooq.*;
 import org.jooq.exception.TooManyRowsException;
 import org.jooq.impl.DSL;
+import org.jooq.impl.DefaultConfiguration;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -94,6 +97,10 @@ public abstract class RXTestBase<P,T,O, DAO extends GenericVertxDAO<?,P, T, Sing
 
     protected Single<T> insertAndReturn(P something) {
         return dao.insertReturningPrimary(something);
+    }
+
+    protected RXQueryExecutor queryExecutor(){
+        return (RXQueryExecutor) dao.queryExecutor();
     }
 
     @Test
@@ -249,5 +256,52 @@ public abstract class RXTestBase<P,T,O, DAO extends GenericVertxDAO<?,P, T, Sing
 
     }
 
+    @Test
+    @SuppressWarnings("unchecked")
+    public void unifiedQueryExecutorCRUDTest() throws InterruptedException {
+        Table<? extends UpdatableRecord<?>> table = ((AbstractVertxDAO) dao).getTable();
+        P pojo = createWithId();
+        CountDownLatch latch = new CountDownLatch(1);
+        queryExecutor()
+                .execute(dslContext -> dslContext
+                        .insertInto(table).set(dslContext.newRecord(table, pojo)))
+                .doOnSuccess((i -> Assert.assertEquals(1L, i.longValue())))
+                .flatMap(v -> queryExecutor().query(dslContext -> dslContext
+                        .selectFrom(table)
+                        .where(eqPrimaryKey(getId(pojo)))))
+                .doOnSuccess((queryResult -> {
+                    Assert.assertTrue(queryResult.hasResults());
+                    Field<?>[] fields = table.fieldsRow().fields();
+                    UpdatableRecord<?> record = DSL.using(new DefaultConfiguration()).newRecord(table, pojo);
+                    for (int i = 0; i < fields.length; i++) {
+                        boolean hasValidValue = record.get(fields[i])!=null;
+                        if(hasValidValue)
+                            assertQueryResultReturnsValidValue(fields[i], queryResult, i);
+                    }
+                    List<QueryResult> queryResults = queryResult.asList();
+                    Assert.assertEquals(1L, queryResults.size());
+                    queryResults.forEach(res -> {
+                        for (int i = 0; i < fields.length; i++) {
+                            boolean hasValidValue = record.get(fields[i])!=null;
+                            if(hasValidValue)
+                                assertQueryResultReturnsValidValue(fields[i], res, i);
+                        }
+                    });
+                }))
+                .flatMap(v -> queryExecutor().execute(dslContext -> dslContext.deleteFrom(table).where(eqPrimaryKey(getId(pojo)))))
+                .doOnSuccess((i -> Assert.assertEquals(1L, i.longValue())))
+                .subscribe(countdownLatchHandler(latch))
+        ;
+        await(latch);
+    }
+
+    private void assertQueryResultReturnsValidValue(Field<?> field, QueryResult queryResult, int index) {
+        Assert.assertNotNull(queryResult.get(field));
+        //can't guarantee correct conversion for get(String,Class<?>) and get(Integer,Class<?>)
+        if(field.getConverter().fromType().equals(field.getConverter().toType())){
+            Assert.assertNotNull(queryResult.get(index, field.getType()));
+            Assert.assertNotNull(queryResult.get(field.getName(), field.getType()));
+        }
+    }
 
 }

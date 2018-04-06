@@ -1,14 +1,17 @@
 package io.github.jklingsporn.vertx.jooq.generate.classic;
 
+import io.github.jklingsporn.vertx.jooq.classic.ClassicQueryExecutor;
+import io.github.jklingsporn.vertx.jooq.shared.internal.AbstractVertxDAO;
 import io.github.jklingsporn.vertx.jooq.shared.internal.GenericVertxDAO;
+import io.github.jklingsporn.vertx.jooq.shared.internal.QueryResult;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.CompositeFuture;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
-import org.jooq.Condition;
-import org.jooq.TableField;
+import org.jooq.*;
 import org.jooq.exception.TooManyRowsException;
 import org.jooq.impl.DSL;
+import org.jooq.impl.DefaultConfiguration;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -70,6 +73,10 @@ public abstract class ClassicTestBase<P,T,O, DAO extends GenericVertxDAO<?,P, T,
 
     protected Future<T> insertAndReturn(P something) {
         return dao.insertReturningPrimary(something);
+    }
+
+    protected ClassicQueryExecutor queryExecutor(){
+        return (ClassicQueryExecutor) dao.queryExecutor();
     }
 
     @Test
@@ -225,6 +232,54 @@ public abstract class ClassicTestBase<P,T,O, DAO extends GenericVertxDAO<?,P, T,
                 .setHandler(countdownLatchHandler(latch))
                 ;
         await(latch);
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void unifiedQueryExecutorCRUDTest() throws InterruptedException {
+        Table<? extends UpdatableRecord<?>> table = ((AbstractVertxDAO) dao).getTable();
+        P pojo = createWithId();
+        CountDownLatch latch = new CountDownLatch(1);
+        queryExecutor()
+                .execute(dslContext -> dslContext
+                        .insertInto(table).set(dslContext.newRecord(table, pojo)))
+                .map(toVoid(i -> Assert.assertEquals(1L, i.longValue())))
+                .compose(v -> queryExecutor().query(dslContext -> dslContext
+                        .selectFrom(table)
+                        .where(eqPrimaryKey(getId(pojo)))))
+                .map(toVoid(queryResult -> {
+                    Assert.assertTrue(queryResult.hasResults());
+                    Field<?>[] fields = table.fieldsRow().fields();
+                    UpdatableRecord<?> record = DSL.using(new DefaultConfiguration()).newRecord(table, pojo);
+                    for (int i = 0; i < fields.length; i++) {
+                        boolean hasValidValue = record.get(fields[i])!=null;
+                        if(hasValidValue)
+                            assertQueryResultReturnsValidValue(fields[i], queryResult, i);
+                    }
+                    List<QueryResult> queryResults = queryResult.asList();
+                    Assert.assertEquals(1L, queryResults.size());
+                    queryResults.forEach(res -> {
+                        for (int i = 0; i < fields.length; i++) {
+                            boolean hasValidValue = record.get(fields[i])!=null;
+                            if(hasValidValue)
+                                assertQueryResultReturnsValidValue(fields[i], res, i);
+                        }
+                    });
+                }))
+                .compose(v -> queryExecutor().execute(dslContext -> dslContext.deleteFrom(table).where(eqPrimaryKey(getId(pojo)))))
+                .map(toVoid(i -> Assert.assertEquals(1L, i.longValue())))
+                .setHandler(countdownLatchHandler(latch))
+        ;
+        await(latch);
+    }
+
+    private void assertQueryResultReturnsValidValue(Field<?> field, QueryResult queryResult, int index) {
+        Assert.assertNotNull(queryResult.get(field));
+        //can't guarantee correct conversion for get(String,Class<?>) and get(Integer,Class<?>)
+        if(field.getConverter().fromType().equals(field.getConverter().toType())){
+            Assert.assertNotNull(queryResult.get(index, field.getType()));
+            Assert.assertNotNull(queryResult.get(field.getName(), field.getType()));
+        }
     }
 
 }
