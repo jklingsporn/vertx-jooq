@@ -5,7 +5,8 @@ import org.jooq.*;
 import java.util.function.Function;
 
 /**
- * @param <EXECUTE> the result type returned for insert, update and delete-operations. This varies on the VertxDAO-subtypes, e.g. {@code Future<Integer>}.
+ * A {@code QueryExecutor} to execute any insert, update or delete operation.
+ * @param <EXECUTE> the result type returned for insert, update and delete operations. This varies on the VertxDAO-subtypes, e.g. {@code Future<Integer>}.
  */
 public interface BasicQueryExecutor<EXECUTE>{
 

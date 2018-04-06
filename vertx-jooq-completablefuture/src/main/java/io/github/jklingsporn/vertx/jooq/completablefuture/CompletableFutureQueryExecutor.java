@@ -1,14 +1,14 @@
 package io.github.jklingsporn.vertx.jooq.completablefuture;
 
 import io.github.jklingsporn.vertx.jooq.shared.internal.QueryResult;
-import io.github.jklingsporn.vertx.jooq.shared.internal.GenericQueryExecutor;
+import io.github.jklingsporn.vertx.jooq.shared.internal.UnifiedQueryExecutor;
 
 import java.util.concurrent.CompletableFuture;
 
 /**
- * Created by jensklingsporn on 23.03.18.
+ * A {@code UnifiedQueryExecutor} using the {@code CompletableFuture}-based API.
  */
-public interface CompletableFutureQueryExecutor extends GenericQueryExecutor<CompletableFuture<Integer>,CompletableFuture<QueryResult>>{
+public interface CompletableFutureQueryExecutor extends UnifiedQueryExecutor<CompletableFuture<Integer>,CompletableFuture<QueryResult>> {
 
 
 
