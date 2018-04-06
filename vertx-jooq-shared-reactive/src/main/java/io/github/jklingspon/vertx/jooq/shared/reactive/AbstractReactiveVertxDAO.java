@@ -21,7 +21,7 @@ public abstract class AbstractReactiveVertxDAO<R extends UpdatableRecord<R>, P, 
 
     protected AbstractReactiveVertxDAO(Table<R> table, Class<P> type, QueryExecutor<R, T, FIND_MANY, FIND_ONE, EXECUTE, INSERT_RETURNING> queryExecutor) {
         super(table, type, queryExecutor);
-        Arguments.require(SQLDialect.POSTGRES.equals(configuration().dialect().family()),"Only Postgres supported");
+        Arguments.require(SQLDialect.POSTGRES.equals(queryExecutor.configuration().dialect().family()),"Only Postgres supported");
     }
 
     @SuppressWarnings("unchecked")

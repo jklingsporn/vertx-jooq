@@ -32,17 +32,8 @@ public abstract class AbstractVertxDAO<R extends UpdatableRecord<R>, P, T, FIND_
         this.queryExecutor = queryExecutor;
     }
 
-    public AbstractVertxDAO setConfiguration(Configuration configuration) {
-        this.queryExecutor().attach(configuration);
-        return this;
-    }
-
     public Table<R> getTable() {
         return table;
-    }
-
-    protected Configuration configuration() {
-        return queryExecutor().configuration();
     }
 
     @Override
@@ -217,7 +208,7 @@ public abstract class AbstractVertxDAO<R extends UpdatableRecord<R>, P, T, FIND_
             return null;
 
         TableField<R, Object>[] fields = (TableField<R, Object>[]) key.getFieldsArray();
-        Record result = DSL.using(configuration())
+        Record result = DSL.using(queryExecutor.configuration())
                 .newRecord(fields);
 
         for (int i = 0; i < values.length; i++)

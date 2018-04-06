@@ -118,6 +118,11 @@ public class SomethingDao extends AbstractAsyncVertxDAO<SomethingRecord, generat
     }
 
     @Override
+    public AsyncRXQueryExecutor<SomethingRecord,generated.rx.async.guice.tables.pojos.Something,Integer> queryExecutor(){
+        return (AsyncRXQueryExecutor<SomethingRecord,generated.rx.async.guice.tables.pojos.Something,Integer>) super.queryExecutor();
+    }
+
+    @Override
     protected java.util.function.Function<Object,Integer> keyConverter(){
         return lastId -> Integer.valueOf(((io.vertx.core.json.JsonArray)lastId).getLong(0).intValue());
     }

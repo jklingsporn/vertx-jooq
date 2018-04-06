@@ -113,4 +113,9 @@ public class SomethingDao extends AbstractVertxDAO<SomethingRecord, generated.cf
     public CompletableFuture<List<generated.cf.jdbc.regular.vertx.tables.pojos.Something>> findManyBySometimestamp(List<LocalDateTime> values) {
         return findManyByCondition(Something.SOMETHING.SOMETIMESTAMP.in(values));
     }
+
+    @Override
+    public JDBCCompletableFutureQueryExecutor<SomethingRecord,generated.cf.jdbc.regular.vertx.tables.pojos.Something,Integer> queryExecutor(){
+        return (JDBCCompletableFutureQueryExecutor<SomethingRecord,generated.cf.jdbc.regular.vertx.tables.pojos.Something,Integer>) super.queryExecutor();
+    }
 }

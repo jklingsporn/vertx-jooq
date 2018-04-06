@@ -65,4 +65,9 @@ public class SomethingcompositeDao extends AbstractReactiveVertxDAO<Somethingcom
     public Single<List<generated.rx.reactive.guice.vertx.tables.pojos.Somethingcomposite>> findManyBySomejsonobject(List<JsonObject> values) {
         return findManyByCondition(Somethingcomposite.SOMETHINGCOMPOSITE.SOMEJSONOBJECT.in(values));
     }
+
+    @Override
+    public ReactiveRXQueryExecutor<SomethingcompositeRecord,generated.rx.reactive.guice.vertx.tables.pojos.Somethingcomposite,Record2<Integer, Integer>> queryExecutor(){
+        return (ReactiveRXQueryExecutor<SomethingcompositeRecord,generated.rx.reactive.guice.vertx.tables.pojos.Somethingcomposite,Record2<Integer, Integer>>) super.queryExecutor();
+    }
 }

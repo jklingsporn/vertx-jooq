@@ -117,6 +117,11 @@ public class SomethingDao extends AbstractAsyncVertxDAO<SomethingRecord, generat
     }
 
     @Override
+    public AsyncCompletableFutureQueryExecutor<SomethingRecord,generated.cf.async.regular.tables.pojos.Something,Integer> queryExecutor(){
+        return (AsyncCompletableFutureQueryExecutor<SomethingRecord,generated.cf.async.regular.tables.pojos.Something,Integer>) super.queryExecutor();
+    }
+
+    @Override
     protected java.util.function.Function<Object,Integer> keyConverter(){
         return lastId -> Integer.valueOf(((io.vertx.core.json.JsonArray)lastId).getLong(0).intValue());
     }

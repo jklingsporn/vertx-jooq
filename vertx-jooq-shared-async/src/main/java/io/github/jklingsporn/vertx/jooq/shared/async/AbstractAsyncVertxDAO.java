@@ -28,8 +28,8 @@ public abstract class AbstractAsyncVertxDAO<R extends UpdatableRecord<R>, P, T, 
     @SuppressWarnings("unchecked")
     protected AbstractAsyncVertxDAO(Table<R> table, Class<P> type, QueryExecutor<R, T, FIND_MANY, FIND_ONE, EXECUTE, INSERT_RETURNING> queryExecutor) {
         super(table, type, queryExecutor);
-        Arguments.require(isMysql(configuration()) || isPostgres(configuration()),"Only Postgres and MySQL supported");
-        if(isMysql(configuration())){
+        Arguments.require(isMysql(queryExecutor.configuration()) || isPostgres(queryExecutor.configuration()),"Only Postgres and MySQL supported");
+        if(isMysql(queryExecutor.configuration())){
             keyConverter = keyConverter();
         }else{
             keyConverter = o -> {

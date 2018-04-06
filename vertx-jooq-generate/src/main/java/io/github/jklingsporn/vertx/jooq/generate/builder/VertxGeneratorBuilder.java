@@ -44,7 +44,8 @@ public class VertxGeneratorBuilder {
      * @return an {@code APIStep} to init the build of a {@code VertxGeneratorStrategy}.
      */
     public static APIStep init(){
-        return new APIStepImpl(new ComponentBasedVertxGenerator().setRenderFQVertxNameDelegate(() -> "io.vertx.core.Vertx"));
+        return new APIStepImpl(new ComponentBasedVertxGenerator()
+                .setRenderFQVertxNameDelegate(() -> "io.vertx.core.Vertx"));
     }
 
     static class APIStepImpl implements APIStep {
@@ -53,6 +54,13 @@ public class VertxGeneratorBuilder {
 
         APIStepImpl(ComponentBasedVertxGenerator base) {
             this.base = base;
+            this.base.addOverwriteDAODelegate((out, className, tableIdentifier, tableRecord, pType, tType) -> {
+                out.println();
+                out.tab(1).override();
+                out.tab(1).println("public %s queryExecutor(){", base.renderQueryExecutor(tableRecord, pType, tType));
+                out.tab(2).println("return (%s) super.queryExecutor();", base.renderQueryExecutor(tableRecord, pType, tType));
+                out.tab(1).println("}");
+            });
         }
 
         @Override
@@ -206,13 +214,13 @@ public class VertxGeneratorBuilder {
         @Override
         public DIStep withAsyncDriver() {
             base.setRenderDAOExtendsDelegate(()->"io.github.jklingsporn.vertx.jooq.shared.async.AbstractAsyncVertxDAO");
-                    base.setOverwriteDAODelegate((out, className, tableIdentifier, tableRecord, pType, tType) -> {
-                        if (SUPPORTED_MYSQL_INSERT_RETURNING_TYPES_MAP.containsKey(tType)) {
-                            out.println();
-                            out.tab(1).override();
-                            out.tab(1).println("protected java.util.function.Function<Object,%s> keyConverter(){", tType);
-                            out.tab(2).println("return lastId -> %s.valueOf(((%s)lastId).getLong(0).%sValue());", tType, JsonArray.class.getName(), SUPPORTED_MYSQL_INSERT_RETURNING_TYPES_MAP.get(tType));
-                            out.tab(1).println("}");
+            base.addOverwriteDAODelegate((out, className, tableIdentifier, tableRecord, pType, tType) -> {
+                if (SUPPORTED_MYSQL_INSERT_RETURNING_TYPES_MAP.containsKey(tType)) {
+                    out.println();
+                    out.tab(1).override();
+                    out.tab(1).println("protected java.util.function.Function<Object,%s> keyConverter(){", tType);
+                    out.tab(2).println("return lastId -> %s.valueOf(((%s)lastId).getLong(0).%sValue());", tType, JsonArray.class.getName(), SUPPORTED_MYSQL_INSERT_RETURNING_TYPES_MAP.get(tType));
+                    out.tab(1).println("}");
                 }
             });
             switch (base.apiType) {

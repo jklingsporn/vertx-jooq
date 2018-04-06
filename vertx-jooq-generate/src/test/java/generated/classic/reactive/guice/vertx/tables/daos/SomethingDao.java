@@ -107,4 +107,9 @@ public class SomethingDao extends AbstractReactiveVertxDAO<SomethingRecord, gene
     public Future<List<generated.classic.reactive.guice.vertx.tables.pojos.Something>> findManyBySometimestamp(List<LocalDateTime> values) {
         return findManyByCondition(Something.SOMETHING.SOMETIMESTAMP.in(values));
     }
+
+    @Override
+    public ReactiveClassicQueryExecutor<SomethingRecord,generated.classic.reactive.guice.vertx.tables.pojos.Something,Integer> queryExecutor(){
+        return (ReactiveClassicQueryExecutor<SomethingRecord,generated.classic.reactive.guice.vertx.tables.pojos.Something,Integer>) super.queryExecutor();
+    }
 }

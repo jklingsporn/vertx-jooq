@@ -56,4 +56,9 @@ public class SomethingwithoutjsonDao extends AbstractReactiveVertxDAO<Somethingw
     public CompletableFuture<List<generated.cf.reactive.guice.vertx.tables.pojos.Somethingwithoutjson>> findManyBySomestring(List<String> values) {
         return findManyByCondition(Somethingwithoutjson.SOMETHINGWITHOUTJSON.SOMESTRING.in(values));
     }
+
+    @Override
+    public ReactiveCompletableFutureQueryExecutor<SomethingwithoutjsonRecord,generated.cf.reactive.guice.vertx.tables.pojos.Somethingwithoutjson,Integer> queryExecutor(){
+        return (ReactiveCompletableFutureQueryExecutor<SomethingwithoutjsonRecord,generated.cf.reactive.guice.vertx.tables.pojos.Somethingwithoutjson,Integer>) super.queryExecutor();
+    }
 }

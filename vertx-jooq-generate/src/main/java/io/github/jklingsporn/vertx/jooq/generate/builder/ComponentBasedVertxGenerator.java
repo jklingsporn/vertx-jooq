@@ -30,7 +30,7 @@ class ComponentBasedVertxGenerator extends VertxGenerator {
     WriteConstructorComponent writeConstructorDelegate;
     Supplier<String> renderFQVertxNameDelegate;
     Supplier<String> renderDAOExtendsDelegate;
-    OverwriteDAOComponent overwriteDAODelegate = (out, className, tableIdentifier, tableRecord, pType, tType) -> {}; //no overwrite by default
+    Collection<OverwriteDAOComponent> overwriteDAODelegates = new ArrayList<>();
     Consumer<JavaWriter> writeDAOClassAnnotationDelegate = (w)->{};
     Consumer<JavaWriter> writeDAOConstructorAnnotationDelegate = (w)->{};
     Collection<BiFunction<SchemaDefinition,Function<File,JavaWriter>,JavaWriter>> writeExtraDataDelegates = new ArrayList<>();
@@ -83,7 +83,7 @@ class ComponentBasedVertxGenerator extends VertxGenerator {
 
     @Override
     public void overwriteDAOMethods(JavaWriter out, String className, String tableIdentifier, String rType, String pType, String tType) {
-        overwriteDAODelegate.overwrite(out, className, tableIdentifier, rType, pType, tType);
+        overwriteDAODelegates.forEach(o -> o.overwrite(out, className, tableIdentifier, rType, pType, tType));
     }
 
     @Override
@@ -141,8 +141,8 @@ class ComponentBasedVertxGenerator extends VertxGenerator {
         return this;
     }
 
-    ComponentBasedVertxGenerator setOverwriteDAODelegate(OverwriteDAOComponent overwriteDelegate) {
-        this.overwriteDAODelegate = overwriteDelegate;
+    ComponentBasedVertxGenerator addOverwriteDAODelegate(OverwriteDAOComponent overwriteDelegate) {
+        this.overwriteDAODelegates.add(overwriteDelegate);
         return this;
     }
 

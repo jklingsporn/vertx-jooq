@@ -58,6 +58,11 @@ public class SomethingwithoutjsonDao extends AbstractAsyncVertxDAO<Somethingwith
     }
 
     @Override
+    public AsyncRXQueryExecutor<SomethingwithoutjsonRecord,generated.rx.async.guice.tables.pojos.Somethingwithoutjson,Integer> queryExecutor(){
+        return (AsyncRXQueryExecutor<SomethingwithoutjsonRecord,generated.rx.async.guice.tables.pojos.Somethingwithoutjson,Integer>) super.queryExecutor();
+    }
+
+    @Override
     protected java.util.function.Function<Object,Integer> keyConverter(){
         return lastId -> Integer.valueOf(((io.vertx.core.json.JsonArray)lastId).getLong(0).intValue());
     }

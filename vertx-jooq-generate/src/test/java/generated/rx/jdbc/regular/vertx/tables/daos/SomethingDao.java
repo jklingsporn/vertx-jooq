@@ -113,4 +113,9 @@ public class SomethingDao extends AbstractVertxDAO<SomethingRecord, generated.rx
     public Single<List<generated.rx.jdbc.regular.vertx.tables.pojos.Something>> findManyBySometimestamp(List<LocalDateTime> values) {
         return findManyByCondition(Something.SOMETHING.SOMETIMESTAMP.in(values));
     }
+
+    @Override
+    public JDBCRXQueryExecutor<SomethingRecord,generated.rx.jdbc.regular.vertx.tables.pojos.Something,Integer> queryExecutor(){
+        return (JDBCRXQueryExecutor<SomethingRecord,generated.rx.jdbc.regular.vertx.tables.pojos.Something,Integer>) super.queryExecutor();
+    }
 }

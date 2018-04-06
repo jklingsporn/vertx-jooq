@@ -64,4 +64,9 @@ public class SomethingcompositeDao extends AbstractAsyncVertxDAO<Somethingcompos
     public CompletableFuture<List<generated.cf.async.regular.tables.pojos.Somethingcomposite>> findManyBySomejsonobject(List<JsonObject> values) {
         return findManyByCondition(Somethingcomposite.SOMETHINGCOMPOSITE.SOMEJSONOBJECT.in(values));
     }
+
+    @Override
+    public AsyncCompletableFutureQueryExecutor<SomethingcompositeRecord,generated.cf.async.regular.tables.pojos.Somethingcomposite,Record2<Integer, Integer>> queryExecutor(){
+        return (AsyncCompletableFutureQueryExecutor<SomethingcompositeRecord,generated.cf.async.regular.tables.pojos.Somethingcomposite,Record2<Integer, Integer>>) super.queryExecutor();
+    }
 }
