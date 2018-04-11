@@ -81,7 +81,7 @@ If you are new to jOOQ, I recommend to read the awesome [jOOQ documentation](htt
                   <name>io.github.jklingsporn.vertx.jooq.generate.rx.RXReactiveVertxGenerator</name>
                   <!-- use 'io.github.jklingsporn.vertx.jooq.generate.rx.RXReactiveGuiceVertxGenerator' to enable Guice DI -->
                   <database>
-                      <name>org.jooq.util.mysql.MySQLDatabase</name>
+                      <name>org.jooq.util.postgres.PostgresDatabase</name>
                       <includes>.*</includes>
                       <inputSchema>YOUR_INPUT_SCHEMA</inputSchema>
                       <outputSchema>YOUR_OUTPUT_SCHEMA</outputSchema>
