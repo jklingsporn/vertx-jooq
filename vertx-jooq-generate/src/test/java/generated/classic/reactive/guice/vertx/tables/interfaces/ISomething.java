@@ -108,6 +108,16 @@ public interface ISomething extends VertxPojo, Serializable {
     public JsonArray getSomejsonarray();
 
     /**
+     * Setter for <code>vertx.something.someJsonBObject</code>.
+     */
+    public ISomething setSomejsonbobject(JsonObject value);
+
+    /**
+     * Getter for <code>vertx.something.someJsonBObject</code>.
+     */
+    public JsonObject getSomejsonbobject();
+
+    /**
      * Setter for <code>vertx.something.someTimestamp</code>.
      */
     public ISomething setSometimestamp(LocalDateTime value);
@@ -141,6 +151,7 @@ public interface ISomething extends VertxPojo, Serializable {
         setSomedouble(json.getDouble("someDouble"));
         setSomejsonobject(json.getJsonObject("someJsonObject"));
         setSomejsonarray(json.getJsonArray("someJsonArray"));
+        setSomejsonbobject(json.getJsonObject("someJsonBObject"));
         // Omitting unrecognized type java.time.LocalDateTime for column someTimestamp!
         return this;
     }
@@ -157,6 +168,7 @@ public interface ISomething extends VertxPojo, Serializable {
         json.put("someDouble",getSomedouble());
         json.put("someJsonObject",getSomejsonobject());
         json.put("someJsonArray",getSomejsonarray());
+        json.put("someJsonBObject",getSomejsonbobject());
         // Omitting unrecognized type java.time.LocalDateTime for column someTimestamp!
         return json;
     }

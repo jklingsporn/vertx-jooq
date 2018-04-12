@@ -18,6 +18,7 @@ public class RowMappers {
             pojo.setSomedouble(row.getDouble("someDouble"));
             pojo.setSomejsonobject(row.getJsonObject("someJsonObject"));
             pojo.setSomejsonarray(row.getJsonArray("someJsonArray"));
+            pojo.setSomejsonbobject(row.getJsonObject("someJsonBObject"));
             pojo.setSometimestamp(row.getLocalDateTime("someTimestamp"));
             return pojo;
         };

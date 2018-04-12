@@ -37,6 +37,7 @@ public class PostgresConfigurationProvider extends AbstractDatabaseConfiguration
                     //                "  \"someEnum\" \"someEnum\" NULL,\n" + //DEFAULT 'FOO' NOT default value for enums is buggy in jOOQ 3.10.5
                     "  \"someJsonObject\" VARCHAR(45) NULL,\n" +
                     "  \"someJsonArray\" VARCHAR(45) NULL,\n" +
+                    "  \"someJsonBObject\" JSONB NULL,\n" +
                     "  \"someTimestamp\" TIMESTAMP NULL,\n" +
                     "  PRIMARY KEY (\"someId\"));").execute();
             connection.prepareStatement("CREATE TABLE \"somethingComposite\" (\n" +
@@ -58,7 +59,7 @@ public class PostgresConfigurationProvider extends AbstractDatabaseConfiguration
         jdbcConfig.setUrl("jdbc:postgresql://127.0.0.1:5432/postgres");
         jdbcConfig.setUser(Credentials.POSTGRES.getUser());
         jdbcConfig.setPassword(Credentials.POSTGRES.getPassword());
-        return createGeneratorConfig(generatorName,packageName,generatorStrategy,jdbcConfig, PostgresDatabase.class.getName());
+        return createGeneratorConfig(generatorName, packageName, generatorStrategy, jdbcConfig, PostgresDatabase.class.getName());
     }
 
     @Override

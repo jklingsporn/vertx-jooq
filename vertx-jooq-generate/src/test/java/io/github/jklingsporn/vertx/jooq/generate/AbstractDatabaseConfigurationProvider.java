@@ -2,6 +2,7 @@ package io.github.jklingsporn.vertx.jooq.generate;
 
 import io.github.jklingsporn.vertx.jooq.shared.JsonArrayConverter;
 import io.github.jklingsporn.vertx.jooq.shared.JsonObjectConverter;
+import io.github.jklingsporn.vertx.jooq.shared.ObjectToJsonObjectBinding;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import org.jooq.util.jaxb.*;
@@ -44,11 +45,19 @@ abstract class AbstractDatabaseConfigurationProvider {
         jsonArrayType.setExpression("someJsonArray");
         jsonArrayType.setTypes(".*");
 
+        /**
+         * jsonB column to JsonObject
+         */
+        ForcedType objectToJsonObjectBinding = new ForcedType();
+        objectToJsonObjectBinding.setUserType(JsonObject.class.getName());
+        objectToJsonObjectBinding.setBinding(ObjectToJsonObjectBinding.class.getName());
+        objectToJsonObjectBinding.setExpression("someJsonBObject");
+
         Configuration configuration = new Configuration();
         Database databaseConfig = new Database();
         databaseConfig.setName(dbType);
         databaseConfig.setIncludes("something|somethingComposite|somethingWithoutJson|something_someEnum|someEnum");
-        databaseConfig.setForcedTypes(Arrays.asList(jsonArrayType, jsonObjectType));
+        databaseConfig.setForcedTypes(Arrays.asList(jsonArrayType, jsonObjectType,objectToJsonObjectBinding));
 //        databaseConfig.setEnumTypes(Collections.singletonList(new EnumType().withName("someEnum").withLiterals("FOO,BAR,BAZ")));
 
         Target targetConfig = new Target();

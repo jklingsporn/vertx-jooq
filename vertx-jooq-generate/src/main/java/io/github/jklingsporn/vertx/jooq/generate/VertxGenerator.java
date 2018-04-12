@@ -2,6 +2,7 @@ package io.github.jklingsporn.vertx.jooq.generate;
 
 import io.github.jklingsporn.vertx.jooq.shared.JsonArrayConverter;
 import io.github.jklingsporn.vertx.jooq.shared.JsonObjectConverter;
+import io.github.jklingsporn.vertx.jooq.shared.ObjectToJsonObjectBinding;
 import io.github.jklingsporn.vertx.jooq.shared.internal.AbstractVertxDAO;
 import io.vertx.core.Vertx;
 import io.vertx.core.impl.Arguments;
@@ -270,7 +271,8 @@ public abstract class VertxGenerator extends JavaGenerator {
                 out.tab(2).println("%s(json.getInstant(\"%s\"));", setter, javaMemberName);
             }else if(isEnum(table, column)) {
                 out.tab(2).println("%s(java.util.Arrays.stream(%s.values()).filter(td -> td.getLiteral().equals(json.getString(\"%s\"))).findFirst().orElse(null));", setter, columnType, javaMemberName);
-            }else if(column.getType().getConverter() != null && isType(column.getType().getConverter(),JsonObjectConverter.class)){
+            }else if((column.getType().getConverter() != null && isType(column.getType().getConverter(),JsonObjectConverter.class)) ||
+                    (column.getType().getBinding() != null && isType(column.getType().getBinding(),ObjectToJsonObjectBinding.class))){
                 out.tab(2).println("%s(json.getJsonObject(\"%s\"));", setter, javaMemberName);
             }else if(column.getType().getConverter() != null && isType(column.getType().getConverter(),JsonArrayConverter.class)){
                 out.tab(2).println("%s(json.getJsonArray(\"%s\"));", setter, javaMemberName);
@@ -340,7 +342,7 @@ public abstract class VertxGenerator extends JavaGenerator {
                 isType(columnType, Boolean.class) || isType(columnType,String.class) || isType(columnType, Instant.class) ||
                 columnType.equals(byte.class.getName()+"[]") || (column.getType().getConverter() != null &&
                 (isType(column.getType().getConverter(),JsonObjectConverter.class) || isType(column.getType().getConverter(),JsonArrayConverter.class)))
-                ;
+                || (column.getType().getBinding() != null && isType(column.getType().getBinding(),ObjectToJsonObjectBinding.class));
     }
 
     @Override

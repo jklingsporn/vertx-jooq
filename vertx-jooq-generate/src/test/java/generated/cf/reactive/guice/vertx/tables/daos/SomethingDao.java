@@ -103,6 +103,13 @@ public class SomethingDao extends AbstractReactiveVertxDAO<SomethingRecord, gene
     }
 
     /**
+     * Find records that have <code>someJsonBObject IN (values)</code> asynchronously
+     */
+    public CompletableFuture<List<generated.cf.reactive.guice.vertx.tables.pojos.Something>> findManyBySomejsonbobject(List<JsonObject> values) {
+        return findManyByCondition(Something.SOMETHING.SOMEJSONBOBJECT.in(values));
+    }
+
+    /**
      * Find records that have <code>someTimestamp IN (values)</code> asynchronously
      */
     public CompletableFuture<List<generated.cf.reactive.guice.vertx.tables.pojos.Something>> findManyBySometimestamp(List<LocalDateTime> values) {

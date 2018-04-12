@@ -45,6 +45,7 @@ public class SomethingDaoTest extends ClassicTestBase<Something, Integer, Long, 
         something.setSomehugenumber(random.nextLong());
         something.setSomejsonarray(new JsonArray().add(1).add(2).add(3));
         something.setSomejsonobject(new JsonObject().put("key", "value"));
+        something.setSomejsonbobject(new JsonObject().put("anotherKey", "anotherValue"));
         something.setSomesmallnumber((short) random.nextInt(Short.MAX_VALUE));
 //        something.setSomeenum(Someenum.values()[random.nextInt(Someenum.values().length)]);
         something.setSomestring("my_string");

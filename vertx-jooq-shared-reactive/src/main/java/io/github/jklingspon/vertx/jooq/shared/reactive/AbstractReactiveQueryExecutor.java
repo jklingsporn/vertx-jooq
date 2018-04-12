@@ -29,7 +29,9 @@ public abstract class AbstractReactiveQueryExecutor extends AbstractQueryExecuto
             Object value = convertToDatabaseType(param);
             bindValues.add(value);
         }
-        return Tuple.of(bindValues.toArray());
+        Tuple tuple = Tuple.of(bindValues.toArray());
+        System.err.println(tuple);
+        return tuple;
     }
 
     protected <U> Object convertToDatabaseType(Param<U> param) {
@@ -44,6 +46,8 @@ public abstract class AbstractReactiveQueryExecutor extends AbstractQueryExecuto
 
     protected String toPreparedQuery(Query query){
         String namedQuery = query.getSQL(ParamType.NAMED);
-        return namedQuery.replaceAll("\\:", "\\$");
+        String replaceAll = namedQuery.replaceAll("\\:", "\\$").replaceAll("\\$\\$", "\\::");
+        System.err.println(replaceAll);
+        return replaceAll;
     }
 }
