@@ -34,6 +34,8 @@ class ComponentBasedVertxGenerator extends VertxGenerator {
     Consumer<JavaWriter> writeDAOClassAnnotationDelegate = (w)->{};
     Consumer<JavaWriter> writeDAOConstructorAnnotationDelegate = (w)->{};
     Collection<BiFunction<SchemaDefinition,Function<File,JavaWriter>,JavaWriter>> writeExtraDataDelegates = new ArrayList<>();
+    NamedInjectionStrategy namedInjectionStrategy = PredefinedNamedInjectionStrategy.DISABLED;
+
     VertxGenerator activeGenerator = this;
 
     @Override
@@ -77,8 +79,8 @@ class ComponentBasedVertxGenerator extends VertxGenerator {
     }
 
     @Override
-    public void writeDAOConstructor(JavaWriter out, String className, String tableIdentifier, String rType, String pType, String tType) {
-        writeConstructorDelegate.writeConstructor(out, className, tableIdentifier, rType, pType, tType);
+    public void writeDAOConstructor(JavaWriter out, String className, String tableIdentifier, String rType, String pType, String tType, String schema) {
+        writeConstructorDelegate.writeConstructor(out, className, tableIdentifier, rType, pType, tType, schema);
     }
 
     @Override
@@ -163,6 +165,11 @@ class ComponentBasedVertxGenerator extends VertxGenerator {
 
     ComponentBasedVertxGenerator addWriteExtraDataDelegate(BiFunction<SchemaDefinition, Function<File, JavaWriter>, JavaWriter> writeExtraDataDelegate) {
         this.writeExtraDataDelegates.add(writeExtraDataDelegate);
+        return this;
+    }
+
+    public ComponentBasedVertxGenerator setNamedInjectionStrategy(NamedInjectionStrategy namedInjectionStrategy) {
+        this.namedInjectionStrategy = namedInjectionStrategy;
         return this;
     }
 

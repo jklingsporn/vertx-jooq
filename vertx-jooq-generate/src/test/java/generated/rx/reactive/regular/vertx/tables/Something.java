@@ -10,7 +10,6 @@ import generated.rx.reactive.regular.vertx.tables.records.SomethingRecord;
 
 import io.github.jklingsporn.vertx.jooq.shared.JsonArrayConverter;
 import io.github.jklingsporn.vertx.jooq.shared.JsonObjectConverter;
-import io.github.jklingsporn.vertx.jooq.shared.ObjectToJsonObjectBinding;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
@@ -44,7 +43,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Something extends TableImpl<SomethingRecord> {
 
-    private static final long serialVersionUID = 1638761178;
+    private static final long serialVersionUID = -1794812620;
 
     /**
      * The reference instance of <code>vertx.something</code>
@@ -98,11 +97,6 @@ public class Something extends TableImpl<SomethingRecord> {
      * The column <code>vertx.something.someJsonArray</code>.
      */
     public final TableField<SomethingRecord, JsonArray> SOMEJSONARRAY = createField("someJsonArray", org.jooq.impl.SQLDataType.VARCHAR(45), this, "", new JsonArrayConverter());
-
-    /**
-     * The column <code>vertx.something.someJsonBObject</code>.
-     */
-    public final TableField<SomethingRecord, JsonObject> SOMEJSONBOBJECT = createField("someJsonBObject", org.jooq.impl.DefaultDataType.getDefaultDataType("jsonb"), this, "", new ObjectToJsonObjectBinding());
 
     /**
      * The column <code>vertx.something.someTimestamp</code>.

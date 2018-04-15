@@ -9,9 +9,11 @@ import java.io.File;
  */
 public class VertxJavaWriter extends JavaWriter {
 
+
     public VertxJavaWriter(File file, String fullyQualifiedTypes, String encoding) {
         super(file, fullyQualifiedTypes, encoding);
     }
+
 
     @Override
     protected String beforeClose(String string) {

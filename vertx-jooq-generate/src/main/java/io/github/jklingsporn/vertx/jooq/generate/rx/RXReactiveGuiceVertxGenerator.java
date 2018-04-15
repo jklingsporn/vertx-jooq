@@ -1,6 +1,7 @@
 package io.github.jklingsporn.vertx.jooq.generate.rx;
 
 import io.github.jklingsporn.vertx.jooq.generate.builder.DelegatingVertxGenerator;
+import io.github.jklingsporn.vertx.jooq.generate.builder.PredefinedNamedInjectionStrategy;
 import io.github.jklingsporn.vertx.jooq.generate.builder.VertxGeneratorBuilder;
 
 /**
@@ -9,6 +10,6 @@ import io.github.jklingsporn.vertx.jooq.generate.builder.VertxGeneratorBuilder;
 public class RXReactiveGuiceVertxGenerator extends DelegatingVertxGenerator {
 
     public RXReactiveGuiceVertxGenerator() {
-        super(VertxGeneratorBuilder.init().withRXAPI().withPostgresReactiveDriver().withGuice(true).build());
+        super(VertxGeneratorBuilder.init().withRXAPI().withPostgresReactiveDriver().withGuice(true, PredefinedNamedInjectionStrategy.DISABLED).build());
     }
 }

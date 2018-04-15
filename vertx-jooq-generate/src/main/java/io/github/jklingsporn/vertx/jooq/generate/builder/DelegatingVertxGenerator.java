@@ -59,8 +59,8 @@ public class DelegatingVertxGenerator extends VertxGenerator {
     }
 
     @Override
-    protected void writeDAOConstructor(JavaWriter out, String className, String tableIdentifier, String rType, String pType, String tType) {
-        delegate.writeDAOConstructor(out, className, tableIdentifier, rType, pType, tType);
+    protected void writeDAOConstructor(JavaWriter out, String className, String tableIdentifier, String rType, String pType, String tType, String schema) {
+        delegate.writeDAOConstructor(out, className, tableIdentifier, rType, pType, tType, schema);
     }
 
     @Override

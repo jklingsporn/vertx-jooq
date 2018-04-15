@@ -37,7 +37,7 @@ public class PostgresConfigurationProvider extends AbstractDatabaseConfiguration
                     //                "  \"someEnum\" \"someEnum\" NULL,\n" + //DEFAULT 'FOO' NOT default value for enums is buggy in jOOQ 3.10.5
                     "  \"someJsonObject\" VARCHAR(45) NULL,\n" +
                     "  \"someJsonArray\" VARCHAR(45) NULL,\n" +
-                    "  \"someJsonBObject\" JSONB NULL,\n" +
+//                    "  \"someJsonBObject\" JSONB NULL,\n" +
                     "  \"someTimestamp\" TIMESTAMP NULL,\n" +
                     "  PRIMARY KEY (\"someId\"));").execute();
             connection.prepareStatement("CREATE TABLE \"somethingComposite\" (\n" +

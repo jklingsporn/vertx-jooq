@@ -122,8 +122,9 @@ public abstract class VertxGenerator extends JavaGenerator {
      * @param rType the record type
      * @param pType the POJO type
      * @param tType the primary key type
+     * @param schema
      */
-    protected abstract void writeDAOConstructor(JavaWriter out, String className, String tableIdentifier, String rType, String pType, String tType);
+    protected abstract void writeDAOConstructor(JavaWriter out, String className, String tableIdentifier, String rType, String pType, String tType, String schema);
 
     /**
      * Write imports in the DAO.
@@ -541,7 +542,7 @@ public abstract class VertxGenerator extends JavaGenerator {
         }
 
         writeDAOConstructorAnnotation(out);
-        writeDAOConstructor(out, className, tableIdentifier, tableRecord, pType, tType);
+        writeDAOConstructor(out, className, tableIdentifier, tableRecord, pType, tType, table.getSchema().getName());
 
         // Template method implementations
         // -------------------------------

@@ -8,5 +8,5 @@ import org.jooq.util.JavaWriter;
 @FunctionalInterface
 interface WriteConstructorComponent {
 
-    public void writeConstructor(JavaWriter out, String className, String tableIdentifier, String tableRecord, String pType, String tType);
+    public void writeConstructor(JavaWriter out, String className, String tableIdentifier, String tableRecord, String pType, String tType, String schema);
 }
