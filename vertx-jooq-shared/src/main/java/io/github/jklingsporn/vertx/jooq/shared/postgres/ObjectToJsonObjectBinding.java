@@ -1,4 +1,4 @@
-package io.github.jklingsporn.vertx.jooq.shared;
+package io.github.jklingsporn.vertx.jooq.shared.postgres;
 
 import io.vertx.core.json.JsonObject;
 import org.jooq.*;
@@ -17,7 +17,7 @@ public class ObjectToJsonObjectBinding implements Binding<Object, JsonObject>{
     private static final Converter<Object, JsonObject> CONVERTER = new Converter<Object, JsonObject>() {
         @Override
         public JsonObject from(Object t) {
-            return t == null ? null : JsonObject.mapFrom(t);
+            return t == null ? null : new JsonObject(t.toString());
         }
 
         @Override
@@ -48,7 +48,7 @@ public class ObjectToJsonObjectBinding implements Binding<Object, JsonObject>{
         // Depending on how you generate your SQL, you may need to explicitly distinguish
         // between jOOQ generating bind variables or inlined literals. If so, use this check:
         // ctx.render().paramType() == INLINED
-        ctx.render().visit(DSL.val(ctx.convert(converter()).value())).sql("::jsonb");
+        ctx.render().visit(DSL.val(ctx.convert(converter()).value())).sql("::json");
     }
 
     // Registering VARCHAR types for JDBC CallableStatement OUT parameters
