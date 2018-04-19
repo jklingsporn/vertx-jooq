@@ -271,7 +271,12 @@ public abstract class VertxGenerator extends JavaGenerator {
             }else if(isType(columnType,Instant.class)){
                 out.tab(2).println("%s(json.getInstant(\"%s\"));", setter, javaMemberName);
             }else if(isEnum(table, column)) {
-                out.tab(2).println("%s(java.util.Arrays.stream(%s.values()).filter(td -> td.getLiteral().equals(json.getString(\"%s\"))).findFirst().orElse(null));", setter, columnType, javaMemberName);
+                //if enum is handled by custom type, getLiteral() is not available
+                if(column.getType().getConverter() == null){
+                    out.tab(2).println("%s(java.util.Arrays.stream(%s.values()).filter(td -> td.getLiteral().equals(json.getString(\"%s\"))).findFirst().orElse(null));", setter, columnType, javaMemberName);
+                }else{
+                    out.tab(2).println("%s(java.util.Arrays.stream(%s.values()).filter(td -> td.name().equals(json.getString(\"%s\"))).findFirst().orElse(null));", setter, columnType, javaMemberName);
+                }
             }else if((column.getType().getConverter() != null && isType(column.getType().getConverter(),JsonObjectConverter.class)) ||
                     (column.getType().getBinding() != null && isType(column.getType().getBinding(),ObjectToJsonObjectBinding.class))){
                 out.tab(2).println("%s(json.getJsonObject(\"%s\"));", setter, javaMemberName);
@@ -311,7 +316,12 @@ public abstract class VertxGenerator extends JavaGenerator {
             if(handleCustomTypeToJson(column,getter,columnType, getJsonKeyName(column), out)) {
                 //handled by user
             }else if(isEnum(table,column)){
-                out.tab(2).println("json.put(\"%s\",%s()==null?null:%s().getLiteral());", getJsonKeyName(column),getter,getter);
+                //if enum is handled by custom type, try getLiteral() is not available
+                if(column.getType().getConverter() == null){
+                    out.tab(2).println("json.put(\"%s\",%s()==null?null:%s().getLiteral());", getJsonKeyName(column),getter,getter);
+                }else{
+                    out.tab(2).println("json.put(\"%s\",%s()==null?null:%s().name());", getJsonKeyName(column),getter,getter);
+                }
             }else if(isAllowedJsonType(column, columnType)){
                 out.tab(2).println("json.put(\"%s\",%s());", getJsonKeyName(column),getter);
             }else{
@@ -574,49 +584,60 @@ public abstract class VertxGenerator extends JavaGenerator {
         out.println("}");
     }
 
+    protected String getTypeReference(Database db, SchemaDefinition schema, String t, int p, int s, int l, boolean n, boolean i, String d, Name u,String converter) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("org.jooq.util.");
+        sb.append(db.getDialect().getName().toLowerCase());
+        sb.append(".");
+        sb.append(db.getDialect().getName());
+        sb.append("DataType.");
+        sb.append(DefaultDataType.normalise(DefaultDataType.getDataType(db.getDialect(), String.class).getTypeName()));
+        if(converter == null){
+            sb.append(".asEnumDataType(");
+            sb.append(getStrategy().getFullJavaClassName(db.getEnum(schema, u))).append(".class");
+            sb.append(")");
+        }
+        if (!n)
+            sb.append(".nullable(false)");
+        if (i)
+            sb.append(".identity(true)");
+        if(d != null){
+            sb.append(".defaultValue(");
+            sb.append(getStrategy().getFullJavaClassName(db.getEnum(schema, u)));
+            sb.append(".");
+            sb.append(d);
+            sb.append(")");
+        }
+        return sb.toString();
+    }
+
     /**
      * Enums cannot have a default value for some rome reason. Also nullability information gets lost.
      * Until a fix is provided, we have to handle it on our own.
      * @param db
-     * @param schema
-     * @param t
-     * @param p
-     * @param s
-     * @param l
-     * @param n
-     * @param i
-     * @param d
-     * @param u
+     * @param type
      * @return
      * @see <a href="https://github.com/jOOQ/jOOQ/issues/7199">Issue 7199</a>
      */
     @Override
-    protected String getTypeReference(Database db, SchemaDefinition schema, String t, int p, int s, int l, boolean n, boolean i, String d, Name u) {
-        if (db.getEnum(schema, u) != null) {
-            StringBuilder sb = new StringBuilder();
-            sb.append("org.jooq.util.");
-            sb.append(db.getDialect().getName().toLowerCase());
-            sb.append(".");
-            sb.append(db.getDialect().getName());
-            sb.append("DataType.");
-            sb.append(DefaultDataType.normalise(DefaultDataType.getDataType(db.getDialect(), String.class).getTypeName()));
-            sb.append(".asEnumDataType(");
-            sb.append(getStrategy().getFullJavaClassName(db.getEnum(schema, u))).append(".class");
-            sb.append(")");
-            if (!n)
-                sb.append(".nullable(false)");
-            if (i)
-                sb.append(".identity(true)");
-            if(d != null){
-                sb.append(".defaultValue(");
-                sb.append(getStrategy().getFullJavaClassName(db.getEnum(schema, u)));
-                sb.append(".");
-                sb.append(d);
-                sb.append(")");
-            }
-            return sb.toString();
-        }else{
-            return super.getTypeReference(db, schema, t, p, s, l, n, i, d, u);
+    protected String getJavaTypeReference(Database db, DataTypeDefinition type){
+        if (db.getEnum(type.getSchema(), type.getUserType()) != null) {
+            return this.getTypeReference(
+                    db,
+                    type.getSchema(),
+                    type.getType(),
+                    type.getPrecision(),
+                    type.getScale(),
+                    type.getLength(),
+                    type.isNullable(),
+                    type.isIdentity(),
+                    type.getDefaultValue(),
+                    type.getQualifiedUserType(),
+                    type.getConverter()
+            );
+        }
+        else {
+            return super.getJavaTypeReference(db,type);
         }
     }
 
