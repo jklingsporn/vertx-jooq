@@ -621,7 +621,9 @@ public abstract class VertxGenerator extends JavaGenerator {
                 sb.append(".defaultValue(");
                 sb.append(getStrategy().getFullJavaClassName(db.getEnum(schema, u)));
                 sb.append(".");
-                sb.append(d);
+                //Hotfix for Postgres
+                String defaultValue = d.split("::")[0].replaceAll("'","");
+                sb.append(defaultValue);
                 sb.append(")");
             }
             return sb.toString();
