@@ -285,6 +285,7 @@ public class VertxGeneratorBuilder {
                 out.println();
                 Set<String> supportedRowTypes = new HashSet<>();
                 supportedRowTypes.add(Boolean.class.getName());
+                supportedRowTypes.add(Short.class.getName());
                 supportedRowTypes.add(Integer.class.getName());
                 supportedRowTypes.add(Long.class.getName());
                 supportedRowTypes.add(Float.class.getName());
