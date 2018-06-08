@@ -363,6 +363,14 @@ public abstract class VertxGenerator extends JavaGenerator {
         this.vertxGeneratorStrategy = (VertxGeneratorStrategy) strategy;
     }
 
+    /**
+     * @return the VertxGeneratorStrategy used. Unfortunately {@code getStrategy()} cannot be used because every
+     * {@code GeneratorStrategy} is wrapped into a package local jOOQ-class, so casting doesn't work.
+     */
+    public VertxGeneratorStrategy getVertxGeneratorStrategy() {
+        return vertxGeneratorStrategy;
+    }
+
     private void generateFromJsonConstructor(TableDefinition table, JavaWriter out, GeneratorStrategy.Mode mode){
         final String className = getStrategy().getJavaClassName(table, mode);
         out.println();

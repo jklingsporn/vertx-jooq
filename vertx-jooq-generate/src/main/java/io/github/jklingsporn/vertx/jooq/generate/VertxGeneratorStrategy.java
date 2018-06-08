@@ -29,6 +29,10 @@ public class VertxGeneratorStrategy implements GeneratorStrategy {
         return column.getName();
     }
 
+    public String getRowMappersSubPackage(){
+        return "mappers";
+    }
+
     @Override
     public List<String> getJavaClassImplements(Definition definition, Mode mode) {
         List<String> javaClassImplements = delegate.getJavaClassImplements(definition, mode);

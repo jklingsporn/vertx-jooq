@@ -13,7 +13,7 @@ public class RowMappers {
             pojo.setSomeid(row.getInteger("someId"));
             pojo.setSomestring(row.getString("someString"));
             pojo.setSomehugenumber(row.getLong("someHugeNumber"));
-            // Omitting unrecognized type DataType [ t=smallint; p=16; s=0; u="pg_catalog"."int2"; j=null ] (java.lang.Short) for column someSmallNumber!
+            pojo.setSomesmallnumber(row.getShort("someSmallNumber"));
             pojo.setSomeregularnumber(row.getInteger("someRegularNumber"));
             pojo.setSomedouble(row.getDouble("someDouble"));
             pojo.setSomejsonobject(row.getJsonObject("someJsonObject"));

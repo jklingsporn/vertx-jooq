@@ -2,8 +2,8 @@ package io.github.jklingsporn.vertx.jooq.generate.builder;
 
 import io.github.jklingsporn.vertx.jooq.shared.JsonArrayConverter;
 import io.github.jklingsporn.vertx.jooq.shared.JsonObjectConverter;
-import io.github.jklingsporn.vertx.jooq.shared.postgres.ObjectToJsonObjectBinding;
 import io.github.jklingsporn.vertx.jooq.shared.internal.AbstractVertxDAO;
+import io.github.jklingsporn.vertx.jooq.shared.postgres.ObjectToJsonObjectBinding;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
@@ -271,10 +271,14 @@ public class VertxGeneratorBuilder {
             base.setRenderDAOExtendsDelegate(()->"io.github.jklingspon.vertx.jooq.shared.reactive.AbstractReactiveVertxDAO");
             base.addWriteExtraDataDelegate((schema, writerGen) -> {
                 ComponentBasedVertxGenerator.logger.info("Generate RowMappers ... ");
-                String packageName = (base.getActiveGenerator().getStrategy().getTargetDirectory() + "/" + base.getActiveGenerator().getStrategy().getJavaPackageName(schema) + ".tables.mappers").replaceAll("\\.", "/");
-                File moduleFile = new File(packageName, "RowMappers.java");
+                String mappersSubPackage = base.getActiveGenerator().getVertxGeneratorStrategy().getRowMappersSubPackage();
+                String packageName = base.getActiveGenerator().getStrategy().getJavaPackageName(schema) + ".tables." + mappersSubPackage;
+                String dir = base.getActiveGenerator().getStrategy().getTargetDirectory();
+                dir = File.separator.equals("/") ? dir.replace("\\", File.separator) : dir.replace("/", File.separator);
+                dir = dir + File.separator + packageName.replace(".", File.separator);
+                File moduleFile = new File(dir, "RowMappers.java");
                 JavaWriter out = writerGen.apply(moduleFile);
-                out.println("package " + base.getActiveGenerator().getStrategy().getJavaPackageName(schema) + ".tables.mappers;");
+                out.println("package " + base.getActiveGenerator().getStrategy().getJavaPackageName(schema) + ".tables."+mappersSubPackage+";");
                 out.println();
                 out.println("import io.reactiverse.pgclient.Row;");
                 out.println("import %s;", Function.class.getName());
@@ -347,9 +351,15 @@ public class VertxGeneratorBuilder {
                             .setWriteDAOImportsDelegate(base.writeDAOImportsDelegate.andThen(out -> out.println("import io.github.jklingsporn.vertx.jooq.classic.reactivepg.ReactiveClassicQueryExecutor;")))
                             .setRenderQueryExecutorDelegate((rType, pType, tType) -> String.format("ReactiveClassicQueryExecutor<%s,%s,%s>", rType, pType, tType))
                             .setWriteConstructorDelegate((out, className, tableIdentifier, tableRecord, pType, tType,schema) -> {
-                                //pType = foo.bar.pojos.Somepojo -> split[0]=foo.bar. -> split[1]=Somepojo
-                                String[] split = pType.split("pojos.");
-                                String mapperFactory = String.format("%smappers.RowMappers.get%sMapper()",split[0],split[1]);
+                                /*
+                                 * pType = foo.bar.pojos.Somepojo
+                                 * -------^-need--^---------------
+                                 * temp = foo.bar.pojos
+                                 */
+                                String temp = pType.substring(0, pType.lastIndexOf('.'));
+                                String basePath = temp.substring(0, temp.lastIndexOf('.'));
+                                String pojoName = pType.substring(pType.lastIndexOf(".") + 1, pType.length());
+                                String mapperFactory = String.format("%s.%s.RowMappers.get%sMapper()",basePath, base.getVertxGeneratorStrategy().getRowMappersSubPackage(), pojoName);
                                 out.tab(1).javadoc("@param configuration Used for rendering, so only SQLDialect must be set and must be one of the POSTGREs types.\n     * @param delegate A configured AsyncSQLClient that is used for query execution");
                                 out.tab(1).println("public %s(%s%s configuration, io.reactiverse.pgclient.PgClient delegate) {", className, base.namedInjectionStrategy.apply(schema),Configuration.class);
                                 out.tab(2).println("super(%s, %s.class, new %s(configuration,delegate,%s));", tableIdentifier, pType, base.renderQueryExecutor(tableRecord, pType, tType),mapperFactory);
@@ -362,9 +372,15 @@ public class VertxGeneratorBuilder {
                             .setWriteDAOImportsDelegate(base.writeDAOImportsDelegate.andThen(out -> out.println("import io.github.jklingsporn.vertx.jooq.completablefuture.reactivepg.ReactiveCompletableFutureQueryExecutor;")))
                             .setRenderQueryExecutorDelegate((rType, pType, tType) -> String.format("ReactiveCompletableFutureQueryExecutor<%s,%s,%s>", rType, pType, tType))
                             .setWriteConstructorDelegate((out, className, tableIdentifier, tableRecord, pType, tType, schema) -> {
-                                //pType = foo.bar.pojos.Somepojo -> split[0]=foo.bar. -> split[1]=Somepojo
-                                String[] split = pType.split("pojos.");
-                                String mapperFactory = String.format("%smappers.RowMappers.get%sMapper()",split[0],split[1]);
+                                /*
+                                 * pType = foo.bar.pojos.Somepojo
+                                 * -------^-need--^---------------
+                                 * temp = foo.bar.pojos
+                                 */
+                                String temp = pType.substring(0, pType.lastIndexOf('.'));
+                                String basePath = temp.substring(0, temp.lastIndexOf('.'));
+                                String pojoName = pType.substring(pType.lastIndexOf(".")+1,pType.length());
+                                String mapperFactory = String.format("%s.%s.RowMappers.get%sMapper()",basePath, base.getVertxGeneratorStrategy().getRowMappersSubPackage(), pojoName);
                                 out.tab(1).javadoc("@param configuration The Configuration used for rendering and query execution.\n     * @param vertx the vertx instance");
                                 out.tab(1).println("public %s(%s configuration, %sio.reactiverse.pgclient.PgClient delegate, %s vertx) {", className, Configuration.class, base.namedInjectionStrategy.apply(schema), base.renderFQVertxName());
                                 out.tab(2).println("super(%s, %s.class, new %s(configuration,delegate,%s,vertx));", tableIdentifier, pType, base.renderQueryExecutor(tableRecord, pType, tType), mapperFactory);
@@ -376,9 +392,15 @@ public class VertxGeneratorBuilder {
                             .setWriteDAOImportsDelegate(base.writeDAOImportsDelegate.andThen(out -> out.println("import io.github.jklingsporn.vertx.jooq.rx.reactivepg.ReactiveRXQueryExecutor;")))
                             .setRenderQueryExecutorDelegate((rType, pType, tType) -> String.format("ReactiveRXQueryExecutor<%s,%s,%s>", rType, pType, tType))
                             .setWriteConstructorDelegate((out, className, tableIdentifier, tableRecord, pType, tType, schema) -> {
-                                //pType = foo.bar.pojos.Somepojo -> split[0]=foo.bar. -> split[1]=Somepojo
-                                String[] split = pType.split("pojos.");
-                                String mapperFactory = String.format("%smappers.RowMappers.get%sMapper()",split[0],split[1]);
+                                /*
+                                 * pType = foo.bar.pojos.Somepojo
+                                 * -------^-need--^---------------
+                                 * temp = foo.bar.pojos
+                                 */
+                                String temp = pType.substring(0, pType.lastIndexOf('.'));
+                                String basePath = temp.substring(0, temp.lastIndexOf('.'));
+                                String pojoName = pType.substring(pType.lastIndexOf(".") + 1, pType.length());
+                                String mapperFactory = String.format("%s.%s.RowMappers.get%sMapper()",basePath, base.getVertxGeneratorStrategy().getRowMappersSubPackage(), pojoName);
                                 out.tab(1).javadoc("@param configuration The Configuration used for rendering and query execution.\n" +
                                         "     * @param vertx the vertx instance");
                                 out.tab(1).println("public %s(%s configuration, %sio.reactiverse.reactivex.pgclient.PgClient delegate) {", className, Configuration.class, base.namedInjectionStrategy.apply(schema));
