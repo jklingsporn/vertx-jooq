@@ -2,9 +2,9 @@ package io.github.jklingsporn.vertx.jooq.generate;
 
 import org.jooq.SQLDialect;
 import org.jooq.impl.DefaultConfiguration;
-import org.jooq.util.jaxb.Configuration;
-import org.jooq.util.jaxb.Jdbc;
-import org.jooq.util.mysql.MySQLDatabase;
+import org.jooq.meta.jaxb.Configuration;
+import org.jooq.meta.jaxb.Jdbc;
+import org.jooq.meta.mysql.MySQLDatabase;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

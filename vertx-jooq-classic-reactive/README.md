@@ -81,7 +81,7 @@ If you are new to jOOQ, I recommend to read the awesome [jOOQ documentation](htt
                   <name>io.github.jklingsporn.vertx.jooq.generate.classic.ClassicReactiveVertxGenerator</name>
               		<!-- use 'io.github.jklingsporn.vertx.jooq.generate.classic.ClassicReactiveGuiceVertxGenerator' to enable Guice DI -->
                   <database>
-                      <name>org.jooq.util.postgres.PostgresDatabase</name>
+                      <name>org.jooq.meta.postgres.PostgresDatabase</name>
                       <includes>.*</includes>
                       <inputSchema>YOUR_INPUT_SCHEMA</inputSchema>
                       <outputSchema>YOUR_OUTPUT_SCHEMA</outputSchema>
@@ -180,7 +180,7 @@ task jooqGenerate {
             generator {
                 name('io.github.jklingsporn.vertx.jooq.generate.classic.ClassicReactiveVertxGenerator')
                 database {
-                    name('org.jooq.util.postgres.PostgresDatabase')
+                    name('org.jooq.meta.postgres.PostgresDatabase')
                     include('.*')
                     excludes('schema_version')
                     inputSchema('public')
@@ -208,7 +208,7 @@ task jooqGenerate {
             }
         }
         GenerationTool.generate(
-                JAXB.unmarshal(new StringReader(writer.toString()), org.jooq.util.jaxb.Configuration.class)
+                JAXB.unmarshal(new StringReader(writer.toString()), org.jooq.meta.jaxb.Configuration.class)
         )
     }
 }

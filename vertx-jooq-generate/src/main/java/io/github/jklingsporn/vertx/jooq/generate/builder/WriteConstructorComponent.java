@@ -1,6 +1,6 @@
 package io.github.jklingsporn.vertx.jooq.generate.builder;
 
-import org.jooq.util.JavaWriter;
+import org.jooq.codegen.JavaWriter;
 
 /**
  * Created by jensklingsporn on 09.02.18.

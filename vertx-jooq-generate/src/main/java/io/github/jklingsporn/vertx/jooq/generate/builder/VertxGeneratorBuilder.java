@@ -8,7 +8,11 @@ import io.vertx.core.buffer.Buffer;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import org.jooq.Configuration;
-import org.jooq.util.*;
+import org.jooq.codegen.GeneratorStrategy;
+import org.jooq.codegen.JavaWriter;
+import org.jooq.meta.TableDefinition;
+import org.jooq.meta.TypedElementDefinition;
+import org.jooq.meta.UniqueKeyDefinition;
 
 import java.io.File;
 import java.math.BigDecimal;

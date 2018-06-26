@@ -4,7 +4,7 @@ import io.github.jklingsporn.vertx.jooq.shared.JsonArrayConverter;
 import io.github.jklingsporn.vertx.jooq.shared.JsonObjectConverter;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
-import org.jooq.util.jaxb.*;
+import org.jooq.meta.jaxb.*;
 
 import java.util.Arrays;
 

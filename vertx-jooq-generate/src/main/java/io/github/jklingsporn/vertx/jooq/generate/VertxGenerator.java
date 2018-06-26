@@ -2,16 +2,19 @@ package io.github.jklingsporn.vertx.jooq.generate;
 
 import io.github.jklingsporn.vertx.jooq.shared.JsonArrayConverter;
 import io.github.jklingsporn.vertx.jooq.shared.JsonObjectConverter;
-import io.github.jklingsporn.vertx.jooq.shared.postgres.ObjectToJsonObjectBinding;
 import io.github.jklingsporn.vertx.jooq.shared.internal.AbstractVertxDAO;
+import io.github.jklingsporn.vertx.jooq.shared.postgres.ObjectToJsonObjectBinding;
 import io.vertx.core.Vertx;
 import io.vertx.core.impl.Arguments;
 import org.jooq.Constants;
 import org.jooq.Name;
 import org.jooq.Record;
+import org.jooq.codegen.GeneratorStrategy;
+import org.jooq.codegen.JavaGenerator;
+import org.jooq.codegen.JavaWriter;
 import org.jooq.impl.DefaultDataType;
+import org.jooq.meta.*;
 import org.jooq.tools.JooqLogger;
-import org.jooq.util.*;
 
 import java.io.File;
 import java.time.Instant;
@@ -52,7 +55,7 @@ public abstract class VertxGenerator extends JavaGenerator {
      * @param javaMemberName the java member name
      * @param out the JavaWriter
      * @return <code>true</code> if the column was handled.
-     * @see #generateFromJson(TableDefinition, JavaWriter, org.jooq.util.GeneratorStrategy.Mode)
+     * @see #generateFromJson(TableDefinition, JavaWriter, org.jooq.codegen.GeneratorStrategy.Mode)
      */
     protected boolean handleCustomTypeFromJson(TypedElementDefinition<?> column, String setter, String columnType, String javaMemberName, JavaWriter out){
         return false;
@@ -66,7 +69,7 @@ public abstract class VertxGenerator extends JavaGenerator {
      * @param javaMemberName the java member name
      * @param out the JavaWriter
      * @return <code>true</code> if the column was handled.
-     * @see #generateToJson(TableDefinition, JavaWriter, org.jooq.util.GeneratorStrategy.Mode)
+     * @see #generateToJson(TableDefinition, JavaWriter, org.jooq.codegen.GeneratorStrategy.Mode)
      */
     protected boolean handleCustomTypeToJson(TypedElementDefinition<?> column, String getter, String columnType, String javaMemberName, JavaWriter out) {
         return false;

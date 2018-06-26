@@ -2,8 +2,8 @@ package io.github.jklingsporn.vertx.jooq.generate.custom;
 
 import io.github.jklingsporn.vertx.jooq.generate.builder.DelegatingVertxGenerator;
 import io.github.jklingsporn.vertx.jooq.generate.builder.VertxGeneratorBuilder;
-import org.jooq.util.JavaWriter;
-import org.jooq.util.TypedElementDefinition;
+import org.jooq.codegen.JavaWriter;
+import org.jooq.meta.TypedElementDefinition;
 
 import java.time.LocalDateTime;
 

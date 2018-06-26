@@ -1,10 +1,10 @@
 package io.github.jklingsporn.vertx.jooq.generate;
 
 import io.github.jklingsporn.vertx.jooq.shared.internal.VertxPojo;
-import org.jooq.util.DefaultGeneratorStrategy;
-import org.jooq.util.Definition;
-import org.jooq.util.GeneratorStrategy;
-import org.jooq.util.TypedElementDefinition;
+import org.jooq.codegen.DefaultGeneratorStrategy;
+import org.jooq.meta.Definition;
+import org.jooq.codegen.GeneratorStrategy;
+import org.jooq.meta.TypedElementDefinition;
 
 import java.io.File;
 import java.util.Collection;

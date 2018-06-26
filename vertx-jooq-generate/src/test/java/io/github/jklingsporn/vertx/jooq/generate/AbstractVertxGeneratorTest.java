@@ -1,7 +1,7 @@
 package io.github.jklingsporn.vertx.jooq.generate;
 
-import org.jooq.util.GenerationTool;
-import org.jooq.util.jaxb.Configuration;
+import org.jooq.codegen.GenerationTool;
+import org.jooq.meta.jaxb.Configuration;
 import org.junit.Assert;
 import org.junit.Test;
 

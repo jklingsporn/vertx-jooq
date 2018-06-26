@@ -282,4 +282,19 @@ public abstract class ClassicTestBase<P,T,O, DAO extends GenericVertxDAO<?,P, T,
         }
     }
 
+//    @Test
+//    public void queryExecutorWithLimitShouldReturnValues() throws InterruptedException {
+//        //https://github.com/jklingsporn/vertx-jooq/issues/61
+//        CountDownLatch latch = new CountDownLatch(1);
+//        O someO = createSomeO();
+//        Future<T> insertFuture1 = insertAndReturn(setSomeO(create(), someO));
+//        Future<T> insertFuture2 = insertAndReturn(setSomeO(create(), someO));
+//        CompositeFuture.all(insertFuture1, insertFuture2).
+//                compose(v -> queryExecutor().query(dslContext -> dslContext.selectFrom(otherfield.getTable()).limit(1))).
+//                map(toVoid(values -> Assert.assertEquals(1, values.asList().size()))).
+//                compose(v -> dao.deleteByCondition(otherfield.eq(someO))).
+//                setHandler(countdownLatchHandler(latch));
+//        await(latch);
+//    }
+
 }

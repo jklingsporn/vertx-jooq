@@ -1,9 +1,9 @@
 package io.github.jklingsporn.vertx.jooq.generate.builder;
 
 import io.github.jklingsporn.vertx.jooq.generate.VertxGenerator;
-import org.jooq.util.GeneratorStrategy;
-import org.jooq.util.JavaWriter;
-import org.jooq.util.SchemaDefinition;
+import org.jooq.codegen.GeneratorStrategy;
+import org.jooq.codegen.JavaWriter;
+import org.jooq.meta.SchemaDefinition;
 
 import java.io.File;
 import java.util.Collection;
