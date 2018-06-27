@@ -35,7 +35,7 @@ public class AsyncClassicQueryExecutor<R extends UpdatableRecord<R>,P,T> extends
 
     @Override
     public Future<T> insertReturning(Function<DSLContext, ? extends InsertResultStep<R>> queryFunction, Function<Object, T> keyMapper) {
-        return getConnection().compose(sqlConnection->{
+        return getConnection().compose(safeExecute(sqlConnection->{
             Query query = createQuery(queryFunction);
             log(query);
             Future<Object> future = Future.future();
@@ -57,7 +57,7 @@ public class AsyncClassicQueryExecutor<R extends UpdatableRecord<R>,P,T> extends
                 );
             }
             return future.map(keyMapper);
-        });
+        }));
     }
 
 }

@@ -2,6 +2,7 @@ package io.github.jklingsporn.vertx.jooq.rx.async;
 
 import io.github.jklingsporn.vertx.jooq.shared.internal.QueryExecutor;
 import io.reactivex.Single;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.reactivex.ext.asyncsql.AsyncSQLClient;
 import io.vertx.reactivex.ext.sql.SQLConnection;
@@ -44,16 +45,17 @@ public class AsyncRXQueryExecutor<R extends UpdatableRecord<R>,P,T> extends Asyn
     public Single<T> insertReturning(Function<DSLContext, ? extends InsertResultStep<R>> queryFunction, Function<Object, T> keyMapper) {
         Query query = createQuery(queryFunction);
         log(query);
+        String sql = query.getSQL();
+        JsonArray bindValues = getBindValues(query);
         Function<SQLConnection, Single<? extends T>> runInsertReturning;
         if(isMysql){
-            runInsertReturning = sqlConnection ->
-                    sqlConnection
-                            .rxUpdateWithParams(query.getSQL(), getBindValues(query))
-                            .map(updateResult -> keyMapper.apply(updateResult.getKeys()));
+            runInsertReturning = sqlConnection -> sqlConnection
+                    .rxUpdateWithParams(sql, bindValues)
+                    .map(updateResult -> keyMapper.apply(updateResult.getKeys()));
         }else{
             runInsertReturning = sqlConnection ->
                     sqlConnection
-                            .rxQueryWithParams(query.getSQL(), getBindValues(query))
+                            .rxQueryWithParams(sql, bindValues)
                             .map(queryResult -> keyMapper.apply(queryResult.getResults().get(0)));
         }
         return getConnection().flatMap(executeAndClose(runInsertReturning));

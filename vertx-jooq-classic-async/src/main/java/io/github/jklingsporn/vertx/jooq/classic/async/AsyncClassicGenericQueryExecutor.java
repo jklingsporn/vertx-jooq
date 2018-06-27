@@ -30,25 +30,25 @@ public class AsyncClassicGenericQueryExecutor extends AbstractAsyncQueryExecutor
 
     @Override
     public Future<Integer> execute(Function<DSLContext, ? extends Query> queryFunction) {
-        return getConnection().compose(sqlConnection -> {
-            Query query = createQuery(queryFunction);
-            log(query);
-            Future<Integer> future = Future.future();
-            sqlConnection.updateWithParams(
-                    query.getSQL(),
-                    getBindValues(query),
-                    this.<UpdateResult,Integer>executeAndClose(UpdateResult::getUpdated,
-                            sqlConnection,
-                            future)
-            );
-            return future;
-        });
+        return getConnection().compose(safeExecute(sqlConnection -> {
+                Query query = createQuery(queryFunction);
+                log(query);
+                Future<Integer> future = Future.future();
+                sqlConnection.updateWithParams(
+                        query.getSQL(),
+                        getBindValues(query),
+                        this.<UpdateResult,Integer>executeAndClose(UpdateResult::getUpdated,
+                                sqlConnection,
+                                future)
+                );
+                return future;
+        }));
     }
 
 
     @Override
     public <Q extends Record> Future<List<JsonObject>> findManyJson(Function<DSLContext, ? extends ResultQuery<Q>> queryFunction) {
-        return getConnection().compose(sqlConnection -> {
+        return getConnection().compose(safeExecute(sqlConnection -> {
             Query query = createQuery(queryFunction);
             log(query);
             Future<List<JsonObject>> future = Future.future();
@@ -58,12 +58,12 @@ public class AsyncClassicGenericQueryExecutor extends AbstractAsyncQueryExecutor
                     this.<ResultSet,List<JsonObject>>executeAndClose(ResultSet::getRows, sqlConnection, future)
             );
             return future;
-        });
+        }));
     }
 
     @Override
     public <Q extends Record> Future<JsonObject> findOneJson(Function<DSLContext, ? extends ResultQuery<Q>> queryFunction) {
-        return getConnection().compose(sqlConnection -> {
+        return getConnection().compose(safeExecute(sqlConnection -> {
             Query query = createQuery(queryFunction);
             log(query);
             Future<JsonObject> future = Future.future();
@@ -82,7 +82,7 @@ public class AsyncClassicGenericQueryExecutor extends AbstractAsyncQueryExecutor
                             future)
             );
             return future;
-        });
+        }));
     }
 
     /**
@@ -111,9 +111,20 @@ public class AsyncClassicGenericQueryExecutor extends AbstractAsyncQueryExecutor
         };
     }
 
+    protected <U> Function<SQLConnection,Future<U>> safeExecute(Function<SQLConnection,Future<U>> action){
+        return sqlConnection -> {
+            try{
+                return action.apply(sqlConnection);
+            }catch(Throwable e){
+                sqlConnection.close();
+                return Future.failedFuture(e);
+            }
+        };
+    }
+
     @Override
     public <R extends Record> Future<QueryResult> query(Function<DSLContext, ? extends ResultQuery<R>> queryFunction) {
-        return getConnection().compose(sqlConnection -> {
+        return getConnection().compose(safeExecute(sqlConnection -> {
             Query query = createQuery(queryFunction);
             log(query);
             Future<QueryResult> future = Future.future();
@@ -123,6 +134,6 @@ public class AsyncClassicGenericQueryExecutor extends AbstractAsyncQueryExecutor
                     this.executeAndClose(AsyncQueryResult::new,sqlConnection,future)
             );
             return future;
-        });
+        }));
     }
 }

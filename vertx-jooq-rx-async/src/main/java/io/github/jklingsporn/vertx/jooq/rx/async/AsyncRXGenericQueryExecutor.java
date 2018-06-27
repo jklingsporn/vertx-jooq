@@ -30,37 +30,52 @@ public class AsyncRXGenericQueryExecutor extends AbstractAsyncQueryExecutor<Sing
 
     @Override
     public Single<Integer> execute(Function<DSLContext, ? extends Query> queryFunction) {
-        Query query = createQuery(queryFunction);
-        log(query);
         return getConnection()
-                .flatMap(executeAndClose(sqlConnection ->
-                                sqlConnection
-                                        .rxUpdateWithParams(query.getSQL(), getBindValues(query))
-                                        .map(UpdateResult::getUpdated))
-                );
+                .flatMap(
+                        safeExecute(
+                                executeAndClose(sqlConnection -> {
+                                            Query query = createQuery(queryFunction);
+                                            log(query);
+                                            return sqlConnection
+                                                    .rxUpdateWithParams(query.getSQL(), getBindValues(query))
+                                                    ;
+                                        }
+                                ))).map(UpdateResult::getUpdated);
     }
 
     @Override
     public <Q extends Record> Single<List<JsonObject>> findManyJson(Function<DSLContext, ? extends ResultQuery<Q>> queryFunction) {
-        Query query = createQuery(queryFunction);
-        log(query);
-        return getConnection().flatMap(executeAndClose(sqlConnection ->
-                sqlConnection.rxQueryWithParams(query.getSQL(), getBindValues(query)).map(ResultSet::getRows)));
+        return getConnection().flatMap(
+                safeExecute(
+                        executeAndClose(
+                                sqlConnection -> {
+                                    Query query = createQuery(queryFunction);
+                                    log(query);
+                                    return sqlConnection.rxQueryWithParams(query.getSQL(), getBindValues(query));
+                                })))
+                .map(ResultSet::getRows);
     }
 
     @Override
     public <Q extends Record> Single<Optional<JsonObject>> findOneJson(Function<DSLContext, ? extends ResultQuery<Q>> queryFunction) {
-        Query query = createQuery(queryFunction);
-        log(query);
-        return getConnection().flatMap(executeAndClose(sqlConnection ->
-                sqlConnection.rxQueryWithParams(query.getSQL(), getBindValues(query)).map(rs -> {
+        return getConnection().flatMap(
+                safeExecute(
+                        executeAndClose(sqlConnection -> {
+                            Query query = createQuery(queryFunction);
+                            log(query);
+                            return sqlConnection.rxQueryWithParams(query.getSQL(), getBindValues(query));
+                        })))
+                .map(rs -> {
                     List<JsonObject> rows = rs.getRows();
                     switch (rows.size()) {
-                        case 0: return Optional.empty();
-                        case 1: return Optional.of(rows.get(0));
-                        default: throw new TooManyRowsException(String.format("Found more than one row: %d", rows.size()));
+                        case 0:
+                            return Optional.empty();
+                        case 1:
+                            return Optional.of(rows.get(0));
+                        default:
+                            throw new TooManyRowsException(String.format("Found more than one row: %d", rows.size()));
                     }
-                })));
+                });
     }
 
 
@@ -79,5 +94,16 @@ public class AsyncRXGenericQueryExecutor extends AbstractAsyncQueryExecutor<Sing
         return getConnection()
                 .flatMap(executeAndClose(sqlConnection ->
                         sqlConnection.rxQueryWithParams(query.getSQL(), getBindValues(query)).map(AsyncQueryResult::new)));
+    }
+
+    protected <U> io.reactivex.functions.Function<io.vertx.reactivex.ext.sql.SQLConnection,Single<? extends U>> safeExecute(io.reactivex.functions.Function<io.vertx.reactivex.ext.sql.SQLConnection,Single<? extends U>> action){
+        return sqlConnection -> {
+            try{
+                return action.apply(sqlConnection);
+            }catch(Throwable e){
+                sqlConnection.close();
+                return Single.error(e);
+            }
+        };
     }
 }

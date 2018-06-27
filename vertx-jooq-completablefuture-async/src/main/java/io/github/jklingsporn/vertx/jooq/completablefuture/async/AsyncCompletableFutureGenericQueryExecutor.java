@@ -63,21 +63,34 @@ public class AsyncCompletableFutureGenericQueryExecutor extends AbstractAsyncQue
         };
     }
 
+    protected <U> Function<SQLConnection,CompletableFuture<U>> safeExecute(Function<SQLConnection,CompletableFuture<U>> action){
+        return sqlConnection -> {
+            try{
+                return action.apply(sqlConnection);
+            }catch(Throwable e){
+                sqlConnection.close();
+                CompletableFuture<U> cf = new VertxCompletableFuture<>(vertx);
+                cf.completeExceptionally(e);
+                return cf;
+            }
+        };
+    }
+
     @Override
     public CompletableFuture<Integer> execute(Function<DSLContext, ? extends Query> queryFunction) {
-        return getConnection().thenCompose(sqlConnection -> {
+        return getConnection().thenCompose(safeExecute(sqlConnection -> {
             Query query = createQuery(queryFunction);
             log(query);
             CompletableFuture<Integer> cf = new VertxCompletableFuture<>(vertx);
             JsonArray bindValues = getBindValues(query);
             sqlConnection.updateWithParams(query.getSQL(), bindValues, executeAndClose(UpdateResult::getUpdated,sqlConnection,cf));
             return cf;
-        });
+        }));
     }
 
     @Override
     public <Q extends Record> CompletableFuture<List<JsonObject>> findManyJson(Function<DSLContext, ? extends ResultQuery<Q>> queryFunction) {
-        return getConnection().thenCompose(sqlConnection -> {
+        return getConnection().thenCompose(safeExecute(sqlConnection -> {
             Query query = createQuery(queryFunction);
             log(query);
             CompletableFuture<List<JsonObject>> cf = new VertxCompletableFuture<>(vertx);
@@ -89,12 +102,12 @@ public class AsyncCompletableFutureGenericQueryExecutor extends AbstractAsyncQue
                             cf)
             );
             return cf;
-        });
+        }));
     }
 
     @Override
     public <Q extends Record> CompletableFuture<JsonObject> findOneJson(Function<DSLContext, ? extends ResultQuery<Q>> queryFunction) {
-        return getConnection().thenCompose(sqlConnection -> {
+        return getConnection().thenCompose(safeExecute(sqlConnection -> {
             Query query = createQuery(queryFunction);
             log(query);
             CompletableFuture<JsonObject> cf = new VertxCompletableFuture<>(vertx);
@@ -107,12 +120,12 @@ public class AsyncCompletableFutureGenericQueryExecutor extends AbstractAsyncQue
                 }
             }, sqlConnection, cf));
             return cf;
-        });
+        }));
     }
 
     @Override
     public <R extends Record> CompletableFuture<QueryResult> query(Function<DSLContext, ? extends ResultQuery<R>> queryFunction) {
-        return getConnection().thenCompose(sqlConnection -> {
+        return getConnection().thenCompose(safeExecute(sqlConnection -> {
             Query query = createQuery(queryFunction);
             log(query);
             CompletableFuture<QueryResult> cf = new VertxCompletableFuture<>(vertx);
@@ -122,7 +135,7 @@ public class AsyncCompletableFutureGenericQueryExecutor extends AbstractAsyncQue
                     executeAndClose(AsyncQueryResult::new,sqlConnection,cf)
             );
             return cf;
-        });
+        }));
     }
 
 }
