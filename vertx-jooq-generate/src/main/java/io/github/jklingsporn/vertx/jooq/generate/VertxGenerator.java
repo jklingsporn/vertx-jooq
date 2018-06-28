@@ -615,11 +615,7 @@ public abstract class VertxGenerator extends JavaGenerator {
     protected String getTypeReference(Database db, SchemaDefinition schema, String t, int p, int s, int l, boolean n, boolean i, String d, Name u) {
         if (db.getEnum(schema, u) != null) {
             StringBuilder sb = new StringBuilder();
-            sb.append("org.jooq.util.");
-            sb.append(db.getDialect().getName().toLowerCase());
-            sb.append(".");
-            sb.append(db.getDialect().getName());
-            sb.append("DataType.");
+            sb.append("org.jooq.impl.SQLDataType.");
             sb.append(DefaultDataType.normalise(DefaultDataType.getDataType(db.getDialect(), String.class).getTypeName()));
             sb.append(".asEnumDataType(");
             sb.append(getStrategy().getFullJavaClassName(db.getEnum(schema, u))).append(".class");
