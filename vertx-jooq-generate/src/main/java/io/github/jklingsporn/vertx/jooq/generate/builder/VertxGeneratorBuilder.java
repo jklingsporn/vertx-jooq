@@ -302,8 +302,6 @@ public class VertxGeneratorBuilder {
                 supportedRowTypes.add(String.class.getName());
                 supportedRowTypes.add(Character.class.getName());
                 supportedRowTypes.add(Buffer.class.getName());
-                supportedRowTypes.add(JsonObject.class.getName());
-                supportedRowTypes.add(JsonArray.class.getName());
                 supportedRowTypes.add(UUID.class.getName());
                 supportedRowTypes.add(Instant.class.getName());
                 supportedRowTypes.add(Temporal.class.getName());
@@ -331,11 +329,13 @@ public class VertxGeneratorBuilder {
                             } catch (ClassNotFoundException e) {
                                 ComponentBasedVertxGenerator.logger.error(e.getMessage(), e);
                             }
-                        }else if((column.getType().getConverter() != null && column.getType().getConverter().equalsIgnoreCase(JsonObjectConverter.class.getName()))
+                        }else if(javaType.equals(JsonObject.class.getName())
+                                || (column.getType().getConverter() != null && column.getType().getConverter().equalsIgnoreCase(JsonObjectConverter.class.getName()))
                                 || (column.getType().getBinding() != null && column.getType().getBinding().equalsIgnoreCase(ObjectToJsonObjectBinding.class.getName()))){
-                            out.tab(3).println("pojo.%s(row.getJsonObject(\"%s\"));", setter, column.getName());
-                        }else if(column.getType().getConverter() != null && column.getType().getConverter().equalsIgnoreCase(JsonArrayConverter.class.getName())){
-                            out.tab(3).println("pojo.%s(row.getJsonArray(\"%s\"));", setter, column.getName());
+                            out.tab(3).println("pojo.%s((io.vertx.core.json.JsonObject)row.getJson(\"%s\").value());", setter, column.getName());
+                        }else if(javaType.equals(JsonArray.class.getName())
+                                || (column.getType().getConverter() != null && column.getType().getConverter().equalsIgnoreCase(JsonArrayConverter.class.getName()))){
+                            out.tab(3).println("pojo.%s((io.vertx.core.json.JsonArray)row.getJsonArray(\"%s\").value());", setter, column.getName());
                         }else{
                             ComponentBasedVertxGenerator.logger.warn(String.format("Omitting unrecognized type %s (%s) for column %s in table %s!",column.getType(),javaType,column.getName(),table.getName()));
                             out.tab(3).println(String.format("// Omitting unrecognized type %s (%s) for column %s!",column.getType(),javaType, column.getName()));
