@@ -1,9 +1,8 @@
 package io.github.jklingsporn.vertx.jooq.rx.reactivepg;
 
-import io.reactiverse.reactivex.pgclient.PgClient;
-import io.reactiverse.reactivex.pgclient.PgResult;
-import io.reactiverse.reactivex.pgclient.Row;
 import io.github.jklingsporn.vertx.jooq.shared.internal.QueryExecutor;
+import io.reactiverse.reactivex.pgclient.PgClient;
+import io.reactiverse.reactivex.pgclient.PgRowSet;
 import io.reactivex.Single;
 import org.jooq.*;
 import org.jooq.impl.DefaultConfiguration;
@@ -43,9 +42,9 @@ public class ReactiveRXQueryExecutor<R extends UpdatableRecord<R>,P,T> extends R
     public Single<T> insertReturning(Function<DSLContext, ? extends InsertResultStep<R>> queryFunction, Function<Object, T> keyMapper) {
         InsertResultStep<R> query = createQuery(queryFunction);
         log(query);
-        Single<PgResult<Row>> rowFuture = delegate.rxPreparedQuery(toPreparedQuery(query), rxGetBindValues(query));
+        Single<PgRowSet> rowFuture = delegate.rxPreparedQuery(toPreparedQuery(query), rxGetBindValues(query));
         return rowFuture
-                .map(rows -> unwrap(rows.getDelegate()).iterator().next())
+                .map(rows -> rows.getDelegate().iterator().next())
                 .map(keyMapper::apply);
     }
 

@@ -2,6 +2,7 @@ package io.github.jklingsporn.vertx.jooq.classic.reactivepg;
 
 import io.reactiverse.pgclient.PgClient;
 import io.reactiverse.pgclient.PgResult;
+import io.reactiverse.pgclient.PgRowSet;
 import io.reactiverse.pgclient.Row;
 import io.github.jklingspon.vertx.jooq.shared.reactive.AbstractReactiveQueryExecutor;
 import io.github.jklingspon.vertx.jooq.shared.reactive.ReactiveQueryResult;
@@ -34,7 +35,7 @@ public class ReactiveClassicGenericQueryExecutor extends AbstractReactiveQueryEx
     public <Q extends Record> Future<List<Row>> findManyRow(Function<DSLContext, ? extends ResultQuery<Q>> queryFunction) {
         Query query = createQuery(queryFunction);
         log(query);
-        Future<PgResult<Row>> rowFuture = Future.future();
+        Future<PgRowSet> rowFuture = Future.future();
         delegate.preparedQuery(toPreparedQuery(query),getBindValues(query),rowFuture);
         return rowFuture.map(res-> StreamSupport
                 .stream(res.spliterator(), false)
@@ -45,7 +46,7 @@ public class ReactiveClassicGenericQueryExecutor extends AbstractReactiveQueryEx
     public <Q extends Record> Future<Row> findOneRow(Function<DSLContext, ? extends ResultQuery<Q>> queryFunction) {
         Query query = createQuery(queryFunction);
         log(query);
-        Future<PgResult<Row>> rowFuture = Future.future();
+        Future<PgRowSet> rowFuture = Future.future();
         delegate.preparedQuery(toPreparedQuery(query),getBindValues(query),rowFuture);
         return rowFuture.map(res-> {
             switch (res.size()) {
@@ -60,9 +61,9 @@ public class ReactiveClassicGenericQueryExecutor extends AbstractReactiveQueryEx
     public Future<Integer> execute(Function<DSLContext, ? extends Query> queryFunction) {
         Query query = createQuery(queryFunction);
         log(query);
-        Future<PgResult<Row>> rowFuture = Future.future();
+        Future<PgRowSet> rowFuture = Future.future();
         delegate.preparedQuery(toPreparedQuery(query),getBindValues(query),rowFuture);
-        return rowFuture.map(PgResult::updatedCount);
+        return rowFuture.map(PgResult::rowCount);
     }
 
 
@@ -70,7 +71,7 @@ public class ReactiveClassicGenericQueryExecutor extends AbstractReactiveQueryEx
     public <R extends Record> Future<QueryResult> query(Function<DSLContext, ? extends ResultQuery<R>> queryFunction) {
         Query query = createQuery(queryFunction);
         log(query);
-        Future<PgResult<Row>> rowFuture = Future.future();
+        Future<PgRowSet> rowFuture = Future.future();
         delegate.preparedQuery(toPreparedQuery(query),getBindValues(query),rowFuture);
         return rowFuture.map(ReactiveQueryResult::new);
     }

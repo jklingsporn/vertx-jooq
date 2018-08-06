@@ -1,9 +1,9 @@
 package io.github.jklingsporn.vertx.jooq.completablefuture.reactivepg;
 
-import io.reactiverse.pgclient.PgClient;
-import io.reactiverse.pgclient.PgResult;
-import io.reactiverse.pgclient.Row;
 import io.github.jklingsporn.vertx.jooq.shared.internal.QueryExecutor;
+import io.reactiverse.pgclient.PgClient;
+import io.reactiverse.pgclient.PgRowSet;
+import io.reactiverse.pgclient.Row;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
@@ -46,7 +46,7 @@ public class ReactiveCompletableFutureQueryExecutor<R extends UpdatableRecord<R>
     public CompletableFuture<T> insertReturning(Function<DSLContext, ? extends InsertResultStep<R>> queryFunction, Function<Object, T> keyMapper) {
         Query query = createQuery(queryFunction);
         log(query);
-        CompletableFuture<PgResult<Row>> rowFuture = new VertxCompletableFuture<>(vertx);
+        CompletableFuture<PgRowSet> rowFuture = new VertxCompletableFuture<>(vertx);
         delegate.preparedQuery(toPreparedQuery(query),getBindValues(query),createCompletionHandler(rowFuture));
         return rowFuture
                 .thenApply(rows -> rows.iterator().next())

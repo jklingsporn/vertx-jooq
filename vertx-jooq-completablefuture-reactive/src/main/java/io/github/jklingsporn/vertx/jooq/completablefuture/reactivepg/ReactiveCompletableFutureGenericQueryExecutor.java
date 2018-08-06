@@ -1,13 +1,14 @@
 package io.github.jklingsporn.vertx.jooq.completablefuture.reactivepg;
 
-import io.reactiverse.pgclient.PgClient;
-import io.reactiverse.pgclient.PgResult;
-import io.reactiverse.pgclient.Row;
 import io.github.jklingspon.vertx.jooq.shared.reactive.AbstractReactiveQueryExecutor;
-import io.github.jklingspon.vertx.jooq.shared.reactive.ReactiveQueryResult;
 import io.github.jklingspon.vertx.jooq.shared.reactive.ReactiveQueryExecutor;
+import io.github.jklingspon.vertx.jooq.shared.reactive.ReactiveQueryResult;
 import io.github.jklingsporn.vertx.jooq.completablefuture.CompletableFutureQueryExecutor;
 import io.github.jklingsporn.vertx.jooq.shared.internal.QueryResult;
+import io.reactiverse.pgclient.PgClient;
+import io.reactiverse.pgclient.PgResult;
+import io.reactiverse.pgclient.PgRowSet;
+import io.reactiverse.pgclient.Row;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
@@ -39,7 +40,7 @@ public class ReactiveCompletableFutureGenericQueryExecutor extends AbstractReact
     public <Q extends Record> CompletableFuture<List<Row>> findManyRow(Function<DSLContext, ? extends ResultQuery<Q>> queryFunction) {
         Query query = createQuery(queryFunction);
         log(query);
-        CompletableFuture<PgResult<Row>> rowFuture = new VertxCompletableFuture<>(vertx);
+        CompletableFuture<PgRowSet> rowFuture = new VertxCompletableFuture<>(vertx);
         delegate.preparedQuery(toPreparedQuery(query),getBindValues(query),createCompletionHandler(rowFuture));
         return rowFuture.thenApply(res-> StreamSupport
                 .stream(res.spliterator(),false)
@@ -50,7 +51,7 @@ public class ReactiveCompletableFutureGenericQueryExecutor extends AbstractReact
     public <Q extends Record> CompletableFuture<Row> findOneRow(Function<DSLContext, ? extends ResultQuery<Q>> queryFunction) {
         Query query = createQuery(queryFunction);
         log(query);
-        CompletableFuture<PgResult<Row>> rowFuture = new VertxCompletableFuture<>(vertx);
+        CompletableFuture<PgRowSet> rowFuture = new VertxCompletableFuture<>(vertx);
         delegate.preparedQuery(toPreparedQuery(query),getBindValues(query),createCompletionHandler(rowFuture));
         return rowFuture.thenApply(res-> {
             switch (res.size()) {
@@ -66,9 +67,9 @@ public class ReactiveCompletableFutureGenericQueryExecutor extends AbstractReact
     public CompletableFuture<Integer> execute(Function<DSLContext, ? extends Query> queryFunction) {
         Query query = createQuery(queryFunction);
         log(query);
-        CompletableFuture<PgResult<Row>> rowFuture = new VertxCompletableFuture<>(vertx);
+        CompletableFuture<PgRowSet> rowFuture = new VertxCompletableFuture<>(vertx);
         delegate.preparedQuery(toPreparedQuery(query),getBindValues(query),createCompletionHandler(rowFuture));
-        return rowFuture.thenApply(PgResult::updatedCount);
+        return rowFuture.thenApply(PgResult::rowCount);
     }
 
 
@@ -91,7 +92,7 @@ public class ReactiveCompletableFutureGenericQueryExecutor extends AbstractReact
     public <R extends Record> CompletableFuture<QueryResult> query(Function<DSLContext, ? extends ResultQuery<R>> queryFunction) {
         Query query = createQuery(queryFunction);
         log(query);
-        CompletableFuture<PgResult<Row>> rowFuture = new VertxCompletableFuture<>(vertx);
+        CompletableFuture<PgRowSet> rowFuture = new VertxCompletableFuture<>(vertx);
         delegate.preparedQuery(toPreparedQuery(query),getBindValues(query),createCompletionHandler(rowFuture));
         return rowFuture.thenApply(ReactiveQueryResult::new);
     }
