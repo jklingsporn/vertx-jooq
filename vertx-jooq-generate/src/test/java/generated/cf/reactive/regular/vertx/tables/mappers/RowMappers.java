@@ -1,6 +1,8 @@
 package generated.cf.reactive.regular.vertx.tables.mappers;
 
 import io.reactiverse.pgclient.Row;
+import io.vertx.core.json.JsonObject;
+
 import java.util.function.Function;
 
 public class RowMappers {
@@ -16,8 +18,8 @@ public class RowMappers {
             pojo.setSomesmallnumber(row.getShort("someSmallNumber"));
             pojo.setSomeregularnumber(row.getInteger("someRegularNumber"));
             pojo.setSomedouble(row.getDouble("someDouble"));
-            pojo.setSomejsonobject(row.getJsonObject("someJsonObject"));
-            pojo.setSomejsonarray(row.getJsonArray("someJsonArray"));
+            pojo.setSomejsonobject((JsonObject)row.getJson("someJsonObject").value());
+            pojo.setSomejsonarray((io.vertx.core.json.JsonArray)row.getJson("someJsonArray").value());
             pojo.setSometimestamp(row.getLocalDateTime("someTimestamp"));
             return pojo;
         };
@@ -28,7 +30,7 @@ public class RowMappers {
             generated.cf.reactive.regular.vertx.tables.pojos.Somethingcomposite pojo = new generated.cf.reactive.regular.vertx.tables.pojos.Somethingcomposite();
             pojo.setSomeid(row.getInteger("someId"));
             pojo.setSomesecondid(row.getInteger("someSecondId"));
-            pojo.setSomejsonobject(row.getJsonObject("someJsonObject"));
+            pojo.setSomejsonobject((io.vertx.core.json.JsonObject)row.getJson("someJsonObject").value());
             return pojo;
         };
     }
