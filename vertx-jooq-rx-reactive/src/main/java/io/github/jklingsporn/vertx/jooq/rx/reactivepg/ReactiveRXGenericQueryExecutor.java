@@ -51,7 +51,7 @@ public class ReactiveRXGenericQueryExecutor extends AbstractReactiveQueryExecuto
         return rowFuture.map(res-> {
             switch (res.size()) {
                 case 0: return Optional.empty();
-                case 1: return Optional.ofNullable(unwrap(res.getDelegate()).next().value());
+                case 1: return Optional.ofNullable(res.getDelegate().iterator().next());
                 default: throw new TooManyRowsException(String.format("Found more than one row: %d", res.size()));
             }
         });
@@ -74,11 +74,6 @@ public class ReactiveRXGenericQueryExecutor extends AbstractReactiveQueryExecuto
         Tuple tuple = Tuple.tuple();
         bindValues.forEach(tuple::addValue);
         return tuple;
-    }
-
-    @SuppressWarnings("unchecked")
-    protected io.reactiverse.pgclient.PgResult<io.reactiverse.pgclient.Row> unwrap(io.reactiverse.pgclient.PgResult generic){
-        return (io.reactiverse.pgclient.PgResult<io.reactiverse.pgclient.Row>)generic;
     }
 
     @Override

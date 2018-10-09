@@ -51,12 +51,15 @@ public class AsyncCompletableFutureGenericQueryExecutor extends AbstractAsyncQue
 
     protected <V,U> Handler<AsyncResult<V>> executeAndClose(Function<V, U> func, SQLConnection sqlConnection, CompletableFuture<U> cf) {
         return rs -> {
-            try{
+            try {
                 if (rs.succeeded()) {
                     cf.complete(func.apply(rs.result()));
                 } else {
                     cf.completeExceptionally(rs.cause());
                 }
+            }catch(Throwable e){
+                //in case func.apply throws an exception
+                cf.completeExceptionally(e);
             }finally {
                 sqlConnection.close();
             }

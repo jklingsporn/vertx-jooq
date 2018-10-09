@@ -161,16 +161,16 @@ public abstract class CompletableFutureTestBase<P,T,O, DAO extends GenericVertxD
         O someO = createSomeO();
         CompletableFuture<T> insertFuture1 = insertAndReturn(setSomeO(create(), someO));
         CompletableFuture<T> insertFuture2 = insertAndReturn(setSomeO(create(), someO));
-        VertxCompletableFuture.allOf(insertFuture1, insertFuture2).
-                thenCompose(v -> dao.findOneByCondition(otherfield.eq(someO))).
-                handle((res, x) -> {
+        VertxCompletableFuture.allOf(insertFuture1, insertFuture2)
+                .thenCompose(v -> dao.findOneByCondition(otherfield.eq(someO)))
+                .handle((res, x) -> {
                     Assert.assertNotNull(x);
                     //cursor found more than one row
                     Assert.assertEquals(TooManyRowsException.class, x.getCause().getClass());
                     return null;
-                }).
-                thenCompose(v -> dao.deleteByCondition(otherfield.eq(someO))).
-                whenComplete(countdownLatchHandler(latch));
+                })
+                .thenCompose(v -> dao.deleteByCondition(otherfield.eq(someO)))
+                .whenComplete(countdownLatchHandler(latch));
         await(latch);
     }
 
