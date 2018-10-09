@@ -7,7 +7,7 @@ package generated.cf.reactive.regular.vertx.tables.daos;
 import generated.cf.reactive.regular.vertx.tables.Something;
 import generated.cf.reactive.regular.vertx.tables.records.SomethingRecord;
 
-import io.github.jklingspon.vertx.jooq.shared.reactive.AbstractReactiveVertxDAO;
+import io.github.jklingsporn.vertx.jooq.shared.reactive.AbstractReactiveVertxDAO;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 

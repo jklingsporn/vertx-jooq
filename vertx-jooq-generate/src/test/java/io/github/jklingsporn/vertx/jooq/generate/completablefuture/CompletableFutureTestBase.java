@@ -254,7 +254,8 @@ public abstract class CompletableFutureTestBase<P,T,O, DAO extends GenericVertxD
                 .thenAccept(i -> Assert.assertEquals(1L, i.longValue()))
                 .thenCompose(v -> queryExecutor().query(dslContext -> dslContext
                         .selectFrom(table)
-                        .where(eqPrimaryKey(getId(pojo)))))
+                        .where(eqPrimaryKey(getId(pojo)))
+                        .limit(1)))
                 .thenAccept(queryResult -> {
                     Assert.assertTrue(queryResult.hasResults());
                     Field<?>[] fields = table.fieldsRow().fields();

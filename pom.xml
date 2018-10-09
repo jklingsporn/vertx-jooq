@@ -36,7 +36,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <postgresql.driver.version>42.2.2</postgresql.driver.version>
-        <reactivepg.client.version>0.10.0</reactivepg.client.version>
+        <reactivepg.client.version>0.10.6</reactivepg.client.version>
     </properties>
     <groupId>io.github.jklingsporn</groupId>
     <version>4.0.0-BETA3</version>

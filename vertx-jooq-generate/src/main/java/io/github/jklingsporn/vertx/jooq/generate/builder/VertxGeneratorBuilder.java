@@ -272,7 +272,7 @@ public class VertxGeneratorBuilder {
 
         @Override
         public DIStep withPostgresReactiveDriver() {
-            base.setRenderDAOExtendsDelegate(()->"io.github.jklingspon.vertx.jooq.shared.reactive.AbstractReactiveVertxDAO");
+            base.setRenderDAOExtendsDelegate(()->"io.github.jklingsporn.vertx.jooq.shared.reactive.AbstractReactiveVertxDAO");
             base.addWriteExtraDataDelegate((schema, writerGen) -> {
                 ComponentBasedVertxGenerator.logger.info("Generate RowMappers ... ");
                 String mappersSubPackage = base.getActiveGenerator().getVertxGeneratorStrategy().getRowMappersSubPackage();
@@ -332,10 +332,10 @@ public class VertxGeneratorBuilder {
                         }else if(javaType.equals(JsonObject.class.getName())
                                 || (column.getType().getConverter() != null && column.getType().getConverter().equalsIgnoreCase(JsonObjectConverter.class.getName()))
                                 || (column.getType().getBinding() != null && column.getType().getBinding().equalsIgnoreCase(ObjectToJsonObjectBinding.class.getName()))){
-                            out.tab(3).println("pojo.%s((io.vertx.core.json.JsonObject)row.getJson(\"%s\").value());", setter, column.getName());
+                            out.tab(3).println("pojo.%s(io.github.jklingsporn.vertx.jooq.shared.reactive.JsonAccessor.getJsonObject(row,\"%s\"));", setter, column.getName());
                         }else if(javaType.equals(JsonArray.class.getName())
                                 || (column.getType().getConverter() != null && column.getType().getConverter().equalsIgnoreCase(JsonArrayConverter.class.getName()))){
-                            out.tab(3).println("pojo.%s((io.vertx.core.json.JsonArray)row.getJsonArray(\"%s\").value());", setter, column.getName());
+                            out.tab(3).println("pojo.%s(io.github.jklingsporn.vertx.jooq.shared.reactive.JsonAccessor.getJsonArray(row,\"%s\"));", setter, column.getName());
                         }else{
                             ComponentBasedVertxGenerator.logger.warn(String.format("Omitting unrecognized type %s (%s) for column %s in table %s!",column.getType(),javaType,column.getName(),table.getName()));
                             out.tab(3).println(String.format("// Omitting unrecognized type %s (%s) for column %s!",column.getType(),javaType, column.getName()));

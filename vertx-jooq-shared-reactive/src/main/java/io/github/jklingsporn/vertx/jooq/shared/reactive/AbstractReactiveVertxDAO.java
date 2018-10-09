@@ -1,4 +1,4 @@
-package io.github.jklingspon.vertx.jooq.shared.reactive;
+package io.github.jklingsporn.vertx.jooq.shared.reactive;
 
 import io.github.jklingsporn.vertx.jooq.shared.internal.AbstractVertxDAO;
 import io.github.jklingsporn.vertx.jooq.shared.internal.QueryExecutor;

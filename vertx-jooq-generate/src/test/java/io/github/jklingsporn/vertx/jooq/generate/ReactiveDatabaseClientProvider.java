@@ -1,6 +1,7 @@
 package io.github.jklingsporn.vertx.jooq.generate;
 
 import io.reactiverse.pgclient.PgClient;
+import io.reactiverse.pgclient.PgConnectOptions;
 import io.reactiverse.pgclient.PgPoolOptions;
 import io.vertx.core.Vertx;
 
@@ -29,12 +30,12 @@ public class ReactiveDatabaseClientProvider {
     }
 
     private PgPoolOptions getOptions() {
-        return new PgPoolOptions()
-                .setHost("127.0.0.1")
+        return new PgPoolOptions(new PgConnectOptions().setHost("127.0.0.1")
                 .setPort(5432)
-                .setUsername("vertx")
+                .setUser("vertx")
                 .setDatabase("postgres")
-                .setPassword("password");
+                .setPassword("password"))
+                ;
     }
 
     public io.reactiverse.reactivex.pgclient.PgClient rxGetClient() {

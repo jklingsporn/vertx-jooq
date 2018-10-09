@@ -268,22 +268,23 @@ public abstract class RXTestBase<P,T,O, DAO extends GenericVertxDAO<?,P, T, Sing
                 .doOnSuccess((i -> Assert.assertEquals(1L, i.longValue())))
                 .flatMap(v -> queryExecutor().query(dslContext -> dslContext
                         .selectFrom(table)
-                        .where(eqPrimaryKey(getId(pojo)))))
+                        .where(eqPrimaryKey(getId(pojo)))
+                        .limit(1)))
                 .doOnSuccess((queryResult -> {
                     Assert.assertTrue(queryResult.hasResults());
                     Field<?>[] fields = table.fieldsRow().fields();
                     UpdatableRecord<?> record = DSL.using(new DefaultConfiguration()).newRecord(table, pojo);
                     for (int i = 0; i < fields.length; i++) {
-                        boolean hasValidValue = record.get(fields[i])!=null;
-                        if(hasValidValue)
+                        boolean hasValidValue = record.get(fields[i]) != null;
+                        if (hasValidValue)
                             assertQueryResultReturnsValidValue(fields[i], queryResult, i);
                     }
                     List<QueryResult> queryResults = queryResult.asList();
                     Assert.assertEquals(1L, queryResults.size());
                     queryResults.forEach(res -> {
                         for (int i = 0; i < fields.length; i++) {
-                            boolean hasValidValue = record.get(fields[i])!=null;
-                            if(hasValidValue)
+                            boolean hasValidValue = record.get(fields[i]) != null;
+                            if (hasValidValue)
                                 assertQueryResultReturnsValidValue(fields[i], res, i);
                         }
                     });

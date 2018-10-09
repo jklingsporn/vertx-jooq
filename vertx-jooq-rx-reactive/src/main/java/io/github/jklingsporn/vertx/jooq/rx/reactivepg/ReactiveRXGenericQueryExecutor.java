@@ -1,8 +1,8 @@
 package io.github.jklingsporn.vertx.jooq.rx.reactivepg;
 
-import io.github.jklingspon.vertx.jooq.shared.reactive.AbstractReactiveQueryExecutor;
-import io.github.jklingspon.vertx.jooq.shared.reactive.ReactiveQueryExecutor;
-import io.github.jklingspon.vertx.jooq.shared.reactive.ReactiveQueryResult;
+import io.github.jklingsporn.vertx.jooq.shared.reactive.AbstractReactiveQueryExecutor;
+import io.github.jklingsporn.vertx.jooq.shared.reactive.ReactiveQueryExecutor;
+import io.github.jklingsporn.vertx.jooq.shared.reactive.ReactiveQueryResult;
 import io.github.jklingsporn.vertx.jooq.rx.RXQueryExecutor;
 import io.github.jklingsporn.vertx.jooq.shared.internal.QueryResult;
 import io.reactiverse.reactivex.pgclient.PgClient;
@@ -51,7 +51,7 @@ public class ReactiveRXGenericQueryExecutor extends AbstractReactiveQueryExecuto
         return rowFuture.map(res-> {
             switch (res.size()) {
                 case 0: return Optional.empty();
-                case 1: return Optional.ofNullable(unwrap(res.getDelegate()).value());
+                case 1: return Optional.ofNullable(unwrap(res.getDelegate()).next().value());
                 default: throw new TooManyRowsException(String.format("Found more than one row: %d", res.size()));
             }
         });

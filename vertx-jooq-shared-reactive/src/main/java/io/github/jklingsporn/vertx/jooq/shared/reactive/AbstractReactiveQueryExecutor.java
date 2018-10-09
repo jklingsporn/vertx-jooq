@@ -1,15 +1,14 @@
-package io.github.jklingspon.vertx.jooq.shared.reactive;
+package io.github.jklingsporn.vertx.jooq.shared.reactive;
 
-import io.reactiverse.pgclient.Tuple;
 import io.github.jklingsporn.vertx.jooq.shared.internal.AbstractQueryExecutor;
+import io.reactiverse.pgclient.Tuple;
+import io.reactiverse.pgclient.impl.ArrayTuple;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 import org.jooq.Configuration;
 import org.jooq.Param;
 import org.jooq.Query;
 import org.jooq.conf.ParamType;
-
-import java.util.ArrayList;
 
 /**
  * @author jensklingsporn
@@ -24,12 +23,12 @@ public abstract class AbstractReactiveQueryExecutor extends AbstractQueryExecuto
     }
 
     protected Tuple getBindValues(Query query) {
-        ArrayList<Object> bindValues = new ArrayList<>();
+        ArrayTuple bindValues = new ArrayTuple(query.getParams().size());
         for (Param<?> param : query.getParams().values()) {
             Object value = convertToDatabaseType(param);
             bindValues.add(value);
         }
-        return Tuple.of(bindValues.toArray());
+        return bindValues;
     }
 
     protected <U> Object convertToDatabaseType(Param<U> param) {
