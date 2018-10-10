@@ -39,7 +39,7 @@
         <reactivepg.client.version>0.10.6</reactivepg.client.version>
     </properties>
     <groupId>io.github.jklingsporn</groupId>
-    <version>4.0.0-BETA3</version>
+    <version>4.0.0</version>
     <artifactId>vertx-jooq</artifactId>
     <name>${project.groupId}:${project.artifactId}</name>
     <description>A jOOQ-CodeGenerator to create vertxified DAOs and POJOs</description>
