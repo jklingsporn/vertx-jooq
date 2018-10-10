@@ -310,6 +310,9 @@ public class VertxGeneratorBuilder {
                 supportedRowTypes.add(LocalDateTime.class.getName());
                 supportedRowTypes.add(OffsetTime.class.getName());
                 supportedRowTypes.add(OffsetDateTime.class.getName());
+                //Reactiverse types. Need to be hardcoded
+                supportedRowTypes.add("io.reactiverse.pgclient.data.Interval");
+                supportedRowTypes.add("io.reactiverse.pgclient.data.Numeric");
                 for (TableDefinition table : schema.getTables()) {
                     UniqueKeyDefinition key = table.getPrimaryKey();
                     if (key == null) {
