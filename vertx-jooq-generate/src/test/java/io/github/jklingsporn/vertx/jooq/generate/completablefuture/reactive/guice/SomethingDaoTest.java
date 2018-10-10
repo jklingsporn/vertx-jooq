@@ -1,12 +1,13 @@
 package io.github.jklingsporn.vertx.jooq.generate.completablefuture.reactive.guice;
 
-import io.reactiverse.pgclient.PgException;
 import generated.cf.reactive.guice.vertx.Tables;
+import generated.cf.reactive.guice.vertx.enums.Someenum;
 import generated.cf.reactive.guice.vertx.tables.daos.SomethingDao;
 import generated.cf.reactive.guice.vertx.tables.pojos.Something;
-import io.github.jklingsporn.vertx.jooq.generate.ReactiveDatabaseClientProvider;
 import io.github.jklingsporn.vertx.jooq.generate.PostgresConfigurationProvider;
+import io.github.jklingsporn.vertx.jooq.generate.ReactiveDatabaseClientProvider;
 import io.github.jklingsporn.vertx.jooq.generate.completablefuture.CompletableFutureTestBase;
+import io.reactiverse.pgclient.PgException;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import org.jooq.Condition;
@@ -46,7 +47,7 @@ public class SomethingDaoTest extends CompletableFutureTestBase<Something, Integ
         something.setSomejsonarray(new JsonArray().add(1).add(2).add(3));
         something.setSomejsonobject(new JsonObject().put("key", "value"));
         something.setSomesmallnumber((short) random.nextInt(Short.MAX_VALUE));
-//        something.setSomeenum(Someenum.values()[random.nextInt(Someenum.values().length)]);
+        something.setSomeenum(Someenum.values()[random.nextInt(Someenum.values().length)]);
         something.setSomestring("my_string");
         something.setSometimestamp(LocalDateTime.now());
         return something;

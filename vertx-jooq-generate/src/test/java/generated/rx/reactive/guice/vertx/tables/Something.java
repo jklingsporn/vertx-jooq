@@ -6,6 +6,7 @@ package generated.rx.reactive.guice.vertx.tables;
 
 import generated.rx.reactive.guice.vertx.Keys;
 import generated.rx.reactive.guice.vertx.Vertx;
+import generated.rx.reactive.guice.vertx.enums.Someenum;
 import generated.rx.reactive.guice.vertx.tables.records.SomethingRecord;
 
 import io.github.jklingsporn.vertx.jooq.shared.JsonArrayConverter;
@@ -45,7 +46,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Something extends TableImpl<SomethingRecord> {
 
-    private static final long serialVersionUID = 1408187773;
+    private static final long serialVersionUID = -1839470160;
 
     /**
      * The reference instance of <code>vertx.something</code>
@@ -89,6 +90,11 @@ public class Something extends TableImpl<SomethingRecord> {
      * The column <code>vertx.something.someDouble</code>.
      */
     public final TableField<SomethingRecord, Double> SOMEDOUBLE = createField("someDouble", org.jooq.impl.SQLDataType.DOUBLE, this, "");
+
+    /**
+     * The column <code>vertx.something.someEnum</code>.
+     */
+    public final TableField<SomethingRecord, Someenum> SOMEENUM = createField("someEnum", org.jooq.impl.SQLDataType.VARCHAR.defaultValue(org.jooq.impl.DSL.field("'FOO'::\"someEnum\"", org.jooq.impl.SQLDataType.VARCHAR)).asEnumDataType(generated.rx.reactive.guice.vertx.enums.Someenum.class), this, "");
 
     /**
      * The column <code>vertx.something.someJsonObject</code>.

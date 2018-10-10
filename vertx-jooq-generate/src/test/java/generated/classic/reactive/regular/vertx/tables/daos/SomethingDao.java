@@ -4,6 +4,7 @@
 package generated.classic.reactive.regular.vertx.tables.daos;
 
 
+import generated.classic.reactive.regular.vertx.enums.Someenum;
 import generated.classic.reactive.regular.vertx.tables.Something;
 import generated.classic.reactive.regular.vertx.tables.records.SomethingRecord;
 
@@ -83,6 +84,13 @@ public class SomethingDao extends AbstractReactiveVertxDAO<SomethingRecord, gene
      */
     public Future<List<generated.classic.reactive.regular.vertx.tables.pojos.Something>> findManyBySomedouble(List<Double> values) {
         return findManyByCondition(Something.SOMETHING.SOMEDOUBLE.in(values));
+    }
+
+    /**
+     * Find records that have <code>someEnum IN (values)</code> asynchronously
+     */
+    public Future<List<generated.classic.reactive.regular.vertx.tables.pojos.Something>> findManyBySomeenum(List<Someenum> values) {
+        return findManyByCondition(Something.SOMETHING.SOMEENUM.in(values));
     }
 
     /**

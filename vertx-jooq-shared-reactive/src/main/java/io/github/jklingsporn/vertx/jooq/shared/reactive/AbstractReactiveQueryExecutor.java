@@ -32,7 +32,11 @@ public abstract class AbstractReactiveQueryExecutor extends AbstractQueryExecuto
     }
 
     protected <U> Object convertToDatabaseType(Param<U> param) {
-        return (param.getBinding().converter().to(param.getValue()));
+            /*
+             * https://github.com/reactiverse/reactive-pg-client/issues/191 enum types are treated as unknown
+             * DataTypes. Workaround is to convert them to string before adding to the Tuple.
+             */
+        return Enum.class.isAssignableFrom(param.getBinding().converter().toType()) ? param.getValue().toString() : (param.getBinding().converter().to(param.getValue()));
     }
 
     protected void log(Query query){
@@ -43,6 +47,6 @@ public abstract class AbstractReactiveQueryExecutor extends AbstractQueryExecuto
 
     protected String toPreparedQuery(Query query){
         String namedQuery = query.getSQL(ParamType.NAMED);
-        return namedQuery.replaceAll("\\:", "\\$");
+        return namedQuery.replaceAll("(?<!:):(?!:)", "\\$");
     }
 }

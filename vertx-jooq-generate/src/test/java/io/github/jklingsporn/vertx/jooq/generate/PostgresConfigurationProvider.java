@@ -26,7 +26,7 @@ public class PostgresConfigurationProvider extends AbstractDatabaseConfiguration
             connection.prepareStatement("DROP SCHEMA IF EXISTS vertx CASCADE;").execute();
             connection.prepareStatement("CREATE SCHEMA vertx;").execute();
             connection.prepareStatement("SET SCHEMA 'vertx';").execute();
-            //        connection.prepareStatement("CREATE TYPE \"someEnum\" AS ENUM('FOO', 'BAR', 'BAZ');").execute();
+                    connection.prepareStatement("CREATE TYPE \"someEnum\" AS ENUM('FOO', 'BAR', 'BAZ');").execute();
             connection.prepareStatement("CREATE TABLE something (\n" +
                     "  \"someId\" SERIAL,\n" +
                     "  \"someString\" VARCHAR(45) NULL,\n" +
@@ -34,7 +34,7 @@ public class PostgresConfigurationProvider extends AbstractDatabaseConfiguration
                     "  \"someSmallNumber\" SMALLINT NULL,\n" +
                     "  \"someRegularNumber\" INTEGER NULL,\n" +
                     "  \"someDouble\" DOUBLE PRECISION NULL,\n" +
-                    //                "  \"someEnum\" \"someEnum\" NULL,\n" + //DEFAULT 'FOO' NOT default value for enums is buggy in jOOQ 3.10.5
+                                    "  \"someEnum\" \"someEnum\" DEFAULT 'FOO' ,\n" + //DEFAULT 'FOO' NOT default value for enums is buggy in jOOQ 3.10.5
                     "  \"someJsonObject\" VARCHAR(45) NULL,\n" +
                     "  \"someJsonArray\" VARCHAR(45) NULL,\n" +
 //                    "  \"someJsonBObject\" JSONB NULL,\n" +

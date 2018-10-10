@@ -10,8 +10,8 @@ import io.vertx.core.json.JsonObject;
 import org.jooq.Configuration;
 import org.jooq.codegen.GeneratorStrategy;
 import org.jooq.codegen.JavaWriter;
+import org.jooq.meta.ColumnDefinition;
 import org.jooq.meta.TableDefinition;
-import org.jooq.meta.TypedElementDefinition;
 import org.jooq.meta.UniqueKeyDefinition;
 
 import java.io.File;
@@ -323,9 +323,11 @@ public class VertxGeneratorBuilder {
                     out.tab(1).println("public static Function<Row,%s> get%sMapper() {",pType,base.getActiveGenerator().getStrategy().getJavaClassName(table, GeneratorStrategy.Mode.POJO));
                     out.tab(2).println("return row -> {");
                     out.tab(3).println("%s pojo = new %s();",pType,pType);
-                    for (TypedElementDefinition<?> column : table.getColumns()) {
+                    for (ColumnDefinition column : table.getColumns()) {
                         String setter = base.getActiveGenerator().getStrategy().getJavaSetterName(column, GeneratorStrategy.Mode.INTERFACE);
                         String javaType = base.getActiveGenerator().getJavaType(column.getType());
+                        //is there a better way to check for enum type?
+                        boolean javaTypeInEnumPackage = javaType.contains("enums.");
                         if(supportedRowTypes.contains(javaType)) {
                             try {
                                 out.tab(3).println("pojo.%s(row.get%s(\"%s\"));", setter, Class.forName(javaType).getSimpleName(), column.getName());
@@ -339,6 +341,8 @@ public class VertxGeneratorBuilder {
                         }else if(javaType.equals(JsonArray.class.getName())
                                 || (column.getType().getConverter() != null && column.getType().getConverter().equalsIgnoreCase(JsonArrayConverter.class.getName()))){
                             out.tab(3).println("pojo.%s(io.github.jklingsporn.vertx.jooq.shared.reactive.JsonAccessor.getJsonArray(row,\"%s\"));", setter, column.getName());
+                        }else if(javaTypeInEnumPackage){
+                            out.tab(3).println("pojo.%s(%s.valueOf(row.getString(\"%s\")));", setter, javaType, column.getName());
                         }else{
                             ComponentBasedVertxGenerator.logger.warn(String.format("Omitting unrecognized type %s (%s) for column %s in table %s!",column.getType(),javaType,column.getName(),table.getName()));
                             out.tab(3).println(String.format("// Omitting unrecognized type %s (%s) for column %s!",column.getType(),javaType, column.getName()));

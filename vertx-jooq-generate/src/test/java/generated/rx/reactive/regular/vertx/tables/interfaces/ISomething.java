@@ -4,6 +4,8 @@
 package generated.rx.reactive.regular.vertx.tables.interfaces;
 
 
+import generated.rx.reactive.regular.vertx.enums.Someenum;
+
 import io.github.jklingsporn.vertx.jooq.shared.internal.VertxPojo;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
@@ -88,6 +90,16 @@ public interface ISomething extends VertxPojo, Serializable {
     public Double getSomedouble();
 
     /**
+     * Setter for <code>vertx.something.someEnum</code>.
+     */
+    public ISomething setSomeenum(Someenum value);
+
+    /**
+     * Getter for <code>vertx.something.someEnum</code>.
+     */
+    public Someenum getSomeenum();
+
+    /**
      * Setter for <code>vertx.something.someJsonObject</code>.
      */
     public ISomething setSomejsonobject(JsonObject value);
@@ -139,6 +151,7 @@ public interface ISomething extends VertxPojo, Serializable {
         setSomesmallnumber(json.getInteger("someSmallNumber")==null?null:json.getInteger("someSmallNumber").shortValue());
         setSomeregularnumber(json.getInteger("someRegularNumber"));
         setSomedouble(json.getDouble("someDouble"));
+        setSomeenum(java.util.Arrays.stream(generated.rx.reactive.regular.vertx.enums.Someenum.values()).filter(td -> td.getLiteral().equals(json.getString("someEnum"))).findFirst().orElse(null));
         setSomejsonobject(json.getJsonObject("someJsonObject"));
         setSomejsonarray(json.getJsonArray("someJsonArray"));
         // Omitting unrecognized type java.time.LocalDateTime for column someTimestamp!
@@ -155,6 +168,7 @@ public interface ISomething extends VertxPojo, Serializable {
         json.put("someSmallNumber",getSomesmallnumber());
         json.put("someRegularNumber",getSomeregularnumber());
         json.put("someDouble",getSomedouble());
+        json.put("someEnum",getSomeenum()==null?null:getSomeenum().getLiteral());
         json.put("someJsonObject",getSomejsonobject());
         json.put("someJsonArray",getSomejsonarray());
         // Omitting unrecognized type java.time.LocalDateTime for column someTimestamp!

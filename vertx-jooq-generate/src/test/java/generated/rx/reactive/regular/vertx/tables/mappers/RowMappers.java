@@ -16,6 +16,7 @@ public class RowMappers {
             pojo.setSomesmallnumber(row.getShort("someSmallNumber"));
             pojo.setSomeregularnumber(row.getInteger("someRegularNumber"));
             pojo.setSomedouble(row.getDouble("someDouble"));
+            pojo.setSomeenum(generated.rx.reactive.regular.vertx.enums.Someenum.valueOf(row.getString("someEnum")));
             pojo.setSomejsonobject(io.github.jklingsporn.vertx.jooq.shared.reactive.JsonAccessor.getJsonObject(row,"someJsonObject"));
             pojo.setSomejsonarray(io.github.jklingsporn.vertx.jooq.shared.reactive.JsonAccessor.getJsonArray(row,"someJsonArray"));
             pojo.setSometimestamp(row.getLocalDateTime("someTimestamp"));
