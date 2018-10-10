@@ -9,30 +9,18 @@ import generated.cf.async.guice.Keys;
 import generated.cf.async.guice.Vertx;
 import generated.cf.async.guice.enums.SomethingSomeenum;
 import generated.cf.async.guice.tables.records.SomethingRecord;
-
 import io.github.jklingsporn.vertx.jooq.shared.JsonArrayConverter;
 import io.github.jklingsporn.vertx.jooq.shared.JsonObjectConverter;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+import org.jooq.*;
+import org.jooq.impl.DSL;
+import org.jooq.impl.TableImpl;
 
+import javax.annotation.Generated;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-
-import javax.annotation.Generated;
-
-import org.jooq.Field;
-import org.jooq.ForeignKey;
-import org.jooq.Identity;
-import org.jooq.Index;
-import org.jooq.Name;
-import org.jooq.Record;
-import org.jooq.Schema;
-import org.jooq.Table;
-import org.jooq.TableField;
-import org.jooq.UniqueKey;
-import org.jooq.impl.DSL;
-import org.jooq.impl.TableImpl;
 
 
 /**
@@ -48,7 +36,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Something extends TableImpl<SomethingRecord> {
 
-    private static final long serialVersionUID = 836355314;
+    private static final long serialVersionUID = 1837954520;
 
     /**
      * The reference instance of <code>vertx.something</code>
@@ -96,7 +84,7 @@ public class Something extends TableImpl<SomethingRecord> {
     /**
      * The column <code>vertx.something.someEnum</code>.
      */
-    public final TableField<SomethingRecord, SomethingSomeenum> SOMEENUM = createField("someEnum", org.jooq.impl.SQLDataType.VARCHAR.asEnumDataType(generated.cf.async.guice.enums.SomethingSomeenum.class).nullable(false).defaultValue(generated.cf.async.guice.enums.SomethingSomeenum.FOO), this, "");
+    public final TableField<SomethingRecord, SomethingSomeenum> SOMEENUM = createField("someEnum", org.jooq.impl.SQLDataType.VARCHAR(3).nullable(false).defaultValue(org.jooq.impl.DSL.inline("FOO", org.jooq.impl.SQLDataType.VARCHAR)).asEnumDataType(generated.cf.async.guice.enums.SomethingSomeenum.class), this, "");
 
     /**
      * The column <code>vertx.something.someJsonObject</code>.

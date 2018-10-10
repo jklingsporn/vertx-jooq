@@ -48,7 +48,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Something extends TableImpl<SomethingRecord> {
 
-    private static final long serialVersionUID = -1257236164;
+    private static final long serialVersionUID = 1227509949;
 
     /**
      * The reference instance of <code>vertx.something</code>
@@ -96,7 +96,7 @@ public class Something extends TableImpl<SomethingRecord> {
     /**
      * The column <code>vertx.something.someEnum</code>.
      */
-    public final TableField<SomethingRecord, SomethingSomeenum> SOMEENUM = createField("someEnum", org.jooq.impl.SQLDataType.VARCHAR.asEnumDataType(generated.classic.async.guice.enums.SomethingSomeenum.class).nullable(false).defaultValue(generated.classic.async.guice.enums.SomethingSomeenum.FOO), this, "");
+    public final TableField<SomethingRecord, SomethingSomeenum> SOMEENUM = createField("someEnum", org.jooq.impl.SQLDataType.VARCHAR(3).nullable(false).defaultValue(org.jooq.impl.DSL.inline("FOO", org.jooq.impl.SQLDataType.VARCHAR)).asEnumDataType(generated.classic.async.guice.enums.SomethingSomeenum.class), this, "");
 
     /**
      * The column <code>vertx.something.someJsonObject</code>.

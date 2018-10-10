@@ -7,12 +7,10 @@ import io.github.jklingsporn.vertx.jooq.shared.postgres.ObjectToJsonObjectBindin
 import io.vertx.core.Vertx;
 import io.vertx.core.impl.Arguments;
 import org.jooq.Constants;
-import org.jooq.Name;
 import org.jooq.Record;
 import org.jooq.codegen.GeneratorStrategy;
 import org.jooq.codegen.JavaGenerator;
 import org.jooq.codegen.JavaWriter;
-import org.jooq.impl.DefaultDataType;
 import org.jooq.meta.*;
 import org.jooq.tools.JooqLogger;
 
@@ -595,48 +593,5 @@ public abstract class VertxGenerator extends JavaGenerator {
         out.println("}");
     }
 
-    /**
-     * Enums cannot have a default value for some rome reason. Also nullability information gets lost.
-     * Until a fix is provided, we have to handle it on our own.
-     * @param db
-     * @param schema
-     * @param t
-     * @param p
-     * @param s
-     * @param l
-     * @param n
-     * @param i
-     * @param d
-     * @param u
-     * @return
-     * @see <a href="https://github.com/jOOQ/jOOQ/issues/7199">Issue 7199</a>
-     */
-    @Override
-    protected String getTypeReference(Database db, SchemaDefinition schema, String t, int p, int s, int l, boolean n, boolean i, String d, Name u) {
-        if (db.getEnum(schema, u) != null) {
-            StringBuilder sb = new StringBuilder();
-            sb.append("org.jooq.impl.SQLDataType.");
-            sb.append(DefaultDataType.normalise(DefaultDataType.getDataType(db.getDialect(), String.class).getTypeName()));
-            sb.append(".asEnumDataType(");
-            sb.append(getStrategy().getFullJavaClassName(db.getEnum(schema, u))).append(".class");
-            sb.append(")");
-            if (!n)
-                sb.append(".nullable(false)");
-            if (i)
-                sb.append(".identity(true)");
-            if(d != null){
-                sb.append(".defaultValue(");
-                sb.append(getStrategy().getFullJavaClassName(db.getEnum(schema, u)));
-                sb.append(".");
-                //Hotfix for Postgres
-                String defaultValue = d.split("::")[0].replaceAll("'","");
-                sb.append(defaultValue);
-                sb.append(")");
-            }
-            return sb.toString();
-        }else{
-            return super.getTypeReference(db, schema, t, p, s, l, n, i, d, u);
-        }
-    }
 
 }
