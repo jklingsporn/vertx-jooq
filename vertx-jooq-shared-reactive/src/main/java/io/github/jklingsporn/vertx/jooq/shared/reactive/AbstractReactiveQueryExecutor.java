@@ -16,7 +16,10 @@ import org.jooq.conf.ParamType;
 public abstract class AbstractReactiveQueryExecutor extends AbstractQueryExecutor {
 
     private static final Logger logger = LoggerFactory.getLogger(AbstractReactiveQueryExecutor.class);
-
+    /**
+     * Replace ':' but not '::'
+     */
+    private static final String pattern = "(?<!:):(?!:)";
 
     protected AbstractReactiveQueryExecutor(Configuration configuration) {
         super(configuration);
@@ -32,10 +35,10 @@ public abstract class AbstractReactiveQueryExecutor extends AbstractQueryExecuto
     }
 
     protected <U> Object convertToDatabaseType(Param<U> param) {
-            /*
-             * https://github.com/reactiverse/reactive-pg-client/issues/191 enum types are treated as unknown
-             * DataTypes. Workaround is to convert them to string before adding to the Tuple.
-             */
+        /*
+         * https://github.com/reactiverse/reactive-pg-client/issues/191 enum types are treated as unknown
+         * DataTypes. Workaround is to convert them to string before adding to the Tuple.
+         */
         return Enum.class.isAssignableFrom(param.getBinding().converter().toType()) ? param.getValue().toString() : (param.getBinding().converter().to(param.getValue()));
     }
 
@@ -47,6 +50,6 @@ public abstract class AbstractReactiveQueryExecutor extends AbstractQueryExecuto
 
     protected String toPreparedQuery(Query query){
         String namedQuery = query.getSQL(ParamType.NAMED);
-        return namedQuery.replaceAll("(?<!:):(?!:)", "\\$");
+        return namedQuery.replaceAll(pattern, "\\$");
     }
 }
