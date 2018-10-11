@@ -326,7 +326,7 @@ public class VertxGeneratorBuilder {
                     for (ColumnDefinition column : table.getColumns()) {
                         String setter = base.getActiveGenerator().getStrategy().getJavaSetterName(column, GeneratorStrategy.Mode.INTERFACE);
                         String javaType = base.getActiveGenerator().getJavaType(column.getType());
-                        //is there a better way to check for enum type?
+                        //is there a better way to check for enum type rather than checking the package?
                         boolean javaTypeInEnumPackage = javaType.contains("enums.");
                         if(supportedRowTypes.contains(javaType)) {
                             try {
