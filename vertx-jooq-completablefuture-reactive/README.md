@@ -274,6 +274,8 @@ updatedCustomFuture.whenComplete((updated,x)->{
 ```
 
 # known issues
+- Although postgres and the reactive driver permit `false` or `true` as valid JSON, this is not supported. JSON- and JSONB-fields are automatically mapped to a
+`io.vertx.core.json.JsonObject` (or array) which cannot handle those types.
 - The [`VertxCompletableFuture`](https://github.com/cescoffier/vertx-completable-future) is not part of the vertx-core package.
 The reason behind this is that it violates the contract of `CompletableFuture#XXXAsync` methods which states that those methods should
 run on the ForkJoin-Pool if no Executor is provided. This can not be done, because it would break the threading model of Vertx. Please

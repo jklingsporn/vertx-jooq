@@ -273,3 +273,6 @@ updatedCustom.setHandler(res->{
 });
 ```
 
+# known issues
+- Although postgres and the reactive driver permit `false` or `true` as valid JSON, this is not supported. JSON- and JSONB-fields are automatically mapped to a
+`io.vertx.core.json.JsonObject` (or array) which cannot handle those types.
