@@ -107,7 +107,7 @@ public abstract class AbstractAsyncQueryExecutor<FIND_MANY_JSON, FIND_ONE_JSON, 
             OffsetDateTime obj = (OffsetDateTime) object;
 
             // Keep the same instant when converting to date time
-            ZonedDateTime convert = obj.atZoneSameInstant(ZoneOffset.UTC);
+            ZonedDateTime convert = obj.toZonedDateTime();
             org.joda.time.DateTime dt = new org.joda.time.DateTime(convert.getYear(),
                     convert.getMonthValue(),
                     convert.getDayOfMonth(),
