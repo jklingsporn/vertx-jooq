@@ -3,7 +3,7 @@ package io.github.jklingsporn.vertx.jooq.generate.builder;
 import io.github.jklingsporn.vertx.jooq.shared.JsonArrayConverter;
 import io.github.jklingsporn.vertx.jooq.shared.JsonObjectConverter;
 import io.github.jklingsporn.vertx.jooq.shared.internal.AbstractVertxDAO;
-import io.github.jklingsporn.vertx.jooq.shared.postgres.ObjectToJsonObjectBinding;
+import io.github.jklingsporn.vertx.jooq.shared.ObjectToJsonObjectBinding;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;

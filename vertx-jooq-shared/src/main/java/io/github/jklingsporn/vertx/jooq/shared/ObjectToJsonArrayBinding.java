@@ -1,4 +1,4 @@
-package io.github.jklingsporn.vertx.jooq.shared.postgres;
+package io.github.jklingsporn.vertx.jooq.shared;
 
 import io.vertx.core.json.JsonArray;
 import org.jooq.*;
@@ -12,7 +12,7 @@ import java.util.Objects;
 /**
  * @author jensklingsporn
  */
-public class ObjectToJsonArrayBinding implements Binding<Object, JsonArray>{
+public class ObjectToJsonArrayBinding implements Binding<Object, JsonArray> {
 
     private static final Converter<Object, JsonArray> CONVERTER = new Converter<Object, JsonArray>() {
         @Override
@@ -44,11 +44,15 @@ public class ObjectToJsonArrayBinding implements Binding<Object, JsonArray>{
 
     // Rending a bind variable for the binding context's value and casting it to the json type
     @Override
-    public void sql(BindingSQLContext<JsonArray> ctx) throws SQLException {
+    public void sql(BindingSQLContext<JsonArray> ctx) {
         // Depending on how you generate your SQL, you may need to explicitly distinguish
         // between jOOQ generating bind variables or inlined literals. If so, use this check:
         // ctx.render().paramType() == INLINED
-        ctx.render().visit(DSL.val(ctx.convert(converter()).value())).sql("::json");
+        RenderContext context = ctx.render().visit(DSL.val(ctx.convert(converter()).value()));
+        if (ctx.configuration().dialect() == SQLDialect.POSTGRES)
+        {
+            context.sql("::json");
+        }
     }
 
     // Registering VARCHAR types for JDBC CallableStatement OUT parameters

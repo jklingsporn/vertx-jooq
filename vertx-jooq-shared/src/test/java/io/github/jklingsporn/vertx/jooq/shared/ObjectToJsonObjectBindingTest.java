@@ -1,4 +1,4 @@
-package io.github.jklingsporn.vertx.jooq.shared.postgres;
+package io.github.jklingsporn.vertx.jooq.shared;
 
 import io.vertx.core.json.JsonObject;
 import org.junit.Assert;
@@ -13,13 +13,13 @@ public class ObjectToJsonObjectBindingTest {
 
 
     @Test
-    public void convertFromNullShouldReturnNull() throws Exception {
+    public void convertFromNullShouldReturnNull() {
         JsonObject from = binding.converter().from(null);
         Assert.assertNull(from);
     }
 
     @Test
-    public void convertToNullShouldReturnNull() throws Exception {
+    public void convertToNullShouldReturnNull() {
         Object to = binding.converter().to(null);
         Assert.assertNull(to);
     }
