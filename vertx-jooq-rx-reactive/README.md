@@ -7,8 +7,8 @@
 </dependency>
 ```
 
-# maven code generator configuration example for mysql
-The following code-snippet can be copy-pasted into your pom.xml to generate code from your MySQL database schema.
+# maven code generator configuration example for postgres
+The following code-snippet can be copy-pasted into your pom.xml to generate code from your Postgres database schema.
 
 **Watch out for placeholders beginning with 'YOUR_xyz' though! E.g. you have to define credentials for DB access and specify the target directory where jOOQ
 should put the generated code into, otherwise it won't run!**
