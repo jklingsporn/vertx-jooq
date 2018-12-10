@@ -162,7 +162,7 @@ version 'your project version'
 apply plugin: 'java'
 
 dependencies {
-    compile "io.github.jklingsporn:vertx-jooq-rx:$vertx_jooq_version"
+    compile "io.github.jklingsporn:vertx-jooq-rx-jdbc:$vertx_jooq_version"
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
 
