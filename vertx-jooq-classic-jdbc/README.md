@@ -170,7 +170,7 @@ task jooqGenerate {
     doLast() {
         def writer = new StringWriter()
         new MarkupBuilder(writer)
-                .configuration('xmlns': 'http://www.jooq.org/xsd/jooq-codegen-3.10.0.xsd') {
+                .configuration('xmlns': 'http://www.jooq.org/xsd/jooq-codegen-3.11.0.xsd') {
             jdbc {
                 driver('org.postgresql.Driver')
                 url('jdbc:postgresql://IP:PORT/DATABASE')
@@ -199,7 +199,7 @@ task jooqGenerate {
                     daos(true)
                 }
                 target() {
-                    packageName('io.one.sys.db')
+                    packageName('this.is.an.example')
                     directory("$projectDir/src/main/java")
                 }
                 strategy {
