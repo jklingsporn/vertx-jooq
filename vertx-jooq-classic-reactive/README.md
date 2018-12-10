@@ -27,7 +27,7 @@ If you are new to jOOQ, I recommend to read the awesome [jOOQ documentation](htt
     <dependency>
       <groupId>org.jooq</groupId>
       <artifactId>jooq</artifactId>
-      <version>3.10.5</version>
+      <version>3.11.7</version>
     </dependency>
     <dependency>
       <groupId>io.github.jklingsporn</groupId>
@@ -41,7 +41,7 @@ If you are new to jOOQ, I recommend to read the awesome [jOOQ documentation](htt
           <!-- Specify the maven code generator plugin -->
           <groupId>org.jooq</groupId>
           <artifactId>jooq-codegen-maven</artifactId>
-          <version>3.10.5</version>
+          <version>3.11.7</version>
 
           <!-- The plugin should hook into the generate goal -->
           <executions>
