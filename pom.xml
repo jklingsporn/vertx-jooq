@@ -23,8 +23,8 @@
         <module>vertx-jooq-rx-reactive</module>
     </modules>
     <properties>
-        <jooq.version>3.11.7</jooq.version>
-        <vertx.version>3.5.4</vertx.version>
+        <jooq.version>3.11.9</jooq.version>
+        <vertx.version>3.6.2</vertx.version>
         <hsqldb.version>2.3.2</hsqldb.version>
         <junit.version>4.12</junit.version>
         <guice.version>4.1.0</guice.version>
