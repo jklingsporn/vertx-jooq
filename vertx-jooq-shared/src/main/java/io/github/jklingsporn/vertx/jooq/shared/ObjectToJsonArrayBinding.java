@@ -49,7 +49,7 @@ public class ObjectToJsonArrayBinding implements Binding<Object, JsonArray> {
         // between jOOQ generating bind variables or inlined literals. If so, use this check:
         // ctx.render().paramType() == INLINED
         RenderContext context = ctx.render().visit(DSL.val(ctx.convert(converter()).value()));
-        if (ctx.configuration().dialect() == SQLDialect.POSTGRES)
+        if (SQLDialect.POSTGRES.equals(ctx.configuration().dialect().family()))
         {
             context.sql("::json");
         }
