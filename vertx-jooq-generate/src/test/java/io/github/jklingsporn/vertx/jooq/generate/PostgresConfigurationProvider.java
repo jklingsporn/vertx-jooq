@@ -34,7 +34,7 @@ public class PostgresConfigurationProvider extends AbstractDatabaseConfiguration
                     "  \"someSmallNumber\" SMALLINT NULL,\n" +
                     "  \"someRegularNumber\" INTEGER NULL,\n" +
                     "  \"someDouble\" DOUBLE PRECISION NULL,\n" +
-                                    "  \"someEnum\" \"someEnum\" DEFAULT 'FOO' ,\n" + //DEFAULT 'FOO' NOT default value for enums is buggy in jOOQ 3.10.5
+                    "  \"someEnum\" \"someEnum\" DEFAULT 'FOO' ,\n" +
                     "  \"someJsonObject\" VARCHAR(45) NULL,\n" +
                     "  \"someJsonArray\" VARCHAR(45) NULL,\n" +
 //                    "  \"someJsonBObject\" JSONB NULL,\n" +

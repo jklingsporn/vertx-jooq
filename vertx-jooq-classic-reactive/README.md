@@ -3,12 +3,12 @@
 <dependency>
   <groupId>io.github.jklingsporn</groupId>
   <artifactId>vertx-jooq-classic-reactive</artifactId>
-  <version>4.0.0</version>
+  <version>4.1.0</version>
 </dependency>
 ```
 
-# maven code generator configuration example for postgres
-The following code-snippet can be copy-pasted into your pom.xml to generate code from your MySQL database schema.
+# maven code generator configuration example for Postgres
+The following code-snippet can be copy-pasted into your pom.xml to generate code from your Postgres database schema.
 
 **Watch out for placeholders beginning with 'YOUR_xyz' though! E.g. you have to define credentials for DB access and specify the target directory where jOOQ
 should put the generated code into, otherwise it won't run!**
@@ -27,12 +27,12 @@ If you are new to jOOQ, I recommend to read the awesome [jOOQ documentation](htt
     <dependency>
       <groupId>org.jooq</groupId>
       <artifactId>jooq</artifactId>
-      <version>3.10.5</version>
+      <version>3.11.7</version>
     </dependency>
     <dependency>
       <groupId>io.github.jklingsporn</groupId>
       <artifactId>vertx-jooq-classic-reactive</artifactId>
-      <version>4.0.0</version>
+      <version>4.1.0</version>
     </dependency>
   </dependencies>
   <build>
@@ -41,7 +41,7 @@ If you are new to jOOQ, I recommend to read the awesome [jOOQ documentation](htt
           <!-- Specify the maven code generator plugin -->
           <groupId>org.jooq</groupId>
           <artifactId>jooq-codegen-maven</artifactId>
-          <version>3.10.5</version>
+          <version>3.11.7</version>
 
           <!-- The plugin should hook into the generate goal -->
           <executions>
@@ -61,7 +61,7 @@ If you are new to jOOQ, I recommend to read the awesome [jOOQ documentation](htt
               <dependency>
                   <groupId>io.github.jklingsporn</groupId>
                   <artifactId>vertx-jooq-generate</artifactId>
-                  <version>4.0.0</version>
+                  <version>4.1.0</version>
               </dependency>
           </dependencies>
 
@@ -138,7 +138,7 @@ The following code-snippet can be copy-pasted into your `build.gradle` to genera
 ```gradle
 buildscript {
     ext {
-        vertx_jooq_version = '4.0.0'
+        vertx_jooq_version = '4.1.0'
         postgresql_version = '42.2.2'
     }
     repositories {
@@ -162,7 +162,7 @@ version 'your project version'
 apply plugin: 'java'
 
 dependencies {
-    compile "io.github.jklingsporn:vertx-jooq-classic:$vertx_jooq_version"
+    compile "io.github.jklingsporn:vertx-jooq-classic-reactive:$vertx_jooq_version"
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
 
@@ -170,7 +170,7 @@ task jooqGenerate {
     doLast() {
         def writer = new StringWriter()
         new MarkupBuilder(writer)
-                .configuration('xmlns': 'http://www.jooq.org/xsd/jooq-codegen-3.10.0.xsd') {
+                .configuration('xmlns': 'http://www.jooq.org/xsd/jooq-codegen-3.11.0.xsd') {
             jdbc {
                 driver('org.postgresql.Driver')
                 url('jdbc:postgresql://IP:PORT/DATABASE')
@@ -199,7 +199,7 @@ task jooqGenerate {
                     daos(true)
                 }
                 target() {
-                    packageName('io.one.sys.db')
+                    packageName('this.is.an.example')
                     directory("$projectDir/src/main/java")
                 }
                 strategy {
