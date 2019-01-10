@@ -32,7 +32,7 @@ public class JDBCRXGenericQueryExecutor extends AbstractQueryExecutor implements
     }
 
     <X> Single<X> executeBlocking(Handler<Future<X>> blockingCodeHandler) {
-        return vertx.rxExecuteBlocking(blockingCodeHandler);
+        return RXTool.executeBlocking(blockingCodeHandler, vertx);
     }
 
     @Override
