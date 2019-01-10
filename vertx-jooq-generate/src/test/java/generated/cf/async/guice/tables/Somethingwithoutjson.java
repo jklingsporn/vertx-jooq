@@ -41,7 +41,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Somethingwithoutjson extends TableImpl<SomethingwithoutjsonRecord> {
 
-    private static final long serialVersionUID = 1099751387;
+    private static final long serialVersionUID = -1876687785;
 
     /**
      * The reference instance of <code>vertx.somethingWithoutJson</code>

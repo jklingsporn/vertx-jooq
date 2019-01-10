@@ -24,7 +24,7 @@ import javax.annotation.Generated;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Somethingwithoutjson implements VertxPojo, ISomethingwithoutjson {
 
-    private static final long serialVersionUID = 1717905486;
+    private static final long serialVersionUID = 612258762;
 
     private Integer someid;
     private String  somestring;

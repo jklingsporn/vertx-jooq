@@ -4,11 +4,11 @@
 package generated.cf.async.regular.enums;
 
 
+import javax.annotation.Generated;
+
 import org.jooq.Catalog;
 import org.jooq.EnumType;
 import org.jooq.Schema;
-
-import javax.annotation.Generated;
 
 
 /**

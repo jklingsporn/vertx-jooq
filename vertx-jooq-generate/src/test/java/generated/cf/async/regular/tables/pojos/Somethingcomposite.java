@@ -25,7 +25,7 @@ import javax.annotation.Generated;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Somethingcomposite implements VertxPojo, ISomethingcomposite {
 
-    private static final long serialVersionUID = 9697479;
+    private static final long serialVersionUID = 1694023883;
 
     private Integer    someid;
     private Integer    somesecondid;

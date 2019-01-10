@@ -32,7 +32,7 @@ import org.jooq.impl.SchemaImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Vertx extends SchemaImpl {
 
-    private static final long serialVersionUID = 273123609;
+    private static final long serialVersionUID = -1369938403;
 
     /**
      * The reference instance of <code>vertx</code>

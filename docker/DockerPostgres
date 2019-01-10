@@ -1,0 +1,2 @@
+FROM postgres:10.5
+COPY src/postgres_setup.sql /docker-entrypoint-initdb.d/postgres-setup.sql

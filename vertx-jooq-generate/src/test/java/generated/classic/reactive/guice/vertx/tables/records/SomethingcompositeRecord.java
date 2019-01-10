@@ -32,7 +32,7 @@ import org.jooq.impl.UpdatableRecordImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class SomethingcompositeRecord extends UpdatableRecordImpl<SomethingcompositeRecord> implements VertxPojo, Record3<Integer, Integer, JsonObject>, ISomethingcomposite {
 
-    private static final long serialVersionUID = 1923201161;
+    private static final long serialVersionUID = -434223867;
 
     /**
      * Setter for <code>vertx.somethingComposite.someId</code>.

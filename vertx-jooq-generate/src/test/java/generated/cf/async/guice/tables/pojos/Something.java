@@ -6,14 +6,12 @@ package generated.cf.async.guice.tables.pojos;
 
 import generated.cf.async.guice.enums.SomethingSomeenum;
 import generated.cf.async.guice.tables.interfaces.ISomething;
-
 import io.github.jklingsporn.vertx.jooq.shared.internal.VertxPojo;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
-import java.time.LocalDateTime;
-
 import javax.annotation.Generated;
+import java.time.LocalDateTime;
 
 
 /**
@@ -29,7 +27,7 @@ import javax.annotation.Generated;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Something implements VertxPojo, ISomething {
 
-    private static final long serialVersionUID = 1828653802;
+    private static final long serialVersionUID = 84936806;
 
     private Integer           someid;
     private String            somestring;

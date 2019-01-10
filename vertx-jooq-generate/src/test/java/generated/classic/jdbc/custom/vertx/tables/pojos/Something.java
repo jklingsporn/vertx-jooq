@@ -27,7 +27,7 @@ import javax.annotation.Generated;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Something implements VertxPojo, Serializable {
 
-    private static final long serialVersionUID = -1335333972;
+    private static final long serialVersionUID = 237677864;
 
     private Integer       someid;
     private String        somestring;

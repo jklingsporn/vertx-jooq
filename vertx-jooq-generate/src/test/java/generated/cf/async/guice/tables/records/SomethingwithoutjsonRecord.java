@@ -6,14 +6,16 @@ package generated.cf.async.guice.tables.records;
 
 import generated.cf.async.guice.tables.Somethingwithoutjson;
 import generated.cf.async.guice.tables.interfaces.ISomethingwithoutjson;
+
 import io.github.jklingsporn.vertx.jooq.shared.internal.VertxPojo;
+
+import javax.annotation.Generated;
+
 import org.jooq.Field;
 import org.jooq.Record1;
 import org.jooq.Record2;
 import org.jooq.Row2;
 import org.jooq.impl.UpdatableRecordImpl;
-
-import javax.annotation.Generated;
 
 
 /**
@@ -29,7 +31,7 @@ import javax.annotation.Generated;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class SomethingwithoutjsonRecord extends UpdatableRecordImpl<SomethingwithoutjsonRecord> implements VertxPojo, Record2<Integer, String>, ISomethingwithoutjson {
 
-    private static final long serialVersionUID = -884846115;
+    private static final long serialVersionUID = 1346972897;
 
     /**
      * Setter for <code>vertx.somethingWithoutJson.someId</code>.

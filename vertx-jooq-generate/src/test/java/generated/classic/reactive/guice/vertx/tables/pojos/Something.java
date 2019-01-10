@@ -29,7 +29,7 @@ import javax.annotation.Generated;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Something implements VertxPojo, ISomething {
 
-    private static final long serialVersionUID = 1809563781;
+    private static final long serialVersionUID = 836287745;
 
     private Integer       someid;
     private String        somestring;

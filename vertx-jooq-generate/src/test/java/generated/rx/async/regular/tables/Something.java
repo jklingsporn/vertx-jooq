@@ -48,7 +48,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Something extends TableImpl<SomethingRecord> {
 
-    private static final long serialVersionUID = -448787142;
+    private static final long serialVersionUID = -1077326154;
 
     /**
      * The reference instance of <code>vertx.something</code>

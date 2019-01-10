@@ -31,7 +31,7 @@ import org.jooq.impl.UpdatableRecordImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class SomethingwithoutjsonRecord extends UpdatableRecordImpl<SomethingwithoutjsonRecord> implements VertxPojo, Record2<Integer, String>, ISomethingwithoutjson {
 
-    private static final long serialVersionUID = 397501850;
+    private static final long serialVersionUID = -1665646434;
 
     /**
      * Setter for <code>vertx.somethingWithoutJson.someId</code>.

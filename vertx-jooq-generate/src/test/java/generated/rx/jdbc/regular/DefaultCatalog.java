@@ -29,7 +29,7 @@ import org.jooq.impl.CatalogImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class DefaultCatalog extends CatalogImpl {
 
-    private static final long serialVersionUID = -2054944398;
+    private static final long serialVersionUID = 1414499822;
 
     /**
      * The reference instance of <code></code>

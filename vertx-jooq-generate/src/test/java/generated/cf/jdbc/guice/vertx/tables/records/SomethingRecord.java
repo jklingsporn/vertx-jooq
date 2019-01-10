@@ -35,7 +35,7 @@ import org.jooq.impl.UpdatableRecordImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class SomethingRecord extends UpdatableRecordImpl<SomethingRecord> implements VertxPojo, Record10<Integer, String, Long, Short, Integer, Boolean, Double, JsonObject, JsonArray, LocalDateTime>, ISomething {
 
-    private static final long serialVersionUID = 1403426893;
+    private static final long serialVersionUID = 415164753;
 
     /**
      * Setter for <code>VERTX.SOMETHING.SOMEID</code>.
