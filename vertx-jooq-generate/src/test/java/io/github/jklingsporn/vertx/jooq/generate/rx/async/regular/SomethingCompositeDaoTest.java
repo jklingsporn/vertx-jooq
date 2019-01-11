@@ -1,5 +1,6 @@
 package io.github.jklingsporn.vertx.jooq.generate.rx.async.regular;
 
+import com.github.mauricio.async.db.mysql.exceptions.MySQLException;
 import generated.rx.async.regular.Tables;
 import generated.rx.async.regular.tables.daos.SomethingcompositeDao;
 import generated.rx.async.regular.tables.pojos.Somethingcomposite;
@@ -89,12 +90,12 @@ public class SomethingCompositeDaoTest extends RXTestBase<Somethingcomposite, Re
     }
 
     @Test
-    public void insertReturningShouldThrowUnsupportedOperationException() throws InterruptedException {
+    public void insertReturningShouldThrowMysqlException() throws InterruptedException {
         CountDownLatch latch = new CountDownLatch(1);
         dao.insertReturningPrimary(new Somethingcomposite())
                 .subscribe((res, x) -> {
                             Assert.assertNotNull(x);
-                            assertException(UnsupportedOperationException.class, x);
+                            assertException(MySQLException.class, x);
                             latch.countDown();
                         }
                 );

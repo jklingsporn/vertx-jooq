@@ -68,6 +68,12 @@ public abstract class AbstractAsyncVertxDAO<R extends UpdatableRecord<R>, P, T, 
         return SQLDialect.POSTGRES.equals(configuration.dialect().family());
     }
 
+    /**
+     * @param object the pojo
+     * @return the result type returned for INSERT_RETURNING.
+     * @throws UnsupportedOperationException if <code>pojo</code> has a compound key and the keys are not set and the underlying database is MySql 5.6 or lower
+     * @throws com.github.mauricio.async.db.mysql.exceptions.MySQLException if <code>pojo</code> has a compound key and the keys are not set and the underlying database is MySql 5.7 or higher
+     */
     @Override
     public INSERT_RETURNING insertReturningPrimary(P object) {
         return queryExecutor().insertReturning(dslContext -> dslContext

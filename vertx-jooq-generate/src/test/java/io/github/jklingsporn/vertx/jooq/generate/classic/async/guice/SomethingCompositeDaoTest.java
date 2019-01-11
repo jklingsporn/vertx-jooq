@@ -1,5 +1,6 @@
 package io.github.jklingsporn.vertx.jooq.generate.classic.async.guice;
 
+import com.github.mauricio.async.db.mysql.exceptions.MySQLException;
 import generated.classic.async.guice.Tables;
 import generated.classic.async.guice.tables.daos.SomethingcompositeDao;
 import generated.classic.async.guice.tables.pojos.Somethingcomposite;
@@ -88,12 +89,12 @@ public class SomethingCompositeDaoTest extends ClassicTestBase<Somethingcomposit
     }
 
     @Test
-    public void insertReturningShouldThrowUnsupportedOperationException() throws InterruptedException {
+    public void insertReturningShouldThrowMysqlException() throws InterruptedException {
         CountDownLatch latch = new CountDownLatch(1);
         dao.insertReturningPrimary(new Somethingcomposite())
                 .setHandler(h -> {
                             Assert.assertTrue(h.failed());
-                            Assert.assertEquals(UnsupportedOperationException.class, h.cause().getClass());
+                            Assert.assertEquals(MySQLException.class, h.cause().getClass());
                             latch.countDown();
                         }
                 );
