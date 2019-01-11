@@ -7,7 +7,7 @@ public enum Credentials {
 
     HSQLDB("test", ""),
     POSTGRES("vertx", "password"),
-    MYSQL("vertx", "");
+    MYSQL("root", "vertx");
 
     private final String user;
     private final String password;
