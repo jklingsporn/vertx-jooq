@@ -28,8 +28,10 @@ public abstract class AbstractReactiveQueryExecutor extends AbstractQueryExecuto
     protected Tuple getBindValues(Query query) {
         ArrayTuple bindValues = new ArrayTuple(query.getParams().size());
         for (Param<?> param : query.getParams().values()) {
-            Object value = convertToDatabaseType(param);
-            bindValues.add(value);
+            if(!param.isInline()){
+                Object value = convertToDatabaseType(param);
+                bindValues.add(value);
+            }
         }
         return bindValues;
     }

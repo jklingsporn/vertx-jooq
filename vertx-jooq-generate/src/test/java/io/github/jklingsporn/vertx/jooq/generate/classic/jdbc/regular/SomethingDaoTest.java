@@ -11,10 +11,12 @@ import io.vertx.core.json.JsonObject;
 import org.jooq.Condition;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Test;
 
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.time.LocalDateTime;
 import java.util.Random;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * Created by jensklingsporn on 02.11.16.
@@ -82,4 +84,24 @@ public class SomethingDaoTest extends ClassicTestBase<Something, Integer, Long, 
         Assert.assertEquals(SQLIntegrityConstraintViolationException.class, x.getCause().getClass());
     }
 
+    @Test
+    public void containsShouldSucceed() throws InterruptedException {
+        //https://github.com/jklingsporn/vertx-jooq/issues/93
+        CountDownLatch latch = new CountDownLatch(1);
+        insertAndReturn(create())
+                .compose(dao::findOneById)
+                .compose(something -> dao.queryExecutor().findMany(dslContext -> dslContext.selectFrom(Tables.SOMETHING).where(Tables.SOMETHING.SOMESTRING.containsIgnoreCase(something.getSomestring())))
+                        .compose(rows -> {
+                            Assert.assertEquals(1L, rows.size());
+                            return dao
+                                    .deleteById(getId(something))
+                                    .map(deletedRows -> {
+                                        Assert.assertEquals(1l, deletedRows.longValue());
+                                        return null;
+                                    });
+                        }))
+                .setHandler(countdownLatchHandler(latch))
+        ;
+        await(latch);
+    }
 }
