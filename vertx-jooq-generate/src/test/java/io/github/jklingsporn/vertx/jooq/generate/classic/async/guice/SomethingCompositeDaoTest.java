@@ -1,6 +1,6 @@
 package io.github.jklingsporn.vertx.jooq.generate.classic.async.guice;
 
-import com.github.mauricio.async.db.mysql.exceptions.MySQLException;
+import com.github.jasync.sql.db.mysql.exceptions.MySQLException;
 import generated.classic.async.guice.Tables;
 import generated.classic.async.guice.tables.daos.SomethingcompositeDao;
 import generated.classic.async.guice.tables.pojos.Somethingcomposite;
@@ -77,7 +77,7 @@ public class SomethingCompositeDaoTest extends ClassicTestBase<Somethingcomposit
 
     @Override
     protected void assertDuplicateKeyException(Throwable x) {
-        Assert.assertEquals(com.github.mauricio.async.db.mysql.exceptions.MySQLException.class, x.getClass());
+        Assert.assertEquals(com.github.jasync.sql.db.mysql.exceptions.MySQLException.class, x.getClass());
     }
 
     @Override
