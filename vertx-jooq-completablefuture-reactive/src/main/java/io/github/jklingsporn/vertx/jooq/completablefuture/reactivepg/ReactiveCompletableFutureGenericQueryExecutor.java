@@ -5,13 +5,12 @@ import io.github.jklingsporn.vertx.jooq.shared.reactive.ReactiveQueryExecutor;
 import io.github.jklingsporn.vertx.jooq.shared.reactive.ReactiveQueryResult;
 import io.github.jklingsporn.vertx.jooq.completablefuture.CompletableFutureQueryExecutor;
 import io.github.jklingsporn.vertx.jooq.shared.internal.QueryResult;
-import io.reactiverse.pgclient.PgClient;
-import io.reactiverse.pgclient.PgResult;
-import io.reactiverse.pgclient.PgRowSet;
+import io.reactiverse.pgclient.*;
 import io.reactiverse.pgclient.Row;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
+import io.vertx.core.impl.Arguments;
 import me.escoffier.vertx.completablefuture.VertxCompletableFuture;
 import org.jooq.*;
 import org.jooq.exception.TooManyRowsException;
@@ -95,5 +94,23 @@ public class ReactiveCompletableFutureGenericQueryExecutor extends AbstractReact
         CompletableFuture<PgRowSet> rowFuture = new VertxCompletableFuture<>(vertx);
         delegate.preparedQuery(toPreparedQuery(query),getBindValues(query),createCompletionHandler(rowFuture));
         return rowFuture.thenApply(ReactiveQueryResult::new);
+    }
+
+    public CompletableFuture<? extends ReactiveCompletableFutureGenericQueryExecutor> beginTransaction(){
+        Arguments.require(delegate instanceof PgPool, "Already in transaction");
+        CompletableFuture<PgTransaction> transactionFuture = new VertxCompletableFuture<>(vertx);
+        ((PgPool) delegate).begin(createCompletionHandler(transactionFuture));
+        return transactionFuture.thenApply(newInstance());
+    }
+
+    Function<PgTransaction, ? extends ReactiveCompletableFutureGenericQueryExecutor> newInstance() {
+        return transaction -> new ReactiveCompletableFutureGenericQueryExecutor(configuration(),transaction,vertx);
+    }
+
+    public CompletableFuture<Void> commit(){
+        Arguments.require(delegate instanceof PgTransaction, "Not in transaction");
+        CompletableFuture<Void> commit = new VertxCompletableFuture<>(vertx);
+        ((PgTransaction) delegate).commit(createCompletionHandler(commit));
+        return commit;
     }
 }

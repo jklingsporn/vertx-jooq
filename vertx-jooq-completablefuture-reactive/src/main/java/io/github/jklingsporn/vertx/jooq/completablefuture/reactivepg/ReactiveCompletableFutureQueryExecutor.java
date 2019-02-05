@@ -3,6 +3,7 @@ package io.github.jklingsporn.vertx.jooq.completablefuture.reactivepg;
 import io.github.jklingsporn.vertx.jooq.shared.internal.QueryExecutor;
 import io.reactiverse.pgclient.PgClient;
 import io.reactiverse.pgclient.PgRowSet;
+import io.reactiverse.pgclient.PgTransaction;
 import io.reactiverse.pgclient.Row;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
@@ -68,5 +69,13 @@ public class ReactiveCompletableFutureQueryExecutor<R extends UpdatableRecord<R>
         };
     }
 
+    @Override
+    public CompletableFuture<ReactiveCompletableFutureQueryExecutor<R,P,T>> beginTransaction() {
+        return (CompletableFuture<ReactiveCompletableFutureQueryExecutor<R, P, T>>) super.beginTransaction();
+    }
 
+    @Override
+    Function<PgTransaction, ReactiveCompletableFutureQueryExecutor<R,P,T>> newInstance() {
+        return pgTransaction -> new ReactiveCompletableFutureQueryExecutor<R, P, T>(configuration(),pgTransaction,pojoMapper,vertx);
+    }
 }
