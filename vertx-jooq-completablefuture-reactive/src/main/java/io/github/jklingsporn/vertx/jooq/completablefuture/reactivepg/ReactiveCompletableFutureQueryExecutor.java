@@ -69,6 +69,7 @@ public class ReactiveCompletableFutureQueryExecutor<R extends UpdatableRecord<R>
         };
     }
 
+
     @Override
     public CompletableFuture<ReactiveCompletableFutureQueryExecutor<R,P,T>> beginTransaction() {
         return (CompletableFuture<ReactiveCompletableFutureQueryExecutor<R, P, T>>) super.beginTransaction();

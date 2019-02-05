@@ -96,6 +96,12 @@ public class ReactiveCompletableFutureGenericQueryExecutor extends AbstractReact
         return rowFuture.thenApply(ReactiveQueryResult::new);
     }
 
+
+    /**
+     * @return an instance of a <code>ReactiveCompletableFutureGenericQueryExecutor</code> that performs all CRUD
+     * functions in a scope of a transaction. The transaction has to be committed by calling <code>commit</code> on the
+     * QueryExecutor returned.
+     */
     public CompletableFuture<? extends ReactiveCompletableFutureGenericQueryExecutor> beginTransaction(){
         Arguments.require(delegate instanceof PgPool, "Already in transaction");
         CompletableFuture<PgTransaction> transactionFuture = new VertxCompletableFuture<>(vertx);
@@ -103,9 +109,10 @@ public class ReactiveCompletableFutureGenericQueryExecutor extends AbstractReact
         return transactionFuture.thenApply(newInstance());
     }
 
-    Function<PgTransaction, ? extends ReactiveCompletableFutureGenericQueryExecutor> newInstance() {
+    protected Function<PgTransaction, ? extends ReactiveCompletableFutureGenericQueryExecutor> newInstance() {
         return transaction -> new ReactiveCompletableFutureGenericQueryExecutor(configuration(),transaction,vertx);
     }
+
 
     public CompletableFuture<Void> commit(){
         Arguments.require(delegate instanceof PgTransaction, "Not in transaction");
