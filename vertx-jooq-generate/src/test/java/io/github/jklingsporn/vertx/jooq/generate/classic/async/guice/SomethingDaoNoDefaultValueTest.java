@@ -80,6 +80,6 @@ public class SomethingDaoNoDefaultValueTest extends ClassicTestBase<Something, I
 
     @Override
     protected void assertDuplicateKeyException(Throwable x) {
-        Assert.assertEquals(com.github.mauricio.async.db.mysql.exceptions.MySQLException.class, x.getClass());
+        Assert.assertEquals(com.github.jasync.sql.db.mysql.exceptions.MySQLException.class, x.getClass());
     }
 }

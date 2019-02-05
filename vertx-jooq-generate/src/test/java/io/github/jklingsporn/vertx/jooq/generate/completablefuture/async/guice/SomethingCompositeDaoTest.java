@@ -1,6 +1,6 @@
 package io.github.jklingsporn.vertx.jooq.generate.completablefuture.async.guice;
 
-import com.github.mauricio.async.db.mysql.exceptions.MySQLException;
+import com.github.jasync.sql.db.mysql.exceptions.MySQLException;
 import generated.cf.async.guice.Tables;
 import generated.cf.async.guice.tables.daos.SomethingcompositeDao;
 import generated.cf.async.guice.tables.pojos.Somethingcomposite;
@@ -76,7 +76,7 @@ public class SomethingCompositeDaoTest extends CompletableFutureTestBase<Somethi
 
     @Override
     protected void assertDuplicateKeyException(Throwable x) {
-        assertException(com.github.mauricio.async.db.mysql.exceptions.MySQLException.class, x);
+        assertException(com.github.jasync.sql.db.mysql.exceptions.MySQLException.class, x);
     }
 
     @Override

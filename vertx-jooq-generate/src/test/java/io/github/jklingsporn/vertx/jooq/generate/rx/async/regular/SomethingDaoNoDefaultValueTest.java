@@ -78,6 +78,6 @@ public class SomethingDaoNoDefaultValueTest extends RXTestBase<Something, Intege
 
     @Override
     protected void assertDuplicateKeyException(Throwable x) {
-        assertException(com.github.mauricio.async.db.mysql.exceptions.MySQLException.class, x);
+        assertException(com.github.jasync.sql.db.mysql.exceptions.MySQLException.class, x);
     }
 }

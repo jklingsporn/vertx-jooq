@@ -1,6 +1,6 @@
 package io.github.jklingsporn.vertx.jooq.generate.rx.async.regular;
 
-import com.github.mauricio.async.db.mysql.exceptions.MySQLException;
+import com.github.jasync.sql.db.mysql.exceptions.MySQLException;
 import generated.rx.async.regular.Tables;
 import generated.rx.async.regular.tables.daos.SomethingcompositeDao;
 import generated.rx.async.regular.tables.pojos.Somethingcomposite;
@@ -78,7 +78,7 @@ public class SomethingCompositeDaoTest extends RXTestBase<Somethingcomposite, Re
 
     @Override
     protected void assertDuplicateKeyException(Throwable x) {
-        assertException(com.github.mauricio.async.db.mysql.exceptions.MySQLException.class, x);
+        assertException(com.github.jasync.sql.db.mysql.exceptions.MySQLException.class, x);
     }
 
     @Override
