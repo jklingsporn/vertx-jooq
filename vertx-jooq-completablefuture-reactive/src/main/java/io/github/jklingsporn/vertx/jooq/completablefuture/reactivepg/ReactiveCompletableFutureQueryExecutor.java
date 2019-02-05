@@ -69,14 +69,15 @@ public class ReactiveCompletableFutureQueryExecutor<R extends UpdatableRecord<R>
         };
     }
 
-
     @Override
+    @SuppressWarnings("unchecked")
     public CompletableFuture<ReactiveCompletableFutureQueryExecutor<R,P,T>> beginTransaction() {
         return (CompletableFuture<ReactiveCompletableFutureQueryExecutor<R, P, T>>) super.beginTransaction();
     }
 
     @Override
-    Function<PgTransaction, ReactiveCompletableFutureQueryExecutor<R,P,T>> newInstance() {
+    protected Function<PgTransaction, ReactiveCompletableFutureQueryExecutor<R,P,T>> newInstance() {
         return pgTransaction -> new ReactiveCompletableFutureQueryExecutor<R, P, T>(configuration(),pgTransaction,pojoMapper,vertx);
     }
+
 }

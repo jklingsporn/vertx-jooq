@@ -1,10 +1,10 @@
 package io.github.jklingsporn.vertx.jooq.completablefuture.reactivepg;
 
+import io.github.jklingsporn.vertx.jooq.completablefuture.CompletableFutureQueryExecutor;
+import io.github.jklingsporn.vertx.jooq.shared.internal.QueryResult;
 import io.github.jklingsporn.vertx.jooq.shared.reactive.AbstractReactiveQueryExecutor;
 import io.github.jklingsporn.vertx.jooq.shared.reactive.ReactiveQueryExecutor;
 import io.github.jklingsporn.vertx.jooq.shared.reactive.ReactiveQueryResult;
-import io.github.jklingsporn.vertx.jooq.completablefuture.CompletableFutureQueryExecutor;
-import io.github.jklingsporn.vertx.jooq.shared.internal.QueryResult;
 import io.reactiverse.pgclient.*;
 import io.reactiverse.pgclient.Row;
 import io.vertx.core.AsyncResult;
@@ -99,8 +99,8 @@ public class ReactiveCompletableFutureGenericQueryExecutor extends AbstractReact
 
     /**
      * @return an instance of a <code>ReactiveCompletableFutureGenericQueryExecutor</code> that performs all CRUD
-     * functions in a scope of a transaction. The transaction has to be committed by calling <code>commit</code> on the
-     * QueryExecutor returned.
+     * functions in the scope of a transaction. The transaction has to be committed/rolled back by calling <code>commit</code>
+     * or <code>rollback</code> on the QueryExecutor returned.
      */
     public CompletableFuture<? extends ReactiveCompletableFutureGenericQueryExecutor> beginTransaction(){
         Arguments.require(delegate instanceof PgPool, "Already in transaction");
@@ -113,11 +113,57 @@ public class ReactiveCompletableFutureGenericQueryExecutor extends AbstractReact
         return transaction -> new ReactiveCompletableFutureGenericQueryExecutor(configuration(),transaction,vertx);
     }
 
-
+    /**
+     * Commits a transaction.
+     * @return a <code>CompletableFuture</code> that completes when the transaction has been committed.
+     * @throws IllegalStateException if not called <code>beginTransaction</code> before.
+     */
     public CompletableFuture<Void> commit(){
-        Arguments.require(delegate instanceof PgTransaction, "Not in transaction");
+        if(!(delegate instanceof PgTransaction)){
+            throw new IllegalStateException("Not in transaction");
+        }
         CompletableFuture<Void> commit = new VertxCompletableFuture<>(vertx);
         ((PgTransaction) delegate).commit(createCompletionHandler(commit));
         return commit;
+    }
+
+    /**
+     * Rolls a transaction back.
+     * @return a <code>CompletableFuture</code> that completes when the transaction has been rolled back.
+     * @throws IllegalStateException if not called <code>beginTransaction</code> before.
+     */
+    public CompletableFuture<Void> rollback(){
+        if(!(delegate instanceof PgTransaction)){
+            throw new IllegalStateException("Not in transaction");
+        }
+        CompletableFuture<Void> commit = new VertxCompletableFuture<>(vertx);
+        ((PgTransaction) delegate).rollback(createCompletionHandler(commit));
+        return commit;
+    }
+
+    /**
+     * Convenience method to perform multiple calls on a transactional QueryExecutor, committing the transaction and
+     * returning a result.
+     * @param transaction your code using a transactional QueryExecutor.
+     *                    <pre>
+     *                    {@code
+     *                    ReactiveCompletableFutureGenericQueryExecutor nonTransactionalQueryExecutor...;
+     *                    CompletableFuture<QueryResult> resultOfTransaction = nonTransactionalQueryExecutor.transaction(transactionalQueryExecutor ->
+     *                      {
+     *                          //make all calls on the provided QueryExecutor that runs all code in a transaction
+     *                          return transactionalQueryExecutor.execute(dslContext -> dslContext.insertInto(Tables.XYZ)...)
+     *                              .thenCompose(i -> transactionalQueryExecutor.query(dslContext -> dslContext.selectFrom(Tables.XYZ).where(Tables.XYZ.SOME_VALUE.eq("FOO")));
+     *                      }
+     *                    );
+     *                    }
+     *                    </pre>
+     * @param <U> the return type.
+     * @return the result of the transaction.
+     */
+    public <U> CompletableFuture<U> transaction(Function<ReactiveCompletableFutureGenericQueryExecutor, CompletableFuture<U>> transaction){
+        return beginTransaction()
+                .thenCompose(queryExecutor -> transaction.apply(queryExecutor) //perform user tasks
+                        .thenCompose(res -> queryExecutor.commit() //commit the transaction
+                                .thenApply(v -> res))); //and return the result
     }
 }

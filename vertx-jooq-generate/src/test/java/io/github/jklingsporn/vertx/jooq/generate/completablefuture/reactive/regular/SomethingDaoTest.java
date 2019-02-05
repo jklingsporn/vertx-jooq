@@ -87,7 +87,7 @@ public class SomethingDaoTest extends CompletableFutureTestBase<Something, Integ
     }
 
     @Test
-    public void queriesInTransactionShouldSucceed() throws InterruptedException {
+    public void manualTransactionProcessingShouldSucceed() throws InterruptedException {
         Something pojo = createWithId();
         CountDownLatch completionLatch = new CountDownLatch(1);
         dao.queryExecutor().beginTransaction()
@@ -121,7 +121,7 @@ public class SomethingDaoTest extends CompletableFutureTestBase<Something, Integ
                 .thenCompose(ReactiveCompletableFutureQueryExecutor::beginTransaction)
                 .exceptionally(x -> {
                     Assert.assertNotNull(x);
-                    assertException(IllegalArgumentException.class,x);
+                    assertException(IllegalStateException.class,x);
                     return null;
                 }).whenComplete(countdownLatchHandler(latch));
         await(latch);
@@ -132,7 +132,18 @@ public class SomethingDaoTest extends CompletableFutureTestBase<Something, Integ
         CountDownLatch latch = new CountDownLatch(1);
         try{
             dao.queryExecutor().commit();
-        }catch (IllegalArgumentException x){
+        }catch (IllegalStateException x){
+            latch.countDown();
+        }
+        await(latch);
+    }
+
+    @Test
+    public void rollbackTransactionCanNotBeCalledOutsideTransaction(){
+        CountDownLatch latch = new CountDownLatch(1);
+        try{
+            dao.queryExecutor().rollback();
+        }catch (IllegalStateException x){
             latch.countDown();
         }
         await(latch);
@@ -165,5 +176,45 @@ public class SomethingDaoTest extends CompletableFutureTestBase<Something, Integ
         await(completionLatch);
     }
 
+    @Test
+    public void rollbackShouldNotExecuteTransactionalQueries() throws InterruptedException {
+        Something pojo = createWithId();
+        CountDownLatch completionLatch = new CountDownLatch(1);
+        dao.queryExecutor().beginTransaction()
+                .thenCompose(transactionQE -> transactionQE.execute(dslContext -> dslContext.insertInto(dao.getTable()).set(dslContext.newRecord(dao.getTable(), pojo)))
+                                .thenAccept(inserted -> Assert.assertEquals(1, inserted.intValue()))
+                                .thenCompose(v -> transactionQE.rollback())
+                                .thenCompose(v -> dao.findOneById(pojo.getSomeid()))
+                                .thenAccept(Assert::assertNull)
+                                .whenComplete(countdownLatchHandler(completionLatch))
+                );
+        await(completionLatch);
+    }
+
+    @Test
+    public void convenientTransactionShouldSucceed() throws InterruptedException {
+        Something pojo = createWithId();
+        CountDownLatch completionLatch = new CountDownLatch(1);
+        dao.queryExecutor().transaction(
+                        transactionQE -> transactionQE.execute(
+                                dslContext -> dslContext.insertInto(dao.getTable()).set(dslContext.newRecord(dao.getTable(), pojo))
+                        ).thenAccept(
+                                inserted -> Assert.assertEquals(1, inserted.intValue())
+                        ).thenCompose(
+                                v -> transactionQE.findOneRow(
+                                        dslContext -> dslContext.selectFrom(dao.getTable()).where(eqPrimaryKey(pojo.getSomeid()))
+                                )
+                        ).thenAccept(Assert::assertNotNull)
+                                .thenCompose(v -> dao.findOneById(pojo.getSomeid()))
+                                .thenAccept(Assert::assertNull) //not known outside of transaction
+        ) //implicitly commit the transaction
+                                .thenCompose(v -> dao.findOneById(pojo.getSomeid())) //now known because we committed the transaction
+                                .thenAccept(Assert::assertNotNull)
+                                .thenCompose(v -> dao.deleteById(pojo.getSomeid()))
+                                .thenAccept(deleted -> Assert.assertEquals(1, deleted.intValue()))
+                                .whenComplete(countdownLatchHandler(completionLatch)
+                                );
+        await(completionLatch);
+    }
 
 }
