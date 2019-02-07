@@ -47,9 +47,13 @@ public abstract class ClassicTestBase<P,T,O, DAO extends GenericVertxDAO<?,P, T,
     protected abstract void assertDuplicateKeyException(Throwable x);
 
 
-    protected void await(CountDownLatch latch) throws InterruptedException {
-        if(!latch.await(3, TimeUnit.SECONDS)){
-            Assert.fail("latch not triggered");
+    protected void await(CountDownLatch latch)  {
+        try {
+            if(!latch.await(3, TimeUnit.SECONDS)){
+                Assert.fail("latch not triggered");
+            }
+        } catch (InterruptedException e) {
+            Assert.fail(e.getMessage());
         }
     }
 

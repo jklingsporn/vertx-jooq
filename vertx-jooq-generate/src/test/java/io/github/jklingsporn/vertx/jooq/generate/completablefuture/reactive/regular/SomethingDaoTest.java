@@ -86,6 +86,8 @@ public class SomethingDaoTest extends CompletableFutureTestBase<Something, Integ
         assertException(PgException.class, x, pgException -> Assert.assertEquals("23505", pgException.getCode()));
     }
 
+    //for now the tests have to be located in this class as transactions are only supported by the reactive driver
+
     @Test
     public void manualTransactionProcessingShouldSucceed() throws InterruptedException {
         Something pojo = createWithId();
@@ -168,11 +170,10 @@ public class SomethingDaoTest extends CompletableFutureTestBase<Something, Integ
                                 .thenAccept(Assert::assertNull) //not known because transaction was rolled back
                         .thenCompose(v -> transactionQE.commit()) //should throw error because the transaction was already rolled back
                         .exceptionally(x -> {
-                            Assert.assertEquals("io.vertx.core.impl.NoStackTraceThrowable: Transaction already completed", x.getMessage());
-                            completionLatch.countDown();
+                            Assert.assertTrue("Wrong exception. Got: " + x.getMessage(), x.getMessage().contains("Transaction already completed"));
                             return null;
                         })
-                );
+                ).whenComplete(countdownLatchHandler(completionLatch));
         await(completionLatch);
     }
 

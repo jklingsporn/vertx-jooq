@@ -3,6 +3,7 @@ package io.github.jklingsporn.vertx.jooq.classic.reactivepg;
 import io.github.jklingsporn.vertx.jooq.shared.internal.QueryExecutor;
 import io.reactiverse.pgclient.PgClient;
 import io.reactiverse.pgclient.PgRowSet;
+import io.reactiverse.pgclient.PgTransaction;
 import io.reactiverse.pgclient.Row;
 import io.vertx.core.Future;
 import org.jooq.*;
@@ -37,11 +38,22 @@ public class ReactiveClassicQueryExecutor<R extends UpdatableRecord<R>,P,T> exte
     public Future<T> insertReturning(Function<DSLContext, ? extends InsertResultStep<R>> queryFunction, Function<Object, T> keyMapper) {
         Query query = createQuery(queryFunction);
         log(query);
-        Future<PgRowSet> rowFuture = Future.future();
+        Future<PgRowSet> rowFuture = io.vertx.core.Future.future();
         delegate.preparedQuery(toPreparedQuery(query),getBindValues(query),rowFuture);
         return rowFuture
                 .map(rows -> rows.iterator().next())
                 .map(keyMapper::apply);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public Future<ReactiveClassicQueryExecutor<R,P,T>> beginTransaction() {
+        return (Future<ReactiveClassicQueryExecutor<R, P, T>>) super.beginTransaction();
+    }
+
+    @Override
+    protected Function<PgTransaction, ReactiveClassicQueryExecutor<R,P,T>> newInstance() {
+        return pgTransaction -> new ReactiveClassicQueryExecutor<R, P, T>(configuration(),pgTransaction,pojoMapper);
     }
 
 

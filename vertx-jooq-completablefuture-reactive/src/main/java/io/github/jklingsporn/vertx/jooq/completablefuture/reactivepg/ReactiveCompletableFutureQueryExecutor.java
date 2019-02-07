@@ -5,8 +5,6 @@ import io.reactiverse.pgclient.PgClient;
 import io.reactiverse.pgclient.PgRowSet;
 import io.reactiverse.pgclient.PgTransaction;
 import io.reactiverse.pgclient.Row;
-import io.vertx.core.AsyncResult;
-import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import me.escoffier.vertx.completablefuture.VertxCompletableFuture;
 import org.jooq.*;
@@ -52,21 +50,6 @@ public class ReactiveCompletableFutureQueryExecutor<R extends UpdatableRecord<R>
         return rowFuture
                 .thenApply(rows -> rows.iterator().next())
                 .thenApply(keyMapper);
-    }
-
-    /**
-     * @param future
-     * @param <U>
-     * @return A handler which completes the given future.
-     */
-    private static <U> Handler<AsyncResult<U>> createCompletionHandler(CompletableFuture<U> future) {
-        return h->{
-            if(h.succeeded()){
-                future.complete(h.result());
-            }else{
-                future.completeExceptionally(h.cause());
-            }
-        };
     }
 
     @Override

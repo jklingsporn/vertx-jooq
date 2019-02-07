@@ -6,12 +6,14 @@ package generated.cf.async.guice.tables.pojos;
 
 import generated.cf.async.guice.enums.SomethingSomeenum;
 import generated.cf.async.guice.tables.interfaces.ISomething;
+
 import io.github.jklingsporn.vertx.jooq.shared.internal.VertxPojo;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
-import javax.annotation.Generated;
 import java.time.LocalDateTime;
+
+import javax.annotation.Generated;
 
 
 /**

@@ -1,14 +1,12 @@
 package io.github.jklingsporn.vertx.jooq.classic.reactivepg;
 
-import io.reactiverse.pgclient.PgClient;
-import io.reactiverse.pgclient.PgResult;
-import io.reactiverse.pgclient.PgRowSet;
-import io.reactiverse.pgclient.Row;
-import io.github.jklingsporn.vertx.jooq.shared.reactive.AbstractReactiveQueryExecutor;
-import io.github.jklingsporn.vertx.jooq.shared.reactive.ReactiveQueryResult;
-import io.github.jklingsporn.vertx.jooq.shared.reactive.ReactiveQueryExecutor;
 import io.github.jklingsporn.vertx.jooq.classic.ClassicQueryExecutor;
 import io.github.jklingsporn.vertx.jooq.shared.internal.QueryResult;
+import io.github.jklingsporn.vertx.jooq.shared.reactive.AbstractReactiveQueryExecutor;
+import io.github.jklingsporn.vertx.jooq.shared.reactive.ReactiveQueryExecutor;
+import io.github.jklingsporn.vertx.jooq.shared.reactive.ReactiveQueryResult;
+import io.reactiverse.pgclient.*;
+import io.reactiverse.pgclient.Row;
 import io.vertx.core.Future;
 import org.jooq.*;
 import org.jooq.exception.TooManyRowsException;
@@ -74,5 +72,77 @@ public class ReactiveClassicGenericQueryExecutor extends AbstractReactiveQueryEx
         Future<PgRowSet> rowFuture = Future.future();
         delegate.preparedQuery(toPreparedQuery(query),getBindValues(query),rowFuture);
         return rowFuture.map(ReactiveQueryResult::new);
+    }
+
+    /**
+     * @return an instance of a <code>ReactiveClassicGenericQueryExecutor</code> that performs all CRUD
+     * functions in the scope of a transaction. The transaction has to be committed/rolled back by calling <code>commit</code>
+     * or <code>rollback</code> on the QueryExecutor returned.
+     */
+    public Future<? extends ReactiveClassicGenericQueryExecutor> beginTransaction(){
+        if(delegate instanceof PgTransaction){
+            throw new IllegalStateException("Already in transaction");
+        }
+        Future<PgTransaction> transactionFuture = Future.future();
+        ((PgPool) delegate).begin(transactionFuture);
+        return transactionFuture.map(newInstance());
+    }
+
+    protected Function<PgTransaction, ? extends ReactiveClassicGenericQueryExecutor> newInstance() {
+        return transaction -> new ReactiveClassicGenericQueryExecutor(configuration(),transaction);
+    }
+
+    /**
+     * Commits a transaction.
+     * @return a <code>Future</code> that completes when the transaction has been committed.
+     * @throws IllegalStateException if not called <code>beginTransaction</code> before.
+     */
+    public Future<Void> commit(){
+        if(!(delegate instanceof PgTransaction)){
+            throw new IllegalStateException("Not in transaction");
+        }
+        Future<Void> commit = Future.future();
+        ((PgTransaction) delegate).commit(commit);
+        return commit;
+    }
+
+    /**
+     * Rolls a transaction back.
+     * @return a <code>Future</code> that completes when the transaction has been rolled back.
+     * @throws IllegalStateException if not called <code>beginTransaction</code> before.
+     */
+    public Future<Void> rollback(){
+        if(!(delegate instanceof PgTransaction)){
+            throw new IllegalStateException("Not in transaction");
+        }
+        Future<Void> commit = Future.future();
+        ((PgTransaction) delegate).rollback(commit);
+        return commit;
+    }
+
+    /**
+     * Convenience method to perform multiple calls on a transactional QueryExecutor, committing the transaction and
+     * returning a result.
+     * @param transaction your code using a transactional QueryExecutor.
+     *                    <pre>
+     *                    {@code
+     *                    ReactiveClassicGenericQueryExecutor nonTransactionalQueryExecutor...;
+     *                    Future<QueryResult> resultOfTransaction = nonTransactionalQueryExecutor.transaction(transactionalQueryExecutor ->
+     *                      {
+     *                          //make all calls on the provided QueryExecutor that runs all code in a transaction
+     *                          return transactionalQueryExecutor.execute(dslContext -> dslContext.insertInto(Tables.XYZ)...)
+     *                              .compose(i -> transactionalQueryExecutor.query(dslContext -> dslContext.selectFrom(Tables.XYZ).where(Tables.XYZ.SOME_VALUE.eq("FOO")));
+     *                      }
+     *                    );
+     *                    }
+     *                    </pre>
+     * @param <U> the return type.
+     * @return the result of the transaction.
+     */
+    public <U> Future<U> transaction(Function<ReactiveClassicGenericQueryExecutor, Future<U>> transaction){
+        return beginTransaction()
+                .compose(queryExecutor -> transaction.apply(queryExecutor) //perform user tasks
+                        .compose(res -> queryExecutor.commit() //commit the transaction
+                                .map(v -> res))); //and return the result
     }
 }

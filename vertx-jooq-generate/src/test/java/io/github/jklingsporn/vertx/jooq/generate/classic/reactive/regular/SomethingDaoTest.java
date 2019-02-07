@@ -4,6 +4,7 @@ import generated.classic.reactive.regular.vertx.Tables;
 import generated.classic.reactive.regular.vertx.enums.Someenum;
 import generated.classic.reactive.regular.vertx.tables.daos.SomethingDao;
 import generated.classic.reactive.regular.vertx.tables.pojos.Something;
+import io.github.jklingsporn.vertx.jooq.classic.reactivepg.ReactiveClassicQueryExecutor;
 import io.github.jklingsporn.vertx.jooq.generate.PostgresConfigurationProvider;
 import io.github.jklingsporn.vertx.jooq.generate.ReactiveDatabaseClientProvider;
 import io.github.jklingsporn.vertx.jooq.generate.classic.ClassicTestBase;
@@ -106,6 +107,135 @@ public class SomethingDaoTest extends ClassicTestBase<Something, Integer, Long, 
                 .setHandler(countdownLatchHandler(latch))
         ;
         await(latch);
+    }
+
+    //for now the tests have to be located in this class as transactions are only supported by the reactive driver
+
+    @Test
+    public void manualTransactionProcessingShouldSucceed() throws InterruptedException {
+        Something pojo = createWithId();
+        CountDownLatch completionLatch = new CountDownLatch(1);
+        dao.queryExecutor().beginTransaction()
+                .compose(
+                        transactionQE -> transactionQE.execute(
+                                dslContext -> dslContext.insertInto(dao.getTable()).set(dslContext.newRecord(dao.getTable(), pojo))
+                        ).map(toVoid(
+                                        inserted -> Assert.assertEquals(1, inserted.intValue()))
+                        ).compose(
+                                v -> transactionQE.findOne(
+                                        dslContext -> dslContext.selectFrom(dao.getTable()).where(eqPrimaryKey(pojo.getSomeid()))
+                                )
+                        ).map(toVoid(Assert::assertNotNull))
+                                .compose(v -> dao.findOneById(pojo.getSomeid()))
+                                .map(toVoid(Assert::assertNull)) //not known outside of transaction
+                                .compose(v -> transactionQE.commit())
+                                .compose(v -> dao.findOneById(pojo.getSomeid())) //now known because we committed the transaction
+                                .map(toVoid(Assert::assertNotNull))
+                                .compose(v -> dao.deleteById(pojo.getSomeid()))
+                                .map(toVoid(deleted -> Assert.assertEquals(1, deleted.intValue()))))
+                .setHandler(countdownLatchHandler(completionLatch));
+        await(completionLatch);
+    }
+
+    @Test
+    public void beginTransactionCanNotBeCalledInTransaction(){
+        CountDownLatch latch = new CountDownLatch(1);
+        dao.queryExecutor()
+                .beginTransaction()
+                .compose(ReactiveClassicQueryExecutor::beginTransaction)
+                .otherwise(x -> {
+                    Assert.assertNotNull(x);
+                    Assert.assertEquals(IllegalStateException.class,x.getClass());
+                    return null;
+                }).setHandler(countdownLatchHandler(latch));
+        await(latch);
+    }
+
+    @Test
+    public void commitTransactionCanNotBeCalledOutsideTransaction(){
+        CountDownLatch latch = new CountDownLatch(1);
+        try{
+            dao.queryExecutor().commit();
+        }catch (IllegalStateException x){
+            latch.countDown();
+        }
+        await(latch);
+    }
+
+    @Test
+    public void rollbackTransactionCanNotBeCalledOutsideTransaction(){
+        CountDownLatch latch = new CountDownLatch(1);
+        try{
+            dao.queryExecutor().rollback();
+        }catch (IllegalStateException x){
+            latch.countDown();
+        }
+        await(latch);
+    }
+
+    @Test
+    public void illegalQueriesShouldRollbackTransaction() throws InterruptedException {
+        Something pojo = createWithId();
+        CountDownLatch completionLatch = new CountDownLatch(1);
+        dao.queryExecutor().beginTransaction()
+                .compose(
+                        transactionQE -> transactionQE.execute(
+                                dslContext -> dslContext.insertInto(dao.getTable()).set(dslContext.newRecord(dao.getTable(), pojo))
+                        ).map(toVoid(inserted -> Assert.assertEquals(1, inserted.intValue()))
+                        ).compose(
+                                //insert again to trigger an exception
+                                v -> transactionQE.execute(
+                                        dslContext -> dslContext.insertInto(dao.getTable()).set(dslContext.newRecord(dao.getTable(), pojo))
+                                ).otherwiseEmpty() //we know it failed, just recover from the exception
+                        ).compose(v -> dao.findOneById(pojo.getSomeid()))
+                                .map(toVoid(Assert::assertNull)) //not known because transaction was rolled back
+                                .compose(v -> transactionQE.commit()) //should throw error because the transaction was already rolled back
+                                .otherwise(x -> {
+                                    Assert.assertTrue("Wrong exception. Got: " + x.getMessage(), x.getMessage().contains("Transaction already completed"));
+                                    return null;
+                                })
+                ).setHandler(countdownLatchHandler(completionLatch));
+        await(completionLatch);
+    }
+
+    @Test
+    public void rollbackShouldNotExecuteTransactionalQueries() throws InterruptedException {
+        Something pojo = createWithId();
+        CountDownLatch completionLatch = new CountDownLatch(1);
+        dao.queryExecutor().beginTransaction()
+                .compose(transactionQE -> transactionQE.execute(dslContext -> dslContext.insertInto(dao.getTable()).set(dslContext.newRecord(dao.getTable(), pojo)))
+                                .map(toVoid(inserted -> Assert.assertEquals(1, inserted.intValue())))
+                                .compose(v -> transactionQE.rollback())
+                                .compose(v -> dao.findOneById(pojo.getSomeid()))
+                                .map(toVoid(Assert::assertNull))
+                ).setHandler(countdownLatchHandler(completionLatch));
+        await(completionLatch);
+    }
+
+    @Test
+    public void convenientTransactionShouldSucceed() throws InterruptedException {
+        Something pojo = createWithId();
+        CountDownLatch completionLatch = new CountDownLatch(1);
+        dao.queryExecutor().transaction(
+                transactionQE -> transactionQE.execute(
+                        dslContext -> dslContext.insertInto(dao.getTable()).set(dslContext.newRecord(dao.getTable(), pojo))
+                ).map(toVoid(
+                        inserted -> Assert.assertEquals(1, inserted.intValue()))
+                ).compose(
+                        v -> transactionQE.findOneRow(
+                                dslContext -> dslContext.selectFrom(dao.getTable()).where(eqPrimaryKey(pojo.getSomeid()))
+                        )
+                ).map(toVoid(Assert::assertNotNull))
+                        .compose(v -> dao.findOneById(pojo.getSomeid()))
+                        .map(toVoid(Assert::assertNull)) //not known outside of transaction
+        ) //implicitly commit the transaction
+                .compose(v -> dao.findOneById(pojo.getSomeid())) //now known because we committed the transaction
+                .map(toVoid(Assert::assertNotNull))
+                .compose(v -> dao.deleteById(pojo.getSomeid()))
+                .map(toVoid(deleted -> Assert.assertEquals(1, deleted.intValue())))
+                .setHandler(countdownLatchHandler(completionLatch)
+                );
+        await(completionLatch);
     }
 
 }

@@ -10,7 +10,6 @@ import io.reactiverse.pgclient.Row;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
-import io.vertx.core.impl.Arguments;
 import me.escoffier.vertx.completablefuture.VertxCompletableFuture;
 import org.jooq.*;
 import org.jooq.exception.TooManyRowsException;
@@ -77,7 +76,7 @@ public class ReactiveCompletableFutureGenericQueryExecutor extends AbstractReact
      * @param <U>
      * @return A handler which completes the given future.
      */
-    private static <U> Handler<AsyncResult<U>> createCompletionHandler(CompletableFuture<U> future) {
+    static <U> Handler<AsyncResult<U>> createCompletionHandler(CompletableFuture<U> future) {
         return h->{
             if(h.succeeded()){
                 future.complete(h.result());
@@ -103,7 +102,9 @@ public class ReactiveCompletableFutureGenericQueryExecutor extends AbstractReact
      * or <code>rollback</code> on the QueryExecutor returned.
      */
     public CompletableFuture<? extends ReactiveCompletableFutureGenericQueryExecutor> beginTransaction(){
-        Arguments.require(delegate instanceof PgPool, "Already in transaction");
+        if(delegate instanceof PgTransaction){
+            throw new IllegalStateException("Already in transaction");
+        }
         CompletableFuture<PgTransaction> transactionFuture = new VertxCompletableFuture<>(vertx);
         ((PgPool) delegate).begin(createCompletionHandler(transactionFuture));
         return transactionFuture.thenApply(newInstance());

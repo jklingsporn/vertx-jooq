@@ -45,7 +45,7 @@ public abstract class CompletableFutureTestBase<P,T,O, DAO extends GenericVertxD
     protected abstract void assertDuplicateKeyException(Throwable x);
 
 
-    protected void await(CountDownLatch latch) {
+    protected void await(CountDownLatch latch)  {
         try {
             if(!latch.await(3, TimeUnit.SECONDS)){
                 Assert.fail("latch not triggered");
