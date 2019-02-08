@@ -20,7 +20,7 @@ Transaction are now added onto the reactive variants of the `QueryExecutor`. The
 						.compose(v->transactionQE.commit() /*or .rollback()*/); //don't forget to commit your transaction
 				});
 		```
-	2. The "convenient mode"" is the best choice for most situations. It allows you to work in a transactional context that
+	2. The "convenient mode" is the best choice for most situations. It allows you to work in a transactional context that
 		automatically commits your work when you are done. You can also return a value from your transactional work.
 		```
 		Future<Void> transactionWork = dao.queryExecutor()
