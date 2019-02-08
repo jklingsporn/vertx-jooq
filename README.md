@@ -37,7 +37,7 @@ Transaction are now added onto the reactive variants of the `QueryExecutor`. The
 which was introduced in vertx 3.6.3 and will be the default implementation in the next releases.
 The API stays the same but the driver is written in Kotlin instead of Scala. Checkout the [migration guide](https://github.com/jasync-sql/jasync-sql/wiki/Mauricio-Driver-Migration)
 for more details.
-- Lastly, [some bugs have been fixed](https://github.com/jklingsporn/vertx-jooq/milestone/14).
+- Lastly, [some bugs have been fixed](https://github.com/jklingsporn/vertx-jooq/milestone/14?closed=1).
 
 ## new in version 4.x
 Fast, faster, reactive.
