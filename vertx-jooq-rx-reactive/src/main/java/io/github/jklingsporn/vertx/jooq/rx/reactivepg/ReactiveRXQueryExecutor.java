@@ -3,6 +3,7 @@ package io.github.jklingsporn.vertx.jooq.rx.reactivepg;
 import io.github.jklingsporn.vertx.jooq.shared.internal.QueryExecutor;
 import io.reactiverse.reactivex.pgclient.PgClient;
 import io.reactiverse.reactivex.pgclient.PgRowSet;
+import io.reactiverse.reactivex.pgclient.PgTransaction;
 import io.reactivex.Single;
 import org.jooq.*;
 import org.jooq.impl.DefaultConfiguration;
@@ -49,4 +50,14 @@ public class ReactiveRXQueryExecutor<R extends UpdatableRecord<R>,P,T> extends R
     }
 
 
+    @Override
+    protected io.reactivex.functions.Function<PgTransaction, ? extends ReactiveRXGenericQueryExecutor> newInstance() {
+        return transaction-> new ReactiveRXQueryExecutor<R,P,T>(configuration(),transaction,pojoMapper);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public Single<ReactiveRXQueryExecutor<R,P,T>> beginTransaction() {
+        return (Single<ReactiveRXQueryExecutor<R,P,T>>) super.beginTransaction();
+    }
 }

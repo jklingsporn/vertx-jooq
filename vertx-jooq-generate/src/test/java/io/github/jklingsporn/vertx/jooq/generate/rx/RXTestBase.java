@@ -46,9 +46,13 @@ public abstract class RXTestBase<P,T,O, DAO extends GenericVertxDAO<?,P, T, Sing
     protected abstract void assertDuplicateKeyException(Throwable x);
 
 
-    protected void await(CountDownLatch latch) throws InterruptedException {
-        if(!latch.await(3, TimeUnit.SECONDS)){
-            Assert.fail("latch not triggered");
+    protected void await(CountDownLatch latch)  {
+        try {
+            if(!latch.await(3, TimeUnit.SECONDS)){
+                Assert.fail("latch not triggered");
+            }
+        } catch (InterruptedException e) {
+            Assert.fail(e.getMessage());
         }
     }
 
@@ -165,7 +169,7 @@ public abstract class RXTestBase<P,T,O, DAO extends GenericVertxDAO<?,P, T, Sing
         insertFuture
                 .doOnSuccess(t->setId(something,t))
                 .flatMap(v -> dao.findOneByCondition(eqPrimaryKey(getId(something))))
-                .doOnSuccess(Assert::assertNotNull)
+                .doOnSuccess(this::optionalAssertNotNull)
                 .flatMap(v -> dao.deleteByCondition(eqPrimaryKey(getId(something))))
                 .subscribe(countdownLatchHandler(latch));
         await(latch);
@@ -303,6 +307,14 @@ public abstract class RXTestBase<P,T,O, DAO extends GenericVertxDAO<?,P, T, Sing
             Assert.assertNotNull(queryResult.get(index, field.getType()));
             Assert.assertNotNull(queryResult.get(field.getName(), field.getType()));
         }
+    }
+
+    protected <T> void optionalAssertNotNull(Optional<T> value){
+        Assert.assertTrue(value.isPresent());
+    }
+
+    protected <T> void optionalAssertNull(Optional<T> value){
+        Assert.assertFalse(value.isPresent());
     }
 
 }
