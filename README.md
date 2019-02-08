@@ -9,29 +9,29 @@ Transaction are now added onto the reactive variants of the `QueryExecutor`. The
 	1. The manual mode involves starting and manually committing or rolling back the transaction.
 		```
 		Future<Void> transactionWork = dao.queryExecutor()
-										.beginTransaction()
-										.compose(
-														transactionQE -> {
-																//only work on the "transactional" QueryExecutor returned by the beginTransaction() method
-																Future<Integer> insert1 = transactionQE.execute(dslContext -> dslContext.insertInto() ....;
-																Future<Integer> insert2 = transactionQE.execute(dslContext -> dslContext.insertInto() ....;
-																return CompositeFuture
-																	.all(insert1,insert2)
-																	.compose(v->transactionQE.commit() /*or .rollback()*/); //don't forget to commit your transaction
-														});
+			.beginTransaction()
+			.compose(
+				transactionQE -> {
+					//only work on the "transactional" QueryExecutor returned by the beginTransaction() method
+					Future<Integer> insert1 = transactionQE.execute(dslContext -> dslContext.insertInto() ....;
+					Future<Integer> insert2 = transactionQE.execute(dslContext -> dslContext.insertInto() ....;
+					return CompositeFuture
+						.all(insert1,insert2)
+						.compose(v->transactionQE.commit() /*or .rollback()*/); //don't forget to commit your transaction
+				});
 		```
 	2. The "convenient mode"" is the best choice for most situations. It allows you to work in a transactional context that
 		automatically commits your work when you are done. You can also return a value from your transactional work.
 		```
 		Future<Void> transactionWork = dao.queryExecutor()
-										.transaction(
-														transactionQE -> {
-																//only work on the "transactional" QueryExecutor returned by the transaction() method
-																Future<Integer> insert1 = transactionQE.execute(dslContext -> dslContext.insertInto() ....;
-																Future<Integer> insert2 = transactionQE.execute(dslContext -> dslContext.insertInto() ....;
-																return CompositeFuture.all(insert1,insert2);
-																//or return some result
-														});
+			.transaction(
+				transactionQE -> {
+					//only work on the "transactional" QueryExecutor returned by the transaction() method
+					Future<Integer> insert1 = transactionQE.execute(dslContext -> dslContext.insertInto() ....;
+					Future<Integer> insert2 = transactionQE.execute(dslContext -> dslContext.insertInto() ....;
+					return CompositeFuture.all(insert1,insert2);
+					//or return some result
+				});
 		```
 - Another important change was the [switch to a maintained fork of the async driver](https://github.com/jklingsporn/vertx-jooq/issues/91)
 which was introduced in vertx 3.6.3 and will be the default implementation in the next releases.
