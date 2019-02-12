@@ -287,19 +287,39 @@ public abstract class ClassicTestBase<P,T,O, DAO extends GenericVertxDAO<?,P, T,
         }
     }
 
-//    @Test
-//    public void queryExecutorWithLimitShouldReturnValues() throws InterruptedException {
-//        //https://github.com/jklingsporn/vertx-jooq/issues/61
-//        CountDownLatch latch = new CountDownLatch(1);
-//        O someO = createSomeO();
-//        Future<T> insertFuture1 = insertAndReturn(setSomeO(create(), someO));
-//        Future<T> insertFuture2 = insertAndReturn(setSomeO(create(), someO));
-//        CompositeFuture.all(insertFuture1, insertFuture2).
-//                compose(v -> queryExecutor().query(dslContext -> dslContext.selectFrom(otherfield.getTable()).limit(1))).
-//                map(toVoid(values -> Assert.assertEquals(1, values.asList().size()))).
-//                compose(v -> dao.deleteByCondition(otherfield.eq(someO))).
-//                setHandler(countdownLatchHandler(latch));
-//        await(latch);
-//    }
+    @Test
+    @SuppressWarnings("unchecked")
+    public void unifiedQueryExecutorNoResultShouldSucceed() throws InterruptedException {
+        Table<? extends UpdatableRecord<?>> table = ((AbstractVertxDAO) dao).getTable();
+        P pojo = createWithId();
+        CountDownLatch latch = new CountDownLatch(1);
+        queryExecutor()
+                .query(dslContext -> dslContext
+                        .selectFrom(table)
+                        .where(eqPrimaryKey(getId(pojo)))
+                        .limit(1))
+                .map(toVoid(queryResult -> {
+                    Assert.assertFalse(queryResult.hasResults());
+                    Field<?>[] fields = table.fieldsRow().fields();
+                    UpdatableRecord<?> record = DSL.using(new DefaultConfiguration()).newRecord(table, pojo);
+                    for (int i = 0; i < fields.length; i++) {
+                        boolean hasValidValue = record.get(fields[i]) != null;
+                        if (hasValidValue)
+                            assertQueryResultReturnsNull(fields[i], queryResult, i);
+                    }
+                }))
+                .setHandler(countdownLatchHandler(latch))
+        ;
+        await(latch);
+    }
+
+    private void assertQueryResultReturnsNull(Field<?> field, QueryResult queryResult, int index) {
+        Assert.assertNull(queryResult.get(field));
+        //can't guarantee correct conversion for get(String,Class<?>) and get(Integer,Class<?>)
+        if(field.getConverter().fromType().equals(field.getConverter().toType())){
+            Assert.assertNull(queryResult.get(index, field.getType()));
+            Assert.assertNull(queryResult.get(field.getName(), field.getType()));
+        }
+    }
 
 }

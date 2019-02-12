@@ -29,20 +29,23 @@ public class JDBCQueryResult implements QueryResult {
 
     @Override
     public <T> T get(Field<T> field) {
-        return result.getValue(0, field);
+        return result.isEmpty() ? null : result.getValue(0, field);
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T> T get(int index, Class<T> type) {
-        return (T) result.getValue(this.index,index);
+        return result.isEmpty() ? null : (T) result.getValue(this.index,index);
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T> T get(String columnName, Class<T> type) {
-        return (T)result.getValue(this.index,columnName);
+        return result.isEmpty() ? null : (T)result.getValue(this.index,columnName);
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T> T unwrap() {
         return (T) result;
     }

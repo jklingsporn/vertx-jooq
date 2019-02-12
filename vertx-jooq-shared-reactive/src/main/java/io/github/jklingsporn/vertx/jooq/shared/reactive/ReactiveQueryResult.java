@@ -21,7 +21,7 @@ public class ReactiveQueryResult implements QueryResult {
 
     public ReactiveQueryResult(PgRowSet result) {
         this.result = result;
-        this.current = result.iterator().next();
+        this.current = result.iterator().hasNext() ? result.iterator().next() : null;
     }
 
     private ReactiveQueryResult(Row row) {
