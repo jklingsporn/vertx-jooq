@@ -7,7 +7,7 @@ driver of your choice.
 - The main addition in this release is [transaction support for reactive modules](https://github.com/jklingsporn/vertx-jooq/issues/92).
 Transaction are now added onto the reactive variants of the `QueryExecutor`. There are two ways to work with transactions:
 	1. The manual mode involves starting and manually committing or rolling back the transaction.
-		```
+		```java
 		Future<Void> transactionWork = dao.queryExecutor()
 			.beginTransaction()
 			.compose(
@@ -22,7 +22,7 @@ Transaction are now added onto the reactive variants of the `QueryExecutor`. The
 		```
 	2. The "convenient mode" is the best choice for most situations. It allows you to work in a transactional context that
 		automatically commits your work when you are done. You can also return a value from your transactional work.
-		```
+		```java
 		Future<Void> transactionWork = dao.queryExecutor()
 			.transaction(
 				transactionQE -> {
@@ -46,7 +46,7 @@ Fast, faster, reactive.
 - A new `UnifiedQueryExecutor` interface that allows the execution of arbitrary jOOQ-SQL against an API with the
 same return value for all drivers! Currently there are three interfaces you can use: `ClassicQueryExecutor`,
 `CompletableFutureQueryExecutor` and `RXQueryExecutor`. The following is possible now:
-```
+```java
 //first, you decide to use the classic API using JDBC
 ClassicQueryExecutor queryExecutor = new JDBCClassicGenericQueryExecutor(configuration,vertx);
 Future<QueryResult> queryResult = queryExecutor.query(dslContext ->
@@ -78,7 +78,7 @@ queryResult.map(res -> {
 - Move away from `GeneratorStrategies` to generate DAOs: it was a misconception to use `GeneratorStrategies` to distinguish
 between the APIs, drivers and injection-support. Instead, there is now a Builder-API to create the `VertxGenerator` of your choice.
 This comes in handy if you configure your jOOQ code generator programmatically. Example:
-```
+```java
 VertxGenerator vertxGenerator = VertxGeneratorBuilder
 	.init()
 	.withClassicAPI()
@@ -128,7 +128,7 @@ When you made your choice, you can start to configure the code-generator. This c
 
 ## example
 Once the generator is set up, it will create DAOs like in the code snippet below (classic-API, JDBC, no dependency injection):
-```
+```java
 //Setup your jOOQ configuration
 Configuration configuration = ...
 
