@@ -5,18 +5,13 @@
     <parent>
         <artifactId>vertx-jooq</artifactId>
         <groupId>io.github.jklingsporn</groupId>
-        <version>4.1.1</version>
+        <version>4.2.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <packaging>jar</packaging>
     <artifactId>vertx-jooq-rx</artifactId>
 
     <dependencies>
-        <dependency>
-            <groupId>io.reactivex.rxjava2</groupId>
-            <artifactId>rxjava</artifactId>
-            <version>${rx.version}</version>
-        </dependency>
         <dependency>
             <groupId>io.vertx</groupId>
             <artifactId>vertx-rx-java2</artifactId>

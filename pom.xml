@@ -29,7 +29,6 @@
         <junit.version>4.12</junit.version>
         <guice.version>4.1.0</guice.version>
         <logback.version>1.1.3</logback.version>
-        <rx.version>2.1.3</rx.version>
         <mysql.driver.version>5.1.37</mysql.driver.version>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
@@ -39,7 +38,7 @@
         <reactivepg.client.version>0.11.2</reactivepg.client.version>
     </properties>
     <groupId>io.github.jklingsporn</groupId>
-    <version>4.1.1</version>
+    <version>4.2.0</version>
     <artifactId>vertx-jooq</artifactId>
     <name>${project.groupId}:${project.artifactId}</name>
     <description>A jOOQ-CodeGenerator to create vertxified DAOs and POJOs</description>
