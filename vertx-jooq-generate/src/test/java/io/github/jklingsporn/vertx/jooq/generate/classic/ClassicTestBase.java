@@ -17,6 +17,7 @@ import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
@@ -289,7 +290,7 @@ public abstract class ClassicTestBase<P,T,O, DAO extends GenericVertxDAO<?,P, T,
 
     @Test
     @SuppressWarnings("unchecked")
-    public void unifiedQueryExecutorNoResultShouldSucceed() throws InterruptedException {
+    public void unifiedQueryExecutorNoResultShouldThrowNSEException() throws InterruptedException {
         Table<? extends UpdatableRecord<?>> table = ((AbstractVertxDAO) dao).getTable();
         P pojo = createWithId();
         CountDownLatch latch = new CountDownLatch(1);
@@ -301,11 +302,25 @@ public abstract class ClassicTestBase<P,T,O, DAO extends GenericVertxDAO<?,P, T,
                 .map(toVoid(queryResult -> {
                     Assert.assertFalse(queryResult.hasResults());
                     Field<?>[] fields = table.fieldsRow().fields();
-                    UpdatableRecord<?> record = DSL.using(new DefaultConfiguration()).newRecord(table, pojo);
-                    for (int i = 0; i < fields.length; i++) {
-                        boolean hasValidValue = record.get(fields[i]) != null;
-                        if (hasValidValue)
-                            assertQueryResultReturnsNull(fields[i], queryResult, i);
+                    for (int i=0;i<fields.length;i++) {
+                        Field<?> field = fields[i];
+                        try {
+                            queryResult.get(field);
+                        } catch (NoSuchElementException e) {
+                            //ok
+                        }
+                        try {
+                            queryResult.get(field.getName(), field.getType());
+                        } catch (NoSuchElementException e) {
+                            //ok
+                        }
+                        try {
+                            queryResult.get(i, field.getType());
+                        } catch (NoSuchElementException e) {
+                            //ok
+                            continue;
+                        }
+                        Assert.fail("Expected NoSuchElementException");
                     }
                 }))
                 .setHandler(countdownLatchHandler(latch))
@@ -313,13 +328,6 @@ public abstract class ClassicTestBase<P,T,O, DAO extends GenericVertxDAO<?,P, T,
         await(latch);
     }
 
-    private void assertQueryResultReturnsNull(Field<?> field, QueryResult queryResult, int index) {
-        Assert.assertNull(queryResult.get(field));
-        //can't guarantee correct conversion for get(String,Class<?>) and get(Integer,Class<?>)
-        if(field.getConverter().fromType().equals(field.getConverter().toType())){
-            Assert.assertNull(queryResult.get(index, field.getType()));
-            Assert.assertNull(queryResult.get(field.getName(), field.getType()));
-        }
-    }
+
 
 }

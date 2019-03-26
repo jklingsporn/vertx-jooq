@@ -8,30 +8,18 @@ import generated.cf.jdbc.guice.vertx.Indexes;
 import generated.cf.jdbc.guice.vertx.Keys;
 import generated.cf.jdbc.guice.vertx.Vertx;
 import generated.cf.jdbc.guice.vertx.tables.records.SomethingRecord;
-
 import io.github.jklingsporn.vertx.jooq.shared.JsonArrayConverter;
 import io.github.jklingsporn.vertx.jooq.shared.JsonObjectConverter;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+import org.jooq.*;
+import org.jooq.impl.DSL;
+import org.jooq.impl.TableImpl;
 
+import javax.annotation.Generated;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-
-import javax.annotation.Generated;
-
-import org.jooq.Field;
-import org.jooq.ForeignKey;
-import org.jooq.Identity;
-import org.jooq.Index;
-import org.jooq.Name;
-import org.jooq.Record;
-import org.jooq.Schema;
-import org.jooq.Table;
-import org.jooq.TableField;
-import org.jooq.UniqueKey;
-import org.jooq.impl.DSL;
-import org.jooq.impl.TableImpl;
 
 
 /**
@@ -47,7 +35,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Something extends TableImpl<SomethingRecord> {
 
-    private static final long serialVersionUID = -1408590502;
+    private static final long serialVersionUID = 62780847;
 
     /**
      * The reference instance of <code>VERTX.SOMETHING</code>
@@ -158,7 +146,7 @@ public class Something extends TableImpl<SomethingRecord> {
      */
     @Override
     public List<Index> getIndexes() {
-        return Arrays.<Index>asList(Indexes.SYS_IDX_SYS_PK_10244_10246);
+        return Arrays.<Index>asList(Indexes.SYS_IDX_SYS_PK_10248_10250);
     }
 
     /**
@@ -174,7 +162,7 @@ public class Something extends TableImpl<SomethingRecord> {
      */
     @Override
     public UniqueKey<SomethingRecord> getPrimaryKey() {
-        return Keys.SYS_PK_10244;
+        return Keys.SYS_PK_10248;
     }
 
     /**
@@ -182,7 +170,7 @@ public class Something extends TableImpl<SomethingRecord> {
      */
     @Override
     public List<UniqueKey<SomethingRecord>> getKeys() {
-        return Arrays.<UniqueKey<SomethingRecord>>asList(Keys.SYS_PK_10244);
+        return Arrays.<UniqueKey<SomethingRecord>>asList(Keys.SYS_PK_10248);
     }
 
     /**

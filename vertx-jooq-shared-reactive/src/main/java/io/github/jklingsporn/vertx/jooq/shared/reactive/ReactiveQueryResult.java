@@ -1,5 +1,6 @@
 package io.github.jklingsporn.vertx.jooq.shared.reactive;
 
+import io.github.jklingsporn.vertx.jooq.shared.internal.AbstractQueryResult;
 import io.github.jklingsporn.vertx.jooq.shared.internal.QueryResult;
 import io.reactiverse.pgclient.PgRowSet;
 import io.reactiverse.pgclient.Row;
@@ -14,7 +15,7 @@ import java.util.stream.StreamSupport;
 /**
  * @author jensklingsporn
  */
-public class ReactiveQueryResult implements QueryResult {
+public class ReactiveQueryResult extends AbstractQueryResult{
 
     private final Row current;
     private final PgRowSet result;
@@ -31,17 +32,17 @@ public class ReactiveQueryResult implements QueryResult {
 
     @Override
     public <T> T get(Field<T> field) {
-        return Convert.convert(current.getValue(field.getName()), field.getConverter());
+        return supplyOrThrow(()->Convert.convert(current.getValue(field.getName()), field.getConverter()));
     }
 
     @Override
     public <T> T get(int index, Class<T> type) {
-        return Convert.convert(current.getValue(index), type);
+        return supplyOrThrow(()->Convert.convert(current.getValue(index), type));
     }
 
     @Override
     public <T> T get(String columnName, Class<T> type) {
-        return Convert.convert(current.getValue(columnName), type);
+        return supplyOrThrow(()->Convert.convert(current.getValue(columnName), type));
     }
 
     @Override
