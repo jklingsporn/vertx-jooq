@@ -290,7 +290,7 @@ public abstract class VertxGenerator extends JavaGenerator {
             }
             out.tab(2).println("} catch (java.lang.ClassCastException e) {");
             out.tab(3).println("String msg = e.getMessage().replaceAll(\"\\\\w+\\\\.\",\"\").toLowerCase();");
-            out.tab(3).println("throw new ClassCastException(\"Invalid type for field '\" + %s + \"': \" + msg);");
+            out.tab(3).println("throw new ClassCastException(\"Invalid type for field '\" + %s + \"': \" + msg);", javaMemberName);
             out.tab(2).println("}");
         }
         out.tab(2).println("return this;");
