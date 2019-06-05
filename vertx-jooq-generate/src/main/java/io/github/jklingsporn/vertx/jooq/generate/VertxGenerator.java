@@ -288,9 +288,9 @@ public abstract class VertxGenerator extends JavaGenerator {
                 logger.warn(String.format("Omitting unrecognized type %s for column %s in table %s!",columnType,column.getName(),table.getName()));
                 out.tab(3).println(String.format("// Omitting unrecognized type %s for column %s!",columnType,column.getName()));
             }
+            out.ref("io.github.jklingsporn.vertx.jooq.shared.UnexpectedJsonValueType");
             out.tab(2).println("} catch (java.lang.ClassCastException e) {");
-            out.tab(3).println("String msg = e.getMessage().replaceAll(\"\\\\w+\\\\.\",\"\").toLowerCase().split(\"(\")[0].trim();");
-            out.tab(3).println("throw new ClassCastException(\"Invalid type for field '%s': \" + msg);", javaMemberName);
+            out.tab(3).println("throw new UnexpectedJsonValueType(\"%s\",\"%s\",e);", javaMemberName, columnType);
             out.tab(2).println("}");
         }
         out.tab(2).println("return this;");
