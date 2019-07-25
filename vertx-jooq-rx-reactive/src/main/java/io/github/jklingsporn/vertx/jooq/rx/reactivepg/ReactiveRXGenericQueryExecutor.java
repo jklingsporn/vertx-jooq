@@ -5,10 +5,12 @@ import io.github.jklingsporn.vertx.jooq.shared.internal.QueryResult;
 import io.github.jklingsporn.vertx.jooq.shared.reactive.AbstractReactiveQueryExecutor;
 import io.github.jklingsporn.vertx.jooq.shared.reactive.ReactiveQueryExecutor;
 import io.github.jklingsporn.vertx.jooq.shared.reactive.ReactiveQueryResult;
-import io.reactiverse.reactivex.pgclient.*;
 import io.reactivex.Completable;
 import io.reactivex.Maybe;
 import io.reactivex.Single;
+import io.vertx.reactivex.sqlclient.*;
+import io.vertx.reactivex.sqlclient.Transaction;
+import io.vertx.sqlclient.Row;
 import org.jooq.*;
 import org.jooq.exception.TooManyRowsException;
 
@@ -22,20 +24,20 @@ import java.util.stream.StreamSupport;
 /**
  * Created by jensklingsporn on 01.03.18.
  */
-public class ReactiveRXGenericQueryExecutor extends AbstractReactiveQueryExecutor implements ReactiveQueryExecutor<Single<List<io.reactiverse.pgclient.Row>>,Single<Optional<io.reactiverse.pgclient.Row>>,Single<Integer>>, RXQueryExecutor {
+public class ReactiveRXGenericQueryExecutor extends AbstractReactiveQueryExecutor implements ReactiveQueryExecutor<Single<List<Row>>,Single<Optional<Row>>,Single<Integer>>, RXQueryExecutor {
 
-    protected final PgClient delegate;
+    protected final SqlClient delegate;
 
-    public ReactiveRXGenericQueryExecutor(Configuration configuration, PgClient delegate) {
+    public ReactiveRXGenericQueryExecutor(Configuration configuration, SqlClient delegate) {
         super(configuration);
         this.delegate = delegate;
     }
 
     @Override
-    public <Q extends Record> Single<List<io.reactiverse.pgclient.Row>> findManyRow(Function<DSLContext, ? extends ResultQuery<Q>> queryFunction) {
+    public <Q extends Record> Single<List<Row>> findManyRow(Function<DSLContext, ? extends ResultQuery<Q>> queryFunction) {
         Query query = createQuery(queryFunction);
         log(query);
-        Single<PgRowSet> rowSingle  = delegate.rxPreparedQuery(toPreparedQuery(query), rxGetBindValues(query));
+        Single<RowSet> rowSingle  = delegate.rxPreparedQuery(toPreparedQuery(query), rxGetBindValues(query));
         return rowSingle.map(res ->
                 StreamSupport
                 .stream(res.getDelegate().spliterator(), false)
@@ -43,10 +45,10 @@ public class ReactiveRXGenericQueryExecutor extends AbstractReactiveQueryExecuto
     }
 
     @Override
-    public <Q extends Record> Single<Optional<io.reactiverse.pgclient.Row>> findOneRow(Function<DSLContext, ? extends ResultQuery<Q>> queryFunction) {
+    public <Q extends Record> Single<Optional<Row>> findOneRow(Function<DSLContext, ? extends ResultQuery<Q>> queryFunction) {
         Query query = createQuery(queryFunction);
         log(query);
-        Single<PgRowSet> rowSingle = delegate.rxPreparedQuery(toPreparedQuery(query), rxGetBindValues(query));
+        Single<RowSet> rowSingle = delegate.rxPreparedQuery(toPreparedQuery(query), rxGetBindValues(query));
         return rowSingle.map(res-> {
             switch (res.size()) {
                 case 0: return Optional.empty();
@@ -60,8 +62,8 @@ public class ReactiveRXGenericQueryExecutor extends AbstractReactiveQueryExecuto
     public Single<Integer> execute(Function<DSLContext, ? extends Query> queryFunction) {
         Query query = createQuery(queryFunction);
         log(query);
-        Single<PgRowSet> rowSingle = delegate.rxPreparedQuery(toPreparedQuery(query), rxGetBindValues(query));
-        return rowSingle.map(PgResult::rowCount);
+        Single<RowSet> rowSingle = delegate.rxPreparedQuery(toPreparedQuery(query), rxGetBindValues(query));
+        return rowSingle.map(SqlResult::rowCount);
     }
 
     protected Tuple rxGetBindValues(Query query) {
@@ -80,7 +82,7 @@ public class ReactiveRXGenericQueryExecutor extends AbstractReactiveQueryExecuto
     public <R extends Record> Single<QueryResult> query(Function<DSLContext, ? extends ResultQuery<R>> queryFunction) {
         Query query = createQuery(queryFunction);
         log(query);
-        Single<PgRowSet> rowSingle  = delegate.rxPreparedQuery(toPreparedQuery(query), rxGetBindValues(query));
+        Single<RowSet> rowSingle  = delegate.rxPreparedQuery(toPreparedQuery(query), rxGetBindValues(query));
         return rowSingle.map(res -> new ReactiveQueryResult(res.getDelegate()));
     }
 
@@ -90,13 +92,13 @@ public class ReactiveRXGenericQueryExecutor extends AbstractReactiveQueryExecuto
      * or <code>rollback</code> on the QueryExecutor returned.
      */
     public Single<? extends ReactiveRXGenericQueryExecutor> beginTransaction(){
-        if(delegate instanceof PgTransaction){
+        if(delegate instanceof Transaction){
             throw new IllegalStateException("Already in transaction");
         }
-        return ((PgPool) delegate).rxBegin().map(newInstance());
+        return ((Pool) delegate).rxBegin().map(newInstance());
     }
 
-    protected io.reactivex.functions.Function<PgTransaction, ? extends ReactiveRXGenericQueryExecutor> newInstance() {
+    protected io.reactivex.functions.Function<Transaction, ? extends ReactiveRXGenericQueryExecutor> newInstance() {
         return transaction -> new ReactiveRXGenericQueryExecutor(configuration(),transaction);
     }
 
@@ -106,10 +108,10 @@ public class ReactiveRXGenericQueryExecutor extends AbstractReactiveQueryExecuto
      * @throws IllegalStateException if not called <code>beginTransaction</code> before.
      */
     public Completable commit(){
-        if(!(delegate instanceof PgTransaction)){
+        if(!(delegate instanceof Transaction)){
             throw new IllegalStateException("Not in transaction");
         }
-        return ((PgTransaction) delegate).rxCommit();
+        return ((Transaction) delegate).rxCommit();
     }
 
     /**
@@ -118,10 +120,10 @@ public class ReactiveRXGenericQueryExecutor extends AbstractReactiveQueryExecuto
      * @throws IllegalStateException if not called <code>beginTransaction</code> before.
      */
     public Completable rollback(){
-        if(!(delegate instanceof PgTransaction)){
+        if(!(delegate instanceof Transaction)){
             throw new IllegalStateException("Not in transaction");
         }
-        return ((PgTransaction) delegate).rxRollback();
+        return ((Transaction) delegate).rxRollback();
     }
 
     /**

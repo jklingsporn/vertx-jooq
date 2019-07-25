@@ -5,10 +5,7 @@ import io.github.jklingsporn.vertx.jooq.shared.internal.AbstractQueryExecutor;
 import io.github.jklingsporn.vertx.jooq.shared.internal.QueryResult;
 import io.github.jklingsporn.vertx.jooq.shared.internal.jdbc.JDBCQueryResult;
 import io.github.jklingsporn.vertx.jooq.shared.internal.jdbc.JDBCQueryExecutor;
-import io.vertx.core.AsyncResult;
-import io.vertx.core.Future;
-import io.vertx.core.Handler;
-import io.vertx.core.Vertx;
+import io.vertx.core.*;
 import me.escoffier.vertx.completablefuture.VertxCompletableFuture;
 import org.jooq.*;
 import org.jooq.impl.DSL;
@@ -38,7 +35,7 @@ public class JDBCCompletableFutureGenericQueryExecutor extends AbstractQueryExec
      * @param <U>
      * @return a CompletableFuture that is completed when the blocking code has been executed by Vertx.
      */
-    <U> CompletableFuture<U> executeBlocking(Handler<Future<U>> blockingCodeHandler){
+    <U> CompletableFuture<U> executeBlocking(Handler<Promise<U>> blockingCodeHandler){
         VertxCompletableFuture<U> future = new VertxCompletableFuture<>(vertx);
         vertx.executeBlocking(blockingCodeHandler, createCompletionHandler(future));
         return future;

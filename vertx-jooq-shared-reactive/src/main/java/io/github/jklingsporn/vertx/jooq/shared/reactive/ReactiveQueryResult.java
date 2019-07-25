@@ -1,8 +1,8 @@
 package io.github.jklingsporn.vertx.jooq.shared.reactive;
 
 import io.github.jklingsporn.vertx.jooq.shared.internal.QueryResult;
-import io.reactiverse.pgclient.PgRowSet;
-import io.reactiverse.pgclient.Row;
+import io.vertx.sqlclient.Row;
+import io.vertx.sqlclient.RowSet;
 import org.jooq.Field;
 import org.jooq.tools.Convert;
 
@@ -17,9 +17,9 @@ import java.util.stream.StreamSupport;
 public class ReactiveQueryResult implements QueryResult {
 
     private final Row current;
-    private final PgRowSet result;
+    private final RowSet result;
 
-    public ReactiveQueryResult(PgRowSet result) {
+    public ReactiveQueryResult(RowSet result) {
         this.result = result;
         this.current = result.iterator().next();
     }

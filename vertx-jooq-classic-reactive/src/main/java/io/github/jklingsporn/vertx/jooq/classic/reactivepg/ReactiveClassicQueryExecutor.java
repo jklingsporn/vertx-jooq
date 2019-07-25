@@ -1,11 +1,12 @@
 package io.github.jklingsporn.vertx.jooq.classic.reactivepg;
 
 import io.github.jklingsporn.vertx.jooq.shared.internal.QueryExecutor;
-import io.reactiverse.pgclient.PgClient;
-import io.reactiverse.pgclient.PgRowSet;
-import io.reactiverse.pgclient.PgTransaction;
-import io.reactiverse.pgclient.Row;
 import io.vertx.core.Future;
+import io.vertx.core.Promise;
+import io.vertx.sqlclient.RowSet;
+import io.vertx.sqlclient.Row;
+import io.vertx.sqlclient.SqlClient;
+import io.vertx.sqlclient.Transaction;
 import org.jooq.*;
 
 import java.util.List;
@@ -19,7 +20,7 @@ public class ReactiveClassicQueryExecutor<R extends UpdatableRecord<R>,P,T> exte
 
     private final Function<Row,P> pojoMapper;
 
-    public ReactiveClassicQueryExecutor(Configuration configuration, PgClient delegate, Function<Row, P> pojoMapper) {
+    public ReactiveClassicQueryExecutor(Configuration configuration, SqlClient delegate, Function<Row, P> pojoMapper) {
         super(configuration, delegate);
         this.pojoMapper = pojoMapper;
     }
@@ -38,9 +39,10 @@ public class ReactiveClassicQueryExecutor<R extends UpdatableRecord<R>,P,T> exte
     public Future<T> insertReturning(Function<DSLContext, ? extends InsertResultStep<R>> queryFunction, Function<Object, T> keyMapper) {
         Query query = createQuery(queryFunction);
         log(query);
-        Future<PgRowSet> rowFuture = io.vertx.core.Future.future();
-        delegate.preparedQuery(toPreparedQuery(query),getBindValues(query),rowFuture);
-        return rowFuture
+        Promise<RowSet> rowPromise = io.vertx.core.Promise.promise();
+        delegate.preparedQuery(toPreparedQuery(query),getBindValues(query),rowPromise);
+        return rowPromise
+                .future()
                 .map(rows -> rows.iterator().next())
                 .map(keyMapper::apply);
     }
@@ -52,7 +54,7 @@ public class ReactiveClassicQueryExecutor<R extends UpdatableRecord<R>,P,T> exte
     }
 
     @Override
-    protected Function<PgTransaction, ReactiveClassicQueryExecutor<R,P,T>> newInstance() {
+    protected Function<Transaction, ReactiveClassicQueryExecutor<R,P,T>> newInstance() {
         return pgTransaction -> new ReactiveClassicQueryExecutor<R, P, T>(configuration(),pgTransaction,pojoMapper);
     }
 

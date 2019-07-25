@@ -5,11 +5,12 @@ import io.github.jklingsporn.vertx.jooq.shared.internal.QueryResult;
 import io.github.jklingsporn.vertx.jooq.shared.reactive.AbstractReactiveQueryExecutor;
 import io.github.jklingsporn.vertx.jooq.shared.reactive.ReactiveQueryExecutor;
 import io.github.jklingsporn.vertx.jooq.shared.reactive.ReactiveQueryResult;
-import io.reactiverse.pgclient.*;
-import io.reactiverse.pgclient.Row;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
+import io.vertx.sqlclient.*;
+import io.vertx.sqlclient.Row;
+import io.vertx.sqlclient.Transaction;
 import me.escoffier.vertx.completablefuture.VertxCompletableFuture;
 import org.jooq.*;
 import org.jooq.exception.TooManyRowsException;
@@ -25,20 +26,20 @@ import java.util.stream.StreamSupport;
  */
 public class ReactiveCompletableFutureGenericQueryExecutor extends AbstractReactiveQueryExecutor implements ReactiveQueryExecutor<CompletableFuture<List<Row>>,CompletableFuture<Row>,CompletableFuture<Integer>>, CompletableFutureQueryExecutor {
 
-    protected final PgClient delegate;
+    protected final SqlClient delegate;
     protected final Vertx vertx;
 
-    public ReactiveCompletableFutureGenericQueryExecutor(Configuration configuration, PgClient delegate,  Vertx vertx) {
+    public ReactiveCompletableFutureGenericQueryExecutor(Configuration configuration, SqlClient delegate,  Vertx vertx) {
         super(configuration);
         this.delegate = delegate;
         this.vertx = vertx;
     }
 
     @Override
-    public <Q extends Record> CompletableFuture<List<Row>> findManyRow(Function<DSLContext, ? extends ResultQuery<Q>> queryFunction) {
+    public <Q extends Record> CompletableFuture<List<io.vertx.sqlclient.Row>> findManyRow(Function<DSLContext, ? extends ResultQuery<Q>> queryFunction) {
         Query query = createQuery(queryFunction);
         log(query);
-        CompletableFuture<PgRowSet> rowFuture = new VertxCompletableFuture<>(vertx);
+        CompletableFuture<RowSet> rowFuture = new VertxCompletableFuture<>(vertx);
         delegate.preparedQuery(toPreparedQuery(query),getBindValues(query),createCompletionHandler(rowFuture));
         return rowFuture.thenApply(res-> StreamSupport
                 .stream(res.spliterator(),false)
@@ -49,7 +50,7 @@ public class ReactiveCompletableFutureGenericQueryExecutor extends AbstractReact
     public <Q extends Record> CompletableFuture<Row> findOneRow(Function<DSLContext, ? extends ResultQuery<Q>> queryFunction) {
         Query query = createQuery(queryFunction);
         log(query);
-        CompletableFuture<PgRowSet> rowFuture = new VertxCompletableFuture<>(vertx);
+        CompletableFuture<RowSet> rowFuture = new VertxCompletableFuture<>(vertx);
         delegate.preparedQuery(toPreparedQuery(query),getBindValues(query),createCompletionHandler(rowFuture));
         return rowFuture.thenApply(res-> {
             switch (res.size()) {
@@ -65,9 +66,9 @@ public class ReactiveCompletableFutureGenericQueryExecutor extends AbstractReact
     public CompletableFuture<Integer> execute(Function<DSLContext, ? extends Query> queryFunction) {
         Query query = createQuery(queryFunction);
         log(query);
-        CompletableFuture<PgRowSet> rowFuture = new VertxCompletableFuture<>(vertx);
+        CompletableFuture<RowSet> rowFuture = new VertxCompletableFuture<>(vertx);
         delegate.preparedQuery(toPreparedQuery(query),getBindValues(query),createCompletionHandler(rowFuture));
-        return rowFuture.thenApply(PgResult::rowCount);
+        return rowFuture.thenApply(SqlResult::rowCount);
     }
 
 
@@ -90,7 +91,7 @@ public class ReactiveCompletableFutureGenericQueryExecutor extends AbstractReact
     public <R extends Record> CompletableFuture<QueryResult> query(Function<DSLContext, ? extends ResultQuery<R>> queryFunction) {
         Query query = createQuery(queryFunction);
         log(query);
-        CompletableFuture<PgRowSet> rowFuture = new VertxCompletableFuture<>(vertx);
+        CompletableFuture<RowSet> rowFuture = new VertxCompletableFuture<>(vertx);
         delegate.preparedQuery(toPreparedQuery(query),getBindValues(query),createCompletionHandler(rowFuture));
         return rowFuture.thenApply(ReactiveQueryResult::new);
     }
@@ -102,15 +103,15 @@ public class ReactiveCompletableFutureGenericQueryExecutor extends AbstractReact
      * or <code>rollback</code> on the QueryExecutor returned.
      */
     public CompletableFuture<? extends ReactiveCompletableFutureGenericQueryExecutor> beginTransaction(){
-        if(delegate instanceof PgTransaction){
+        if(delegate instanceof Transaction){
             throw new IllegalStateException("Already in transaction");
         }
-        CompletableFuture<PgTransaction> transactionFuture = new VertxCompletableFuture<>(vertx);
-        ((PgPool) delegate).begin(createCompletionHandler(transactionFuture));
+        CompletableFuture<Transaction> transactionFuture = new VertxCompletableFuture<>(vertx);
+        ((Pool) delegate).begin(createCompletionHandler(transactionFuture));
         return transactionFuture.thenApply(newInstance());
     }
 
-    protected Function<PgTransaction, ? extends ReactiveCompletableFutureGenericQueryExecutor> newInstance() {
+    protected Function<Transaction, ? extends ReactiveCompletableFutureGenericQueryExecutor> newInstance() {
         return transaction -> new ReactiveCompletableFutureGenericQueryExecutor(configuration(),transaction,vertx);
     }
 
@@ -120,11 +121,11 @@ public class ReactiveCompletableFutureGenericQueryExecutor extends AbstractReact
      * @throws IllegalStateException if not called <code>beginTransaction</code> before.
      */
     public CompletableFuture<Void> commit(){
-        if(!(delegate instanceof PgTransaction)){
+        if(!(delegate instanceof Transaction)){
             throw new IllegalStateException("Not in transaction");
         }
         CompletableFuture<Void> commit = new VertxCompletableFuture<>(vertx);
-        ((PgTransaction) delegate).commit(createCompletionHandler(commit));
+        ((Transaction) delegate).commit(createCompletionHandler(commit));
         return commit;
     }
 
@@ -134,11 +135,11 @@ public class ReactiveCompletableFutureGenericQueryExecutor extends AbstractReact
      * @throws IllegalStateException if not called <code>beginTransaction</code> before.
      */
     public CompletableFuture<Void> rollback(){
-        if(!(delegate instanceof PgTransaction)){
+        if(!(delegate instanceof Transaction)){
             throw new IllegalStateException("Not in transaction");
         }
         CompletableFuture<Void> commit = new VertxCompletableFuture<>(vertx);
-        ((PgTransaction) delegate).rollback(createCompletionHandler(commit));
+        ((Transaction) delegate).rollback(createCompletionHandler(commit));
         return commit;
     }
 

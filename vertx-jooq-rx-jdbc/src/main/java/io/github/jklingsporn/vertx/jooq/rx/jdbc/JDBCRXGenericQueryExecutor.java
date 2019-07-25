@@ -8,6 +8,7 @@ import io.github.jklingsporn.vertx.jooq.shared.internal.jdbc.JDBCQueryExecutor;
 import io.reactivex.Single;
 import io.vertx.core.Handler;
 import io.vertx.reactivex.core.Future;
+import io.vertx.reactivex.core.Promise;
 import io.vertx.reactivex.core.Vertx;
 import org.jooq.*;
 import org.jooq.impl.DSL;
@@ -31,7 +32,7 @@ public class JDBCRXGenericQueryExecutor extends AbstractQueryExecutor implements
         return executeBlocking(h -> h.complete(function.apply(DSL.using(configuration()))));
     }
 
-    <X> Single<X> executeBlocking(Handler<Future<X>> blockingCodeHandler) {
+    <X> Single<X> executeBlocking(Handler<Promise<X>> blockingCodeHandler) {
         return RXTool.executeBlocking(blockingCodeHandler, vertx);
     }
 

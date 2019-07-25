@@ -1,11 +1,11 @@
 package io.github.jklingsporn.vertx.jooq.completablefuture.reactivepg;
 
 import io.github.jklingsporn.vertx.jooq.shared.internal.QueryExecutor;
-import io.reactiverse.pgclient.PgClient;
-import io.reactiverse.pgclient.PgRowSet;
-import io.reactiverse.pgclient.PgTransaction;
-import io.reactiverse.pgclient.Row;
 import io.vertx.core.Vertx;
+import io.vertx.sqlclient.RowSet;
+import io.vertx.sqlclient.SqlClient;
+import io.vertx.sqlclient.Row;
+import io.vertx.sqlclient.Transaction;
 import me.escoffier.vertx.completablefuture.VertxCompletableFuture;
 import org.jooq.*;
 import org.jooq.impl.DefaultConfiguration;
@@ -22,11 +22,11 @@ public class ReactiveCompletableFutureQueryExecutor<R extends UpdatableRecord<R>
 
     private final Function<Row,P> pojoMapper;
 
-    public ReactiveCompletableFutureQueryExecutor(PgClient delegate, Function<Row, P> pojoMapper, Vertx vertx) {
+    public ReactiveCompletableFutureQueryExecutor(SqlClient delegate, Function<Row, P> pojoMapper, Vertx vertx) {
         this(new DefaultConfiguration().set(SQLDialect.POSTGRES),delegate, pojoMapper, vertx);
     }
 
-    public ReactiveCompletableFutureQueryExecutor(Configuration configuration, PgClient delegate, Function<Row, P> pojoMapper, Vertx vertx) {
+    public ReactiveCompletableFutureQueryExecutor(Configuration configuration, SqlClient delegate, Function<Row, P> pojoMapper, Vertx vertx) {
         super(configuration, delegate,vertx);
         this.pojoMapper = pojoMapper;
     }
@@ -45,7 +45,7 @@ public class ReactiveCompletableFutureQueryExecutor<R extends UpdatableRecord<R>
     public CompletableFuture<T> insertReturning(Function<DSLContext, ? extends InsertResultStep<R>> queryFunction, Function<Object, T> keyMapper) {
         Query query = createQuery(queryFunction);
         log(query);
-        CompletableFuture<PgRowSet> rowFuture = new VertxCompletableFuture<>(vertx);
+        CompletableFuture<RowSet> rowFuture = new VertxCompletableFuture<>(vertx);
         delegate.preparedQuery(toPreparedQuery(query),getBindValues(query),createCompletionHandler(rowFuture));
         return rowFuture
                 .thenApply(rows -> rows.iterator().next())
@@ -59,7 +59,7 @@ public class ReactiveCompletableFutureQueryExecutor<R extends UpdatableRecord<R>
     }
 
     @Override
-    protected Function<PgTransaction, ReactiveCompletableFutureQueryExecutor<R,P,T>> newInstance() {
+    protected Function<Transaction, ReactiveCompletableFutureQueryExecutor<R,P,T>> newInstance() {
         return pgTransaction -> new ReactiveCompletableFutureQueryExecutor<R, P, T>(configuration(),pgTransaction,pojoMapper,vertx);
     }
 

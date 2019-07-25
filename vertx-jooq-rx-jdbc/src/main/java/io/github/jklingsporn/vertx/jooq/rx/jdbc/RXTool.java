@@ -2,6 +2,7 @@ package io.github.jklingsporn.vertx.jooq.rx.jdbc;
 
 import io.vertx.core.Handler;
 import io.vertx.reactivex.core.Future;
+import io.vertx.reactivex.core.Promise;
 import io.vertx.reactivex.core.Vertx;
 import io.reactivex.Observable;
 import io.reactivex.Single;
@@ -16,12 +17,12 @@ public class RXTool {
     }
 
 
-    public static <T> Single<T> executeBlocking(Handler<Future<T>> blockingCodeHandler, Vertx
+    public static <T> Single<T> executeBlocking(Handler<Promise<T>> blockingCodeHandler, Vertx
         vertx) {
         return vertx.rxExecuteBlocking(blockingCodeHandler).toSingle();
     }
 
-    public static <T> Observable<T> executeBlockingObservable(Handler<Future<List<T>>> blockingCodeHandler, Vertx
+    public static <T> Observable<T> executeBlockingObservable(Handler<Promise<List<T>>> blockingCodeHandler, Vertx
         vertx) {
         return executeBlocking(blockingCodeHandler,vertx)
                 .flatMapObservable(Observable::fromIterable);

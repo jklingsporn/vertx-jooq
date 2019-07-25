@@ -5,9 +5,10 @@ import io.github.jklingsporn.vertx.jooq.shared.internal.QueryResult;
 import io.github.jklingsporn.vertx.jooq.shared.reactive.AbstractReactiveQueryExecutor;
 import io.github.jklingsporn.vertx.jooq.shared.reactive.ReactiveQueryExecutor;
 import io.github.jklingsporn.vertx.jooq.shared.reactive.ReactiveQueryResult;
-import io.reactiverse.pgclient.*;
-import io.reactiverse.pgclient.Row;
+import io.vertx.sqlclient.*;
 import io.vertx.core.Future;
+import io.vertx.sqlclient.Row;
+import io.vertx.sqlclient.Transaction;
 import org.jooq.*;
 import org.jooq.exception.TooManyRowsException;
 
@@ -21,9 +22,9 @@ import java.util.stream.StreamSupport;
  */
 public class ReactiveClassicGenericQueryExecutor extends AbstractReactiveQueryExecutor implements ReactiveQueryExecutor<Future<List<Row>>,Future<Row>,Future<Integer>>,ClassicQueryExecutor {
 
-    protected final PgClient delegate;
+    protected final SqlClient delegate;
 
-    public ReactiveClassicGenericQueryExecutor(Configuration configuration, PgClient delegate) {
+    public ReactiveClassicGenericQueryExecutor(Configuration configuration, SqlClient delegate) {
         super(configuration);
         this.delegate = delegate;
     }
@@ -33,7 +34,7 @@ public class ReactiveClassicGenericQueryExecutor extends AbstractReactiveQueryEx
     public <Q extends Record> Future<List<Row>> findManyRow(Function<DSLContext, ? extends ResultQuery<Q>> queryFunction) {
         Query query = createQuery(queryFunction);
         log(query);
-        Future<PgRowSet> rowFuture = Future.future();
+        Future<RowSet> rowFuture = Future.future();
         delegate.preparedQuery(toPreparedQuery(query),getBindValues(query),rowFuture);
         return rowFuture.map(res-> StreamSupport
                 .stream(res.spliterator(), false)
@@ -44,7 +45,7 @@ public class ReactiveClassicGenericQueryExecutor extends AbstractReactiveQueryEx
     public <Q extends Record> Future<Row> findOneRow(Function<DSLContext, ? extends ResultQuery<Q>> queryFunction) {
         Query query = createQuery(queryFunction);
         log(query);
-        Future<PgRowSet> rowFuture = Future.future();
+        Future<RowSet> rowFuture = Future.future();
         delegate.preparedQuery(toPreparedQuery(query),getBindValues(query),rowFuture);
         return rowFuture.map(res-> {
             switch (res.size()) {
@@ -59,9 +60,9 @@ public class ReactiveClassicGenericQueryExecutor extends AbstractReactiveQueryEx
     public Future<Integer> execute(Function<DSLContext, ? extends Query> queryFunction) {
         Query query = createQuery(queryFunction);
         log(query);
-        Future<PgRowSet> rowFuture = Future.future();
+        Future<RowSet> rowFuture = Future.future();
         delegate.preparedQuery(toPreparedQuery(query),getBindValues(query),rowFuture);
-        return rowFuture.map(PgResult::rowCount);
+        return rowFuture.map(SqlResult::rowCount);
     }
 
 
@@ -69,7 +70,7 @@ public class ReactiveClassicGenericQueryExecutor extends AbstractReactiveQueryEx
     public <R extends Record> Future<QueryResult> query(Function<DSLContext, ? extends ResultQuery<R>> queryFunction) {
         Query query = createQuery(queryFunction);
         log(query);
-        Future<PgRowSet> rowFuture = Future.future();
+        Future<RowSet> rowFuture = Future.future();
         delegate.preparedQuery(toPreparedQuery(query),getBindValues(query),rowFuture);
         return rowFuture.map(ReactiveQueryResult::new);
     }
@@ -80,15 +81,15 @@ public class ReactiveClassicGenericQueryExecutor extends AbstractReactiveQueryEx
      * or <code>rollback</code> on the QueryExecutor returned.
      */
     public Future<? extends ReactiveClassicGenericQueryExecutor> beginTransaction(){
-        if(delegate instanceof PgTransaction){
+        if(delegate instanceof Transaction){
             throw new IllegalStateException("Already in transaction");
         }
-        Future<PgTransaction> transactionFuture = Future.future();
-        ((PgPool) delegate).begin(transactionFuture);
+        Future<Transaction> transactionFuture = Future.future();
+        ((Pool) delegate).begin(transactionFuture);
         return transactionFuture.map(newInstance());
     }
 
-    protected Function<PgTransaction, ? extends ReactiveClassicGenericQueryExecutor> newInstance() {
+    protected Function<Transaction, ? extends ReactiveClassicGenericQueryExecutor> newInstance() {
         return transaction -> new ReactiveClassicGenericQueryExecutor(configuration(),transaction);
     }
 
@@ -98,11 +99,11 @@ public class ReactiveClassicGenericQueryExecutor extends AbstractReactiveQueryEx
      * @throws IllegalStateException if not called <code>beginTransaction</code> before.
      */
     public Future<Void> commit(){
-        if(!(delegate instanceof PgTransaction)){
+        if(!(delegate instanceof Transaction)){
             throw new IllegalStateException("Not in transaction");
         }
         Future<Void> commit = Future.future();
-        ((PgTransaction) delegate).commit(commit);
+        ((Transaction) delegate).commit(commit);
         return commit;
     }
 
@@ -112,11 +113,11 @@ public class ReactiveClassicGenericQueryExecutor extends AbstractReactiveQueryEx
      * @throws IllegalStateException if not called <code>beginTransaction</code> before.
      */
     public Future<Void> rollback(){
-        if(!(delegate instanceof PgTransaction)){
+        if(!(delegate instanceof Transaction)){
             throw new IllegalStateException("Not in transaction");
         }
         Future<Void> commit = Future.future();
-        ((PgTransaction) delegate).rollback(commit);
+        ((Transaction) delegate).rollback(commit);
         return commit;
     }
 
