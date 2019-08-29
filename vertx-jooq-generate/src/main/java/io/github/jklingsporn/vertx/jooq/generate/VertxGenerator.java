@@ -249,44 +249,49 @@ public abstract class VertxGenerator extends JavaGenerator {
             String setter = getStrategy().getJavaSetterName(column, GeneratorStrategy.Mode.INTERFACE);
             String columnType = getJavaType(column.getType());
             String javaMemberName = getJsonKeyName(column);
+            out.tab(2).println("try {");            
             if(handleCustomTypeFromJson(column, setter, columnType, javaMemberName, out)) {
                 //handled by user
             }else if(isType(columnType, Integer.class)){
-                out.tab(2).println("%s(json.getInteger(\"%s\"));", setter, javaMemberName);
+                out.tab(3).println("%s(json.getInteger(\"%s\"));", setter, javaMemberName);
             }else if(isType(columnType, Short.class)){
-                out.tab(2).println("%s(json.getInteger(\"%s\")==null?null:json.getInteger(\"%s\").shortValue());", setter, javaMemberName, javaMemberName);
+                out.tab(3).println("%s(json.getInteger(\"%s\")==null?null:json.getInteger(\"%s\").shortValue());", setter, javaMemberName, javaMemberName);
             }else if(isType(columnType, Byte.class)){
-                out.tab(2).println("%s(json.getInteger(\"%s\")==null?null:json.getInteger(\"%s\").byteValue());", setter, javaMemberName, javaMemberName);
+                out.tab(3).println("%s(json.getInteger(\"%s\")==null?null:json.getInteger(\"%s\").byteValue());", setter, javaMemberName, javaMemberName);
             }else if(isType(columnType, Long.class)){
-                out.tab(2).println("%s(json.getLong(\"%s\"));", setter, javaMemberName);
+                out.tab(3).println("%s(json.getLong(\"%s\"));", setter, javaMemberName);
             }else if(isType(columnType, Float.class)){
-                out.tab(2).println("%s(json.getFloat(\"%s\"));", setter, javaMemberName);
+                out.tab(3).println("%s(json.getFloat(\"%s\"));", setter, javaMemberName);
             }else if(isType(columnType, Double.class)){
-                out.tab(2).println("%s(json.getDouble(\"%s\"));", setter, javaMemberName);
+                out.tab(3).println("%s(json.getDouble(\"%s\"));", setter, javaMemberName);
             }else if(isType(columnType, Boolean.class)){
-                out.tab(2).println("%s(json.getBoolean(\"%s\"));", setter, javaMemberName);
+                out.tab(3).println("%s(json.getBoolean(\"%s\"));", setter, javaMemberName);
             }else if(isType(columnType, String.class)){
-                out.tab(2).println("%s(json.getString(\"%s\"));", setter, javaMemberName);
+                out.tab(3).println("%s(json.getString(\"%s\"));", setter, javaMemberName);
             }else if(columnType.equals(byte.class.getName()+"[]")){
-                out.tab(2).println("%s(json.getBinary(\"%s\"));", setter, javaMemberName);
+                out.tab(3).println("%s(json.getBinary(\"%s\"));", setter, javaMemberName);
             }else if(isType(columnType,Instant.class)){
-                out.tab(2).println("%s(json.getInstant(\"%s\"));", setter, javaMemberName);
+                out.tab(3).println("%s(json.getInstant(\"%s\"));", setter, javaMemberName);
             }else if(isEnum(table, column)) {
                 //if enum is handled by custom type, getLiteral() is not available
                 if(column.getType().getConverter() == null){
-                    out.tab(2).println("%s(java.util.Arrays.stream(%s.values()).filter(td -> td.getLiteral().equals(json.getString(\"%s\"))).findFirst().orElse(null));", setter, columnType, javaMemberName);
+                    out.tab(3).println("%s(java.util.Arrays.stream(%s.values()).filter(td -> td.getLiteral().equals(json.getString(\"%s\"))).findFirst().orElse(null));", setter, columnType, javaMemberName);
                 }else{
-                    out.tab(2).println("%s(java.util.Arrays.stream(%s.values()).filter(td -> td.name().equals(json.getString(\"%s\"))).findFirst().orElse(null));", setter, columnType, javaMemberName);
+                    out.tab(3).println("%s(java.util.Arrays.stream(%s.values()).filter(td -> td.name().equals(json.getString(\"%s\"))).findFirst().orElse(null));", setter, columnType, javaMemberName);
                 }
             }else if((column.getType().getConverter() != null && isType(column.getType().getConverter(),JsonObjectConverter.class)) ||
                     (column.getType().getBinding() != null && isType(column.getType().getBinding(),ObjectToJsonObjectBinding.class))){
-                out.tab(2).println("%s(json.getJsonObject(\"%s\"));", setter, javaMemberName);
+                out.tab(3).println("%s(json.getJsonObject(\"%s\"));", setter, javaMemberName);
             }else if(column.getType().getConverter() != null && isType(column.getType().getConverter(),JsonArrayConverter.class)){
-                out.tab(2).println("%s(json.getJsonArray(\"%s\"));", setter, javaMemberName);
+                out.tab(3).println("%s(json.getJsonArray(\"%s\"));", setter, javaMemberName);
             }else{
                 logger.warn(String.format("Omitting unrecognized type %s for column %s in table %s!",columnType,column.getName(),table.getName()));
-                out.tab(2).println(String.format("// Omitting unrecognized type %s for column %s!",columnType,column.getName()));
+                out.tab(3).println(String.format("// Omitting unrecognized type %s for column %s!",columnType,column.getName()));
             }
+            out.ref("io.github.jklingsporn.vertx.jooq.shared.UnexpectedJsonValueType");
+            out.tab(2).println("} catch (java.lang.ClassCastException e) {");
+            out.tab(3).println("throw new UnexpectedJsonValueType(\"%s\",\"%s\",e);", javaMemberName, columnType);
+            out.tab(2).println("}");
         }
         out.tab(2).println("return this;");
         out.tab(1).println("}");
