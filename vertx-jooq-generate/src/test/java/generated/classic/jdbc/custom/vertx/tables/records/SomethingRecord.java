@@ -6,6 +6,7 @@ package generated.classic.jdbc.custom.vertx.tables.records;
 
 import generated.classic.jdbc.custom.vertx.tables.Something;
 
+import io.github.jklingsporn.vertx.jooq.shared.UnexpectedJsonValueType;
 import io.github.jklingsporn.vertx.jooq.shared.internal.VertxPojo;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
@@ -34,7 +35,7 @@ import org.jooq.impl.UpdatableRecordImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class SomethingRecord extends UpdatableRecordImpl<SomethingRecord> implements VertxPojo, Record10<Integer, String, Long, Short, Integer, Boolean, Double, JsonObject, JsonArray, LocalDateTime> {
 
-    private static final long serialVersionUID = -1828629435;
+    private static final long serialVersionUID = 1901681935;
 
     /**
      * Setter for <code>VERTX.SOMETHING.SOMEID</code>.
@@ -602,16 +603,56 @@ public class SomethingRecord extends UpdatableRecordImpl<SomethingRecord> implem
 
     @Override
     public SomethingRecord fromJson(io.vertx.core.json.JsonObject json) {
-        setSomeid(json.getInteger("SOMEID"));
-        setSomestring(json.getString("SOMESTRING"));
-        setSomehugenumber(json.getLong("SOMEHUGENUMBER"));
-        setSomesmallnumber(json.getInteger("SOMESMALLNUMBER")==null?null:json.getInteger("SOMESMALLNUMBER").shortValue());
-        setSomeregularnumber(json.getInteger("SOMEREGULARNUMBER"));
-        setSomeboolean(json.getBoolean("SOMEBOOLEAN"));
-        setSomedouble(json.getDouble("SOMEDOUBLE"));
-        setSomejsonobject(json.getJsonObject("SOMEJSONOBJECT"));
-        setSomejsonarray(json.getJsonArray("SOMEJSONARRAY"));
+        try {
+            setSomeid(json.getInteger("SOMEID"));
+        } catch (java.lang.ClassCastException e) {
+            throw new UnexpectedJsonValueType("SOMEID","java.lang.Integer",e);
+        }
+        try {
+            setSomestring(json.getString("SOMESTRING"));
+        } catch (java.lang.ClassCastException e) {
+            throw new UnexpectedJsonValueType("SOMESTRING","java.lang.String",e);
+        }
+        try {
+            setSomehugenumber(json.getLong("SOMEHUGENUMBER"));
+        } catch (java.lang.ClassCastException e) {
+            throw new UnexpectedJsonValueType("SOMEHUGENUMBER","java.lang.Long",e);
+        }
+        try {
+            setSomesmallnumber(json.getInteger("SOMESMALLNUMBER")==null?null:json.getInteger("SOMESMALLNUMBER").shortValue());
+        } catch (java.lang.ClassCastException e) {
+            throw new UnexpectedJsonValueType("SOMESMALLNUMBER","java.lang.Short",e);
+        }
+        try {
+            setSomeregularnumber(json.getInteger("SOMEREGULARNUMBER"));
+        } catch (java.lang.ClassCastException e) {
+            throw new UnexpectedJsonValueType("SOMEREGULARNUMBER","java.lang.Integer",e);
+        }
+        try {
+            setSomeboolean(json.getBoolean("SOMEBOOLEAN"));
+        } catch (java.lang.ClassCastException e) {
+            throw new UnexpectedJsonValueType("SOMEBOOLEAN","java.lang.Boolean",e);
+        }
+        try {
+            setSomedouble(json.getDouble("SOMEDOUBLE"));
+        } catch (java.lang.ClassCastException e) {
+            throw new UnexpectedJsonValueType("SOMEDOUBLE","java.lang.Double",e);
+        }
+        try {
+            setSomejsonobject(json.getJsonObject("SOMEJSONOBJECT"));
+        } catch (java.lang.ClassCastException e) {
+            throw new UnexpectedJsonValueType("SOMEJSONOBJECT","io.vertx.core.json.JsonObject",e);
+        }
+        try {
+            setSomejsonarray(json.getJsonArray("SOMEJSONARRAY"));
+        } catch (java.lang.ClassCastException e) {
+            throw new UnexpectedJsonValueType("SOMEJSONARRAY","io.vertx.core.json.JsonArray",e);
+        }
+        try {
         setSometimestamp(json.getString("SOMETIMESTAMP")==null?null:LocalDateTime.parse(json.getString("SOMETIMESTAMP")));
+        } catch (java.lang.ClassCastException e) {
+            throw new UnexpectedJsonValueType("SOMETIMESTAMP","java.time.LocalDateTime",e);
+        }
         return this;
     }
 

@@ -5,11 +5,12 @@ package generated.cf.reactive.guice.vertx.enums;
 
 
 import generated.cf.reactive.guice.vertx.Vertx;
+
+import javax.annotation.Generated;
+
 import org.jooq.Catalog;
 import org.jooq.EnumType;
 import org.jooq.Schema;
-
-import javax.annotation.Generated;
 
 
 /**

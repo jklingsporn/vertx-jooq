@@ -4,6 +4,7 @@
 package generated.classic.jdbc.custom.vertx.tables.pojos;
 
 
+import io.github.jklingsporn.vertx.jooq.shared.UnexpectedJsonValueType;
 import io.github.jklingsporn.vertx.jooq.shared.internal.VertxPojo;
 import io.vertx.core.json.JsonObject;
 
@@ -25,7 +26,7 @@ import javax.annotation.Generated;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Somethingcomposite implements VertxPojo, Serializable {
 
-    private static final long serialVersionUID = -313788832;
+    private static final long serialVersionUID = 926859044;
 
     private Integer    someid;
     private Integer    somesecondid;
@@ -135,9 +136,21 @@ public class Somethingcomposite implements VertxPojo, Serializable {
 
     @Override
     public Somethingcomposite fromJson(io.vertx.core.json.JsonObject json) {
-        setSomeid(json.getInteger("SOMEID"));
-        setSomesecondid(json.getInteger("SOMESECONDID"));
-        setSomejsonobject(json.getJsonObject("SOMEJSONOBJECT"));
+        try {
+            setSomeid(json.getInteger("SOMEID"));
+        } catch (java.lang.ClassCastException e) {
+            throw new UnexpectedJsonValueType("SOMEID","java.lang.Integer",e);
+        }
+        try {
+            setSomesecondid(json.getInteger("SOMESECONDID"));
+        } catch (java.lang.ClassCastException e) {
+            throw new UnexpectedJsonValueType("SOMESECONDID","java.lang.Integer",e);
+        }
+        try {
+            setSomejsonobject(json.getJsonObject("SOMEJSONOBJECT"));
+        } catch (java.lang.ClassCastException e) {
+            throw new UnexpectedJsonValueType("SOMEJSONOBJECT","io.vertx.core.json.JsonObject",e);
+        }
         return this;
     }
 
