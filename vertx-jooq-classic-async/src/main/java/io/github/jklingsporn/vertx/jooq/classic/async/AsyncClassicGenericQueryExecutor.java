@@ -7,6 +7,7 @@ import io.github.jklingsporn.vertx.jooq.shared.internal.QueryResult;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
+import io.vertx.core.Promise;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.asyncsql.AsyncSQLClient;
 import io.vertx.ext.sql.ResultSet;
@@ -33,15 +34,15 @@ public class AsyncClassicGenericQueryExecutor extends AbstractAsyncQueryExecutor
         return getConnection().compose(safeExecute(sqlConnection -> {
                 Query query = createQuery(queryFunction);
                 log(query);
-                Future<Integer> future = Future.future();
+                Promise<Integer> promise = Promise.<Integer>promise();
                 sqlConnection.updateWithParams(
                         query.getSQL(),
                         getBindValues(query),
                         this.<UpdateResult,Integer>executeAndClose(UpdateResult::getUpdated,
                                 sqlConnection,
-                                future)
+                                promise)
                 );
-                return future;
+                return promise.future();
         }));
     }
 
@@ -51,13 +52,13 @@ public class AsyncClassicGenericQueryExecutor extends AbstractAsyncQueryExecutor
         return getConnection().compose(safeExecute(sqlConnection -> {
             Query query = createQuery(queryFunction);
             log(query);
-            Future<List<JsonObject>> future = Future.future();
+            Promise<List<JsonObject>> promise = Promise.<List<JsonObject>>promise();
             sqlConnection.queryWithParams(
                     query.getSQL(),
                     getBindValues(query),
-                    this.<ResultSet,List<JsonObject>>executeAndClose(ResultSet::getRows, sqlConnection, future)
+                    this.<ResultSet,List<JsonObject>>executeAndClose(ResultSet::getRows, sqlConnection, promise)
             );
-            return future;
+            return promise.future();
         }));
     }
 
@@ -66,7 +67,7 @@ public class AsyncClassicGenericQueryExecutor extends AbstractAsyncQueryExecutor
         return getConnection().compose(safeExecute(sqlConnection -> {
             Query query = createQuery(queryFunction);
             log(query);
-            Future<JsonObject> future = Future.future();
+            Promise<JsonObject> promise = Promise.<JsonObject>promise();
             sqlConnection.queryWithParams(
                     query.getSQL(),
                     getBindValues(query),
@@ -79,9 +80,9 @@ public class AsyncClassicGenericQueryExecutor extends AbstractAsyncQueryExecutor
                                 }
                             },
                             sqlConnection,
-                            future)
+                            promise)
             );
-            return future;
+            return promise.future();
         }));
     }
 
@@ -89,13 +90,13 @@ public class AsyncClassicGenericQueryExecutor extends AbstractAsyncQueryExecutor
      * @return a Future that returns a SQLConnection or an Exception.
      */
     protected Future<SQLConnection> getConnection(){
-        Future<SQLConnection> future = Future.future();
+        Future<SQLConnection> future = Promise.<SQLConnection>promise().future();
         delegate.getConnection(future);
         return future;
     }
 
 
-    protected <V,U> Handler<AsyncResult<V>> executeAndClose(Function<V, U> func, SQLConnection sqlConnection, Future<U> resultFuture) {
+    protected <V,U> Handler<AsyncResult<V>> executeAndClose(Function<V, U> func, SQLConnection sqlConnection, Promise<U> resultFuture) {
         return rs -> {
             try{
                 if (rs.succeeded()) {
@@ -127,13 +128,13 @@ public class AsyncClassicGenericQueryExecutor extends AbstractAsyncQueryExecutor
         return getConnection().compose(safeExecute(sqlConnection -> {
             Query query = createQuery(queryFunction);
             log(query);
-            Future<QueryResult> future = Future.future();
+            Promise<QueryResult> promise = Promise.promise();
             sqlConnection.queryWithParams(
                     query.getSQL(),
                     getBindValues(query),
-                    this.executeAndClose(AsyncQueryResult::new,sqlConnection,future)
+                    this.executeAndClose(AsyncQueryResult::new,sqlConnection,promise)
             );
-            return future;
+            return promise.future();
         }));
     }
 }

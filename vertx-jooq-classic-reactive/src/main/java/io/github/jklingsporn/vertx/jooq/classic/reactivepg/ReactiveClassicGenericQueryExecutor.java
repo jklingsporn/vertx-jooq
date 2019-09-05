@@ -5,6 +5,7 @@ import io.github.jklingsporn.vertx.jooq.shared.internal.QueryResult;
 import io.github.jklingsporn.vertx.jooq.shared.reactive.AbstractReactiveQueryExecutor;
 import io.github.jklingsporn.vertx.jooq.shared.reactive.ReactiveQueryExecutor;
 import io.github.jklingsporn.vertx.jooq.shared.reactive.ReactiveQueryResult;
+import io.vertx.core.Promise;
 import io.vertx.sqlclient.*;
 import io.vertx.core.Future;
 import io.vertx.sqlclient.Row;
@@ -34,9 +35,9 @@ public class ReactiveClassicGenericQueryExecutor extends AbstractReactiveQueryEx
     public <Q extends Record> Future<List<Row>> findManyRow(Function<DSLContext, ? extends ResultQuery<Q>> queryFunction) {
         Query query = createQuery(queryFunction);
         log(query);
-        Future<RowSet> rowFuture = Future.future();
-        delegate.preparedQuery(toPreparedQuery(query),getBindValues(query),rowFuture);
-        return rowFuture.map(res-> StreamSupport
+        Promise<RowSet> rowPromise = Promise.promise();
+        delegate.preparedQuery(toPreparedQuery(query),getBindValues(query),rowPromise);
+        return rowPromise.future().map(res -> StreamSupport
                 .stream(res.spliterator(), false)
                 .collect(Collectors.toList()));
     }
@@ -45,13 +46,16 @@ public class ReactiveClassicGenericQueryExecutor extends AbstractReactiveQueryEx
     public <Q extends Record> Future<Row> findOneRow(Function<DSLContext, ? extends ResultQuery<Q>> queryFunction) {
         Query query = createQuery(queryFunction);
         log(query);
-        Future<RowSet> rowFuture = Future.future();
-        delegate.preparedQuery(toPreparedQuery(query),getBindValues(query),rowFuture);
-        return rowFuture.map(res-> {
+        Promise<RowSet> rowPromise = Promise.promise();
+        delegate.preparedQuery(toPreparedQuery(query),getBindValues(query),rowPromise);
+        return rowPromise.future().map(res -> {
             switch (res.size()) {
-                case 0: return null;
-                case 1: return res.iterator().next();
-                default: throw new TooManyRowsException(String.format("Found more than one row: %d", res.size()));
+                case 0:
+                    return null;
+                case 1:
+                    return res.iterator().next();
+                default:
+                    throw new TooManyRowsException(String.format("Found more than one row: %d", res.size()));
             }
         });
     }
@@ -60,9 +64,9 @@ public class ReactiveClassicGenericQueryExecutor extends AbstractReactiveQueryEx
     public Future<Integer> execute(Function<DSLContext, ? extends Query> queryFunction) {
         Query query = createQuery(queryFunction);
         log(query);
-        Future<RowSet> rowFuture = Future.future();
-        delegate.preparedQuery(toPreparedQuery(query),getBindValues(query),rowFuture);
-        return rowFuture.map(SqlResult::rowCount);
+        Promise<RowSet> rowPromise = Promise.promise();
+        delegate.preparedQuery(toPreparedQuery(query),getBindValues(query),rowPromise);
+        return rowPromise.future().map(SqlResult::rowCount);
     }
 
 
@@ -70,9 +74,9 @@ public class ReactiveClassicGenericQueryExecutor extends AbstractReactiveQueryEx
     public <R extends Record> Future<QueryResult> query(Function<DSLContext, ? extends ResultQuery<R>> queryFunction) {
         Query query = createQuery(queryFunction);
         log(query);
-        Future<RowSet> rowFuture = Future.future();
-        delegate.preparedQuery(toPreparedQuery(query),getBindValues(query),rowFuture);
-        return rowFuture.map(ReactiveQueryResult::new);
+        Promise<RowSet> rowPromise = Promise.promise();
+        delegate.preparedQuery(toPreparedQuery(query),getBindValues(query),rowPromise);
+        return rowPromise.future().map(ReactiveQueryResult::new);
     }
 
     /**
@@ -84,9 +88,9 @@ public class ReactiveClassicGenericQueryExecutor extends AbstractReactiveQueryEx
         if(delegate instanceof Transaction){
             throw new IllegalStateException("Already in transaction");
         }
-        Future<Transaction> transactionFuture = Future.future();
-        ((Pool) delegate).begin(transactionFuture);
-        return transactionFuture.map(newInstance());
+        Promise<Transaction> transactionPromise = Promise.promise();
+        ((Pool) delegate).begin(transactionPromise);
+        return transactionPromise.future().map(newInstance());
     }
 
     protected Function<Transaction, ? extends ReactiveClassicGenericQueryExecutor> newInstance() {
@@ -102,9 +106,9 @@ public class ReactiveClassicGenericQueryExecutor extends AbstractReactiveQueryEx
         if(!(delegate instanceof Transaction)){
             throw new IllegalStateException("Not in transaction");
         }
-        Future<Void> commit = Future.future();
+        Promise<Void> commit = Promise.promise();
         ((Transaction) delegate).commit(commit);
-        return commit;
+        return commit.future();
     }
 
     /**
@@ -116,9 +120,9 @@ public class ReactiveClassicGenericQueryExecutor extends AbstractReactiveQueryEx
         if(!(delegate instanceof Transaction)){
             throw new IllegalStateException("Not in transaction");
         }
-        Future<Void> commit = Future.future();
+        Promise<Void> commit = Promise.promise();
         ((Transaction) delegate).rollback(commit);
-        return commit;
+        return commit.future();
     }
 
     /**

@@ -32,9 +32,9 @@ public class JDBCClassicGenericQueryExecutor extends AbstractQueryExecutor imple
     }
 
     protected <X> Future<X> executeBlocking(Handler<Promise<X>> blockingCodeHandler){
-        Promise<X> future = Promise.promise();
-        vertx.executeBlocking(blockingCodeHandler,future);
-        return future.future();
+        Promise<X> promise = Promise.promise();
+        vertx.executeBlocking(blockingCodeHandler,promise);
+        return promise.future();
     }
 
     @Override

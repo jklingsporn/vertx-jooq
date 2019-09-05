@@ -2,6 +2,7 @@ package io.github.jklingsporn.vertx.jooq.classic.async;
 
 import io.github.jklingsporn.vertx.jooq.shared.internal.QueryExecutor;
 import io.vertx.core.Future;
+import io.vertx.core.Promise;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.asyncsql.AsyncSQLClient;
 import io.vertx.ext.sql.UpdateResult;
@@ -38,14 +39,14 @@ public class AsyncClassicQueryExecutor<R extends UpdatableRecord<R>,P,T> extends
         return getConnection().compose(safeExecute(sqlConnection->{
             Query query = createQuery(queryFunction);
             log(query);
-            Future<Object> future = Future.future();
+            Promise<Object> promise = Promise.promise();
             if(isMysql){
                 sqlConnection.updateWithParams(
                         query.getSQL(),
                         getBindValues(query),
                         this.executeAndClose(UpdateResult::getKeys,
                                 sqlConnection,
-                                future)
+                                promise)
                 );
             }else{
                 sqlConnection.queryWithParams(
@@ -53,10 +54,10 @@ public class AsyncClassicQueryExecutor<R extends UpdatableRecord<R>,P,T> extends
                         getBindValues(query),
                         this.executeAndClose(res -> res.getResults().get(0),
                                 sqlConnection,
-                                future)
+                                promise)
                 );
             }
-            return future.map(keyMapper);
+            return promise.future().map(keyMapper);
         }));
     }
 
