@@ -138,7 +138,7 @@ The following code-snippet can be copy-pasted into your `build.gradle` to genera
 ```gradle
 buildscript {
     ext {
-        vertx_jooq_version = '4.2.0-SNAPSHOT'
+        vertx_jooq_version = '5.0.0T'
         postgresql_version = '42.2.2'
     }
     repositories {

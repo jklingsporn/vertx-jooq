@@ -17,8 +17,8 @@ public class RowMappers {
             pojo.setSomeregularnumber(row.getInteger("someRegularNumber"));
             pojo.setSomedouble(row.getDouble("someDouble"));
             pojo.setSomeenum(generated.rx.reactive.guice.vertx.enums.Someenum.valueOf(row.getString("someEnum")));
-            pojo.setSomejsonobject(io.github.jklingsporn.vertx.jooq.shared.reactive.JsonAccessor.getJsonObject(row,"someJsonObject"));
-            pojo.setSomejsonarray(io.github.jklingsporn.vertx.jooq.shared.reactive.JsonAccessor.getJsonArray(row,"someJsonArray"));
+            pojo.setSomejsonobject(row.get(io.vertx.core.json.JsonObject.class,row.getColumnIndex("someJsonObject")));
+            pojo.setSomejsonarray(row.get(io.vertx.core.json.JsonArray.class,row.getColumnIndex("someJsonArray")));
             pojo.setSometimestamp(row.getLocalDateTime("someTimestamp"));
             return pojo;
         };
@@ -29,7 +29,7 @@ public class RowMappers {
             generated.rx.reactive.guice.vertx.tables.pojos.Somethingcomposite pojo = new generated.rx.reactive.guice.vertx.tables.pojos.Somethingcomposite();
             pojo.setSomeid(row.getInteger("someId"));
             pojo.setSomesecondid(row.getInteger("someSecondId"));
-            pojo.setSomejsonobject(io.github.jklingsporn.vertx.jooq.shared.reactive.JsonAccessor.getJsonObject(row,"someJsonObject"));
+            pojo.setSomejsonobject(row.get(io.vertx.core.json.JsonObject.class,row.getColumnIndex("someJsonObject")));
             return pojo;
         };
     }

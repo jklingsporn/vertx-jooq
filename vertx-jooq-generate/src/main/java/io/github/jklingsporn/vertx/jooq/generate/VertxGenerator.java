@@ -12,6 +12,7 @@ import org.jooq.codegen.GeneratorStrategy;
 import org.jooq.codegen.JavaGenerator;
 import org.jooq.codegen.JavaWriter;
 import org.jooq.meta.*;
+import org.jooq.meta.jaxb.GeneratedAnnotationType;
 import org.jooq.tools.JooqLogger;
 
 import java.io.File;
@@ -593,5 +594,8 @@ public abstract class VertxGenerator extends JavaGenerator {
         out.println("}");
     }
 
-
+    @Override
+    public GeneratedAnnotationType generateGeneratedAnnotationType() {
+        return GeneratedAnnotationType.JAVAX_ANNOTATION_GENERATED;
+    }
 }
