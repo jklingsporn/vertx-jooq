@@ -337,10 +337,10 @@ public class VertxGeneratorBuilder {
                         }else if(javaType.equals(JsonObject.class.getName())
                                 || (column.getType().getConverter() != null && column.getType().getConverter().equalsIgnoreCase(JsonObjectConverter.class.getName()))
                                 || (column.getType().getBinding() != null && column.getType().getBinding().equalsIgnoreCase(ObjectToJsonObjectBinding.class.getName()))){
-                            out.tab(3).println("pojo.%s(io.github.jklingsporn.vertx.jooq.shared.reactive.JsonAccessor.getJsonObject(row,\"%s\"));", setter, column.getName());
+                            out.tab(3).println("pojo.%s(row.get(io.vertx.core.json.JsonObject.class,row.getColumnIndex(\"%s\")));", setter, column.getName());
                         }else if(javaType.equals(JsonArray.class.getName())
                                 || (column.getType().getConverter() != null && column.getType().getConverter().equalsIgnoreCase(JsonArrayConverter.class.getName()))){
-                            out.tab(3).println("pojo.%s(io.github.jklingsporn.vertx.jooq.shared.reactive.JsonAccessor.getJsonArray(row,\"%s\"));", setter, column.getName());
+                            out.tab(3).println("pojo.%s(row.get(io.vertx.core.json.JsonArray.class,row.getColumnIndex(\"%s\")));", setter, column.getName());
                         }else if(javaTypeInEnumPackage){
                             out.tab(3).println("pojo.%s(%s.valueOf(row.getString(\"%s\")));", setter, javaType, column.getName());
                         }else{
@@ -372,7 +372,7 @@ public class VertxGeneratorBuilder {
                                 String pojoName = pType.substring(pType.lastIndexOf(".") + 1, pType.length());
                                 String mapperFactory = String.format("%s.%s.RowMappers.get%sMapper()",basePath, base.getVertxGeneratorStrategy().getRowMappersSubPackage(), pojoName);
                                 out.tab(1).javadoc("@param configuration Used for rendering, so only SQLDialect must be set and must be one of the POSTGREs types.\n     * @param delegate A configured AsyncSQLClient that is used for query execution");
-                                out.tab(1).println("public %s(%s%s configuration, io.reactiverse.pgclient.PgClient delegate) {", className, base.namedInjectionStrategy.apply(schema),Configuration.class);
+                                out.tab(1).println("public %s(%s%s configuration, io.vertx.sqlclient.SqlClient delegate) {", className, base.namedInjectionStrategy.apply(schema),Configuration.class);
                                 out.tab(2).println("super(%s, %s.class, new %s(configuration,delegate,%s));", tableIdentifier, pType, base.renderQueryExecutor(tableRecord, pType, tType),mapperFactory);
                                 out.tab(1).println("}");
                             })
@@ -393,7 +393,7 @@ public class VertxGeneratorBuilder {
                                 String pojoName = pType.substring(pType.lastIndexOf(".")+1,pType.length());
                                 String mapperFactory = String.format("%s.%s.RowMappers.get%sMapper()",basePath, base.getVertxGeneratorStrategy().getRowMappersSubPackage(), pojoName);
                                 out.tab(1).javadoc("@param configuration The Configuration used for rendering and query execution.\n     * @param vertx the vertx instance");
-                                out.tab(1).println("public %s(%s configuration, %sio.reactiverse.pgclient.PgClient delegate, %s vertx) {", className, Configuration.class, base.namedInjectionStrategy.apply(schema), base.renderFQVertxName());
+                                out.tab(1).println("public %s(%s configuration, %sio.vertx.sqlclient.SqlClient delegate, %s vertx) {", className, Configuration.class, base.namedInjectionStrategy.apply(schema), base.renderFQVertxName());
                                 out.tab(2).println("super(%s, %s.class, new %s(configuration,delegate,%s,vertx));", tableIdentifier, pType, base.renderQueryExecutor(tableRecord, pType, tType), mapperFactory);
                                 out.tab(1).println("}");
                             })

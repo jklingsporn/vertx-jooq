@@ -13,7 +13,7 @@ public interface DIStep extends FinalStep{
      *                               <ul>
      *                                  <li>if running in JDBC mode, the annotation is added to the {@code org.jooq.Configuration} property</li>
      *                                  <li>if running in async mode, the annotation is added to the {@code io.vertx.ext.asyncsql.AsyncSQLClient} (or the rx equivalent) property</li>
-     *                                  <li>if running in reactive mode, the annotation is added to the {@code io.reactiverse.pgclient.PgClient} (or the rx equivalent) property</li>
+     *                                  <li>if running in reactive mode, the annotation is added to the {@code io.vertx.sqlclient.SqlClient} (or the rx equivalent) property</li>
      *                               </ul>
      *                               You can then bind this named property to different schemas.
      * @return a {@code FinalStep} to build the generator.
