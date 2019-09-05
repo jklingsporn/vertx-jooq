@@ -1,6 +1,6 @@
 package generated.cf.reactive.guice.vertx.tables.mappers;
 
-import io.reactiverse.pgclient.Row;
+import io.vertx.sqlclient.Row;
 import java.util.function.Function;
 
 public class RowMappers {

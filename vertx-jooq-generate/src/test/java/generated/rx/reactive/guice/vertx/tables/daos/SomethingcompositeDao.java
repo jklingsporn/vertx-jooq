@@ -40,7 +40,7 @@ public class SomethingcompositeDao extends AbstractReactiveVertxDAO<Somethingcom
      * @param configuration The Configuration used for rendering and query execution.
      * @param vertx the vertx instance
      */
-    public SomethingcompositeDao(Configuration configuration, io.reactiverse.reactivex.pgclient.PgClient delegate) {
+    public SomethingcompositeDao(Configuration configuration, io.vertx.reactivex.sqlclient.SqlClient delegate) {
         super(Somethingcomposite.SOMETHINGCOMPOSITE, generated.rx.reactive.guice.vertx.tables.pojos.Somethingcomposite.class, new ReactiveRXQueryExecutor<SomethingcompositeRecord,generated.rx.reactive.guice.vertx.tables.pojos.Somethingcomposite,Record2<Integer, Integer>>(configuration,delegate,generated.rx.reactive.guice.vertx.tables.mappers.RowMappers.getSomethingcompositeMapper()));
     }
 

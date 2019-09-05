@@ -414,7 +414,7 @@ public class VertxGeneratorBuilder {
                                 String mapperFactory = String.format("%s.%s.RowMappers.get%sMapper()",basePath, base.getVertxGeneratorStrategy().getRowMappersSubPackage(), pojoName);
                                 out.tab(1).javadoc("@param configuration The Configuration used for rendering and query execution.\n" +
                                         "     * @param vertx the vertx instance");
-                                out.tab(1).println("public %s(%s configuration, %sio.reactiverse.reactivex.pgclient.PgClient delegate) {", className, Configuration.class, base.namedInjectionStrategy.apply(schema));
+                                out.tab(1).println("public %s(%s configuration, %sio.vertx.reactivex.sqlclient.SqlClient delegate) {", className, Configuration.class, base.namedInjectionStrategy.apply(schema));
                                 out.tab(2).println("super(%s, %s.class, new %s(configuration,delegate,%s));", tableIdentifier, pType, base.renderQueryExecutor(tableRecord, pType, tType), mapperFactory);
                                 out.tab(1).println("}");
                             })
