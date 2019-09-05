@@ -33,9 +33,9 @@ public class ReactiveDatabaseClientProvider {
     private PgConnectOptions getOptions() {
         return new PgConnectOptions().setHost("127.0.0.1")
                 .setPort(5432)
-                .setUser("vertx")
+                .setUser(Credentials.POSTGRES.getUser())
                 .setDatabase("postgres")
-                .setPassword("password")
+                .setPassword(Credentials.POSTGRES.getPassword())
                 ;
     }
 
