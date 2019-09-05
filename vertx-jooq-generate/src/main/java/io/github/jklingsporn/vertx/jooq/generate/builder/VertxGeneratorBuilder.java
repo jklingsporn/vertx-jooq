@@ -284,7 +284,7 @@ public class VertxGeneratorBuilder {
                 JavaWriter out = writerGen.apply(moduleFile);
                 out.println("package " + base.getActiveGenerator().getStrategy().getJavaPackageName(schema) + ".tables."+mappersSubPackage+";");
                 out.println();
-                out.println("import io.reactiverse.pgclient.Row;");
+                out.println("import io.vertx.sqlclient.Row;");
                 out.println("import %s;", Function.class.getName());
                 out.println();
                 out.println("public class RowMappers {");
@@ -311,8 +311,8 @@ public class VertxGeneratorBuilder {
                 supportedRowTypes.add(OffsetTime.class.getName());
                 supportedRowTypes.add(OffsetDateTime.class.getName());
                 //Reactiverse types. Need to be hardcoded
-                supportedRowTypes.add("io.reactiverse.pgclient.data.Interval");
-                supportedRowTypes.add("io.reactiverse.pgclient.data.Numeric");
+                supportedRowTypes.add("io.vertx.pgclient.data.Interval");
+                supportedRowTypes.add("io.vertx.sqlclient.data.Numeric");
                 for (TableDefinition table : schema.getTables()) {
                     UniqueKeyDefinition key = table.getPrimaryKey();
                     if (key == null) {
