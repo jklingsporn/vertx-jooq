@@ -25,7 +25,7 @@ public abstract class AbstractReactiveQueryExecutor extends AbstractQueryExecuto
         super(configuration);
     }
 
-    protected Tuple getBindValues(Query query) {
+    public Tuple getBindValues(Query query) {
         ArrayTuple bindValues = new ArrayTuple(query.getParams().size());
         for (Param<?> param : query.getParams().values()) {
             if(!param.isInline()){
@@ -50,7 +50,7 @@ public abstract class AbstractReactiveQueryExecutor extends AbstractQueryExecuto
         }
     }
 
-    protected String toPreparedQuery(Query query){
+    public String toPreparedQuery(Query query){
         String namedQuery = query.getSQL(ParamType.NAMED);
         return namedQuery.replaceAll(pattern, "\\$");
     }
