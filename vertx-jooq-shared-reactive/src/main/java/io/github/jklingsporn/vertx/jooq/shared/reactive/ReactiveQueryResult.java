@@ -1,5 +1,6 @@
 package io.github.jklingsporn.vertx.jooq.shared.reactive;
 
+import io.github.jklingsporn.vertx.jooq.shared.internal.AbstractQueryResult;
 import io.github.jklingsporn.vertx.jooq.shared.internal.QueryResult;
 import io.vertx.sqlclient.Row;
 import io.vertx.sqlclient.RowSet;
@@ -14,14 +15,14 @@ import java.util.stream.StreamSupport;
 /**
  * @author jensklingsporn
  */
-public class ReactiveQueryResult implements QueryResult {
+public class ReactiveQueryResult extends AbstractQueryResult{
 
     private final Row current;
     private final RowSet result;
 
     public ReactiveQueryResult(RowSet result) {
         this.result = result;
-        this.current = result.iterator().next();
+        this.current = result.iterator().hasNext() ? result.iterator().next() : null;
     }
 
     private ReactiveQueryResult(Row row) {
@@ -31,17 +32,17 @@ public class ReactiveQueryResult implements QueryResult {
 
     @Override
     public <T> T get(Field<T> field) {
-        return Convert.convert(current.getValue(field.getName()), field.getConverter());
+        return supplyOrThrow(()->Convert.convert(current.getValue(field.getName()), field.getConverter()));
     }
 
     @Override
     public <T> T get(int index, Class<T> type) {
-        return Convert.convert(current.getValue(index), type);
+        return supplyOrThrow(()->Convert.convert(current.getValue(index), type));
     }
 
     @Override
     public <T> T get(String columnName, Class<T> type) {
-        return Convert.convert(current.getValue(columnName), type);
+        return supplyOrThrow(()->Convert.convert(current.getValue(columnName), type));
     }
 
     @Override

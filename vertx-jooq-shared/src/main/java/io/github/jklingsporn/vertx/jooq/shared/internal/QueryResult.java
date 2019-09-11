@@ -16,6 +16,7 @@ public interface QueryResult {
      * @param field the {@code Field} to get.
      * @param <T>
      * @return The field's value or {@code null}.
+     * @throws java.util.NoSuchElementException if the database returned no result at all.
      */
     public <T> T get(Field<T> field);
 
@@ -29,6 +30,7 @@ public interface QueryResult {
      * @throws ClassCastException If the column is mapped by a jOOQ-{@code Converter}, the underlying implementation
      * might throw a {@code ClassCastException} because the non-jOOQ drivers are not aware of converters. For correct
      * handling for fields with converters favor {@code QueryResult#get(Field<T>)} method.
+     * @throws java.util.NoSuchElementException if the database returned no result at all.
      */
     public <T> T get(int index, Class<T> type);
 
@@ -42,6 +44,7 @@ public interface QueryResult {
      * @throws ClassCastException If the column is mapped by a jOOQ-{@code Converter}, the underlying implementation
      * might throw a {@code ClassCastException} because the non-jOOQ drivers are not aware of converters. For correct
      * handling for fields with converters favor {@code QueryResult#get(Field<T>)} method.
+     * @throws java.util.NoSuchElementException if the database returned no result at all.
      */
     public <T> T get(String columnName, Class<T> type);
 

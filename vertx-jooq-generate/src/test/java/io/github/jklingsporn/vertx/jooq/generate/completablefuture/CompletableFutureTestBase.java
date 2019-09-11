@@ -14,6 +14,7 @@ import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -293,6 +294,46 @@ public abstract class CompletableFutureTestBase<P,T,O, DAO extends GenericVertxD
             Assert.assertNotNull(queryResult.get(index, field.getType()));
             Assert.assertNotNull(queryResult.get(field.getName(), field.getType()));
         }
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void unifiedQueryExecutorNoResultShouldThrowNSEException() throws InterruptedException {
+        Table<? extends UpdatableRecord<?>> table = ((AbstractVertxDAO) dao).getTable();
+        P pojo = createWithId();
+        CountDownLatch latch = new CountDownLatch(1);
+        queryExecutor()
+                .query(dslContext -> dslContext
+                        .selectFrom(table)
+                        .where(eqPrimaryKey(getId(pojo)))
+                        .limit(1))
+                .thenAccept(queryResult -> {
+                    Assert.assertFalse(queryResult.hasResults());
+                    Field<?>[] fields = table.fieldsRow().fields();
+                    for (int i=0;i<fields.length;i++) {
+                        Field<?> field = fields[i];
+                        try {
+                            queryResult.get(field);
+                        } catch (NoSuchElementException e) {
+                            //ok
+                        }
+                        try {
+                            queryResult.get(field.getName(), field.getType());
+                        } catch (NoSuchElementException e) {
+                            //ok
+                        }
+                        try {
+                            queryResult.get(i, field.getType());
+                        } catch (NoSuchElementException e) {
+                            //ok
+                            continue;
+                        }
+                        Assert.fail("Expected NoSuchElementException");
+                    }
+                })
+                .whenComplete(countdownLatchHandler(latch))
+        ;
+        await(latch);
     }
 
 }

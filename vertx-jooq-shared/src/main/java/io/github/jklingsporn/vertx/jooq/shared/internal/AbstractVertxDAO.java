@@ -32,6 +32,10 @@ public abstract class AbstractVertxDAO<R extends UpdatableRecord<R>, P, T, FIND_
         this.queryExecutor = queryExecutor;
     }
 
+    public Class<P> getType() {
+        return type;
+    }
+
     public Table<R> getTable() {
         return table;
     }

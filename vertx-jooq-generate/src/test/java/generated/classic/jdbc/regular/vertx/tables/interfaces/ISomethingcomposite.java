@@ -4,6 +4,7 @@
 package generated.classic.jdbc.regular.vertx.tables.interfaces;
 
 
+import io.github.jklingsporn.vertx.jooq.shared.UnexpectedJsonValueType;
 import io.github.jklingsporn.vertx.jooq.shared.internal.VertxPojo;
 import io.vertx.core.json.JsonObject;
 
@@ -71,9 +72,21 @@ public interface ISomethingcomposite extends VertxPojo, Serializable {
 
     @Override
     public default ISomethingcomposite fromJson(io.vertx.core.json.JsonObject json) {
-        setSomeid(json.getInteger("SOMEID"));
-        setSomesecondid(json.getInteger("SOMESECONDID"));
-        setSomejsonobject(json.getJsonObject("SOMEJSONOBJECT"));
+        try {
+            setSomeid(json.getInteger("SOMEID"));
+        } catch (java.lang.ClassCastException e) {
+            throw new UnexpectedJsonValueType("SOMEID","java.lang.Integer",e);
+        }
+        try {
+            setSomesecondid(json.getInteger("SOMESECONDID"));
+        } catch (java.lang.ClassCastException e) {
+            throw new UnexpectedJsonValueType("SOMESECONDID","java.lang.Integer",e);
+        }
+        try {
+            setSomejsonobject(json.getJsonObject("SOMEJSONOBJECT"));
+        } catch (java.lang.ClassCastException e) {
+            throw new UnexpectedJsonValueType("SOMEJSONOBJECT","io.vertx.core.json.JsonObject",e);
+        }
         return this;
     }
 

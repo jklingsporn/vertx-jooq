@@ -6,6 +6,7 @@ package generated.rx.reactive.guice.vertx.tables.interfaces;
 
 import generated.rx.reactive.guice.vertx.enums.Someenum;
 
+import io.github.jklingsporn.vertx.jooq.shared.UnexpectedJsonValueType;
 import io.github.jklingsporn.vertx.jooq.shared.internal.VertxPojo;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
@@ -145,16 +146,56 @@ public interface ISomething extends VertxPojo, Serializable {
 
     @Override
     public default ISomething fromJson(io.vertx.core.json.JsonObject json) {
-        setSomeid(json.getInteger("someId"));
-        setSomestring(json.getString("someString"));
-        setSomehugenumber(json.getLong("someHugeNumber"));
-        setSomesmallnumber(json.getInteger("someSmallNumber")==null?null:json.getInteger("someSmallNumber").shortValue());
-        setSomeregularnumber(json.getInteger("someRegularNumber"));
-        setSomedouble(json.getDouble("someDouble"));
-        setSomeenum(java.util.Arrays.stream(generated.rx.reactive.guice.vertx.enums.Someenum.values()).filter(td -> td.getLiteral().equals(json.getString("someEnum"))).findFirst().orElse(null));
-        setSomejsonobject(json.getJsonObject("someJsonObject"));
-        setSomejsonarray(json.getJsonArray("someJsonArray"));
-        // Omitting unrecognized type java.time.LocalDateTime for column someTimestamp!
+        try {
+            setSomeid(json.getInteger("someId"));
+        } catch (java.lang.ClassCastException e) {
+            throw new UnexpectedJsonValueType("someId","java.lang.Integer",e);
+        }
+        try {
+            setSomestring(json.getString("someString"));
+        } catch (java.lang.ClassCastException e) {
+            throw new UnexpectedJsonValueType("someString","java.lang.String",e);
+        }
+        try {
+            setSomehugenumber(json.getLong("someHugeNumber"));
+        } catch (java.lang.ClassCastException e) {
+            throw new UnexpectedJsonValueType("someHugeNumber","java.lang.Long",e);
+        }
+        try {
+            setSomesmallnumber(json.getInteger("someSmallNumber")==null?null:json.getInteger("someSmallNumber").shortValue());
+        } catch (java.lang.ClassCastException e) {
+            throw new UnexpectedJsonValueType("someSmallNumber","java.lang.Short",e);
+        }
+        try {
+            setSomeregularnumber(json.getInteger("someRegularNumber"));
+        } catch (java.lang.ClassCastException e) {
+            throw new UnexpectedJsonValueType("someRegularNumber","java.lang.Integer",e);
+        }
+        try {
+            setSomedouble(json.getDouble("someDouble"));
+        } catch (java.lang.ClassCastException e) {
+            throw new UnexpectedJsonValueType("someDouble","java.lang.Double",e);
+        }
+        try {
+            setSomeenum(java.util.Arrays.stream(generated.rx.reactive.guice.vertx.enums.Someenum.values()).filter(td -> td.getLiteral().equals(json.getString("someEnum"))).findFirst().orElse(null));
+        } catch (java.lang.ClassCastException e) {
+            throw new UnexpectedJsonValueType("someEnum","generated.rx.reactive.guice.vertx.enums.Someenum",e);
+        }
+        try {
+            setSomejsonobject(json.getJsonObject("someJsonObject"));
+        } catch (java.lang.ClassCastException e) {
+            throw new UnexpectedJsonValueType("someJsonObject","io.vertx.core.json.JsonObject",e);
+        }
+        try {
+            setSomejsonarray(json.getJsonArray("someJsonArray"));
+        } catch (java.lang.ClassCastException e) {
+            throw new UnexpectedJsonValueType("someJsonArray","io.vertx.core.json.JsonArray",e);
+        }
+        try {
+            // Omitting unrecognized type java.time.LocalDateTime for column someTimestamp!
+        } catch (java.lang.ClassCastException e) {
+            throw new UnexpectedJsonValueType("someTimestamp","java.time.LocalDateTime",e);
+        }
         return this;
     }
 

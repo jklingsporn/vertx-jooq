@@ -1,5 +1,6 @@
 package io.github.jklingsporn.vertx.jooq.shared.async;
 
+import io.github.jklingsporn.vertx.jooq.shared.internal.AbstractQueryResult;
 import io.github.jklingsporn.vertx.jooq.shared.internal.QueryResult;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.sql.ResultSet;
@@ -13,7 +14,7 @@ import java.util.stream.IntStream;
 /**
  * @author jensklingsporn
  */
-public class AsyncQueryResult implements QueryResult {
+public class AsyncQueryResult extends AbstractQueryResult {
 
     private final ResultSet resultSet;
     private final int index;
@@ -29,17 +30,17 @@ public class AsyncQueryResult implements QueryResult {
 
     @Override
     public <T> T get(Field<T> field) {
-        return Convert.convert(getCurrent().getValue(field.getName()),field.getConverter());
+        return supplyOrThrow(()->Convert.convert(getCurrent().getValue(field.getName()),field.getConverter()));
     }
 
     @Override
     public <T> T get(int index, Class<T> type) {
-        return Convert.convert(this.resultSet.getResults().get(this.index).getValue(index),type);
+        return supplyOrThrow(()->Convert.convert(this.resultSet.getResults().get(this.index).getValue(index),type));
     }
 
     @Override
     public <T> T get(String columnName, Class<T> type) {
-        return Convert.convert(getCurrent().getValue(columnName),type);
+        return supplyOrThrow(()->Convert.convert(getCurrent().getValue(columnName),type));
     }
 
     @Override

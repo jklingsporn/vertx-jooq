@@ -4,6 +4,7 @@
 package generated.rx.async.guice.tables.interfaces;
 
 
+import io.github.jklingsporn.vertx.jooq.shared.UnexpectedJsonValueType;
 import io.github.jklingsporn.vertx.jooq.shared.internal.VertxPojo;
 
 import java.io.Serializable;
@@ -60,8 +61,16 @@ public interface ISomethingwithoutjson extends VertxPojo, Serializable {
 
     @Override
     public default ISomethingwithoutjson fromJson(io.vertx.core.json.JsonObject json) {
-        setSomeid(json.getInteger("someId"));
-        setSomestring(json.getString("someString"));
+        try {
+            setSomeid(json.getInteger("someId"));
+        } catch (java.lang.ClassCastException e) {
+            throw new UnexpectedJsonValueType("someId","java.lang.Integer",e);
+        }
+        try {
+            setSomestring(json.getString("someString"));
+        } catch (java.lang.ClassCastException e) {
+            throw new UnexpectedJsonValueType("someString","java.lang.String",e);
+        }
         return this;
     }
 

@@ -17,6 +17,7 @@ import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
@@ -287,19 +288,46 @@ public abstract class ClassicTestBase<P,T,O, DAO extends GenericVertxDAO<?,P, T,
         }
     }
 
-//    @Test
-//    public void queryExecutorWithLimitShouldReturnValues() throws InterruptedException {
-//        //https://github.com/jklingsporn/vertx-jooq/issues/61
-//        CountDownLatch latch = new CountDownLatch(1);
-//        O someO = createSomeO();
-//        Future<T> insertFuture1 = insertAndReturn(setSomeO(create(), someO));
-//        Future<T> insertFuture2 = insertAndReturn(setSomeO(create(), someO));
-//        CompositeFuture.all(insertFuture1, insertFuture2).
-//                compose(v -> queryExecutor().query(dslContext -> dslContext.selectFrom(otherfield.getTable()).limit(1))).
-//                map(toVoid(values -> Assert.assertEquals(1, values.asList().size()))).
-//                compose(v -> dao.deleteByCondition(otherfield.eq(someO))).
-//                setHandler(countdownLatchHandler(latch));
-//        await(latch);
-//    }
+    @Test
+    @SuppressWarnings("unchecked")
+    public void unifiedQueryExecutorNoResultShouldThrowNSEException() throws InterruptedException {
+        Table<? extends UpdatableRecord<?>> table = ((AbstractVertxDAO) dao).getTable();
+        P pojo = createWithId();
+        CountDownLatch latch = new CountDownLatch(1);
+        queryExecutor()
+                .query(dslContext -> dslContext
+                        .selectFrom(table)
+                        .where(eqPrimaryKey(getId(pojo)))
+                        .limit(1))
+                .map(toVoid(queryResult -> {
+                    Assert.assertFalse(queryResult.hasResults());
+                    Field<?>[] fields = table.fieldsRow().fields();
+                    for (int i=0;i<fields.length;i++) {
+                        Field<?> field = fields[i];
+                        try {
+                            queryResult.get(field);
+                        } catch (NoSuchElementException e) {
+                            //ok
+                        }
+                        try {
+                            queryResult.get(field.getName(), field.getType());
+                        } catch (NoSuchElementException e) {
+                            //ok
+                        }
+                        try {
+                            queryResult.get(i, field.getType());
+                        } catch (NoSuchElementException e) {
+                            //ok
+                            continue;
+                        }
+                        Assert.fail("Expected NoSuchElementException");
+                    }
+                }))
+                .setHandler(countdownLatchHandler(latch))
+        ;
+        await(latch);
+    }
+
+
 
 }

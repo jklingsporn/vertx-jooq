@@ -1,5 +1,6 @@
 package io.github.jklingsporn.vertx.jooq.shared.internal.jdbc;
 
+import io.github.jklingsporn.vertx.jooq.shared.internal.AbstractQueryResult;
 import io.github.jklingsporn.vertx.jooq.shared.internal.QueryResult;
 import org.jooq.Field;
 import org.jooq.Record;
@@ -12,7 +13,7 @@ import java.util.stream.IntStream;
 /**
  * @author jensklingsporn
  */
-public class JDBCQueryResult implements QueryResult {
+public class JDBCQueryResult extends AbstractQueryResult {
 
     private final Result<? extends Record> result;
     private final int index;
@@ -29,20 +30,23 @@ public class JDBCQueryResult implements QueryResult {
 
     @Override
     public <T> T get(Field<T> field) {
-        return result.getValue(0, field);
+        return supplyOrThrow(() -> result.getValue(index, field));
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T> T get(int index, Class<T> type) {
-        return (T) result.getValue(this.index,index);
+        return supplyOrThrow(() -> (T) result.getValue(this.index, index));
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T> T get(String columnName, Class<T> type) {
-        return (T)result.getValue(this.index,columnName);
+        return supplyOrThrow(() -> (T) result.getValue(this.index, columnName));
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T> T unwrap() {
         return (T) result;
     }
@@ -59,4 +63,6 @@ public class JDBCQueryResult implements QueryResult {
                 .mapToObj(i -> new JDBCQueryResult(result, i))
                 .collect(Collectors.toList());
     }
+
+
 }
