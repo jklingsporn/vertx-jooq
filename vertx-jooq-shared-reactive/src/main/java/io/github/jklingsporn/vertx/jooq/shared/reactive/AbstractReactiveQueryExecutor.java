@@ -7,7 +7,12 @@ import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 import io.vertx.sqlclient.Tuple;
 import io.vertx.sqlclient.impl.ArrayTuple;
-import org.jooq.*;
+import org.jooq.JSON;
+import org.jooq.JSONB;
+import org.jooq.Configuration;
+import org.jooq.Param;
+import org.jooq.Query;
+import org.jooq.SQLDialect;
 import org.jooq.conf.ParamType;
 
 /**
