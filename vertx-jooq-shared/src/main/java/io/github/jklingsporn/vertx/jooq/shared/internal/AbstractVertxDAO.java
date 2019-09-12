@@ -189,7 +189,7 @@ public abstract class AbstractVertxDAO<R extends UpdatableRecord<R>, P, T, FIND_
     }
 
     @SuppressWarnings("unchecked")
-    protected Condition equalKeys(Collection<T> ids){
+    public Condition equalKeys(Collection<T> ids){
         UniqueKey<?> uk = getTable().getPrimaryKey();
         Objects.requireNonNull(uk,()->"No primary key");
         /**
