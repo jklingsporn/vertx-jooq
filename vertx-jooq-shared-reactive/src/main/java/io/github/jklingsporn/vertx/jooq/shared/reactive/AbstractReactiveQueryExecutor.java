@@ -2,14 +2,12 @@ package io.github.jklingsporn.vertx.jooq.shared.reactive;
 
 import io.github.jklingsporn.vertx.jooq.shared.internal.AbstractQueryExecutor;
 import io.vertx.core.buffer.Buffer;
+import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 import io.vertx.sqlclient.Tuple;
 import io.vertx.sqlclient.impl.ArrayTuple;
-import org.jooq.Configuration;
-import org.jooq.Param;
-import org.jooq.Query;
-import org.jooq.SQLDialect;
+import org.jooq.*;
 import org.jooq.conf.ParamType;
 
 /**
@@ -44,6 +42,18 @@ public abstract class AbstractReactiveQueryExecutor extends AbstractQueryExecuto
          * DataTypes. Workaround is to convert them to string before adding to the Tuple.
          */
         if (Enum.class.isAssignableFrom(param.getBinding().converter().toType())) {
+            return param.getValue().toString();
+        }
+
+        // JSON and JSONB are also not known by vertx-sql-client so, if we get a JsonObject just pass that on,
+        // if we get a JSONB or JSON object convert them to a string.
+        if (JsonObject.class.isAssignableFrom(param.getBinding().converter().toType())) {
+            return param.getValue();
+        }
+        if (JSONB.class.isAssignableFrom(param.getBinding().converter().toType())) {
+            return param.getValue().toString();
+        }
+        if (JSON.class.isAssignableFrom(param.getBinding().converter().toType())) {
             return param.getValue().toString();
         }
         if (byte[].class.isAssignableFrom(param.getBinding().converter().fromType())) { // jooq treats BINARY types as byte[] but the reactive client expects a Buffer to write to blobs
