@@ -8,6 +8,8 @@ import io.vertx.core.buffer.Buffer;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import org.jooq.Configuration;
+import org.jooq.JSON;
+import org.jooq.JSONB;
 import org.jooq.codegen.GeneratorStrategy;
 import org.jooq.codegen.JavaWriter;
 import org.jooq.meta.ColumnDefinition;
@@ -341,7 +343,7 @@ public class VertxGeneratorBuilder {
                         }else if(javaType.equals(JsonArray.class.getName())
                                 || (column.getType().getConverter() != null && column.getType().getConverter().equalsIgnoreCase(JsonArrayConverter.class.getName()))){
                             out.tab(3).println("pojo.%s(row.get(io.vertx.core.json.JsonArray.class,row.getColumnIndex(\"%s\")));", setter, column.getName());
-                        }else if(javaTypeInEnumPackage){
+                        }else if(javaTypeInEnumPackage || javaType.equals(JSONB.class.getName()) || javaType.equals(JSON.class.getName())){
                             out.tab(3).println("pojo.%s(%s.valueOf(row.getString(\"%s\")));", setter, javaType, column.getName());
                         }else{
                             ComponentBasedVertxGenerator.logger.warn(String.format("Omitting unrecognized type %s (%s) for column %s in table %s!",column.getType(),javaType,column.getName(),table.getName()));
