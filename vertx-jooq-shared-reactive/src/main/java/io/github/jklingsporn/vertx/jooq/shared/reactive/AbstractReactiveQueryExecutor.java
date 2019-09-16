@@ -55,11 +55,9 @@ public abstract class AbstractReactiveQueryExecutor extends AbstractQueryExecuto
         if (JsonObject.class.isAssignableFrom(param.getBinding().converter().toType())) {
             return param.getValue();
         }
-        if (JSONB.class.isAssignableFrom(param.getBinding().converter().toType())) {
-            return param.getValue().toString();
-        }
-        if (JSON.class.isAssignableFrom(param.getBinding().converter().toType())) {
-            return param.getValue().toString();
+        if (JSONB.class.isAssignableFrom(param.getBinding().converter().fromType()) ||
+                JSON.class.isAssignableFrom(param.getBinding().converter().fromType())) {
+            return param.getBinding().converter().to(param.getValue()).toString();
         }
         if (byte[].class.isAssignableFrom(param.getBinding().converter().fromType())) { // jooq treats BINARY types as byte[] but the reactive client expects a Buffer to write to blobs
             byte[] bytes = (byte[]) param.getBinding().converter().to(param.getValue());
