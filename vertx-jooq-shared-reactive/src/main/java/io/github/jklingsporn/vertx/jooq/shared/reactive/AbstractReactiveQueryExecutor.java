@@ -51,13 +51,13 @@ public abstract class AbstractReactiveQueryExecutor extends AbstractQueryExecuto
         }
 
         // JSON and JSONB are also not known by vertx-sql-client so, if we get a JsonObject just pass that on,
-        // if we get a JSONB or JSON object convert them to a string.
+        // if we get a JSONB or JSON object convert them to a JsonObject.
         if (JsonObject.class.isAssignableFrom(param.getBinding().converter().toType())) {
             return param.getValue();
         }
         if (JSONB.class.isAssignableFrom(param.getBinding().converter().fromType()) ||
                 JSON.class.isAssignableFrom(param.getBinding().converter().fromType())) {
-            return param.getBinding().converter().to(param.getValue()).toString();
+            return JsonObject.mapFrom(param.getValue());
         }
         if (byte[].class.isAssignableFrom(param.getBinding().converter().fromType())) { // jooq treats BINARY types as byte[] but the reactive client expects a Buffer to write to blobs
             byte[] bytes = (byte[]) param.getBinding().converter().to(param.getValue());
