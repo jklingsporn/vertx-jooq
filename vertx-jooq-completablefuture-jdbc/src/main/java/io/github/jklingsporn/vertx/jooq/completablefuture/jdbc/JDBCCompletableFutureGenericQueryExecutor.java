@@ -40,7 +40,7 @@ public class JDBCCompletableFutureGenericQueryExecutor extends AbstractQueryExec
      */
     <U> CompletableFuture<U> executeBlocking(Handler<Future<U>> blockingCodeHandler){
         VertxCompletableFuture<U> future = new VertxCompletableFuture<>(vertx);
-        vertx.executeBlocking(blockingCodeHandler, createCompletionHandler(future));
+        vertx.executeBlocking(blockingCodeHandler, false, createCompletionHandler(future));
         return future;
     }
 
