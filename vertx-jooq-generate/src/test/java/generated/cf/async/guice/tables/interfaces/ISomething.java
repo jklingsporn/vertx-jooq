@@ -5,14 +5,16 @@ package generated.cf.async.guice.tables.interfaces;
 
 
 import generated.cf.async.guice.enums.SomethingSomeenum;
+
 import io.github.jklingsporn.vertx.jooq.shared.UnexpectedJsonValueType;
 import io.github.jklingsporn.vertx.jooq.shared.internal.VertxPojo;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
-import javax.annotation.Generated;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+
+import javax.annotation.Generated;
 
 
 /**
