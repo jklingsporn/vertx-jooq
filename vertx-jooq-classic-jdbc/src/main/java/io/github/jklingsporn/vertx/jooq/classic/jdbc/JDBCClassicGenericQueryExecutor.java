@@ -32,7 +32,7 @@ public class JDBCClassicGenericQueryExecutor extends AbstractQueryExecutor imple
 
     protected <X> Future<X> executeBlocking(Handler<Future<X>> blockingCodeHandler){
         Future<X> future = Future.future();
-        vertx.executeBlocking(blockingCodeHandler,future);
+        vertx.executeBlocking(blockingCodeHandler,false,future);
         return future;
     }
 
