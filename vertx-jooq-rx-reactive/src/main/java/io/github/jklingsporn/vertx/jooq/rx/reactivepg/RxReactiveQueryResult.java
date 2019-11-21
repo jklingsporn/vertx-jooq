@@ -1,21 +1,22 @@
-package io.github.jklingsporn.vertx.jooq.shared.reactive;
+package io.github.jklingsporn.vertx.jooq.rx.reactivepg;
 
-import io.vertx.sqlclient.Row;
-import io.vertx.sqlclient.RowSet;
+import io.github.jklingsporn.vertx.jooq.shared.reactive.AbstractReactiveQueryResult;
+import io.vertx.reactivex.sqlclient.Row;
+import io.vertx.reactivex.sqlclient.RowSet;
 import org.jooq.Field;
 import org.jooq.tools.Convert;
 
 /**
  * @author jensklingsporn
  */
-public class ReactiveQueryResult extends AbstractReactiveQueryResult<Row,RowSet<Row>>{
+public class RxReactiveQueryResult extends AbstractReactiveQueryResult<Row,RowSet<Row>>{
 
 
-    public ReactiveQueryResult(RowSet<Row> result) {
+    public RxReactiveQueryResult(RowSet<Row> result) {
         super(result);
     }
 
-    ReactiveQueryResult(Row row) {
+    RxReactiveQueryResult(Row row) {
         super(row);
     }
 
@@ -35,8 +36,8 @@ public class ReactiveQueryResult extends AbstractReactiveQueryResult<Row,RowSet<
     }
 
     @Override
-    protected ReactiveQueryResult newInstance(Row result) {
-        return new ReactiveQueryResult(result);
+    protected RxReactiveQueryResult newInstance(Row result) {
+        return new RxReactiveQueryResult(result);
     }
 
 }

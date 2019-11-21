@@ -4,13 +4,12 @@ import io.github.jklingsporn.vertx.jooq.rx.RXQueryExecutor;
 import io.github.jklingsporn.vertx.jooq.shared.internal.QueryResult;
 import io.github.jklingsporn.vertx.jooq.shared.reactive.AbstractReactiveQueryExecutor;
 import io.github.jklingsporn.vertx.jooq.shared.reactive.ReactiveQueryExecutor;
-import io.github.jklingsporn.vertx.jooq.shared.reactive.ReactiveQueryResult;
 import io.reactivex.Completable;
 import io.reactivex.Maybe;
 import io.reactivex.Single;
-import io.vertx.sqlclient.Row;
 import io.vertx.reactivex.sqlclient.*;
 import io.vertx.reactivex.sqlclient.Transaction;
+import io.vertx.sqlclient.Row;
 import org.jooq.*;
 import org.jooq.exception.TooManyRowsException;
 
@@ -91,7 +90,7 @@ public class ReactiveRXGenericQueryExecutor extends AbstractReactiveQueryExecuto
         Query query = createQuery(queryFunction);
         log(query);
         Single<RowSet<io.vertx.reactivex.sqlclient.Row>> rowSingle  = delegate.rxPreparedQuery(toPreparedQuery(query), rxGetBindValues(query));
-        return rowSingle.map(res -> new ReactiveQueryResult(rxGetDelegate(res)));
+        return rowSingle.map(RxReactiveQueryResult::new);
     }
 
     /**

@@ -46,6 +46,7 @@ public class ReactiveRXQueryExecutor<R extends UpdatableRecord<R>,P,T> extends R
         Single<RowSet<io.vertx.reactivex.sqlclient.Row>> rowFuture = delegate.rxPreparedQuery(toPreparedQuery(query), rxGetBindValues(query));
         return rowFuture
                 .map(rows -> rows.iterator().next())
+                .map(io.vertx.reactivex.sqlclient.Row::getDelegate)
                 .map(keyMapper::apply);
     }
 
