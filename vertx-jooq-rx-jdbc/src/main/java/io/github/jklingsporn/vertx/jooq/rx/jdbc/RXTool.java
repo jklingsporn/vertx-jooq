@@ -19,7 +19,7 @@ public class RXTool {
 
     public static <T> Single<T> executeBlocking(Handler<Promise<T>> blockingCodeHandler, Vertx
         vertx) {
-        return vertx.rxExecuteBlocking(blockingCodeHandler).toSingle();
+        return vertx.rxExecuteBlocking(blockingCodeHandler,false).toSingle();
     }
 
     public static <T> Observable<T> executeBlockingObservable(Handler<Promise<List<T>>> blockingCodeHandler, Vertx
