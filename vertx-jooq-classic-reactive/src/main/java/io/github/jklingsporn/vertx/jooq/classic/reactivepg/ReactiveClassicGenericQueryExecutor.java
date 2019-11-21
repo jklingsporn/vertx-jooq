@@ -35,7 +35,7 @@ public class ReactiveClassicGenericQueryExecutor extends AbstractReactiveQueryEx
     public <Q extends Record> Future<List<Row>> findManyRow(Function<DSLContext, ? extends ResultQuery<Q>> queryFunction) {
         Query query = createQuery(queryFunction);
         log(query);
-        Promise<RowSet> rowPromise = Promise.promise();
+        Promise<RowSet<Row>> rowPromise = Promise.promise();
         delegate.preparedQuery(toPreparedQuery(query),getBindValues(query),rowPromise);
         return rowPromise.future().map(res -> StreamSupport
                 .stream(res.spliterator(), false)
@@ -46,7 +46,7 @@ public class ReactiveClassicGenericQueryExecutor extends AbstractReactiveQueryEx
     public <Q extends Record> Future<Row> findOneRow(Function<DSLContext, ? extends ResultQuery<Q>> queryFunction) {
         Query query = createQuery(queryFunction);
         log(query);
-        Promise<RowSet> rowPromise = Promise.promise();
+        Promise<RowSet<Row>> rowPromise = Promise.promise();
         delegate.preparedQuery(toPreparedQuery(query),getBindValues(query),rowPromise);
         return rowPromise.future().map(res -> {
             switch (res.size()) {
@@ -64,7 +64,7 @@ public class ReactiveClassicGenericQueryExecutor extends AbstractReactiveQueryEx
     public Future<Integer> execute(Function<DSLContext, ? extends Query> queryFunction) {
         Query query = createQuery(queryFunction);
         log(query);
-        Promise<RowSet> rowPromise = Promise.promise();
+        Promise<RowSet<Row>> rowPromise = Promise.promise();
         delegate.preparedQuery(toPreparedQuery(query),getBindValues(query),rowPromise);
         return rowPromise.future().map(SqlResult::rowCount);
     }
@@ -74,7 +74,7 @@ public class ReactiveClassicGenericQueryExecutor extends AbstractReactiveQueryEx
     public <R extends Record> Future<QueryResult> query(Function<DSLContext, ? extends ResultQuery<R>> queryFunction) {
         Query query = createQuery(queryFunction);
         log(query);
-        Promise<RowSet> rowPromise = Promise.promise();
+        Promise<RowSet<Row>> rowPromise = Promise.promise();
         delegate.preparedQuery(toPreparedQuery(query),getBindValues(query),rowPromise);
         return rowPromise.future().map(ReactiveQueryResult::new);
     }

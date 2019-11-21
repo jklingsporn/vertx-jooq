@@ -4,12 +4,10 @@ import io.github.jklingsporn.vertx.jooq.shared.internal.QueryExecutor;
 import io.reactivex.Single;
 import io.vertx.reactivex.sqlclient.RowSet;
 import io.vertx.reactivex.sqlclient.SqlClient;
-
 import io.vertx.reactivex.sqlclient.Transaction;
-import io.vertx.sqlclient.Row;
 import org.jooq.*;
 import org.jooq.impl.DefaultConfiguration;
-
+import io.vertx.sqlclient.Row;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
@@ -45,9 +43,9 @@ public class ReactiveRXQueryExecutor<R extends UpdatableRecord<R>,P,T> extends R
     public Single<T> insertReturning(Function<DSLContext, ? extends InsertResultStep<R>> queryFunction, Function<Object, T> keyMapper) {
         InsertResultStep<R> query = createQuery(queryFunction);
         log(query);
-        Single<RowSet> rowFuture = delegate.rxPreparedQuery(toPreparedQuery(query), rxGetBindValues(query));
+        Single<RowSet<io.vertx.reactivex.sqlclient.Row>> rowFuture = delegate.rxPreparedQuery(toPreparedQuery(query), rxGetBindValues(query));
         return rowFuture
-                .map(rows -> rows.getDelegate().iterator().next())
+                .map(rows -> rows.iterator().next())
                 .map(keyMapper::apply);
     }
 

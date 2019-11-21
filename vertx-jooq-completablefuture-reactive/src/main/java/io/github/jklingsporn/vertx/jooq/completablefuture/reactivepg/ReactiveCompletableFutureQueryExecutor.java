@@ -45,7 +45,7 @@ public class ReactiveCompletableFutureQueryExecutor<R extends UpdatableRecord<R>
     public CompletableFuture<T> insertReturning(Function<DSLContext, ? extends InsertResultStep<R>> queryFunction, Function<Object, T> keyMapper) {
         Query query = createQuery(queryFunction);
         log(query);
-        CompletableFuture<RowSet> rowFuture = new VertxCompletableFuture<>(vertx);
+        CompletableFuture<RowSet<Row>> rowFuture = new VertxCompletableFuture<>(vertx);
         delegate.preparedQuery(toPreparedQuery(query),getBindValues(query),createCompletionHandler(rowFuture));
         return rowFuture
                 .thenApply(rows -> rows.iterator().next())

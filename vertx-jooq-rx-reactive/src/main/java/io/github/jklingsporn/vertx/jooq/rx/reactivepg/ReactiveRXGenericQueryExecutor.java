@@ -8,9 +8,9 @@ import io.github.jklingsporn.vertx.jooq.shared.reactive.ReactiveQueryResult;
 import io.reactivex.Completable;
 import io.reactivex.Maybe;
 import io.reactivex.Single;
+import io.vertx.sqlclient.Row;
 import io.vertx.reactivex.sqlclient.*;
 import io.vertx.reactivex.sqlclient.Transaction;
-import io.vertx.sqlclient.Row;
 import org.jooq.*;
 import org.jooq.exception.TooManyRowsException;
 
@@ -37,22 +37,30 @@ public class ReactiveRXGenericQueryExecutor extends AbstractReactiveQueryExecuto
     public <Q extends Record> Single<List<Row>> findManyRow(Function<DSLContext, ? extends ResultQuery<Q>> queryFunction) {
         Query query = createQuery(queryFunction);
         log(query);
-        Single<RowSet> rowSingle  = delegate.rxPreparedQuery(toPreparedQuery(query), rxGetBindValues(query));
+        Single<RowSet<io.vertx.reactivex.sqlclient.Row>> rowSingle = delegate.rxPreparedQuery(toPreparedQuery(query), rxGetBindValues(query));
         return rowSingle.map(res ->
                 StreamSupport
-                .stream(res.getDelegate().spliterator(), false)
+                .stream(rxGetDelegate(res).spliterator(), false)
                         .collect(Collectors.toList()));
+    }
+
+    @SuppressWarnings("unchecked")
+    /**
+     * for some reason getDelegate returns untyped version
+     */
+    io.vertx.sqlclient.RowSet<io.vertx.sqlclient.Row> rxGetDelegate(RowSet<io.vertx.reactivex.sqlclient.Row> res) {
+        return res.getDelegate();
     }
 
     @Override
     public <Q extends Record> Single<Optional<Row>> findOneRow(Function<DSLContext, ? extends ResultQuery<Q>> queryFunction) {
         Query query = createQuery(queryFunction);
         log(query);
-        Single<RowSet> rowSingle = delegate.rxPreparedQuery(toPreparedQuery(query), rxGetBindValues(query));
+        Single<RowSet<io.vertx.reactivex.sqlclient.Row>> rowSingle = delegate.rxPreparedQuery(toPreparedQuery(query), rxGetBindValues(query));
         return rowSingle.map(res-> {
             switch (res.size()) {
                 case 0: return Optional.empty();
-                case 1: return Optional.ofNullable(res.getDelegate().iterator().next());
+                case 1: return Optional.ofNullable(rxGetDelegate(res).iterator().next());
                 default: throw new TooManyRowsException(String.format("Found more than one row: %d", res.size()));
             }
         });
@@ -62,7 +70,7 @@ public class ReactiveRXGenericQueryExecutor extends AbstractReactiveQueryExecuto
     public Single<Integer> execute(Function<DSLContext, ? extends Query> queryFunction) {
         Query query = createQuery(queryFunction);
         log(query);
-        Single<RowSet> rowSingle = delegate.rxPreparedQuery(toPreparedQuery(query), rxGetBindValues(query));
+        Single<RowSet<io.vertx.reactivex.sqlclient.Row>> rowSingle = delegate.rxPreparedQuery(toPreparedQuery(query), rxGetBindValues(query));
         return rowSingle.map(SqlResult::rowCount);
     }
 
@@ -82,8 +90,8 @@ public class ReactiveRXGenericQueryExecutor extends AbstractReactiveQueryExecuto
     public <R extends Record> Single<QueryResult> query(Function<DSLContext, ? extends ResultQuery<R>> queryFunction) {
         Query query = createQuery(queryFunction);
         log(query);
-        Single<RowSet> rowSingle  = delegate.rxPreparedQuery(toPreparedQuery(query), rxGetBindValues(query));
-        return rowSingle.map(res -> new ReactiveQueryResult(res.getDelegate()));
+        Single<RowSet<io.vertx.reactivex.sqlclient.Row>> rowSingle  = delegate.rxPreparedQuery(toPreparedQuery(query), rxGetBindValues(query));
+        return rowSingle.map(res -> new ReactiveQueryResult(rxGetDelegate(res)));
     }
 
     /**

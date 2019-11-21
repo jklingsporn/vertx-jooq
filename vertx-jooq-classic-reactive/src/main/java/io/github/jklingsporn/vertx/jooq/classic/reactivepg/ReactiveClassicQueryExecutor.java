@@ -39,7 +39,7 @@ public class ReactiveClassicQueryExecutor<R extends UpdatableRecord<R>,P,T> exte
     public Future<T> insertReturning(Function<DSLContext, ? extends InsertResultStep<R>> queryFunction, Function<Object, T> keyMapper) {
         Query query = createQuery(queryFunction);
         log(query);
-        Promise<RowSet> rowPromise = io.vertx.core.Promise.promise();
+        Promise<RowSet<Row>> rowPromise = io.vertx.core.Promise.promise();
         delegate.preparedQuery(toPreparedQuery(query),getBindValues(query),rowPromise);
         return rowPromise
                 .future()

@@ -18,9 +18,9 @@ import java.util.stream.StreamSupport;
 public class ReactiveQueryResult extends AbstractQueryResult{
 
     private final Row current;
-    private final RowSet result;
+    private final RowSet<Row> result;
 
-    public ReactiveQueryResult(RowSet result) {
+    public ReactiveQueryResult(RowSet<Row> result) {
         this.result = result;
         this.current = result.iterator().hasNext() ? result.iterator().next() : null;
     }
