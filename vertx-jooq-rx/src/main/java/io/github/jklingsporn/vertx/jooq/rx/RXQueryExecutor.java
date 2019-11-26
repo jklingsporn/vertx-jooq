@@ -9,7 +9,4 @@ import io.reactivex.Single;
  */
 public interface RXQueryExecutor extends UnifiedQueryExecutor<Single<Integer>,Single<QueryResult>> {
 
-
-
-
 }

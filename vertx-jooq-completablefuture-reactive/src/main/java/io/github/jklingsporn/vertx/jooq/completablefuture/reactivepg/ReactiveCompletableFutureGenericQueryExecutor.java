@@ -168,4 +168,11 @@ public class ReactiveCompletableFutureGenericQueryExecutor extends AbstractReact
                         .thenCompose(res -> queryExecutor.commit() //commit the transaction
                                 .thenApply(v -> res))); //and return the result
     }
+
+    @Override
+    public void release() {
+        if(delegate!=null){
+            delegate.close();
+        }
+    }
 }

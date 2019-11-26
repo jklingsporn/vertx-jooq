@@ -160,4 +160,11 @@ public class ReactiveRXGenericQueryExecutor extends AbstractReactiveQueryExecuto
                                 .andThen(Maybe.just(res)))) //and return the result
                 ;
     }
+
+    @Override
+    public void release() {
+        if(delegate!=null){
+            delegate.close();
+        }
+    }
 }

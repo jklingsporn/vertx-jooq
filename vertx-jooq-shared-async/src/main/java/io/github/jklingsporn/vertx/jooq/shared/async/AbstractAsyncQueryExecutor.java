@@ -125,4 +125,10 @@ public abstract class AbstractAsyncQueryExecutor<FIND_MANY_JSON, FIND_ONE_JSON, 
         return object;
     }
 
+    @Override
+    public void release() {
+        if(delegate!=null){
+            delegate.close();
+        }
+    }
 }

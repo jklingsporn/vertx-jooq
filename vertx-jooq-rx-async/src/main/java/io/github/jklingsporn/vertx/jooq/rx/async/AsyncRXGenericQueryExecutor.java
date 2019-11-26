@@ -106,4 +106,5 @@ public class AsyncRXGenericQueryExecutor extends AbstractAsyncQueryExecutor<Sing
             }
         };
     }
+
 }

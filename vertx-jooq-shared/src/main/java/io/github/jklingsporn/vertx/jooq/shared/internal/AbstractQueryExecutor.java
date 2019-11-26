@@ -37,4 +37,5 @@ public class AbstractQueryExecutor implements Attachable{
     protected <T extends Query> T createQuery(Function<DSLContext,T> queryFunction){
         return queryFunction.apply(DSL.using(configuration()));
     }
+
 }

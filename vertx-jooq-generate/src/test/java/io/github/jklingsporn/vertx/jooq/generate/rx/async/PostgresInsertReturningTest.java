@@ -73,7 +73,7 @@ public class PostgresInsertReturningTest extends AbstractPostgresInsertReturning
     @Test
     public void insertReturningCompositeKeyNotSetShouldFail() throws InterruptedException {
         CountDownLatch latch = new CountDownLatch(1);
-        runInsertReturning(generated.classic.reactive.regular.vertx.tables.Somethingcomposite.SOMETHINGCOMPOSITE, new SomethingcompositeRecord(), Somethingcomposite::new, latch, res->{
+        runInsertReturning(generated.classic.reactive.regular.vertx.tables.Somethingcomposite.SOMETHINGCOMPOSITE, new SomethingcompositeRecord().setSomejsonobject(new JsonObject()), Somethingcomposite::new, latch, res->{
             Assert.assertTrue(res.failed());
             latch.countDown();
         });

@@ -7,11 +7,11 @@ import generated.rx.reactive.regular.vertx.tables.pojos.Something;
 import io.github.jklingsporn.vertx.jooq.generate.PostgresConfigurationProvider;
 import io.github.jklingsporn.vertx.jooq.generate.ReactiveDatabaseClientProvider;
 import io.github.jklingsporn.vertx.jooq.generate.rx.RXTestBase;
-import io.vertx.pgclient.PgException;
 import io.reactivex.Completable;
 import io.reactivex.Single;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+import io.vertx.pgclient.PgException;
 import org.jooq.Condition;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -220,4 +220,5 @@ public class SomethingDaoTest extends RXTestBase<Something, Integer, Long, Somet
                 );
         await(completionLatch);
     }
+
 }
