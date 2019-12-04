@@ -78,7 +78,6 @@ public abstract class RXTestBase<P,T,O, DAO extends GenericVertxDAO<?,P, T, Sing
         //Cool, same class
     }
 
-
     protected <T> SingleObserver<T> countdownLatchHandler(final CountDownLatch latch){
         return new SingleObserver<T>() {
             @Override

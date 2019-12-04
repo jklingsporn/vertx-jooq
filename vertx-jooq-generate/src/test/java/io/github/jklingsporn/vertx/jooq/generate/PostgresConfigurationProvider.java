@@ -5,6 +5,7 @@ import org.jooq.impl.DefaultConfiguration;
 import org.jooq.meta.jaxb.Configuration;
 import org.jooq.meta.jaxb.Jdbc;
 import org.jooq.meta.postgres.PostgresDatabase;
+import org.junit.Assert;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -49,6 +50,8 @@ public class PostgresConfigurationProvider extends AbstractDatabaseConfiguration
                     "  \"someId\" SERIAL,\n" +
                     "  \"someString\" VARCHAR(45) DEFAULT NULL,\n" +
                     "  PRIMARY KEY (\"someId\"));\n").execute();
+        }catch (Throwable e){
+            Assert.fail(e.getMessage());
         }
     }
 
