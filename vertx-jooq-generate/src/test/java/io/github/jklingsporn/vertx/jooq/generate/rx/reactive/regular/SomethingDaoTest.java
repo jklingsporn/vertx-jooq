@@ -4,9 +4,12 @@ import generated.rx.reactive.regular.vertx.Tables;
 import generated.rx.reactive.regular.vertx.enums.Someenum;
 import generated.rx.reactive.regular.vertx.tables.daos.SomethingDao;
 import generated.rx.reactive.regular.vertx.tables.pojos.Something;
+import generated.rx.reactive.regular.vertx.tables.records.SomethingRecord;
 import io.github.jklingsporn.vertx.jooq.generate.PostgresConfigurationProvider;
 import io.github.jklingsporn.vertx.jooq.generate.ReactiveDatabaseClientProvider;
 import io.github.jklingsporn.vertx.jooq.generate.rx.RXTestBase;
+import io.github.jklingsporn.vertx.jooq.rx.reactivepg.ReactiveRXGenericQueryExecutor;
+import io.github.jklingsporn.vertx.jooq.rx.reactivepg.ReactiveRXQueryExecutor;
 import io.reactivex.Completable;
 import io.reactivex.Single;
 import io.vertx.core.json.JsonArray;
@@ -119,29 +122,36 @@ public class SomethingDaoTest extends RXTestBase<Something, Integer, Long, Somet
         }
     }
 
-    /*
-     * There is something wrong with this test:
-     * - commenting in will fail the test
-     * - it also deadlocks io.github.jklingsporn.vertx.jooq.generate.rx.async.PostgresInsertReturningTest
-     */
-//    @Test
-//    public void beginTransactionCanNotBeCalledInTransaction(){
-//        CountDownLatch latch = new CountDownLatch(1);
-//        Single<ReactiveRXQueryExecutor<SomethingRecord, Something, Integer>> transaction = dao.queryExecutor()
-//                .beginTransaction();
-//        transaction
-//                    .flatMap(transactionQE -> transactionQE.beginTransaction())
-//                    .doOnSuccess(qe -> Assert.fail("Should not succeed"))
-//                    .onErrorResumeNext(x -> {
-//                                Assert.assertNotNull(x);
-//                                assertException(IllegalStateException.class, x);
-//                                return transaction;
-//                            }
-//                    ).flatMapCompletable(qe -> qe.rollback())
-//                    .toSingleDefault(transaction)
-//                .subscribe(countdownLatchHandler(latch));
-//        await(latch);
-//    }
+    @Test
+    public void commitAndRollbackShouldSucceed(){
+        CountDownLatch latch = new CountDownLatch(1);
+        Single<ReactiveRXQueryExecutor<SomethingRecord, Something, Integer>> transaction = dao.queryExecutor()
+                .beginTransaction();
+        transaction
+                .flatMapCompletable(ReactiveRXGenericQueryExecutor::rollback)
+                .toSingleDefault(transaction)
+                .subscribe(countdownLatchHandler(latch));
+        await(latch);
+    }
+
+    @Test
+    public void beginTransactionCanNotBeCalledInTransaction(){
+        CountDownLatch latch = new CountDownLatch(1);
+        Single<ReactiveRXQueryExecutor<SomethingRecord, Something, Integer>> transaction = dao.queryExecutor()
+                .beginTransaction();
+        transaction
+                    .flatMap(transactionQE -> {
+                        try{
+                            Single<ReactiveRXQueryExecutor<SomethingRecord, Something, Integer>> shouldFail = transactionQE.beginTransaction();
+                            Assert.fail("Should not succeed");
+                            return shouldFail;
+                        }catch (IllegalStateException e){
+                            return transactionQE.rollback().toSingleDefault(transaction);
+                        }
+                    })
+                .subscribe(countdownLatchHandler(latch));
+        await(latch);
+    }
 
     @Test
     public void commitTransactionCanNotBeCalledOutsideTransaction(){

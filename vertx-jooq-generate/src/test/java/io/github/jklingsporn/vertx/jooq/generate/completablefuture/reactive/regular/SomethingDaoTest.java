@@ -4,6 +4,7 @@ import generated.cf.reactive.regular.vertx.Tables;
 import generated.cf.reactive.regular.vertx.enums.Someenum;
 import generated.cf.reactive.regular.vertx.tables.daos.SomethingDao;
 import generated.cf.reactive.regular.vertx.tables.pojos.Something;
+import generated.cf.reactive.regular.vertx.tables.records.SomethingRecord;
 import io.github.jklingsporn.vertx.jooq.completablefuture.reactivepg.ReactiveCompletableFutureQueryExecutor;
 import io.github.jklingsporn.vertx.jooq.generate.PostgresConfigurationProvider;
 import io.github.jklingsporn.vertx.jooq.generate.ReactiveDatabaseClientProvider;
@@ -18,6 +19,7 @@ import org.junit.Test;
 
 import java.time.LocalDateTime;
 import java.util.Random;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 
 /**
@@ -118,14 +120,17 @@ public class SomethingDaoTest extends CompletableFutureTestBase<Something, Integ
     @Test
     public void beginTransactionCanNotBeCalledInTransaction(){
         CountDownLatch latch = new CountDownLatch(1);
-        dao.queryExecutor()
-                .beginTransaction()
+        CompletableFuture<ReactiveCompletableFutureQueryExecutor<SomethingRecord, Something, Integer>> transaction = dao.queryExecutor()
+                .beginTransaction();
+        transaction
                 .thenCompose(ReactiveCompletableFutureQueryExecutor::beginTransaction)
+                .thenAccept(v->Assert.fail("Not allowed"))
                 .exceptionally(x -> {
-                    Assert.assertNotNull(x);
                     assertException(IllegalStateException.class,x);
                     return null;
-                }).whenComplete(countdownLatchHandler(latch));
+                })
+                .thenCompose(v->transaction.join().rollback())
+                .whenComplete(countdownLatchHandler(latch));
         await(latch);
     }
 
