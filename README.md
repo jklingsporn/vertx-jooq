@@ -3,7 +3,14 @@ A [jOOQ](http://www.jooq.org/)-CodeGenerator to create [vertx](http://vertx.io/)
 Perform all CRUD-operations asynchronously and convert your POJOs from/into a `io.vertx.core.json.JsonObject` using the API and
 driver of your choice.
 
-## latest release 4.1
+## latest release 5.0.0
+I've finally managed to upgrade the vertx-dependency to 3.8.x. It took me a bit longer than expected to apply the required changes
+because of two things:
+- introduction of `Promise` 
+- and reactive-driver dependency changes  
+Especially the latter took some time, but here we are. Thanks again for all the activity on this project and your contributions :heart:.
+
+## release 4.1
 - The main addition in this release is [transaction support for reactive modules](https://github.com/jklingsporn/vertx-jooq/issues/92).
 Transaction are now added onto the reactive variants of the `QueryExecutor`. There are two ways to work with transactions:
 	1. The manual mode involves starting and manually committing or rolling back the transaction.
@@ -39,9 +46,9 @@ The API stays the same but the driver is written in Kotlin instead of Scala. Che
 for more details.
 - Lastly, [some bugs have been fixed](https://github.com/jklingsporn/vertx-jooq/milestone/14?closed=1).
 
-## new in version 4.x
-Fast, faster, reactive.
-- Starting from this version on, `vertx-jooq` adds support for [this winning, high performance postgres driver](https://github.com/reactiverse/reactive-pg-client).
+## Fast, faster, reactive
+
+- Starting from version 4.x, `vertx-jooq` adds support for [this winning, high performance postgres driver](https://github.com/reactiverse/reactive-pg-client).
 - Finally added support for `DAO#insertReturning` for the async postgres driver.
 - A new `UnifiedQueryExecutor` interface that allows the execution of arbitrary jOOQ-SQL against an API with the
 same return value for all drivers! Currently there are three interfaces you can use: `ClassicQueryExecutor`,
