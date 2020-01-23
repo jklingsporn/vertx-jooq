@@ -3,48 +3,12 @@ A [jOOQ](http://www.jooq.org/)-CodeGenerator to create [vertx](http://vertx.io/)
 Perform all CRUD-operations asynchronously and convert your POJOs from/into a `io.vertx.core.json.JsonObject` using the API and
 driver of your choice.
 
-## latest release 5.0.0
-I've finally managed to upgrade the vertx-dependency to 3.8.x. It took me a bit longer than expected to apply the required changes
+## release 5.0.0
+This release's focus was on upgrading the vertx-dependency to 3.8.x. It took a bit longer than expected to apply the required changes
 because of two things:
 - introduction of `Promise` 
-- and reactive-driver dependency changes  
-Especially the latter took some time, but here we are. Thanks again for all the activity on this project and your contributions :heart:.
-
-## release 4.1
-- The main addition in this release is [transaction support for reactive modules](https://github.com/jklingsporn/vertx-jooq/issues/92).
-Transaction are now added onto the reactive variants of the `QueryExecutor`. There are two ways to work with transactions:
-	1. The manual mode involves starting and manually committing or rolling back the transaction.
-		```java
-		Future<Void> transactionWork = dao.queryExecutor()
-			.beginTransaction()
-			.compose(
-				transactionQE -> {
-					//only work on the "transactional" QueryExecutor returned by the beginTransaction() method
-					Future<Integer> insert1 = transactionQE.execute(dslContext -> dslContext.insertInto() ....;
-					Future<Integer> insert2 = transactionQE.execute(dslContext -> dslContext.insertInto() ....;
-					return CompositeFuture
-						.all(insert1,insert2)
-						.compose(v->transactionQE.commit() /*or .rollback()*/); //don't forget to commit your transaction
-				});
-		```
-	2. The "convenient mode" is the best choice for most situations. It allows you to work in a transactional context that
-		automatically commits your work when you are done. You can also return a value from your transactional work.
-		```java
-		Future<Void> transactionWork = dao.queryExecutor()
-			.transaction(
-				transactionQE -> {
-					//only work on the "transactional" QueryExecutor returned by the transaction() method
-					Future<Integer> insert1 = transactionQE.execute(dslContext -> dslContext.insertInto() ....;
-					Future<Integer> insert2 = transactionQE.execute(dslContext -> dslContext.insertInto() ....;
-					return CompositeFuture.all(insert1,insert2);
-					//or return some result
-				});
-		```
-- Another important change was the [switch to a maintained fork of the async driver](https://github.com/jklingsporn/vertx-jooq/issues/91)
-which was introduced in vertx 3.6.3 and will be the default implementation in the next releases.
-The API stays the same but the driver is written in Kotlin instead of Scala. Checkout the [migration guide](https://github.com/jasync-sql/jasync-sql/wiki/Mauricio-Driver-Migration)
-for more details.
-- Lastly, [some bugs have been fixed](https://github.com/jklingsporn/vertx-jooq/milestone/14?closed=1).
+- and reactive-driver dependency changes\
+Especially the latter took some time, but here we are. Thanks again for all the activity on this project and your contributions :heart:.\
 
 ## Fast, faster, reactive
 
