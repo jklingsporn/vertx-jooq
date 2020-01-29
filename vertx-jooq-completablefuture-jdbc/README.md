@@ -3,7 +3,7 @@
 <dependency>
   <groupId>io.github.jklingsporn</groupId>
   <artifactId>vertx-jooq-completablefuture-jdbc</artifactId>
-  <version>5.0.0</version>
+  <version>5.0.1</version>
 </dependency>
 ```
 
@@ -32,7 +32,7 @@ If you are new to jOOQ, I recommend to read the awesome [jOOQ documentation](htt
     <dependency>
       <groupId>io.github.jklingsporn</groupId>
       <artifactId>vertx-jooq-completablefuture-jdbc</artifactId>
-      <version>5.0.0</version>
+      <version>5.0.1</version>
     </dependency>
   </dependencies>
   <build>
@@ -61,7 +61,7 @@ If you are new to jOOQ, I recommend to read the awesome [jOOQ documentation](htt
               <dependency>
                   <groupId>io.github.jklingsporn</groupId>
                   <artifactId>vertx-jooq-generate</artifactId>
-                  <version>5.0.0</version>
+                  <version>5.0.1</version>
               </dependency>
           </dependencies>
 
