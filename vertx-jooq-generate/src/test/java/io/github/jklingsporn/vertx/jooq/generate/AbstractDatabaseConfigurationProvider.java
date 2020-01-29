@@ -74,6 +74,7 @@ abstract class AbstractDatabaseConfigurationProvider {
         generateConfig.setDaos(true);
         generateConfig.setPojosEqualsAndHashCode(true);
         generateConfig.setJavaTimeTypes(true);
+        generateConfig.setGeneratedAnnotationType(GeneratedAnnotationType.JAVAX_ANNOTATION_GENERATED);
 
         /*
          * We need to do a small hack to let the DAOs extend from AbstractVertxDAO. That's why

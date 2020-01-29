@@ -2,8 +2,8 @@ package io.github.jklingsporn.vertx.jooq.generate;
 
 import io.github.jklingsporn.vertx.jooq.shared.JsonArrayConverter;
 import io.github.jklingsporn.vertx.jooq.shared.JsonObjectConverter;
-import io.github.jklingsporn.vertx.jooq.shared.internal.AbstractVertxDAO;
 import io.github.jklingsporn.vertx.jooq.shared.ObjectToJsonObjectBinding;
+import io.github.jklingsporn.vertx.jooq.shared.internal.AbstractVertxDAO;
 import io.vertx.core.Vertx;
 import io.vertx.core.impl.Arguments;
 import org.jooq.Constants;
@@ -12,7 +12,6 @@ import org.jooq.codegen.GeneratorStrategy;
 import org.jooq.codegen.JavaGenerator;
 import org.jooq.codegen.JavaWriter;
 import org.jooq.meta.*;
-import org.jooq.meta.jaxb.GeneratedAnnotationType;
 import org.jooq.tools.JooqLogger;
 
 import java.io.File;
@@ -597,10 +596,5 @@ public abstract class VertxGenerator extends JavaGenerator {
         generateDaoClassFooter(table, out);
         overwriteDAOMethods(out, className, tableIdentifier, tableRecord, pType, tType);
         out.println("}");
-    }
-
-    @Override
-    public GeneratedAnnotationType generateGeneratedAnnotationType() {
-        return GeneratedAnnotationType.JAVAX_ANNOTATION_GENERATED;
     }
 }
