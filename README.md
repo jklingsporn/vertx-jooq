@@ -8,7 +8,7 @@ This release's focus was on upgrading the vertx-dependency to 3.8.x. It took a b
 because of two things:
 - introduction of `Promise` 
 - and reactive-driver dependency changes\
-Especially the latter took some time, but here we are. Thanks again for all the activity on this project and your contributions :heart:.\
+Especially the latter took some time, but here we are. Thanks again for all the activity on this project and your contributions :heart:.
 
 ## Fast, faster, reactive
 
