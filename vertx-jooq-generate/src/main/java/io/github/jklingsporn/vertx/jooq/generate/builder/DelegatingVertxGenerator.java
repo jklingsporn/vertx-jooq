@@ -56,6 +56,7 @@ public class DelegatingVertxGenerator extends VertxGenerator {
 
     @Override
     protected void writeDAOImports(JavaWriter out) {
+        super.writeDAOImports(out);
         delegate.writeDAOImports(out);
     }
 
