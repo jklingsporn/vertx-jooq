@@ -9,11 +9,12 @@ import generated.cf.reactive.regular.vertx.tables.records.SomethingwithoutjsonRe
 
 import io.github.jklingsporn.vertx.jooq.shared.reactive.AbstractReactiveVertxDAO;
 
-import java.util.List;
+import java.util.Collection;
 
 import org.jooq.Configuration;
 
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import io.github.jklingsporn.vertx.jooq.completablefuture.VertxDAO;
 import io.github.jklingsporn.vertx.jooq.completablefuture.reactivepg.ReactiveCompletableFutureQueryExecutor;
@@ -39,7 +40,7 @@ public class SomethingwithoutjsonDao extends AbstractReactiveVertxDAO<Somethingw
     /**
      * Find records that have <code>someString IN (values)</code> asynchronously
      */
-    public CompletableFuture<List<generated.cf.reactive.regular.vertx.tables.pojos.Somethingwithoutjson>> findManyBySomestring(List<String> values) {
+    public CompletableFuture<List<generated.cf.reactive.regular.vertx.tables.pojos.Somethingwithoutjson>> findManyBySomestring(Collection<String> values) {
         return findManyByCondition(Somethingwithoutjson.SOMETHINGWITHOUTJSON.SOMESTRING.in(values));
     }
 

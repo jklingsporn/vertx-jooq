@@ -12,11 +12,12 @@ import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Collection;
 
 import org.jooq.Configuration;
 
 
+import java.util.List;
 import io.vertx.core.Future;
 import io.github.jklingsporn.vertx.jooq.classic.jdbc.JDBCClassicQueryExecutor;
 /**
@@ -43,63 +44,63 @@ public class SomethingDao extends AbstractVertxDAO<SomethingRecord, generated.cl
     /**
      * Find records that have <code>SOMESTRING IN (values)</code> asynchronously
      */
-    public Future<List<generated.classic.jdbc.guice.vertx.tables.pojos.Something>> findManyBySomestring(List<String> values) {
+    public Future<List<generated.classic.jdbc.guice.vertx.tables.pojos.Something>> findManyBySomestring(Collection<String> values) {
         return findManyByCondition(Something.SOMETHING.SOMESTRING.in(values));
     }
 
     /**
      * Find records that have <code>SOMEHUGENUMBER IN (values)</code> asynchronously
      */
-    public Future<List<generated.classic.jdbc.guice.vertx.tables.pojos.Something>> findManyBySomehugenumber(List<Long> values) {
+    public Future<List<generated.classic.jdbc.guice.vertx.tables.pojos.Something>> findManyBySomehugenumber(Collection<Long> values) {
         return findManyByCondition(Something.SOMETHING.SOMEHUGENUMBER.in(values));
     }
 
     /**
      * Find records that have <code>SOMESMALLNUMBER IN (values)</code> asynchronously
      */
-    public Future<List<generated.classic.jdbc.guice.vertx.tables.pojos.Something>> findManyBySomesmallnumber(List<Short> values) {
+    public Future<List<generated.classic.jdbc.guice.vertx.tables.pojos.Something>> findManyBySomesmallnumber(Collection<Short> values) {
         return findManyByCondition(Something.SOMETHING.SOMESMALLNUMBER.in(values));
     }
 
     /**
      * Find records that have <code>SOMEREGULARNUMBER IN (values)</code> asynchronously
      */
-    public Future<List<generated.classic.jdbc.guice.vertx.tables.pojos.Something>> findManyBySomeregularnumber(List<Integer> values) {
+    public Future<List<generated.classic.jdbc.guice.vertx.tables.pojos.Something>> findManyBySomeregularnumber(Collection<Integer> values) {
         return findManyByCondition(Something.SOMETHING.SOMEREGULARNUMBER.in(values));
     }
 
     /**
      * Find records that have <code>SOMEBOOLEAN IN (values)</code> asynchronously
      */
-    public Future<List<generated.classic.jdbc.guice.vertx.tables.pojos.Something>> findManyBySomeboolean(List<Boolean> values) {
+    public Future<List<generated.classic.jdbc.guice.vertx.tables.pojos.Something>> findManyBySomeboolean(Collection<Boolean> values) {
         return findManyByCondition(Something.SOMETHING.SOMEBOOLEAN.in(values));
     }
 
     /**
      * Find records that have <code>SOMEDOUBLE IN (values)</code> asynchronously
      */
-    public Future<List<generated.classic.jdbc.guice.vertx.tables.pojos.Something>> findManyBySomedouble(List<Double> values) {
+    public Future<List<generated.classic.jdbc.guice.vertx.tables.pojos.Something>> findManyBySomedouble(Collection<Double> values) {
         return findManyByCondition(Something.SOMETHING.SOMEDOUBLE.in(values));
     }
 
     /**
      * Find records that have <code>SOMEJSONOBJECT IN (values)</code> asynchronously
      */
-    public Future<List<generated.classic.jdbc.guice.vertx.tables.pojos.Something>> findManyBySomejsonobject(List<JsonObject> values) {
+    public Future<List<generated.classic.jdbc.guice.vertx.tables.pojos.Something>> findManyBySomejsonobject(Collection<JsonObject> values) {
         return findManyByCondition(Something.SOMETHING.SOMEJSONOBJECT.in(values));
     }
 
     /**
      * Find records that have <code>SOMEJSONARRAY IN (values)</code> asynchronously
      */
-    public Future<List<generated.classic.jdbc.guice.vertx.tables.pojos.Something>> findManyBySomejsonarray(List<JsonArray> values) {
+    public Future<List<generated.classic.jdbc.guice.vertx.tables.pojos.Something>> findManyBySomejsonarray(Collection<JsonArray> values) {
         return findManyByCondition(Something.SOMETHING.SOMEJSONARRAY.in(values));
     }
 
     /**
      * Find records that have <code>SOMETIMESTAMP IN (values)</code> asynchronously
      */
-    public Future<List<generated.classic.jdbc.guice.vertx.tables.pojos.Something>> findManyBySometimestamp(List<LocalDateTime> values) {
+    public Future<List<generated.classic.jdbc.guice.vertx.tables.pojos.Something>> findManyBySometimestamp(Collection<LocalDateTime> values) {
         return findManyByCondition(Something.SOMETHING.SOMETIMESTAMP.in(values));
     }
 

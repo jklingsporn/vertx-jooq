@@ -10,12 +10,13 @@ import generated.cf.async.regular.tables.records.SomethingcompositeRecord;
 import io.github.jklingsporn.vertx.jooq.shared.async.AbstractAsyncVertxDAO;
 import io.vertx.core.json.JsonObject;
 
-import java.util.List;
+import java.util.Collection;
 
 import org.jooq.Configuration;
 import org.jooq.Record2;
 
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import io.github.jklingsporn.vertx.jooq.completablefuture.VertxDAO;
 import io.github.jklingsporn.vertx.jooq.completablefuture.async.AsyncCompletableFutureQueryExecutor;
@@ -42,14 +43,14 @@ public class SomethingcompositeDao extends AbstractAsyncVertxDAO<Somethingcompos
     /**
      * Find records that have <code>someSecondId IN (values)</code> asynchronously
      */
-    public CompletableFuture<List<generated.cf.async.regular.tables.pojos.Somethingcomposite>> findManyBySomesecondid(List<Integer> values) {
+    public CompletableFuture<List<generated.cf.async.regular.tables.pojos.Somethingcomposite>> findManyBySomesecondid(Collection<Integer> values) {
         return findManyByCondition(Somethingcomposite.SOMETHINGCOMPOSITE.SOMESECONDID.in(values));
     }
 
     /**
      * Find records that have <code>someJsonObject IN (values)</code> asynchronously
      */
-    public CompletableFuture<List<generated.cf.async.regular.tables.pojos.Somethingcomposite>> findManyBySomejsonobject(List<JsonObject> values) {
+    public CompletableFuture<List<generated.cf.async.regular.tables.pojos.Somethingcomposite>> findManyBySomejsonobject(Collection<JsonObject> values) {
         return findManyByCondition(Somethingcomposite.SOMETHINGCOMPOSITE.SOMEJSONOBJECT.in(values));
     }
 

@@ -9,11 +9,12 @@ import generated.rx.reactive.regular.vertx.tables.records.SomethingwithoutjsonRe
 
 import io.github.jklingsporn.vertx.jooq.shared.reactive.AbstractReactiveVertxDAO;
 
-import java.util.List;
+import java.util.Collection;
 
 import org.jooq.Configuration;
 
 
+import java.util.List;
 import io.reactivex.Single;
 import java.util.Optional;
 import io.github.jklingsporn.vertx.jooq.rx.reactivepg.ReactiveRXQueryExecutor;
@@ -39,7 +40,7 @@ public class SomethingwithoutjsonDao extends AbstractReactiveVertxDAO<Somethingw
     /**
      * Find records that have <code>someString IN (values)</code> asynchronously
      */
-    public Single<List<generated.rx.reactive.regular.vertx.tables.pojos.Somethingwithoutjson>> findManyBySomestring(List<String> values) {
+    public Single<List<generated.rx.reactive.regular.vertx.tables.pojos.Somethingwithoutjson>> findManyBySomestring(Collection<String> values) {
         return findManyByCondition(Somethingwithoutjson.SOMETHINGWITHOUTJSON.SOMESTRING.in(values));
     }
 

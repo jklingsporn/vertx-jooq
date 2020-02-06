@@ -10,12 +10,13 @@ import generated.classic.reactive.guice.vertx.tables.records.SomethingcompositeR
 import io.github.jklingsporn.vertx.jooq.shared.reactive.AbstractReactiveVertxDAO;
 import io.vertx.core.json.JsonObject;
 
-import java.util.List;
+import java.util.Collection;
 
 import org.jooq.Configuration;
 import org.jooq.Record2;
 
 
+import java.util.List;
 import io.vertx.core.Future;
 import io.github.jklingsporn.vertx.jooq.classic.reactivepg.ReactiveClassicQueryExecutor;
 /**
@@ -42,14 +43,14 @@ public class SomethingcompositeDao extends AbstractReactiveVertxDAO<Somethingcom
     /**
      * Find records that have <code>someSecondId IN (values)</code> asynchronously
      */
-    public Future<List<generated.classic.reactive.guice.vertx.tables.pojos.Somethingcomposite>> findManyBySomesecondid(List<Integer> values) {
+    public Future<List<generated.classic.reactive.guice.vertx.tables.pojos.Somethingcomposite>> findManyBySomesecondid(Collection<Integer> values) {
         return findManyByCondition(Somethingcomposite.SOMETHINGCOMPOSITE.SOMESECONDID.in(values));
     }
 
     /**
      * Find records that have <code>someJsonObject IN (values)</code> asynchronously
      */
-    public Future<List<generated.classic.reactive.guice.vertx.tables.pojos.Somethingcomposite>> findManyBySomejsonobject(List<JsonObject> values) {
+    public Future<List<generated.classic.reactive.guice.vertx.tables.pojos.Somethingcomposite>> findManyBySomejsonobject(Collection<JsonObject> values) {
         return findManyByCondition(Somethingcomposite.SOMETHINGCOMPOSITE.SOMEJSONOBJECT.in(values));
     }
 

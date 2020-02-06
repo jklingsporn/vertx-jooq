@@ -9,11 +9,12 @@ import generated.classic.async.regular.tables.records.SomethingwithoutjsonRecord
 
 import io.github.jklingsporn.vertx.jooq.shared.async.AbstractAsyncVertxDAO;
 
-import java.util.List;
+import java.util.Collection;
 
 import org.jooq.Configuration;
 
 
+import java.util.List;
 import io.vertx.core.Future;
 import io.github.jklingsporn.vertx.jooq.classic.async.AsyncClassicQueryExecutor;
 /**
@@ -38,7 +39,7 @@ public class SomethingwithoutjsonDao extends AbstractAsyncVertxDAO<Somethingwith
     /**
      * Find records that have <code>someString IN (values)</code> asynchronously
      */
-    public Future<List<generated.classic.async.regular.tables.pojos.Somethingwithoutjson>> findManyBySomestring(List<String> values) {
+    public Future<List<generated.classic.async.regular.tables.pojos.Somethingwithoutjson>> findManyBySomestring(Collection<String> values) {
         return findManyByCondition(Somethingwithoutjson.SOMETHINGWITHOUTJSON.SOMESTRING.in(values));
     }
 

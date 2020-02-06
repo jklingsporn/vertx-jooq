@@ -12,6 +12,7 @@ import io.vertx.core.json.JsonObject;
 import org.jooq.Configuration;
 import org.jooq.Record2;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 /**
@@ -39,14 +40,14 @@ public class SomethingcompositeDao extends AbstractAsyncVertxDAO<Somethingcompos
     /**
      * Find records that have <code>someSecondId IN (values)</code> asynchronously
      */
-    public CompletableFuture<List<generated.cf.async.guice.tables.pojos.Somethingcomposite>> findManyBySomesecondid(List<Integer> values) {
+    public CompletableFuture<List<generated.cf.async.guice.tables.pojos.Somethingcomposite>> findManyBySomesecondid(Collection<Integer> values) {
         return findManyByCondition(Somethingcomposite.SOMETHINGCOMPOSITE.SOMESECONDID.in(values));
     }
 
     /**
      * Find records that have <code>someJsonObject IN (values)</code> asynchronously
      */
-    public CompletableFuture<List<generated.cf.async.guice.tables.pojos.Somethingcomposite>> findManyBySomejsonobject(List<JsonObject> values) {
+    public CompletableFuture<List<generated.cf.async.guice.tables.pojos.Somethingcomposite>> findManyBySomejsonobject(Collection<JsonObject> values) {
         return findManyByCondition(Somethingcomposite.SOMETHINGCOMPOSITE.SOMEJSONOBJECT.in(values));
     }
 

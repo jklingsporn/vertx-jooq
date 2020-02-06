@@ -13,11 +13,12 @@ import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Collection;
 
 import org.jooq.Configuration;
 
 
+import java.util.List;
 import io.reactivex.Single;
 import java.util.Optional;
 import io.github.jklingsporn.vertx.jooq.rx.async.AsyncRXQueryExecutor;
@@ -43,63 +44,63 @@ public class SomethingDao extends AbstractAsyncVertxDAO<SomethingRecord, generat
     /**
      * Find records that have <code>someString IN (values)</code> asynchronously
      */
-    public Single<List<generated.rx.async.regular.tables.pojos.Something>> findManyBySomestring(List<String> values) {
+    public Single<List<generated.rx.async.regular.tables.pojos.Something>> findManyBySomestring(Collection<String> values) {
         return findManyByCondition(Something.SOMETHING.SOMESTRING.in(values));
     }
 
     /**
      * Find records that have <code>someHugeNumber IN (values)</code> asynchronously
      */
-    public Single<List<generated.rx.async.regular.tables.pojos.Something>> findManyBySomehugenumber(List<Long> values) {
+    public Single<List<generated.rx.async.regular.tables.pojos.Something>> findManyBySomehugenumber(Collection<Long> values) {
         return findManyByCondition(Something.SOMETHING.SOMEHUGENUMBER.in(values));
     }
 
     /**
      * Find records that have <code>someSmallNumber IN (values)</code> asynchronously
      */
-    public Single<List<generated.rx.async.regular.tables.pojos.Something>> findManyBySomesmallnumber(List<Short> values) {
+    public Single<List<generated.rx.async.regular.tables.pojos.Something>> findManyBySomesmallnumber(Collection<Short> values) {
         return findManyByCondition(Something.SOMETHING.SOMESMALLNUMBER.in(values));
     }
 
     /**
      * Find records that have <code>someRegularNumber IN (values)</code> asynchronously
      */
-    public Single<List<generated.rx.async.regular.tables.pojos.Something>> findManyBySomeregularnumber(List<Integer> values) {
+    public Single<List<generated.rx.async.regular.tables.pojos.Something>> findManyBySomeregularnumber(Collection<Integer> values) {
         return findManyByCondition(Something.SOMETHING.SOMEREGULARNUMBER.in(values));
     }
 
     /**
      * Find records that have <code>someDouble IN (values)</code> asynchronously
      */
-    public Single<List<generated.rx.async.regular.tables.pojos.Something>> findManyBySomedouble(List<Double> values) {
+    public Single<List<generated.rx.async.regular.tables.pojos.Something>> findManyBySomedouble(Collection<Double> values) {
         return findManyByCondition(Something.SOMETHING.SOMEDOUBLE.in(values));
     }
 
     /**
      * Find records that have <code>someEnum IN (values)</code> asynchronously
      */
-    public Single<List<generated.rx.async.regular.tables.pojos.Something>> findManyBySomeenum(List<SomethingSomeenum> values) {
+    public Single<List<generated.rx.async.regular.tables.pojos.Something>> findManyBySomeenum(Collection<SomethingSomeenum> values) {
         return findManyByCondition(Something.SOMETHING.SOMEENUM.in(values));
     }
 
     /**
      * Find records that have <code>someJsonObject IN (values)</code> asynchronously
      */
-    public Single<List<generated.rx.async.regular.tables.pojos.Something>> findManyBySomejsonobject(List<JsonObject> values) {
+    public Single<List<generated.rx.async.regular.tables.pojos.Something>> findManyBySomejsonobject(Collection<JsonObject> values) {
         return findManyByCondition(Something.SOMETHING.SOMEJSONOBJECT.in(values));
     }
 
     /**
      * Find records that have <code>someJsonArray IN (values)</code> asynchronously
      */
-    public Single<List<generated.rx.async.regular.tables.pojos.Something>> findManyBySomejsonarray(List<JsonArray> values) {
+    public Single<List<generated.rx.async.regular.tables.pojos.Something>> findManyBySomejsonarray(Collection<JsonArray> values) {
         return findManyByCondition(Something.SOMETHING.SOMEJSONARRAY.in(values));
     }
 
     /**
      * Find records that have <code>someTimestamp IN (values)</code> asynchronously
      */
-    public Single<List<generated.rx.async.regular.tables.pojos.Something>> findManyBySometimestamp(List<LocalDateTime> values) {
+    public Single<List<generated.rx.async.regular.tables.pojos.Something>> findManyBySometimestamp(Collection<LocalDateTime> values) {
         return findManyByCondition(Something.SOMETHING.SOMETIMESTAMP.in(values));
     }
 
