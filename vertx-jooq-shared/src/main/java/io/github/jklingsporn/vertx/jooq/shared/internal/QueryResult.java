@@ -3,6 +3,7 @@ package io.github.jklingsporn.vertx.jooq.shared.internal;
 import org.jooq.Field;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * A query result wrapper for those returned by the different drivers. It provides some methods to access the actual result
@@ -28,7 +29,7 @@ public interface QueryResult {
      * @param <T>
      * @return The field's value or {@code null}.
      * @throws ClassCastException If the column is mapped by a jOOQ-{@code Converter}, the underlying implementation
-     * might throw a {@code ClassCastException} because the non-jOOQ drivers are not aware of converters. For correct
+     * might throw a {@code ClassCastException} because the non-jdbc drivers are not aware of converters. For correct
      * handling for fields with converters favor {@code QueryResult#get(Field<T>)} method.
      * @throws java.util.NoSuchElementException if the database returned no result at all.
      */
@@ -42,7 +43,7 @@ public interface QueryResult {
      * @param <T>
      * @return The field's value or {@code null}.
      * @throws ClassCastException If the column is mapped by a jOOQ-{@code Converter}, the underlying implementation
-     * might throw a {@code ClassCastException} because the non-jOOQ drivers are not aware of converters. For correct
+     * might throw a {@code ClassCastException} because the non-jdbc drivers are not aware of converters. For correct
      * handling for fields with converters favor {@code QueryResult#get(Field<T>)} method.
      * @throws java.util.NoSuchElementException if the database returned no result at all.
      */
@@ -64,4 +65,10 @@ public interface QueryResult {
      * avoid calling this method on the returned {@code QueryResults} as this is not supported by all implementations.
      */
     public List<QueryResult> asList();
+
+    /**
+     * @return a {@code Stream} of {@code QueryResult} objects, based on this result. Avoid calling this method on the
+     * returned {@code QueryResults} as this is not supported by all implementations.
+     */
+    public Stream<QueryResult> stream();
 }

@@ -7,9 +7,8 @@ import io.vertx.ext.sql.ResultSet;
 import org.jooq.Field;
 import org.jooq.tools.Convert;
 
-import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 /**
  * @author jensklingsporn
@@ -43,6 +42,10 @@ public class AsyncQueryResult extends AbstractQueryResult {
         return supplyOrThrow(()->Convert.convert(getCurrent().getValue(columnName),type));
     }
 
+    private JsonObject getCurrent(){
+        return this.resultSet.getRows().get(index);
+    }
+
     @Override
     @SuppressWarnings("unchecked")
     public <T> T unwrap() {
@@ -55,16 +58,9 @@ public class AsyncQueryResult extends AbstractQueryResult {
     }
 
     @Override
-    public List<QueryResult> asList() {
+    public Stream<QueryResult> stream() {
         return IntStream
                 .range(0, resultSet.getNumRows())
-                .mapToObj(i -> new AsyncQueryResult(resultSet, i))
-                .collect(Collectors.toList());
+                .mapToObj(i -> new AsyncQueryResult(resultSet, i));
     }
-
-    private JsonObject getCurrent(){
-        return this.resultSet.getRows().get(index);
-    }
-
-
 }

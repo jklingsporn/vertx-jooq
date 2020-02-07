@@ -6,9 +6,8 @@ import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.Result;
 
-import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 /**
  * @author jensklingsporn
@@ -57,12 +56,9 @@ public class JDBCQueryResult extends AbstractQueryResult {
     }
 
     @Override
-    public List<QueryResult> asList() {
+    public Stream<QueryResult> stream() {
         return IntStream
                 .range(index, result.size())
-                .mapToObj(i -> new JDBCQueryResult(result, i))
-                .collect(Collectors.toList());
+                .mapToObj(i -> new JDBCQueryResult(result, i));
     }
-
-
 }

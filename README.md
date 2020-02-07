@@ -3,7 +3,7 @@ A [jOOQ](http://www.jooq.org/)-CodeGenerator to create [vertx](http://vertx.io/)
 Perform all CRUD-operations asynchronously and convert your POJOs from/into a `io.vertx.core.json.JsonObject` using the API and
 driver of your choice.
 
-## release 5.0.0
+## release 5.1.0
 This release's focus was on upgrading the vertx-dependency to 3.8.x. It took a bit longer than expected to apply the required changes
 because of two things:
 - introduction of `Promise` 
