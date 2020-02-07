@@ -131,9 +131,7 @@ public abstract class VertxGenerator extends JavaGenerator {
      * Write imports in the DAO.
      * @param out the JavaWriter
      */
-    protected void writeDAOImports(JavaWriter out){
-        out.println("import %s;",List.class.getName());
-    }
+    protected void writeDAOImports(JavaWriter out){}
 
     /**
      * Write annotations on the DAOs class signature.
@@ -227,6 +225,7 @@ public abstract class VertxGenerator extends JavaGenerator {
     protected void printPackage(JavaWriter out, Definition definition, GeneratorStrategy.Mode mode) {
         super.printPackage(out, definition, mode);
         if(mode.equals(GeneratorStrategy.Mode.DAO)){
+            out.println("import %s;",List.class.getName());
             writeDAOImports(out);
         }
     }
@@ -399,6 +398,7 @@ public abstract class VertxGenerator extends JavaGenerator {
         String pType = vOut.ref(getStrategy().getFullJavaClassName(table, GeneratorStrategy.Mode.POJO));
         UniqueKeyDefinition primaryKey = table.getPrimaryKey();
         ColumnDefinition firstPrimaryKeyColumn = primaryKey.getKeyColumns().get(0);
+        List<IndexDefinition> indexes = table.getIndexes();
         for (ColumnDefinition column : table.getColumns()) {
             final String colName = column.getOutputName();
             final String colClass = getStrategy().getJavaClassName(column);
@@ -416,17 +416,20 @@ public abstract class VertxGenerator extends JavaGenerator {
                 generateFindManyByMethods(out, pType, colName, colClass, colType, colIdentifier);
             }
 
-
-            ukLoop:
-            for (UniqueKeyDefinition uk : column.getUniqueKeys()) {
-
-                // If column is part of a single-column unique key...
-                if (uk.getKeyColumns().size() == 1 && uk.getKeyColumns().get(0).equals(column) && !uk.isPrimaryKey()) {
-                    // fetchOneBy[Column]([T])
-                    // -----------------------
-                    generateFindOneByMethods(out, pType, colName, colClass, colType, colIdentifier);
-                    break ukLoop;
+        }
+        for (IndexDefinition index : indexes) {
+            if(index.isUnique()
+                    && index.getIndexColumns().size() == 1
+            ){
+                ColumnDefinition column = index.getIndexColumns().get(0).getColumn();
+                if(column.equals(firstPrimaryKeyColumn)){
+                    continue;
                 }
+                final String colName = column.getOutputName();
+                final String colClass = getStrategy().getJavaClassName(column);
+                final String colType = vOut.ref(getJavaType(column.getType()));
+                final String colIdentifier = vOut.ref(getStrategy().getFullJavaIdentifier(column), colRefSegments(column));
+                generateFindOneByMethods(out, pType, colName, colClass, colType, colIdentifier);
             }
         }
     }
