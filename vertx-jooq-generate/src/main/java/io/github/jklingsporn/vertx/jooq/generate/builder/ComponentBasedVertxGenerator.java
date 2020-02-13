@@ -35,6 +35,7 @@ class ComponentBasedVertxGenerator extends VertxGenerator {
     Consumer<JavaWriter> writeDAOConstructorAnnotationDelegate = (w)->{};
     Collection<BiFunction<SchemaDefinition,Function<File,JavaWriter>,JavaWriter>> writeExtraDataDelegates = new ArrayList<>();
     NamedInjectionStrategy namedInjectionStrategy = PredefinedNamedInjectionStrategy.DISABLED;
+    BuildOptions buildOptions = new BuildOptions();
 
     VertxGenerator activeGenerator = this;
 

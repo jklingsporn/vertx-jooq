@@ -12,6 +12,7 @@ import org.jooq.codegen.GeneratorStrategy;
 import org.jooq.codegen.JavaWriter;
 import org.jooq.impl.SQLDataType;
 import org.jooq.meta.ColumnDefinition;
+import org.jooq.meta.SchemaDefinition;
 import org.jooq.meta.TableDefinition;
 import org.jooq.meta.UniqueKeyDefinition;
 
@@ -275,6 +276,7 @@ public class VertxGeneratorBuilder {
         public DIStep withPostgresReactiveDriver() {
             base.setRenderDAOExtendsDelegate(()->"io.github.jklingsporn.vertx.jooq.shared.reactive.AbstractReactiveVertxDAO");
             base.addWriteExtraDataDelegate((schema, writerGen) -> {
+
                 ComponentBasedVertxGenerator.logger.info("Generate RowMappers ... ");
                 String mappersSubPackage = base.getActiveGenerator().getVertxGeneratorStrategy().getRowMappersSubPackage();
                 String packageName = base.getActiveGenerator().getStrategy().getJavaPackageName(schema) + ".tables." + mappersSubPackage;
@@ -347,11 +349,17 @@ public class VertxGeneratorBuilder {
                         }else if(column.getType().getConverter() != null && (
                                 column.getType().getType().equalsIgnoreCase(SQLDataType.JSONB.getTypeName())
                                         || column.getType().getType().equalsIgnoreCase(SQLDataType.JSON.getTypeName()))){
-                            out.tab(3).println("pojo.%s(new %s().pgConverter().from(row.get(io.vertx.core.json.JsonObject.class,row.getColumnIndex(\"%s\"))));", setter, column.getType().getConverter(),column.getName());
+                            out.tab(3).println("pojo.%s(%s.pgConverter().from(row.get(io.vertx.core.json.JsonObject.class,row.getColumnIndex(\"%s\"))));",
+                                    setter,
+                                    resolveConverterInstance(column.getType().getConverter(),schema,base),
+                                    column.getName());
                         }else if(column.getType().getBinding() != null&& (
                                 column.getType().getType().equalsIgnoreCase(SQLDataType.JSONB.getTypeName())
                                         || column.getType().getType().equalsIgnoreCase(SQLDataType.JSON.getTypeName()))){
-                            out.tab(3).println("pojo.%s(new %s().converter().pgConverter().from(row.get(io.vertx.core.json.JsonObject.class,row.getColumnIndex(\"%s\"))));", setter, column.getType().getConverter(),column.getName());
+                            out.tab(3).println("pojo.%s(%s.converter().pgConverter().from(row.get(io.vertx.core.json.JsonObject.class,row.getColumnIndex(\"%s\"))));",
+                                    setter,
+                                    resolveConverterInstance(column.getType().getBinding(),schema,base),
+                                    column.getName());
                         }else{
                             ComponentBasedVertxGenerator.logger.warn(String.format("Omitting unrecognized type %s (%s) for column %s in table %s!",column.getType(),javaType,column.getName(),table.getName()));
                             out.tab(3).println(String.format("// Omitting unrecognized type %s (%s) for column %s!",column.getType(),javaType, column.getName()));
@@ -512,10 +520,79 @@ public class VertxGeneratorBuilder {
 
         @Override
         public ComponentBasedVertxGenerator build() {
+            return build(new BuildOptions());
+        }
+
+        @Override
+        public ComponentBasedVertxGenerator build(BuildOptions buildOptions) {
+            base.buildOptions = buildOptions;
+            if(buildOptions.getConverterInstantiationMethod().equals(ConverterInstantiationMethod.SINGLETON)){
+                base.addWriteExtraDataDelegate((schema, writerGen) -> {
+                    ComponentBasedVertxGenerator.logger.info("Generate Converters ... ");
+                    String packageName = (base.getActiveGenerator().getStrategy().getTargetDirectory() + "/" + base.getActiveGenerator().getStrategy().getJavaPackageName(schema) + ".tables.converters").replaceAll("\\.", "/");
+                    File moduleFile = new File(packageName, "Converters.java");
+                    JavaWriter out = writerGen.apply(moduleFile);
+                    generateConverters(schema,out);
+                    return out;
+                });
+                base.addWriteExtraDataDelegate((schema, writerGen) -> {
+                    ComponentBasedVertxGenerator.logger.info("Generate Bindings ... ");
+                    String packageName = (base.getActiveGenerator().getStrategy().getTargetDirectory() + "/" + base.getActiveGenerator().getStrategy().getJavaPackageName(schema) + ".tables.converters").replaceAll("\\.", "/");
+                    File moduleFile = new File(packageName, "Bindings.java");
+                    JavaWriter out = writerGen.apply(moduleFile);
+                    generateBindings(schema,out);
+                    return out;
+                });
+            }
             return base;
         }
 
+        private void generateConverters(SchemaDefinition schema, JavaWriter out){
+            out.println("package " + base.getActiveGenerator().getStrategy().getJavaPackageName(schema) + ".tables.converters;");
+            out.println();
+            out.println("public class Converters {");
+            out.println();
+            schema.getTables().stream()
+                    .flatMap(td -> td.getColumns().stream())
+                    .filter(cd -> cd.getType().getConverter() != null)
+                    .map(cd -> cd.getType().getConverter())
+                    .distinct()
+                    .forEach(conv -> out.println("public static final %s %s = new %s();",
+                            conv,
+                            ConverterInstantiationMethod.SINGLETON.apply(conv),
+                            conv
+                    ));
+            out.println();
+            out.println("}");
+        }
 
+        private void generateBindings(SchemaDefinition schema, JavaWriter out){
+            out.println("package " + base.getActiveGenerator().getStrategy().getJavaPackageName(schema) + ".tables.converters;");
+            out.println();
+            out.println("public class Bindings {");
+            out.println();
+            schema.getTables().stream()
+                    .flatMap(td -> td.getColumns().stream())
+                    .filter(cd -> cd.getType().getBinding() != null)
+                    .map(cd -> cd.getType().getBinding())
+                    .distinct()
+                    .forEach(binding -> out.println("public static final %s %s = new %s();",
+                            binding,
+                            ConverterInstantiationMethod.SINGLETON.apply(binding),
+                            binding
+                    ));
+            out.println();
+            out.println("}");
+        }
+
+
+    }
+
+    static String resolveConverterInstance(String converterName, SchemaDefinition schema, ComponentBasedVertxGenerator generator){
+        String converter_instance = generator.buildOptions.getConverterInstantiationMethod().apply(converterName);
+        return generator.buildOptions.getConverterInstantiationMethod().equals(ConverterInstantiationMethod.NEW)
+                ? converter_instance
+                : generator.getActiveGenerator().getStrategy().getJavaPackageName(schema) + ".tables.converters.Converters." + converter_instance ;
     }
 
 }

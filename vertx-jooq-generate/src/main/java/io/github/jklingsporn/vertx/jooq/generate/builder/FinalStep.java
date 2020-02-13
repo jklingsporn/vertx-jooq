@@ -10,4 +10,10 @@ public interface FinalStep {
      */
     public ComponentBasedVertxGenerator build();
 
+    /**
+     *
+     * @param buildOptions more configuration
+     * @return a {@code VertxGenerator} based on the previous configured steps.
+     */
+    public ComponentBasedVertxGenerator build(BuildOptions buildOptions);
 }
