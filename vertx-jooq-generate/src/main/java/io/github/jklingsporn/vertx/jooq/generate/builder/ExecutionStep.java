@@ -12,14 +12,14 @@ public interface ExecutionStep {
     public DIStep withJDBCDriver();
 
     /**
-     * @return A {@code DIStep} using an async driver for query execution (only MySQL and Postgres supported).
-     * @see <a href="https://github.com/mauricio/postgresql-async">postgresql-async @ GitHub</a>
+     * @return A {@code DIStep} using an async driver for query execution (Only MySQL and Postgres supported).
+     * @see <a href="https://github.com/jasync-sql/jasync-sql">postgresql-async @ GitHub</a>
      */
     public DIStep withAsyncDriver();
 
     /**
-     * @return A {@code DIStep} using a reactive driver for query execution. Only Postgres supported.
-     * @see <a href="https://github.com/vietj/reactive-pg-client">reactive-pg-client @ GitHub</a>
+     * @return A {@code DIStep} using a reactive driver for query execution. (Only MySQL and Postgres supported).
+     * @see <a href="https://github.com/eclipse-vertx/vertx-sql-client">reactive-pg-client @ GitHub</a>
      */
     public DIStep withPostgresReactiveDriver();
 

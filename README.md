@@ -21,7 +21,7 @@ Before you start generating code using vertx-jooq, you have to answer these ques
   of `java.util.concurrent.CompletableFuture` for all async DAO operations. This is `vertx-jooq-completablefuture`.
 - How do you want to communicate with the database? There are two options:
   - Using good old JDBC, check for the modules with `-jdbc` suffix.
-  - Using this [asynchronous](https://github.com/mauricio/postgresql-async) database driver, check for `-async` modules.
+  - Using this [asynchronous](https://github.com/jasync-sql/jasync-sql) database driver, check for `-async` modules.
   - Using this [reactive](https://github.com/reactiverse/reactive-pg-client) postgres database driver, check for `-reactive` modules.
 - Do you use [Guice](https://github.com/google/guice) for dependency injection?
 
