@@ -2,14 +2,15 @@ package io.github.jklingsporn.vertx.jooq.generate.builder;
 
 import io.github.jklingsporn.vertx.jooq.shared.JsonArrayConverter;
 import io.github.jklingsporn.vertx.jooq.shared.JsonObjectConverter;
-import io.github.jklingsporn.vertx.jooq.shared.internal.AbstractVertxDAO;
 import io.github.jklingsporn.vertx.jooq.shared.ObjectToJsonObjectBinding;
+import io.github.jklingsporn.vertx.jooq.shared.internal.AbstractVertxDAO;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import org.jooq.Configuration;
 import org.jooq.codegen.GeneratorStrategy;
 import org.jooq.codegen.JavaWriter;
+import org.jooq.impl.SQLDataType;
 import org.jooq.meta.ColumnDefinition;
 import org.jooq.meta.TableDefinition;
 import org.jooq.meta.UniqueKeyDefinition;
@@ -341,8 +342,16 @@ public class VertxGeneratorBuilder {
                         }else if(javaType.equals(JsonArray.class.getName())
                                 || (column.getType().getConverter() != null && column.getType().getConverter().equalsIgnoreCase(JsonArrayConverter.class.getName()))){
                             out.tab(3).println("pojo.%s(row.get(io.vertx.core.json.JsonArray.class,row.getColumnIndex(\"%s\")));", setter, column.getName());
-                        }else if(javaTypeInEnumPackage){
+                        }else if(javaTypeInEnumPackage) {
                             out.tab(3).println("pojo.%s(%s.valueOf(row.getString(\"%s\")));", setter, javaType, column.getName());
+                        }else if(column.getType().getConverter() != null && (
+                                column.getType().getType().equalsIgnoreCase(SQLDataType.JSONB.getTypeName())
+                                        || column.getType().getType().equalsIgnoreCase(SQLDataType.JSON.getTypeName()))){
+                            out.tab(3).println("pojo.%s(new %s().pgConverter().from(row.get(io.vertx.core.json.JsonObject.class,row.getColumnIndex(\"%s\"))));", setter, column.getType().getConverter(),column.getName());
+                        }else if(column.getType().getBinding() != null&& (
+                                column.getType().getType().equalsIgnoreCase(SQLDataType.JSONB.getTypeName())
+                                        || column.getType().getType().equalsIgnoreCase(SQLDataType.JSON.getTypeName()))){
+                            out.tab(3).println("pojo.%s(new %s().converter().pgConverter().from(row.get(io.vertx.core.json.JsonObject.class,row.getColumnIndex(\"%s\"))));", setter, column.getType().getConverter(),column.getName());
                         }else{
                             ComponentBasedVertxGenerator.logger.warn(String.format("Omitting unrecognized type %s (%s) for column %s in table %s!",column.getType(),javaType,column.getName(),table.getName()));
                             out.tab(3).println(String.format("// Omitting unrecognized type %s (%s) for column %s!",column.getType(),javaType, column.getName()));

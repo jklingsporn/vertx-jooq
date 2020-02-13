@@ -6,6 +6,7 @@ package generated.cf.reactive.guice.vertx.tables.interfaces;
 
 import generated.cf.reactive.guice.vertx.enums.Someenum;
 
+import io.github.jklingsporn.vertx.jooq.generate.converter.SomeJsonPojo;
 import io.github.jklingsporn.vertx.jooq.shared.UnexpectedJsonValueType;
 import io.github.jklingsporn.vertx.jooq.shared.internal.VertxPojo;
 import io.vertx.core.json.JsonArray;
@@ -102,6 +103,16 @@ public interface ISomething extends VertxPojo, Serializable {
     public JsonObject getSomejsonobject();
 
     /**
+     * Setter for <code>vertx.something.someCustomJsonObject</code>.
+     */
+    public ISomething setSomecustomjsonobject(SomeJsonPojo value);
+
+    /**
+     * Getter for <code>vertx.something.someCustomJsonObject</code>.
+     */
+    public SomeJsonPojo getSomecustomjsonobject();
+
+    /**
      * Setter for <code>vertx.something.someJsonArray</code>.
      */
     public ISomething setSomejsonarray(JsonArray value);
@@ -178,6 +189,11 @@ public interface ISomething extends VertxPojo, Serializable {
             throw new UnexpectedJsonValueType("someJsonObject","io.vertx.core.json.JsonObject",e);
         }
         try {
+            // Omitting unrecognized type io.github.jklingsporn.vertx.jooq.generate.converter.SomeJsonPojo for column someCustomJsonObject!
+        } catch (java.lang.ClassCastException e) {
+            throw new UnexpectedJsonValueType("someCustomJsonObject","io.github.jklingsporn.vertx.jooq.generate.converter.SomeJsonPojo",e);
+        }
+        try {
             setSomejsonarray(json.getJsonArray("someJsonArray"));
         } catch (java.lang.ClassCastException e) {
             throw new UnexpectedJsonValueType("someJsonArray","io.vertx.core.json.JsonArray",e);
@@ -202,6 +218,7 @@ public interface ISomething extends VertxPojo, Serializable {
         json.put("someDouble",getSomedouble());
         json.put("someEnum",getSomeenum()==null?null:getSomeenum().getLiteral());
         json.put("someJsonObject",getSomejsonobject());
+        // Omitting unrecognized type io.github.jklingsporn.vertx.jooq.generate.converter.SomeJsonPojo for column someCustomJsonObject!
         json.put("someJsonArray",getSomejsonarray());
         // Omitting unrecognized type java.time.LocalDateTime for column someTimestamp!
         return json;

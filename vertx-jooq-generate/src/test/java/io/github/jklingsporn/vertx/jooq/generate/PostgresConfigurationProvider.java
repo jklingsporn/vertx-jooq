@@ -1,14 +1,19 @@
 package io.github.jklingsporn.vertx.jooq.generate;
 
+import io.github.jklingsporn.vertx.jooq.generate.converter.SomeJsonPojo;
+import io.github.jklingsporn.vertx.jooq.generate.converter.SomeJsonPojoConverter;
 import org.jooq.SQLDialect;
 import org.jooq.impl.DefaultConfiguration;
 import org.jooq.meta.jaxb.Configuration;
+import org.jooq.meta.jaxb.ForcedType;
 import org.jooq.meta.jaxb.Jdbc;
 import org.jooq.meta.postgres.PostgresDatabase;
 import org.junit.Assert;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by jensklingsporn on 02.11.16.
@@ -37,6 +42,7 @@ public class PostgresConfigurationProvider extends AbstractDatabaseConfiguration
                     "  \"someDouble\" DOUBLE PRECISION NULL,\n" +
                     "  \"someEnum\" \"someEnum\" DEFAULT 'FOO' ,\n" +
                     "  \"someJsonObject\" VARCHAR(45) NULL,\n" +
+                    "  \"someCustomJsonObject\" JSONB NULL,\n" +
                     "  \"someJsonArray\" VARCHAR(45) NULL,\n" +
 //                    "  \"someJsonBObject\" JSONB NULL,\n" +
                     "  \"someTimestamp\" TIMESTAMP NULL,\n" +
@@ -62,7 +68,16 @@ public class PostgresConfigurationProvider extends AbstractDatabaseConfiguration
         jdbcConfig.setUrl("jdbc:postgresql://127.0.0.1:5432/postgres");
         jdbcConfig.setUser(Credentials.POSTGRES.getUser());
         jdbcConfig.setPassword(Credentials.POSTGRES.getPassword());
-        return createGeneratorConfig(generatorName, packageName, generatorStrategy, jdbcConfig, PostgresDatabase.class.getName());
+        Configuration generatorConfig = createGeneratorConfig(generatorName, packageName, generatorStrategy, jdbcConfig, PostgresDatabase.class.getName());
+        ForcedType customJsonMapping = new ForcedType();
+        customJsonMapping.setUserType(SomeJsonPojo.class.getName());
+        customJsonMapping.setConverter(SomeJsonPojoConverter.class.getName());
+        customJsonMapping.setExpression("someCustomJsonObject");
+        customJsonMapping.setTypes(".*");
+        List<ForcedType> forcedTypes = new ArrayList<>(generatorConfig.getGenerator().getDatabase().getForcedTypes());
+        forcedTypes.add(customJsonMapping);
+        generatorConfig.getGenerator().getDatabase().setForcedTypes(forcedTypes);
+        return generatorConfig;
     }
 
     @Override

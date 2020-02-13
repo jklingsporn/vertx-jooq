@@ -8,6 +8,7 @@ import generated.rx.reactive.guice.vertx.enums.Someenum;
 import generated.rx.reactive.guice.vertx.tables.Something;
 import generated.rx.reactive.guice.vertx.tables.records.SomethingRecord;
 
+import io.github.jklingsporn.vertx.jooq.generate.converter.SomeJsonPojo;
 import io.github.jklingsporn.vertx.jooq.shared.reactive.AbstractReactiveVertxDAO;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
@@ -90,6 +91,13 @@ public class SomethingDao extends AbstractReactiveVertxDAO<SomethingRecord, gene
      */
     public Single<List<generated.rx.reactive.guice.vertx.tables.pojos.Something>> findManyBySomejsonobject(Collection<JsonObject> values) {
         return findManyByCondition(Something.SOMETHING.SOMEJSONOBJECT.in(values));
+    }
+
+    /**
+     * Find records that have <code>someCustomJsonObject IN (values)</code> asynchronously
+     */
+    public Single<List<generated.rx.reactive.guice.vertx.tables.pojos.Something>> findManyBySomecustomjsonobject(Collection<SomeJsonPojo> values) {
+        return findManyByCondition(Something.SOMETHING.SOMECUSTOMJSONOBJECT.in(values));
     }
 
     /**

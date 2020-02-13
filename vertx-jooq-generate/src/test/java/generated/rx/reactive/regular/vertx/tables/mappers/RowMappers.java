@@ -18,6 +18,7 @@ public class RowMappers {
             pojo.setSomedouble(row.getDouble("someDouble"));
             pojo.setSomeenum(generated.rx.reactive.regular.vertx.enums.Someenum.valueOf(row.getString("someEnum")));
             pojo.setSomejsonobject(row.get(io.vertx.core.json.JsonObject.class,row.getColumnIndex("someJsonObject")));
+            pojo.setSomecustomjsonobject(new io.github.jklingsporn.vertx.jooq.generate.converter.SomeJsonPojoConverter().pgConverter().from(row.get(io.vertx.core.json.JsonObject.class,row.getColumnIndex("someCustomJsonObject"))));
             pojo.setSomejsonarray(row.get(io.vertx.core.json.JsonArray.class,row.getColumnIndex("someJsonArray")));
             pojo.setSometimestamp(row.getLocalDateTime("someTimestamp"));
             return pojo;
