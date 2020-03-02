@@ -45,6 +45,9 @@ public abstract class AbstractReactiveQueryExecutor extends AbstractQueryExecuto
          * DataTypes. Workaround is to convert them to string before adding to the Tuple.
          */
         if (Enum.class.isAssignableFrom(param.getBinding().converter().toType())) {
+            if (param.getValue() == null) {
+                return null;
+            }
             return param.getValue().toString();
         }
         if (byte[].class.isAssignableFrom(param.getBinding().converter().fromType())) { // jooq treats BINARY types as byte[] but the reactive client expects a Buffer to write to blobs
