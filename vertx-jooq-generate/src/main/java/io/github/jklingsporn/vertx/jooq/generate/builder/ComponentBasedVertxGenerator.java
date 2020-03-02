@@ -1,9 +1,13 @@
 package io.github.jklingsporn.vertx.jooq.generate.builder;
 
 import io.github.jklingsporn.vertx.jooq.generate.VertxGenerator;
-import org.jooq.tools.JooqLogger;
+import io.vertx.core.json.JsonArray;
+import io.vertx.core.json.JsonObject;
 import org.jooq.codegen.JavaWriter;
 import org.jooq.meta.SchemaDefinition;
+import org.jooq.meta.TypedElementDefinition;
+import org.jooq.tools.JooqLogger;
+import org.jooq.tools.json.JSONArray;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -36,7 +40,6 @@ class ComponentBasedVertxGenerator extends VertxGenerator {
     Collection<BiFunction<SchemaDefinition,Function<File,JavaWriter>,JavaWriter>> writeExtraDataDelegates = new ArrayList<>();
     NamedInjectionStrategy namedInjectionStrategy = PredefinedNamedInjectionStrategy.DISABLED;
     BuildOptions buildOptions = new BuildOptions();
-
     VertxGenerator activeGenerator = this;
 
     @Override
@@ -107,6 +110,41 @@ class ComponentBasedVertxGenerator extends VertxGenerator {
     @Override
     protected Collection<JavaWriter> writeExtraData(SchemaDefinition definition, Function<File, JavaWriter> writerGenerator) {
         return writeExtraDataDelegates.stream().map(d->d.apply(definition,writerGenerator)).collect(Collectors.toList());
+    }
+
+    @Override
+    protected boolean handleCustomTypeFromJson(TypedElementDefinition<?> column, String setter, String columnType, String javaMemberName, JavaWriter out) {
+        if(column.getType().getConverter() != null){
+            if(JsonObject.class.equals(getPgConverterFromType(columnType, column.getType().getConverter()))) {
+                out.tab(3).println("%s(%s.pgConverter().from(json.getJsonObject(\"%s\")));",
+                        setter,
+                        VertxGeneratorBuilder.resolveConverterInstance(column.getType().getConverter(),column.getSchema(),this),
+                        javaMemberName);
+                return true;
+            }else if(JsonArray.class.equals(getPgConverterFromType(columnType, column.getType().getConverter()))) {
+                out.tab(3).println("%s(%s.pgConverter().from(json.getJsonArray(\"%s\")));",
+                        setter,
+                        VertxGeneratorBuilder.resolveConverterInstance(column.getType().getConverter(),column.getSchema(),this),
+                        javaMemberName);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    protected boolean handleCustomTypeToJson(TypedElementDefinition<?> column, String getter, String columnType, String javaMemberName, JavaWriter out) {
+        if(column.getType().getConverter() != null){
+            Class<?> pgConverterFromType = getPgConverterFromType(columnType, column.getType().getConverter());
+            if(JsonObject.class.equals(pgConverterFromType) || JSONArray.class.equals(pgConverterFromType)) {
+                out.tab(2).println("json.put(\"%s\",%s.pgConverter().to(%s()));",
+                        getJsonKeyName(column),
+                        VertxGeneratorBuilder.resolveConverterInstance(column.getType().getConverter(),column.getSchema(),this),
+                        getter);
+                return true;
+            }
+        }
+        return false;
     }
 
     ComponentBasedVertxGenerator setWriteConstructorDelegate(WriteConstructorComponent writeConstructorDelegate) {

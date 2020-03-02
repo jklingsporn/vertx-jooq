@@ -4,6 +4,7 @@ import io.github.jklingsporn.vertx.jooq.generate.VertxGenerator;
 import org.jooq.codegen.GeneratorStrategy;
 import org.jooq.codegen.JavaWriter;
 import org.jooq.meta.SchemaDefinition;
+import org.jooq.meta.TypedElementDefinition;
 
 import java.io.File;
 import java.util.Collection;
@@ -23,6 +24,15 @@ public class DelegatingVertxGenerator extends VertxGenerator {
         delegate.setActiveGenerator(this);
     }
 
+    @Override
+    protected boolean handleCustomTypeToJson(TypedElementDefinition<?> column, String getter, String columnType, String javaMemberName, JavaWriter out) {
+        return delegate.handleCustomTypeToJson(column, getter, columnType, javaMemberName, out);
+    }
+
+    @Override
+    protected boolean handleCustomTypeFromJson(TypedElementDefinition<?> column, String setter, String columnType, String javaMemberName, JavaWriter out) {
+        return delegate.handleCustomTypeFromJson(column, setter, columnType, javaMemberName, out);
+    }
 
     @Override
     protected String renderFindOneType(String pType) {

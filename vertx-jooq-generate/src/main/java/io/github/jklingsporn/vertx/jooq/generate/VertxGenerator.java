@@ -4,6 +4,7 @@ import io.github.jklingsporn.vertx.jooq.shared.JsonArrayConverter;
 import io.github.jklingsporn.vertx.jooq.shared.JsonObjectConverter;
 import io.github.jklingsporn.vertx.jooq.shared.ObjectToJsonObjectBinding;
 import io.github.jklingsporn.vertx.jooq.shared.internal.AbstractVertxDAO;
+import io.github.jklingsporn.vertx.jooq.shared.postgres.PgConverter;
 import io.vertx.core.Vertx;
 import io.vertx.core.impl.Arguments;
 import org.jooq.Constants;
@@ -307,6 +308,23 @@ public abstract class VertxGenerator extends JavaGenerator {
         return columnType.equals(clazz.getName());
     }
 
+    protected Class<?> getPgConverterFromType(String columnType, String converter) {
+        try {
+            Class<?> converterClazz = Class.forName(converter);
+            if(PgConverter.class.isAssignableFrom(converterClazz)){
+                PgConverter<?,?,?> converterInstance = (PgConverter<?, ?, ?>) converterClazz.newInstance();
+                return converterInstance.pgConverter().fromType();
+            }
+            return null;
+        } catch (ClassNotFoundException e) {
+            logger.info(String.format("'%s' to map '%s' could not be accessed from code generator.",converter,columnType));
+            return null;
+        } catch (IllegalAccessException | InstantiationException e) {
+            logger.info(String.format("'%s' to map '%s' could not be instantiated from code generator.",converter,columnType));
+            return null;
+        }
+    }
+
     @Override
     public String getJavaType(DataTypeDefinition type) {
         return super.getJavaType(type);
@@ -602,4 +620,5 @@ public abstract class VertxGenerator extends JavaGenerator {
         overwriteDAOMethods(out, className, tableIdentifier, tableRecord, pType, tType);
         out.println("}");
     }
+
 }
