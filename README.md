@@ -4,11 +4,16 @@ Perform all CRUD-operations asynchronously and convert your POJOs from/into a `i
 driver of your choice.
 
 ## release 5.1.0
-This release's focus was on upgrading the vertx-dependency to 3.8.x. It took a bit longer than expected to apply the required changes
-because of two things:
-- introduction of `Promise` 
-- and reactive-driver dependency changes\
-Especially the latter took some time, but here we are. Thanks again for all the activity on this project and your contributions :heart:
+- Introduction of `PgConverter` for the reactive modules. This gives users finally the opportunity to use custom POJOs 
+instead of `JsonObjects`. The generators are also properly used in the `fromJson` and `toJson`-methods.
+- New `BuildOptions` when creating a code generator using `VertxGeneratorBuilder`. Currently one flag 
+can be set which determines whether to use singletons (default) for converters or 
+instantiate them every time. When set to `SINGLETON`-mode, this will create two classes 
+with references to all `Converters` and `Bindings` that are used.
+- Upgrade to jOOQ 3.13.1
+- `findManyBy`-methods now take `Collection` as argument
+### Resolved issues
+https://github.com/jklingsporn/vertx-jooq/milestone/18?closed=1
 
 ## different needs, different apis
 ![What do you want](https://media.giphy.com/media/E87jjnSCANThe/giphy.gif)
