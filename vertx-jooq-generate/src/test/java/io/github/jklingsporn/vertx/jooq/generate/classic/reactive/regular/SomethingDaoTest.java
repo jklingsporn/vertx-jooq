@@ -8,6 +8,7 @@ import io.github.jklingsporn.vertx.jooq.classic.reactivepg.ReactiveClassicQueryE
 import io.github.jklingsporn.vertx.jooq.generate.PostgresConfigurationProvider;
 import io.github.jklingsporn.vertx.jooq.generate.ReactiveDatabaseClientProvider;
 import io.github.jklingsporn.vertx.jooq.generate.classic.ClassicTestBase;
+import io.github.jklingsporn.vertx.jooq.generate.converter.SomeJsonPojo;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.pgclient.PgException;
@@ -49,6 +50,7 @@ public class SomethingDaoTest extends ClassicTestBase<Something, Integer, Long, 
         something.setSomehugenumber(random.nextLong());
         something.setSomejsonarray(new JsonArray().add(1).add(2).add(3));
         something.setSomejsonobject(new JsonObject().put("key", "value"));
+        something.setSomecustomjsonobject(new SomeJsonPojo().setFoo("foo").setBar(4));
         something.setSomesmallnumber((short) random.nextInt(Short.MAX_VALUE));
         something.setSomeenum(Someenum.values()[random.nextInt(Someenum.values().length)]);
         something.setSomestring("my_string");

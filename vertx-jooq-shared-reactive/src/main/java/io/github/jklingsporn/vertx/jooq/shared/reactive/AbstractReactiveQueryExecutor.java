@@ -1,6 +1,7 @@
 package io.github.jklingsporn.vertx.jooq.shared.reactive;
 
 import io.github.jklingsporn.vertx.jooq.shared.internal.AbstractQueryExecutor;
+import io.github.jklingsporn.vertx.jooq.shared.postgres.PgConverter;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
@@ -52,6 +53,9 @@ public abstract class AbstractReactiveQueryExecutor extends AbstractQueryExecuto
                 return null;
             }
             return Buffer.buffer(bytes);
+        }
+        if(param.getBinding().converter() instanceof PgConverter){
+            return ((PgConverter)param.getBinding().converter()).pgConverter().to(param.getValue());
         }
         return param.getBinding().converter().to(param.getValue());
     }
