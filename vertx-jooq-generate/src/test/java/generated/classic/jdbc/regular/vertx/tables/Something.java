@@ -4,7 +4,6 @@
 package generated.classic.jdbc.regular.vertx.tables;
 
 
-import generated.classic.jdbc.regular.vertx.Indexes;
 import generated.classic.jdbc.regular.vertx.Keys;
 import generated.classic.jdbc.regular.vertx.Vertx;
 import generated.classic.jdbc.regular.vertx.tables.records.SomethingRecord;
@@ -21,13 +20,13 @@ import java.util.List;
 import org.jooq.Field;
 import org.jooq.ForeignKey;
 import org.jooq.Identity;
-import org.jooq.Index;
 import org.jooq.Name;
 import org.jooq.Record;
 import org.jooq.Row10;
 import org.jooq.Schema;
 import org.jooq.Table;
 import org.jooq.TableField;
+import org.jooq.TableOptions;
 import org.jooq.UniqueKey;
 import org.jooq.impl.DSL;
 import org.jooq.impl.TableImpl;
@@ -39,7 +38,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Something extends TableImpl<SomethingRecord> {
 
-    private static final long serialVersionUID = 1803891031;
+    private static final long serialVersionUID = 1268241676;
 
     /**
      * The reference instance of <code>VERTX.SOMETHING</code>
@@ -130,7 +129,7 @@ public class Something extends TableImpl<SomethingRecord> {
     }
 
     private Something(Name alias, Table<SomethingRecord> aliased, Field<?>[] parameters) {
-        super(alias, null, aliased, parameters, DSL.comment(""));
+        super(alias, null, aliased, parameters, DSL.comment(""), TableOptions.table());
     }
 
     public <O extends Record> Something(Table<O> child, ForeignKey<O, SomethingRecord> key) {
@@ -143,23 +142,18 @@ public class Something extends TableImpl<SomethingRecord> {
     }
 
     @Override
-    public List<Index> getIndexes() {
-        return Arrays.<Index>asList(Indexes.SYS_IDX_SYS_PK_10175_10177);
-    }
-
-    @Override
     public Identity<SomethingRecord, Integer> getIdentity() {
         return Keys.IDENTITY_SOMETHING;
     }
 
     @Override
     public UniqueKey<SomethingRecord> getPrimaryKey() {
-        return Keys.SYS_PK_10175;
+        return Keys.SYS_PK_10176;
     }
 
     @Override
     public List<UniqueKey<SomethingRecord>> getKeys() {
-        return Arrays.<UniqueKey<SomethingRecord>>asList(Keys.SYS_PK_10175);
+        return Arrays.<UniqueKey<SomethingRecord>>asList(Keys.SYS_PK_10176);
     }
 
     @Override

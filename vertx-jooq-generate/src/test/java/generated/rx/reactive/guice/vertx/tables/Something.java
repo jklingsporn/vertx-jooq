@@ -29,6 +29,7 @@ import org.jooq.Row11;
 import org.jooq.Schema;
 import org.jooq.Table;
 import org.jooq.TableField;
+import org.jooq.TableOptions;
 import org.jooq.UniqueKey;
 import org.jooq.impl.DSL;
 import org.jooq.impl.TableImpl;
@@ -40,7 +41,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Something extends TableImpl<SomethingRecord> {
 
-    private static final long serialVersionUID = -194502448;
+    private static final long serialVersionUID = -998145014;
 
     /**
      * The reference instance of <code>vertx.something</code>
@@ -136,7 +137,7 @@ public class Something extends TableImpl<SomethingRecord> {
     }
 
     private Something(Name alias, Table<SomethingRecord> aliased, Field<?>[] parameters) {
-        super(alias, null, aliased, parameters, DSL.comment(""));
+        super(alias, null, aliased, parameters, DSL.comment(""), TableOptions.table());
     }
 
     public <O extends Record> Something(Table<O> child, ForeignKey<O, SomethingRecord> key) {

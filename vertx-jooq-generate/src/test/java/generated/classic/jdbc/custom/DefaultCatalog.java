@@ -6,7 +6,6 @@ package generated.classic.jdbc.custom;
 
 import generated.classic.jdbc.custom.vertx.Vertx;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -20,17 +19,17 @@ import org.jooq.impl.CatalogImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class DefaultCatalog extends CatalogImpl {
 
-    private static final long serialVersionUID = -1346827032;
+    private static final long serialVersionUID = 75282574;
 
     /**
-     * The reference instance of <code></code>
+     * The reference instance of <code>DEFAULT_CATALOG</code>
      */
     public static final DefaultCatalog DEFAULT_CATALOG = new DefaultCatalog();
 
     /**
      * The schema <code>VERTX</code>.
      */
-    public final Vertx VERTX = generated.classic.jdbc.custom.vertx.Vertx.VERTX;
+    public final Vertx VERTX = Vertx.VERTX;
 
     /**
      * No further instances allowed
@@ -41,12 +40,6 @@ public class DefaultCatalog extends CatalogImpl {
 
     @Override
     public final List<Schema> getSchemas() {
-        List result = new ArrayList();
-        result.addAll(getSchemas0());
-        return result;
-    }
-
-    private final List<Schema> getSchemas0() {
         return Arrays.<Schema>asList(
             Vertx.VERTX);
     }

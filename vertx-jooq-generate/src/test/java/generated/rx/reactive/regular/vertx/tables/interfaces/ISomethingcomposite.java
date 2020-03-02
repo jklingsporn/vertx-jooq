@@ -54,12 +54,12 @@ public interface ISomethingcomposite extends VertxPojo, Serializable {
     /**
      * Load data from another generated Record/POJO implementing the common interface ISomethingcomposite
      */
-    public void from(generated.rx.reactive.regular.vertx.tables.interfaces.ISomethingcomposite from);
+    public void from(ISomethingcomposite from);
 
     /**
      * Copy data into another generated Record/POJO implementing the common interface ISomethingcomposite
      */
-    public <E extends generated.rx.reactive.regular.vertx.tables.interfaces.ISomethingcomposite> E into(E into);
+    public <E extends ISomethingcomposite> E into(E into);
 
     @Override
     public default ISomethingcomposite fromJson(io.vertx.core.json.JsonObject json) {

@@ -2,6 +2,8 @@ package io.github.jklingsporn.vertx.jooq.generate;
 
 import org.jooq.codegen.GenerationTool;
 import org.jooq.meta.jaxb.Configuration;
+import org.jooq.meta.jaxb.Logging;
+import org.jooq.meta.jaxb.OnError;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -28,6 +30,8 @@ public abstract class AbstractVertxGeneratorTest {
         configurationProvider.setupDatabase();
         Configuration configuration = configurationProvider.createGeneratorConfig(
                 generator.getName(), packageLocation, strategy);
+        configuration.setOnError(OnError.FAIL);
+        configuration.setLogging(Logging.WARN);
         try {
             GenerationTool.generate(configuration);
             Assert.assertTrue(true);

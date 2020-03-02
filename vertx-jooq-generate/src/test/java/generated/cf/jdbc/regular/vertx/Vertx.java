@@ -8,7 +8,6 @@ import generated.cf.jdbc.regular.DefaultCatalog;
 import generated.cf.jdbc.regular.vertx.tables.Something;
 import generated.cf.jdbc.regular.vertx.tables.Somethingcomposite;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -23,7 +22,7 @@ import org.jooq.impl.SchemaImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Vertx extends SchemaImpl {
 
-    private static final long serialVersionUID = -720671361;
+    private static final long serialVersionUID = 292487918;
 
     /**
      * The reference instance of <code>VERTX</code>
@@ -33,12 +32,12 @@ public class Vertx extends SchemaImpl {
     /**
      * The table <code>VERTX.SOMETHING</code>.
      */
-    public final Something SOMETHING = generated.cf.jdbc.regular.vertx.tables.Something.SOMETHING;
+    public final Something SOMETHING = Something.SOMETHING;
 
     /**
      * The table <code>VERTX.SOMETHINGCOMPOSITE</code>.
      */
-    public final Somethingcomposite SOMETHINGCOMPOSITE = generated.cf.jdbc.regular.vertx.tables.Somethingcomposite.SOMETHINGCOMPOSITE;
+    public final Somethingcomposite SOMETHINGCOMPOSITE = Somethingcomposite.SOMETHINGCOMPOSITE;
 
     /**
      * No further instances allowed
@@ -55,12 +54,6 @@ public class Vertx extends SchemaImpl {
 
     @Override
     public final List<Table<?>> getTables() {
-        List result = new ArrayList();
-        result.addAll(getTables0());
-        return result;
-    }
-
-    private final List<Table<?>> getTables0() {
         return Arrays.<Table<?>>asList(
             Something.SOMETHING,
             Somethingcomposite.SOMETHINGCOMPOSITE);

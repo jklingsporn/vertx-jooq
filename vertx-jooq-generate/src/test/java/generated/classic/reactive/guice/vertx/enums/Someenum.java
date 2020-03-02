@@ -17,11 +17,11 @@ import org.jooq.Schema;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public enum Someenum implements EnumType {
 
-    FOO("FOO"),
-
     BAR("BAR"),
 
-    BAZ("BAZ");
+    BAZ("BAZ"),
+
+    FOO("FOO");
 
     private final String literal;
 

@@ -128,12 +128,12 @@ public interface ISomething extends VertxPojo, Serializable {
     /**
      * Load data from another generated Record/POJO implementing the common interface ISomething
      */
-    public void from(generated.rx.async.guice.tables.interfaces.ISomething from);
+    public void from(ISomething from);
 
     /**
      * Copy data into another generated Record/POJO implementing the common interface ISomething
      */
-    public <E extends generated.rx.async.guice.tables.interfaces.ISomething> E into(E into);
+    public <E extends ISomething> E into(E into);
 
     @Override
     public default ISomething fromJson(io.vertx.core.json.JsonObject json) {

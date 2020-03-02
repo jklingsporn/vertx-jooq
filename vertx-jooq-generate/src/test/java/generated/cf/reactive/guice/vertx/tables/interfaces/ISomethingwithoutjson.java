@@ -43,12 +43,12 @@ public interface ISomethingwithoutjson extends VertxPojo, Serializable {
     /**
      * Load data from another generated Record/POJO implementing the common interface ISomethingwithoutjson
      */
-    public void from(generated.cf.reactive.guice.vertx.tables.interfaces.ISomethingwithoutjson from);
+    public void from(ISomethingwithoutjson from);
 
     /**
      * Copy data into another generated Record/POJO implementing the common interface ISomethingwithoutjson
      */
-    public <E extends generated.cf.reactive.guice.vertx.tables.interfaces.ISomethingwithoutjson> E into(E into);
+    public <E extends ISomethingwithoutjson> E into(E into);
 
     @Override
     public default ISomethingwithoutjson fromJson(io.vertx.core.json.JsonObject json) {

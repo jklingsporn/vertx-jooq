@@ -4,7 +4,6 @@
 package generated.classic.async.regular;
 
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -18,17 +17,17 @@ import org.jooq.impl.CatalogImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class DefaultCatalog extends CatalogImpl {
 
-    private static final long serialVersionUID = -1243582852;
+    private static final long serialVersionUID = -1402389747;
 
     /**
-     * The reference instance of <code></code>
+     * The reference instance of <code>DEFAULT_CATALOG</code>
      */
     public static final DefaultCatalog DEFAULT_CATALOG = new DefaultCatalog();
 
     /**
      * The schema <code>vertx</code>.
      */
-    public final Vertx VERTX = generated.classic.async.regular.Vertx.VERTX;
+    public final Vertx VERTX = Vertx.VERTX;
 
     /**
      * No further instances allowed
@@ -39,12 +38,6 @@ public class DefaultCatalog extends CatalogImpl {
 
     @Override
     public final List<Schema> getSchemas() {
-        List result = new ArrayList();
-        result.addAll(getSchemas0());
-        return result;
-    }
-
-    private final List<Schema> getSchemas0() {
         return Arrays.<Schema>asList(
             Vertx.VERTX);
     }

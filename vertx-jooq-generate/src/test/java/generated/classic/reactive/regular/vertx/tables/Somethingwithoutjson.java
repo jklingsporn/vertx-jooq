@@ -20,6 +20,7 @@ import org.jooq.Row2;
 import org.jooq.Schema;
 import org.jooq.Table;
 import org.jooq.TableField;
+import org.jooq.TableOptions;
 import org.jooq.UniqueKey;
 import org.jooq.impl.DSL;
 import org.jooq.impl.TableImpl;
@@ -31,7 +32,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Somethingwithoutjson extends TableImpl<SomethingwithoutjsonRecord> {
 
-    private static final long serialVersionUID = 1008804535;
+    private static final long serialVersionUID = -1756367107;
 
     /**
      * The reference instance of <code>vertx.somethingWithoutJson</code>
@@ -82,7 +83,7 @@ public class Somethingwithoutjson extends TableImpl<SomethingwithoutjsonRecord> 
     }
 
     private Somethingwithoutjson(Name alias, Table<SomethingwithoutjsonRecord> aliased, Field<?>[] parameters) {
-        super(alias, null, aliased, parameters, DSL.comment(""));
+        super(alias, null, aliased, parameters, DSL.comment(""), TableOptions.table());
     }
 
     public <O extends Record> Somethingwithoutjson(Table<O> child, ForeignKey<O, SomethingwithoutjsonRecord> key) {

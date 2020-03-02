@@ -4,7 +4,6 @@
 package generated.classic.async.regular.tables;
 
 
-import generated.classic.async.regular.Indexes;
 import generated.classic.async.regular.Keys;
 import generated.classic.async.regular.Vertx;
 import generated.classic.async.regular.enums.SomethingSomeenum;
@@ -22,13 +21,13 @@ import java.util.List;
 import org.jooq.Field;
 import org.jooq.ForeignKey;
 import org.jooq.Identity;
-import org.jooq.Index;
 import org.jooq.Name;
 import org.jooq.Record;
 import org.jooq.Row10;
 import org.jooq.Schema;
 import org.jooq.Table;
 import org.jooq.TableField;
+import org.jooq.TableOptions;
 import org.jooq.UniqueKey;
 import org.jooq.impl.DSL;
 import org.jooq.impl.TableImpl;
@@ -40,7 +39,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Something extends TableImpl<SomethingRecord> {
 
-    private static final long serialVersionUID = -196810230;
+    private static final long serialVersionUID = -1862399071;
 
     /**
      * The reference instance of <code>vertx.something</code>
@@ -131,7 +130,7 @@ public class Something extends TableImpl<SomethingRecord> {
     }
 
     private Something(Name alias, Table<SomethingRecord> aliased, Field<?>[] parameters) {
-        super(alias, null, aliased, parameters, DSL.comment(""));
+        super(alias, null, aliased, parameters, DSL.comment(""), TableOptions.table());
     }
 
     public <O extends Record> Something(Table<O> child, ForeignKey<O, SomethingRecord> key) {
@@ -141,11 +140,6 @@ public class Something extends TableImpl<SomethingRecord> {
     @Override
     public Schema getSchema() {
         return Vertx.VERTX;
-    }
-
-    @Override
-    public List<Index> getIndexes() {
-        return Arrays.<Index>asList(Indexes.SOMETHING_PRIMARY);
     }
 
     @Override

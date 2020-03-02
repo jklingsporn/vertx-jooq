@@ -4,7 +4,6 @@
 package generated.classic.jdbc.guice.vertx.tables;
 
 
-import generated.classic.jdbc.guice.vertx.Indexes;
 import generated.classic.jdbc.guice.vertx.Keys;
 import generated.classic.jdbc.guice.vertx.Vertx;
 import generated.classic.jdbc.guice.vertx.tables.records.SomethingRecord;
@@ -21,13 +20,13 @@ import java.util.List;
 import org.jooq.Field;
 import org.jooq.ForeignKey;
 import org.jooq.Identity;
-import org.jooq.Index;
 import org.jooq.Name;
 import org.jooq.Record;
 import org.jooq.Row10;
 import org.jooq.Schema;
 import org.jooq.Table;
 import org.jooq.TableField;
+import org.jooq.TableOptions;
 import org.jooq.UniqueKey;
 import org.jooq.impl.DSL;
 import org.jooq.impl.TableImpl;
@@ -39,7 +38,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Something extends TableImpl<SomethingRecord> {
 
-    private static final long serialVersionUID = 1923312746;
+    private static final long serialVersionUID = 79730698;
 
     /**
      * The reference instance of <code>VERTX.SOMETHING</code>
@@ -130,7 +129,7 @@ public class Something extends TableImpl<SomethingRecord> {
     }
 
     private Something(Name alias, Table<SomethingRecord> aliased, Field<?>[] parameters) {
-        super(alias, null, aliased, parameters, DSL.comment(""));
+        super(alias, null, aliased, parameters, DSL.comment(""), TableOptions.table());
     }
 
     public <O extends Record> Something(Table<O> child, ForeignKey<O, SomethingRecord> key) {
@@ -140,11 +139,6 @@ public class Something extends TableImpl<SomethingRecord> {
     @Override
     public Schema getSchema() {
         return Vertx.VERTX;
-    }
-
-    @Override
-    public List<Index> getIndexes() {
-        return Arrays.<Index>asList(Indexes.SYS_IDX_SYS_PK_10092_10094);
     }
 
     @Override

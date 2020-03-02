@@ -12,6 +12,7 @@ import generated.cf.async.guice.tables.records.SomethingcompositeRecord;
 import generated.cf.async.guice.tables.records.SomethingwithoutjsonRecord;
 
 import org.jooq.Identity;
+import org.jooq.TableField;
 import org.jooq.UniqueKey;
 import org.jooq.impl.Internal;
 
@@ -53,8 +54,8 @@ public class Keys {
     }
 
     private static class UniqueKeys0 {
-        public static final UniqueKey<SomethingRecord> KEY_SOMETHING_PRIMARY = Internal.createUniqueKey(Something.SOMETHING, "KEY_something_PRIMARY", Something.SOMETHING.SOMEID);
-        public static final UniqueKey<SomethingcompositeRecord> KEY_SOMETHINGCOMPOSITE_PRIMARY = Internal.createUniqueKey(Somethingcomposite.SOMETHINGCOMPOSITE, "KEY_somethingComposite_PRIMARY", Somethingcomposite.SOMETHINGCOMPOSITE.SOMEID, Somethingcomposite.SOMETHINGCOMPOSITE.SOMESECONDID);
-        public static final UniqueKey<SomethingwithoutjsonRecord> KEY_SOMETHINGWITHOUTJSON_PRIMARY = Internal.createUniqueKey(Somethingwithoutjson.SOMETHINGWITHOUTJSON, "KEY_somethingWithoutJson_PRIMARY", Somethingwithoutjson.SOMETHINGWITHOUTJSON.SOMEID);
+        public static final UniqueKey<SomethingRecord> KEY_SOMETHING_PRIMARY = Internal.createUniqueKey(Something.SOMETHING, "KEY_something_PRIMARY", new TableField[] { Something.SOMETHING.SOMEID }, true);
+        public static final UniqueKey<SomethingcompositeRecord> KEY_SOMETHINGCOMPOSITE_PRIMARY = Internal.createUniqueKey(Somethingcomposite.SOMETHINGCOMPOSITE, "KEY_somethingComposite_PRIMARY", new TableField[] { Somethingcomposite.SOMETHINGCOMPOSITE.SOMEID, Somethingcomposite.SOMETHINGCOMPOSITE.SOMESECONDID }, true);
+        public static final UniqueKey<SomethingwithoutjsonRecord> KEY_SOMETHINGWITHOUTJSON_PRIMARY = Internal.createUniqueKey(Somethingwithoutjson.SOMETHINGWITHOUTJSON, "KEY_somethingWithoutJson_PRIMARY", new TableField[] { Somethingwithoutjson.SOMETHINGWITHOUTJSON.SOMEID }, true);
     }
 }

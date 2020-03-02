@@ -4,7 +4,6 @@
 package generated.classic.jdbc.custom.vertx.tables;
 
 
-import generated.classic.jdbc.custom.vertx.Indexes;
 import generated.classic.jdbc.custom.vertx.Keys;
 import generated.classic.jdbc.custom.vertx.Vertx;
 import generated.classic.jdbc.custom.vertx.tables.records.SomethingcompositeRecord;
@@ -17,13 +16,13 @@ import java.util.List;
 
 import org.jooq.Field;
 import org.jooq.ForeignKey;
-import org.jooq.Index;
 import org.jooq.Name;
 import org.jooq.Record;
 import org.jooq.Row3;
 import org.jooq.Schema;
 import org.jooq.Table;
 import org.jooq.TableField;
+import org.jooq.TableOptions;
 import org.jooq.UniqueKey;
 import org.jooq.impl.DSL;
 import org.jooq.impl.TableImpl;
@@ -35,7 +34,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Somethingcomposite extends TableImpl<SomethingcompositeRecord> {
 
-    private static final long serialVersionUID = -1929437483;
+    private static final long serialVersionUID = -1846664530;
 
     /**
      * The reference instance of <code>VERTX.SOMETHINGCOMPOSITE</code>
@@ -91,7 +90,7 @@ public class Somethingcomposite extends TableImpl<SomethingcompositeRecord> {
     }
 
     private Somethingcomposite(Name alias, Table<SomethingcompositeRecord> aliased, Field<?>[] parameters) {
-        super(alias, null, aliased, parameters, DSL.comment(""));
+        super(alias, null, aliased, parameters, DSL.comment(""), TableOptions.table());
     }
 
     public <O extends Record> Somethingcomposite(Table<O> child, ForeignKey<O, SomethingcompositeRecord> key) {
@@ -104,18 +103,13 @@ public class Somethingcomposite extends TableImpl<SomethingcompositeRecord> {
     }
 
     @Override
-    public List<Index> getIndexes() {
-        return Arrays.<Index>asList(Indexes.SYS_IDX_SYS_PK_10400_10401);
-    }
-
-    @Override
     public UniqueKey<SomethingcompositeRecord> getPrimaryKey() {
-        return Keys.SYS_PK_10400;
+        return Keys.SYS_PK_10407;
     }
 
     @Override
     public List<UniqueKey<SomethingcompositeRecord>> getKeys() {
-        return Arrays.<UniqueKey<SomethingcompositeRecord>>asList(Keys.SYS_PK_10400);
+        return Arrays.<UniqueKey<SomethingcompositeRecord>>asList(Keys.SYS_PK_10407);
     }
 
     @Override

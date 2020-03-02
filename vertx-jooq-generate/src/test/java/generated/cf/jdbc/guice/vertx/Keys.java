@@ -10,6 +10,7 @@ import generated.cf.jdbc.guice.vertx.tables.records.SomethingRecord;
 import generated.cf.jdbc.guice.vertx.tables.records.SomethingcompositeRecord;
 
 import org.jooq.Identity;
+import org.jooq.TableField;
 import org.jooq.UniqueKey;
 import org.jooq.impl.Internal;
 
@@ -31,8 +32,8 @@ public class Keys {
     // UNIQUE and PRIMARY KEY definitions
     // -------------------------------------------------------------------------
 
-    public static final UniqueKey<SomethingRecord> SYS_PK_10250 = UniqueKeys0.SYS_PK_10250;
-    public static final UniqueKey<SomethingcompositeRecord> SYS_PK_10254 = UniqueKeys0.SYS_PK_10254;
+    public static final UniqueKey<SomethingRecord> SYS_PK_10253 = UniqueKeys0.SYS_PK_10253;
+    public static final UniqueKey<SomethingcompositeRecord> SYS_PK_10257 = UniqueKeys0.SYS_PK_10257;
 
     // -------------------------------------------------------------------------
     // FOREIGN KEY definitions
@@ -48,7 +49,7 @@ public class Keys {
     }
 
     private static class UniqueKeys0 {
-        public static final UniqueKey<SomethingRecord> SYS_PK_10250 = Internal.createUniqueKey(Something.SOMETHING, "SYS_PK_10250", Something.SOMETHING.SOMEID);
-        public static final UniqueKey<SomethingcompositeRecord> SYS_PK_10254 = Internal.createUniqueKey(Somethingcomposite.SOMETHINGCOMPOSITE, "SYS_PK_10254", Somethingcomposite.SOMETHINGCOMPOSITE.SOMEID, Somethingcomposite.SOMETHINGCOMPOSITE.SOMESECONDID);
+        public static final UniqueKey<SomethingRecord> SYS_PK_10253 = Internal.createUniqueKey(Something.SOMETHING, "SYS_PK_10253", new TableField[] { Something.SOMETHING.SOMEID }, true);
+        public static final UniqueKey<SomethingcompositeRecord> SYS_PK_10257 = Internal.createUniqueKey(Somethingcomposite.SOMETHINGCOMPOSITE, "SYS_PK_10257", new TableField[] { Somethingcomposite.SOMETHINGCOMPOSITE.SOMEID, Somethingcomposite.SOMETHINGCOMPOSITE.SOMESECONDID }, true);
     }
 }
