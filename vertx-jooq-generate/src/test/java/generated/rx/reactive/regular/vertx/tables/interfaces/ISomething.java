@@ -189,7 +189,7 @@ public interface ISomething extends VertxPojo, Serializable {
             throw new UnexpectedJsonValueType("someJsonObject","io.vertx.core.json.JsonObject",e);
         }
         try {
-            // Omitting unrecognized type io.github.jklingsporn.vertx.jooq.generate.converter.SomeJsonPojo for column someCustomJsonObject!
+            setSomecustomjsonobject(generated.rx.reactive.regular.vertx.tables.converters.Converters.IO_GITHUB_JKLINGSPORN_VERTX_JOOQ_GENERATE_CONVERTER_SOMEJSONPOJOCONVERTER_INSTANCE.pgConverter().from(json.getJsonObject("someCustomJsonObject")));
         } catch (java.lang.ClassCastException e) {
             throw new UnexpectedJsonValueType("someCustomJsonObject","io.github.jklingsporn.vertx.jooq.generate.converter.SomeJsonPojo",e);
         }
@@ -218,7 +218,7 @@ public interface ISomething extends VertxPojo, Serializable {
         json.put("someDouble",getSomedouble());
         json.put("someEnum",getSomeenum()==null?null:getSomeenum().getLiteral());
         json.put("someJsonObject",getSomejsonobject());
-        // Omitting unrecognized type io.github.jklingsporn.vertx.jooq.generate.converter.SomeJsonPojo for column someCustomJsonObject!
+        json.put("someCustomJsonObject",generated.rx.reactive.regular.vertx.tables.converters.Converters.IO_GITHUB_JKLINGSPORN_VERTX_JOOQ_GENERATE_CONVERTER_SOMEJSONPOJOCONVERTER_INSTANCE.pgConverter().to(getSomecustomjsonobject()));
         json.put("someJsonArray",getSomejsonarray());
         // Omitting unrecognized type java.time.LocalDateTime for column someTimestamp!
         return json;
