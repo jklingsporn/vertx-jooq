@@ -258,7 +258,7 @@ vertx.eventBus().<JsonObject>consumer("sendSomething", jsonEvent->{
 
 //or do you prefer writing your own type-safe SQL?
 AsyncRXGenericQueryExecutor queryExecutor = new AsyncRXGenericQueryExecutor(client);
-Single<Integer> updatedCustomFuture = queryExecutor.execute(DSL.using(configuration)
+Single<Integer> updatedCustomFuture = queryExecutor.execute(dslContext -> dslContext
 			.update(Tables.SOMETHING)
 			.set(Tables.SOMETHING.SOMEREGULARNUMBER,456)
 			.where(Tables.SOMETHING.SOMEID.eq(something.getSomeid())));

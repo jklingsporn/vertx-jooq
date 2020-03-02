@@ -258,7 +258,7 @@ vertx.eventBus().<JsonObject>consumer("sendSomething", jsonEvent->{
 
 //or do you prefer writing your own type-safe SQL?
 ReactiveClassicGenericQueryExecutor queryExecutor = new ReactiveClassicGenericQueryExecutor(client);
-Future<Integer> updatedCustom = queryExecutor.execute(DSL.using(configuration)
+Future<Integer> updatedCustom = queryExecutor.execute(dslContext -> dslContext
 			.update(Tables.SOMETHING)
 			.set(Tables.SOMETHING.SOMEREGULARNUMBER,456)
 			.where(Tables.SOMETHING.SOMEID.eq(something.getSomeid())));
