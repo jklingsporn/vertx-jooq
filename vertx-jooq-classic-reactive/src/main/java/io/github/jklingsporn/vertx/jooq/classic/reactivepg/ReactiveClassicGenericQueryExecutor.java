@@ -89,7 +89,7 @@ public class ReactiveClassicGenericQueryExecutor extends AbstractReactiveQueryEx
             throw new IllegalStateException("Already in transaction");
         }
         Promise<Transaction> transactionPromise = Promise.promise();
-        ((Pool) delegate).begin(transactionPromise);
+        transactionPromise.complete(((SqlConnection) delegate).begin());
         return transactionPromise.future().map(newInstance());
     }
 
