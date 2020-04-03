@@ -43,7 +43,7 @@ public class ReactiveRXQueryExecutor<R extends UpdatableRecord<R>,P,T> extends R
     public Single<T> insertReturning(Function<DSLContext, ? extends InsertResultStep<R>> queryFunction, Function<Object, T> keyMapper) {
         InsertResultStep<R> query = createQuery(queryFunction);
         log(query);
-        Single<RowSet<io.vertx.reactivex.sqlclient.Row>> rowFuture = delegate.rxPreparedQuery(toPreparedQuery(query), rxGetBindValues(query));
+        Single<RowSet<io.vertx.reactivex.sqlclient.Row>> rowFuture = delegate.preparedQuery(toPreparedQuery(query)).rxExecute(rxGetBindValues(query));
         return rowFuture
                 .map(rows -> rows.iterator().next())
                 .map(io.vertx.reactivex.sqlclient.Row::getDelegate)

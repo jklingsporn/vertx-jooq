@@ -46,7 +46,7 @@ public class ReactiveCompletableFutureQueryExecutor<R extends UpdatableRecord<R>
         Query query = createQuery(queryFunction);
         log(query);
         CompletableFuture<RowSet<Row>> rowFuture = new VertxCompletableFuture<>(vertx);
-        delegate.preparedQuery(toPreparedQuery(query),getBindValues(query),createCompletionHandler(rowFuture));
+        delegate.preparedQuery(toPreparedQuery(query)).execute(getBindValues(query),createCompletionHandler(rowFuture));
         return rowFuture
                 .thenApply(rows -> rows.iterator().next())
                 .thenApply(keyMapper);
@@ -60,7 +60,7 @@ public class ReactiveCompletableFutureQueryExecutor<R extends UpdatableRecord<R>
 
     @Override
     protected Function<Transaction, ReactiveCompletableFutureQueryExecutor<R,P,T>> newInstance() {
-        return pgTransaction -> new ReactiveCompletableFutureQueryExecutor<R, P, T>(configuration(),pgTransaction,pojoMapper,vertx);
+        return pgTransaction -> new ReactiveCompletableFutureQueryExecutor<>(configuration(), pgTransaction, pojoMapper, vertx);
     }
 
 }

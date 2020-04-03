@@ -11,6 +11,7 @@ import io.vertx.reactivex.sqlclient.*;
 import io.vertx.reactivex.sqlclient.Transaction;
 import io.vertx.sqlclient.Row;
 import org.jooq.*;
+import org.jooq.Query;
 import org.jooq.exception.TooManyRowsException;
 
 import java.util.ArrayList;
@@ -36,7 +37,7 @@ public class ReactiveRXGenericQueryExecutor extends AbstractReactiveQueryExecuto
     public <Q extends Record> Single<List<Row>> findManyRow(Function<DSLContext, ? extends ResultQuery<Q>> queryFunction) {
         Query query = createQuery(queryFunction);
         log(query);
-        Single<RowSet<io.vertx.reactivex.sqlclient.Row>> rowSingle = delegate.rxPreparedQuery(toPreparedQuery(query), rxGetBindValues(query));
+        Single<RowSet<io.vertx.reactivex.sqlclient.Row>> rowSingle = delegate.preparedQuery(toPreparedQuery(query)).rxExecute(rxGetBindValues(query));
         return rowSingle.map(res ->
                 StreamSupport
                 .stream(rxGetDelegate(res).spliterator(), false)
@@ -55,7 +56,7 @@ public class ReactiveRXGenericQueryExecutor extends AbstractReactiveQueryExecuto
     public <Q extends Record> Single<Optional<Row>> findOneRow(Function<DSLContext, ? extends ResultQuery<Q>> queryFunction) {
         Query query = createQuery(queryFunction);
         log(query);
-        Single<RowSet<io.vertx.reactivex.sqlclient.Row>> rowSingle = delegate.rxPreparedQuery(toPreparedQuery(query), rxGetBindValues(query));
+        Single<RowSet<io.vertx.reactivex.sqlclient.Row>> rowSingle = delegate.preparedQuery(toPreparedQuery(query)).rxExecute(rxGetBindValues(query));
         return rowSingle.map(res-> {
             switch (res.size()) {
                 case 0: return Optional.empty();
@@ -69,7 +70,7 @@ public class ReactiveRXGenericQueryExecutor extends AbstractReactiveQueryExecuto
     public Single<Integer> execute(Function<DSLContext, ? extends Query> queryFunction) {
         Query query = createQuery(queryFunction);
         log(query);
-        Single<RowSet<io.vertx.reactivex.sqlclient.Row>> rowSingle = delegate.rxPreparedQuery(toPreparedQuery(query), rxGetBindValues(query));
+        Single<RowSet<io.vertx.reactivex.sqlclient.Row>> rowSingle = delegate.preparedQuery(toPreparedQuery(query)).rxExecute(rxGetBindValues(query));
         return rowSingle.map(SqlResult::rowCount);
     }
 
@@ -89,7 +90,7 @@ public class ReactiveRXGenericQueryExecutor extends AbstractReactiveQueryExecuto
     public <R extends Record> Single<QueryResult> query(Function<DSLContext, ? extends ResultQuery<R>> queryFunction) {
         Query query = createQuery(queryFunction);
         log(query);
-        Single<RowSet<io.vertx.reactivex.sqlclient.Row>> rowSingle  = delegate.rxPreparedQuery(toPreparedQuery(query), rxGetBindValues(query));
+        Single<RowSet<io.vertx.reactivex.sqlclient.Row>> rowSingle = delegate.preparedQuery(toPreparedQuery(query)).rxExecute(rxGetBindValues(query));
         return rowSingle.map(RxReactiveQueryResult::new);
     }
 

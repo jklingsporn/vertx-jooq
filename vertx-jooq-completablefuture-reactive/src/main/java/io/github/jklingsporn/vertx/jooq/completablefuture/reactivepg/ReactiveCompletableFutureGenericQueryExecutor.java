@@ -13,6 +13,7 @@ import io.vertx.sqlclient.Row;
 import io.vertx.sqlclient.Transaction;
 import me.escoffier.vertx.completablefuture.VertxCompletableFuture;
 import org.jooq.*;
+import org.jooq.Query;
 import org.jooq.exception.TooManyRowsException;
 
 import java.util.List;
@@ -40,7 +41,7 @@ public class ReactiveCompletableFutureGenericQueryExecutor extends AbstractReact
         Query query = createQuery(queryFunction);
         log(query);
         CompletableFuture<RowSet<Row>> rowFuture = new VertxCompletableFuture<>(vertx);
-        delegate.preparedQuery(toPreparedQuery(query),getBindValues(query),createCompletionHandler(rowFuture));
+        delegate.preparedQuery(toPreparedQuery(query)).execute(getBindValues(query),createCompletionHandler(rowFuture));
         return rowFuture.thenApply(res-> StreamSupport
                 .stream(res.spliterator(),false)
                 .collect(Collectors.toList()));
@@ -51,7 +52,7 @@ public class ReactiveCompletableFutureGenericQueryExecutor extends AbstractReact
         Query query = createQuery(queryFunction);
         log(query);
         CompletableFuture<RowSet<Row>> rowFuture = new VertxCompletableFuture<>(vertx);
-        delegate.preparedQuery(toPreparedQuery(query),getBindValues(query),createCompletionHandler(rowFuture));
+        delegate.preparedQuery(toPreparedQuery(query)).execute(getBindValues(query),createCompletionHandler(rowFuture));
         return rowFuture.thenApply(res-> {
             switch (res.size()) {
                 case 0: return null;
@@ -67,7 +68,7 @@ public class ReactiveCompletableFutureGenericQueryExecutor extends AbstractReact
         Query query = createQuery(queryFunction);
         log(query);
         CompletableFuture<RowSet<Row>> rowFuture = new VertxCompletableFuture<>(vertx);
-        delegate.preparedQuery(toPreparedQuery(query),getBindValues(query),createCompletionHandler(rowFuture));
+        delegate.preparedQuery(toPreparedQuery(query)).execute(getBindValues(query),createCompletionHandler(rowFuture));
         return rowFuture.thenApply(SqlResult::rowCount);
     }
 
@@ -92,7 +93,7 @@ public class ReactiveCompletableFutureGenericQueryExecutor extends AbstractReact
         Query query = createQuery(queryFunction);
         log(query);
         CompletableFuture<RowSet<Row>> rowFuture = new VertxCompletableFuture<>(vertx);
-        delegate.preparedQuery(toPreparedQuery(query),getBindValues(query),createCompletionHandler(rowFuture));
+        delegate.preparedQuery(toPreparedQuery(query)).execute(getBindValues(query),createCompletionHandler(rowFuture));
         return rowFuture.thenApply(ReactiveQueryResult::new);
     }
 

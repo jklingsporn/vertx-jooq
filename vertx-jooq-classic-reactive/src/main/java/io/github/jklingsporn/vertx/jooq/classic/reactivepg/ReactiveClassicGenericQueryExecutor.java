@@ -11,6 +11,7 @@ import io.vertx.core.Future;
 import io.vertx.sqlclient.Row;
 import io.vertx.sqlclient.Transaction;
 import org.jooq.*;
+import org.jooq.Query;
 import org.jooq.exception.TooManyRowsException;
 
 import java.util.List;
@@ -36,7 +37,7 @@ public class ReactiveClassicGenericQueryExecutor extends AbstractReactiveQueryEx
         Query query = createQuery(queryFunction);
         log(query);
         Promise<RowSet<Row>> rowPromise = Promise.promise();
-        delegate.preparedQuery(toPreparedQuery(query),getBindValues(query),rowPromise);
+        delegate.preparedQuery(toPreparedQuery(query)).execute(getBindValues(query),rowPromise);
         return rowPromise.future().map(res -> StreamSupport
                 .stream(res.spliterator(), false)
                 .collect(Collectors.toList()));
@@ -47,7 +48,7 @@ public class ReactiveClassicGenericQueryExecutor extends AbstractReactiveQueryEx
         Query query = createQuery(queryFunction);
         log(query);
         Promise<RowSet<Row>> rowPromise = Promise.promise();
-        delegate.preparedQuery(toPreparedQuery(query),getBindValues(query),rowPromise);
+        delegate.preparedQuery(toPreparedQuery(query)).execute(getBindValues(query),rowPromise);
         return rowPromise.future().map(res -> {
             switch (res.size()) {
                 case 0:
@@ -65,7 +66,7 @@ public class ReactiveClassicGenericQueryExecutor extends AbstractReactiveQueryEx
         Query query = createQuery(queryFunction);
         log(query);
         Promise<RowSet<Row>> rowPromise = Promise.promise();
-        delegate.preparedQuery(toPreparedQuery(query),getBindValues(query),rowPromise);
+        delegate.preparedQuery(toPreparedQuery(query)).execute(getBindValues(query),rowPromise);
         return rowPromise.future().map(SqlResult::rowCount);
     }
 
@@ -75,7 +76,7 @@ public class ReactiveClassicGenericQueryExecutor extends AbstractReactiveQueryEx
         Query query = createQuery(queryFunction);
         log(query);
         Promise<RowSet<Row>> rowPromise = Promise.promise();
-        delegate.preparedQuery(toPreparedQuery(query),getBindValues(query),rowPromise);
+        delegate.preparedQuery(toPreparedQuery(query)).execute(getBindValues(query),rowPromise);
         return rowPromise.future().map(ReactiveQueryResult::new);
     }
 

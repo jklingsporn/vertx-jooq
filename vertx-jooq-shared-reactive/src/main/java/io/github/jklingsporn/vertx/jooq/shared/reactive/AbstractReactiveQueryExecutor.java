@@ -33,7 +33,7 @@ public abstract class AbstractReactiveQueryExecutor extends AbstractQueryExecuto
         for (Param<?> param : query.getParams().values()) {
             if (!param.isInline()) {
                 Object value = convertToDatabaseType(param);
-                bindValues.add(value);
+                bindValues.addValue(value);
             }
         }
         return bindValues;

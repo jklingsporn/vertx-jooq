@@ -40,7 +40,7 @@ public class ReactiveClassicQueryExecutor<R extends UpdatableRecord<R>,P,T> exte
         Query query = createQuery(queryFunction);
         log(query);
         Promise<RowSet<Row>> rowPromise = io.vertx.core.Promise.promise();
-        delegate.preparedQuery(toPreparedQuery(query),getBindValues(query),rowPromise);
+        delegate.preparedQuery(toPreparedQuery(query)).execute(getBindValues(query),rowPromise);
         return rowPromise
                 .future()
                 .map(rows -> rows.iterator().next())
@@ -55,7 +55,7 @@ public class ReactiveClassicQueryExecutor<R extends UpdatableRecord<R>,P,T> exte
 
     @Override
     protected Function<Transaction, ReactiveClassicQueryExecutor<R,P,T>> newInstance() {
-        return pgTransaction -> new ReactiveClassicQueryExecutor<R, P, T>(configuration(),pgTransaction,pojoMapper);
+        return pgTransaction -> new ReactiveClassicQueryExecutor<>(configuration(), pgTransaction, pojoMapper);
     }
 
 
