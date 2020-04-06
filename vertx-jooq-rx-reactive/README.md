@@ -223,7 +223,7 @@ of how to setup the generator programmatically.
 //Setup your jOOQ configuration
 Configuration configuration = new DefaultConfiguration();
 configuration.set(SQLDialect.POSTGRES);
-//no other DB-Configuration necessary because jOOQ is only used to render our statements - not for excecution
+//no other DB-Configuration necessary because jOOQ is only used to render our statements - not for execution
 
 //setup Vertx
 Vertx vertx = Vertx.vertx();
