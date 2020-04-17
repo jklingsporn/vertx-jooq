@@ -275,11 +275,13 @@ public abstract class VertxGenerator extends JavaGenerator {
             }else if(isType(columnType,Instant.class)){
                 out.tab(3).println("%s(json.getInstant(\"%s\"));", setter, javaMemberName);
             }else if(isEnum(table, column)) {
-                //if enum is handled by custom type, getLiteral() is not available
+                //if this is an enum from the database (no converter) it has getLiteral defined
                 if(column.getType().getConverter() == null){
                     out.tab(3).println("%s(java.util.Arrays.stream(%s.values()).filter(td -> td.getLiteral().equals(json.getString(\"%s\"))).findFirst().orElse(null));", setter, columnType, javaMemberName);
+                //otherwise just use valueOf
                 }else{
-                    out.tab(3).println("%s(java.util.Arrays.stream(%s.values()).filter(td -> td.name().equals(json.getString(\"%s\"))).findFirst().orElse(null));", setter, columnType, javaMemberName);
+                    out.tab(3).println("String %sString = json.getString(\"%s\");", javaMemberName, javaMemberName);
+                    out.tab(3).println("%s(%sString == null ? null : %s.valueOf(%sString));", setter, javaMemberName, columnType,javaMemberName);
                 }
             }else if((column.getType().getConverter() != null && isType(column.getType().getConverter(),JsonObjectConverter.class)) ||
                     (column.getType().getBinding() != null && isType(column.getType().getBinding(),ObjectToJsonObjectBinding.class))){
@@ -301,7 +303,8 @@ public abstract class VertxGenerator extends JavaGenerator {
     }
 
     public boolean isEnum(TableDefinition table, TypedElementDefinition<?> column) {
-        return table.getDatabase().getEnum(table.getSchema(), column.getType().getUserType()) != null;
+        return table.getDatabase().getEnum(table.getSchema(), column.getType().getUserType()) != null ||
+                (column.getType().getConverter()!= null && column.getType().getConverter().endsWith("EnumConverter"));
     }
 
     protected boolean isType(String columnType, Class<?> clazz) {

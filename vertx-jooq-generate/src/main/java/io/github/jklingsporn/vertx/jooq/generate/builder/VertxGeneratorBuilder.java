@@ -330,7 +330,7 @@ public class VertxGeneratorBuilder {
                         String setter = base.getActiveGenerator().getStrategy().getJavaSetterName(column, GeneratorStrategy.Mode.INTERFACE);
                         String javaType = base.getActiveGenerator().getJavaType(column.getType());
                         //is there a better way to check for enum type rather than checking the package?
-                        boolean javaTypeInEnumPackage = javaType.contains("enums.");
+                        boolean isEnumType = javaType.contains("enums.") || (column.getType().getConverter()!= null && column.getType().getConverter().endsWith("EnumConverter"));
                         if(supportedRowTypes.contains(javaType)) {
                             try {
                                 out.tab(3).println("pojo.%s(row.get%s(\"%s\"));", setter, Class.forName(javaType).getSimpleName(), column.getName());
@@ -344,8 +344,13 @@ public class VertxGeneratorBuilder {
                         }else if(javaType.equals(JsonArray.class.getName())
                                 || (column.getType().getConverter() != null && column.getType().getConverter().equalsIgnoreCase(JsonArrayConverter.class.getName()))){
                             out.tab(3).println("pojo.%s(row.get(io.vertx.core.json.JsonArray.class,row.getColumnIndex(\"%s\")));", setter, column.getName());
-                        }else if(javaTypeInEnumPackage) {
-                            out.tab(3).println("pojo.%s(%s.valueOf(row.getString(\"%s\")));", setter, javaType, column.getName());
+                        }else if(isEnumType) {
+                            if(column.getType().getConverter() == null){
+                                out.tab(3).println("pojo.%s(java.util.Arrays.stream(%s.values()).filter(td -> td.getLiteral().equals(row.getString(\"%s\"))).findFirst().orElse(null));", setter, javaType, column.getName());
+                            }else{
+                                out.tab(3).println("String %sString = row.getString(\"%s\");", column.getName(), column.getName());
+                                out.tab(3).println("pojo.%s(%sString == null ? null : %s.valueOf(%sString));", setter, column.getName(), javaType,column.getName());
+                            }
                         }else if(column.getType().getConverter() != null && (
                                 column.getType().getType().equalsIgnoreCase(SQLDataType.JSONB.getTypeName())
                                         || column.getType().getType().equalsIgnoreCase(SQLDataType.JSON.getTypeName()))){
