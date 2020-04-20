@@ -16,7 +16,7 @@ public class RowMappers {
             pojo.setSomesmallnumber(row.getShort("someSmallNumber"));
             pojo.setSomeregularnumber(row.getInteger("someRegularNumber"));
             pojo.setSomedouble(row.getDouble("someDouble"));
-            pojo.setSomeenum(generated.cf.reactive.guice.vertx.enums.Someenum.valueOf(row.getString("someEnum")));
+            pojo.setSomeenum(java.util.Arrays.stream(generated.cf.reactive.guice.vertx.enums.Someenum.values()).filter(td -> td.getLiteral().equals(row.getString("someEnum"))).findFirst().orElse(null));
             pojo.setSomejsonobject(row.get(io.vertx.core.json.JsonObject.class,row.getColumnIndex("someJsonObject")));
             pojo.setSomecustomjsonobject(generated.cf.reactive.guice.vertx.tables.converters.Converters.IO_GITHUB_JKLINGSPORN_VERTX_JOOQ_GENERATE_CONVERTER_SOMEJSONPOJOCONVERTER_INSTANCE.pgConverter().from(row.get(io.vertx.core.json.JsonObject.class,row.getColumnIndex("someCustomJsonObject"))));
             pojo.setSomejsonarray(row.get(io.vertx.core.json.JsonArray.class,row.getColumnIndex("someJsonArray")));
