@@ -2,12 +2,12 @@ package io.github.jklingsporn.vertx.jooq.rx.reactivepg;
 
 import io.github.jklingsporn.vertx.jooq.shared.internal.QueryExecutor;
 import io.reactivex.Single;
-import io.vertx.reactivex.sqlclient.RowSet;
 import io.vertx.reactivex.sqlclient.SqlClient;
 import io.vertx.reactivex.sqlclient.Transaction;
+import io.vertx.sqlclient.Row;
 import org.jooq.*;
 import org.jooq.impl.DefaultConfiguration;
-import io.vertx.sqlclient.Row;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
@@ -41,10 +41,7 @@ public class ReactiveRXQueryExecutor<R extends UpdatableRecord<R>,P,T> extends R
 
     @Override
     public Single<T> insertReturning(Function<DSLContext, ? extends InsertResultStep<R>> queryFunction, Function<Object, T> keyMapper) {
-        InsertResultStep<R> query = createQuery(queryFunction);
-        log(query);
-        Single<RowSet<io.vertx.reactivex.sqlclient.Row>> rowFuture = delegate.preparedQuery(toPreparedQuery(query)).rxExecute(rxGetBindValues(query));
-        return rowFuture
+        return executeAny(queryFunction)
                 .map(rows -> rows.iterator().next())
                 .map(io.vertx.reactivex.sqlclient.Row::getDelegate)
                 .map(keyMapper::apply);

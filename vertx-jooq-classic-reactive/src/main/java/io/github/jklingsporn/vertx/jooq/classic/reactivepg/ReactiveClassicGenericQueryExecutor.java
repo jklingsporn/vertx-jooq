@@ -34,22 +34,14 @@ public class ReactiveClassicGenericQueryExecutor extends AbstractReactiveQueryEx
 
     @Override
     public <Q extends Record> Future<List<Row>> findManyRow(Function<DSLContext, ? extends ResultQuery<Q>> queryFunction) {
-        Query query = createQuery(queryFunction);
-        log(query);
-        Promise<RowSet<Row>> rowPromise = Promise.promise();
-        delegate.preparedQuery(toPreparedQuery(query)).execute(getBindValues(query),rowPromise);
-        return rowPromise.future().map(res -> StreamSupport
+        return executeAny(queryFunction).map(res -> StreamSupport
                 .stream(res.spliterator(), false)
                 .collect(Collectors.toList()));
     }
 
     @Override
     public <Q extends Record> Future<Row> findOneRow(Function<DSLContext, ? extends ResultQuery<Q>> queryFunction) {
-        Query query = createQuery(queryFunction);
-        log(query);
-        Promise<RowSet<Row>> rowPromise = Promise.promise();
-        delegate.preparedQuery(toPreparedQuery(query)).execute(getBindValues(query),rowPromise);
-        return rowPromise.future().map(res -> {
+        return executeAny(queryFunction).map(res -> {
             switch (res.size()) {
                 case 0:
                     return null;
@@ -63,21 +55,13 @@ public class ReactiveClassicGenericQueryExecutor extends AbstractReactiveQueryEx
 
     @Override
     public Future<Integer> execute(Function<DSLContext, ? extends Query> queryFunction) {
-        Query query = createQuery(queryFunction);
-        log(query);
-        Promise<RowSet<Row>> rowPromise = Promise.promise();
-        delegate.preparedQuery(toPreparedQuery(query)).execute(getBindValues(query),rowPromise);
-        return rowPromise.future().map(SqlResult::rowCount);
+        return executeAny(queryFunction).map(SqlResult::rowCount);
     }
 
 
     @Override
     public <R extends Record> Future<QueryResult> query(Function<DSLContext, ? extends ResultQuery<R>> queryFunction) {
-        Query query = createQuery(queryFunction);
-        log(query);
-        Promise<RowSet<Row>> rowPromise = Promise.promise();
-        delegate.preparedQuery(toPreparedQuery(query)).execute(getBindValues(query),rowPromise);
-        return rowPromise.future().map(ReactiveQueryResult::new);
+        return executeAny(queryFunction).map(ReactiveQueryResult::new);
     }
 
     /**
@@ -150,5 +134,18 @@ public class ReactiveClassicGenericQueryExecutor extends AbstractReactiveQueryEx
                 .compose(queryExecutor -> transaction.apply(queryExecutor) //perform user tasks
                         .compose(res -> queryExecutor.commit() //commit the transaction
                                 .map(v -> res))); //and return the result
+    }
+
+    /**
+     * Executes the given queryFunction and returns a <code>RowSet</code>
+     * @param queryFunction the query to execute
+     * @return the results, never null
+     */
+    public Future<RowSet<Row>> executeAny(Function<DSLContext, ? extends Query> queryFunction) {
+        Query query = createQuery(queryFunction);
+        log(query);
+        Promise<RowSet<Row>> rowPromise = Promise.promise();
+        delegate.preparedQuery(toPreparedQuery(query)).execute(getBindValues(query),rowPromise);
+        return rowPromise.future();
     }
 }

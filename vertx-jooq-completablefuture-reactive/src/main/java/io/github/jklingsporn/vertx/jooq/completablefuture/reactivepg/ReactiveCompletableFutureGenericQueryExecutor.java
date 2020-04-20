@@ -5,9 +5,7 @@ import io.github.jklingsporn.vertx.jooq.shared.internal.QueryResult;
 import io.github.jklingsporn.vertx.jooq.shared.reactive.AbstractReactiveQueryExecutor;
 import io.github.jklingsporn.vertx.jooq.shared.reactive.ReactiveQueryExecutor;
 import io.github.jklingsporn.vertx.jooq.shared.reactive.ReactiveQueryResult;
-import io.vertx.core.AsyncResult;
-import io.vertx.core.Handler;
-import io.vertx.core.Vertx;
+import io.vertx.core.*;
 import io.vertx.sqlclient.*;
 import io.vertx.sqlclient.Row;
 import io.vertx.sqlclient.Transaction;
@@ -38,22 +36,14 @@ public class ReactiveCompletableFutureGenericQueryExecutor extends AbstractReact
 
     @Override
     public <Q extends Record> CompletableFuture<List<io.vertx.sqlclient.Row>> findManyRow(Function<DSLContext, ? extends ResultQuery<Q>> queryFunction) {
-        Query query = createQuery(queryFunction);
-        log(query);
-        CompletableFuture<RowSet<Row>> rowFuture = new VertxCompletableFuture<>(vertx);
-        delegate.preparedQuery(toPreparedQuery(query)).execute(getBindValues(query),createCompletionHandler(rowFuture));
-        return rowFuture.thenApply(res-> StreamSupport
+        return executeAny(queryFunction).thenApply(res-> StreamSupport
                 .stream(res.spliterator(),false)
                 .collect(Collectors.toList()));
     }
 
     @Override
     public <Q extends Record> CompletableFuture<Row> findOneRow(Function<DSLContext, ? extends ResultQuery<Q>> queryFunction) {
-        Query query = createQuery(queryFunction);
-        log(query);
-        CompletableFuture<RowSet<Row>> rowFuture = new VertxCompletableFuture<>(vertx);
-        delegate.preparedQuery(toPreparedQuery(query)).execute(getBindValues(query),createCompletionHandler(rowFuture));
-        return rowFuture.thenApply(res-> {
+        return executeAny(queryFunction).thenApply(res-> {
             switch (res.size()) {
                 case 0: return null;
                 case 1: return res.iterator().next();
@@ -90,11 +80,7 @@ public class ReactiveCompletableFutureGenericQueryExecutor extends AbstractReact
 
     @Override
     public <R extends Record> CompletableFuture<QueryResult> query(Function<DSLContext, ? extends ResultQuery<R>> queryFunction) {
-        Query query = createQuery(queryFunction);
-        log(query);
-        CompletableFuture<RowSet<Row>> rowFuture = new VertxCompletableFuture<>(vertx);
-        delegate.preparedQuery(toPreparedQuery(query)).execute(getBindValues(query),createCompletionHandler(rowFuture));
-        return rowFuture.thenApply(ReactiveQueryResult::new);
+        return executeAny(queryFunction).thenApply(ReactiveQueryResult::new);
     }
 
 
@@ -175,5 +161,18 @@ public class ReactiveCompletableFutureGenericQueryExecutor extends AbstractReact
         if(delegate!=null){
             delegate.close();
         }
+    }
+
+    /**
+     * Executes the given queryFunction and returns a <code>RowSet</code>
+     * @param queryFunction the query to execute
+     * @return the results, never null
+     */
+    public CompletableFuture<RowSet<Row>> executeAny(Function<DSLContext, ? extends Query> queryFunction) {
+        Query query = createQuery(queryFunction);
+        log(query);
+        CompletableFuture<RowSet<Row>> rowFuture = new VertxCompletableFuture<>(vertx);
+        delegate.preparedQuery(toPreparedQuery(query)).execute(getBindValues(query),createCompletionHandler(rowFuture));
+        return rowFuture;
     }
 }

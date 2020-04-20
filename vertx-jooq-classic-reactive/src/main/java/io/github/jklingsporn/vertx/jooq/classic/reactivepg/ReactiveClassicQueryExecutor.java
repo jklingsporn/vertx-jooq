@@ -2,8 +2,6 @@ package io.github.jklingsporn.vertx.jooq.classic.reactivepg;
 
 import io.github.jklingsporn.vertx.jooq.shared.internal.QueryExecutor;
 import io.vertx.core.Future;
-import io.vertx.core.Promise;
-import io.vertx.sqlclient.RowSet;
 import io.vertx.sqlclient.Row;
 import io.vertx.sqlclient.SqlClient;
 import io.vertx.sqlclient.Transaction;
@@ -27,7 +25,7 @@ public class ReactiveClassicQueryExecutor<R extends UpdatableRecord<R>,P,T> exte
 
     @Override
     public Future<List<P>> findMany(Function<DSLContext, ? extends ResultQuery<R>> queryFunction) {
-        return findManyRow(queryFunction).map(rows->rows.stream().map(pojoMapper::apply).collect(Collectors.toList()));
+        return findManyRow(queryFunction).map(rows->rows.stream().map(pojoMapper).collect(Collectors.toList()));
     }
 
     @Override
@@ -37,12 +35,7 @@ public class ReactiveClassicQueryExecutor<R extends UpdatableRecord<R>,P,T> exte
 
     @Override
     public Future<T> insertReturning(Function<DSLContext, ? extends InsertResultStep<R>> queryFunction, Function<Object, T> keyMapper) {
-        Query query = createQuery(queryFunction);
-        log(query);
-        Promise<RowSet<Row>> rowPromise = io.vertx.core.Promise.promise();
-        delegate.preparedQuery(toPreparedQuery(query)).execute(getBindValues(query),rowPromise);
-        return rowPromise
-                .future()
+        return executeAny(queryFunction)
                 .map(rows -> rows.iterator().next())
                 .map(keyMapper::apply);
     }
@@ -57,6 +50,5 @@ public class ReactiveClassicQueryExecutor<R extends UpdatableRecord<R>,P,T> exte
     protected Function<Transaction, ReactiveClassicQueryExecutor<R,P,T>> newInstance() {
         return pgTransaction -> new ReactiveClassicQueryExecutor<>(configuration(), pgTransaction, pojoMapper);
     }
-
 
 }

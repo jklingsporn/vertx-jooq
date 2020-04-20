@@ -35,10 +35,7 @@ public class ReactiveRXGenericQueryExecutor extends AbstractReactiveQueryExecuto
 
     @Override
     public <Q extends Record> Single<List<Row>> findManyRow(Function<DSLContext, ? extends ResultQuery<Q>> queryFunction) {
-        Query query = createQuery(queryFunction);
-        log(query);
-        Single<RowSet<io.vertx.reactivex.sqlclient.Row>> rowSingle = delegate.preparedQuery(toPreparedQuery(query)).rxExecute(rxGetBindValues(query));
-        return rowSingle.map(res ->
+        return executeAny(queryFunction).map(res ->
                 StreamSupport
                 .stream(rxGetDelegate(res).spliterator(), false)
                         .collect(Collectors.toList()));
@@ -54,10 +51,7 @@ public class ReactiveRXGenericQueryExecutor extends AbstractReactiveQueryExecuto
 
     @Override
     public <Q extends Record> Single<Optional<Row>> findOneRow(Function<DSLContext, ? extends ResultQuery<Q>> queryFunction) {
-        Query query = createQuery(queryFunction);
-        log(query);
-        Single<RowSet<io.vertx.reactivex.sqlclient.Row>> rowSingle = delegate.preparedQuery(toPreparedQuery(query)).rxExecute(rxGetBindValues(query));
-        return rowSingle.map(res-> {
+        return executeAny(queryFunction).map(res-> {
             switch (res.size()) {
                 case 0: return Optional.empty();
                 case 1: return Optional.ofNullable(rxGetDelegate(res).iterator().next());
@@ -68,10 +62,7 @@ public class ReactiveRXGenericQueryExecutor extends AbstractReactiveQueryExecuto
 
     @Override
     public Single<Integer> execute(Function<DSLContext, ? extends Query> queryFunction) {
-        Query query = createQuery(queryFunction);
-        log(query);
-        Single<RowSet<io.vertx.reactivex.sqlclient.Row>> rowSingle = delegate.preparedQuery(toPreparedQuery(query)).rxExecute(rxGetBindValues(query));
-        return rowSingle.map(SqlResult::rowCount);
+        return executeAny(queryFunction).map(SqlResult::rowCount);
     }
 
     protected Tuple rxGetBindValues(Query query) {
@@ -167,5 +158,16 @@ public class ReactiveRXGenericQueryExecutor extends AbstractReactiveQueryExecuto
         if(delegate!=null){
             delegate.close();
         }
+    }
+
+    /**
+     * Executes the given queryFunction and returns a <code>RowSet</code>
+     * @param queryFunction the query to execute
+     * @return the results, never null
+     */
+    public Single<RowSet<io.vertx.reactivex.sqlclient.Row>> executeAny(Function<DSLContext, ? extends Query> queryFunction) {
+        Query query = createQuery(queryFunction);
+        log(query);
+        return delegate.preparedQuery(toPreparedQuery(query)).rxExecute(rxGetBindValues(query));
     }
 }
