@@ -3,6 +3,12 @@ A [jOOQ](http://www.jooq.org/)-CodeGenerator to create [vertx](http://vertx.io/)
 Perform all CRUD-operations asynchronously and convert your POJOs from/into a `io.vertx.core.json.JsonObject` using the API and
 driver of your choice.
 
+## release 5.1.1
+- [vertx 3.9.0](http://vertx.io/) support
+- `executeAny`-methods in `ReactiveQueryExecutor`-implementations.
+- Fix enum handling if enum is not defined in database (e.g. the database-field is of type `TEXT` and needs to be mapped to a 
+user defined enum)
+
 ## release 5.1.0
 - Introduction of `PgConverter` for the reactive modules. This gives users finally the opportunity to use custom POJOs 
 instead of `JsonObjects`. The generators are also properly used in the `fromJson` and `toJson`-methods.
