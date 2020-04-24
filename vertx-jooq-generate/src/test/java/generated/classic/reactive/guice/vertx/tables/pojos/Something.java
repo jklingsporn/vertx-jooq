@@ -21,7 +21,7 @@ import java.time.LocalDateTime;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Something implements VertxPojo, ISomething {
 
-    private static final long serialVersionUID = 1617944418;
+    private static final long serialVersionUID = 543523899;
 
     private Integer       someid;
     private String        somestring;
@@ -33,6 +33,7 @@ public class Something implements VertxPojo, ISomething {
     private JsonObject    somejsonobject;
     private SomeJsonPojo  somecustomjsonobject;
     private JsonArray     somejsonarray;
+    private JsonObject    somevertxjsonobject;
     private LocalDateTime sometimestamp;
 
     public Something() {}
@@ -48,6 +49,7 @@ public class Something implements VertxPojo, ISomething {
         this.somejsonobject = value.getSomejsonobject();
         this.somecustomjsonobject = value.getSomecustomjsonobject();
         this.somejsonarray = value.getSomejsonarray();
+        this.somevertxjsonobject = value.getSomevertxjsonobject();
         this.sometimestamp = value.getSometimestamp();
     }
 
@@ -62,6 +64,7 @@ public class Something implements VertxPojo, ISomething {
         JsonObject    somejsonobject,
         SomeJsonPojo  somecustomjsonobject,
         JsonArray     somejsonarray,
+        JsonObject    somevertxjsonobject,
         LocalDateTime sometimestamp
     ) {
         this.someid = someid;
@@ -74,6 +77,7 @@ public class Something implements VertxPojo, ISomething {
         this.somejsonobject = somejsonobject;
         this.somecustomjsonobject = somecustomjsonobject;
         this.somejsonarray = somejsonarray;
+        this.somevertxjsonobject = somevertxjsonobject;
         this.sometimestamp = sometimestamp;
     }
 
@@ -188,6 +192,17 @@ public class Something implements VertxPojo, ISomething {
     }
 
     @Override
+    public JsonObject getSomevertxjsonobject() {
+        return this.somevertxjsonobject;
+    }
+
+    @Override
+    public Something setSomevertxjsonobject(JsonObject somevertxjsonobject) {
+        this.somevertxjsonobject = somevertxjsonobject;
+        return this;
+    }
+
+    @Override
     public LocalDateTime getSometimestamp() {
         return this.sometimestamp;
     }
@@ -267,6 +282,12 @@ public class Something implements VertxPojo, ISomething {
         }
         else if (!somejsonarray.equals(other.somejsonarray))
             return false;
+        if (somevertxjsonobject == null) {
+            if (other.somevertxjsonobject != null)
+                return false;
+        }
+        else if (!somevertxjsonobject.equals(other.somevertxjsonobject))
+            return false;
         if (sometimestamp == null) {
             if (other.sometimestamp != null)
                 return false;
@@ -290,6 +311,7 @@ public class Something implements VertxPojo, ISomething {
         result = prime * result + ((this.somejsonobject == null) ? 0 : this.somejsonobject.hashCode());
         result = prime * result + ((this.somecustomjsonobject == null) ? 0 : this.somecustomjsonobject.hashCode());
         result = prime * result + ((this.somejsonarray == null) ? 0 : this.somejsonarray.hashCode());
+        result = prime * result + ((this.somevertxjsonobject == null) ? 0 : this.somevertxjsonobject.hashCode());
         result = prime * result + ((this.sometimestamp == null) ? 0 : this.sometimestamp.hashCode());
         return result;
     }
@@ -308,6 +330,7 @@ public class Something implements VertxPojo, ISomething {
         sb.append(", ").append(somejsonobject);
         sb.append(", ").append(somecustomjsonobject);
         sb.append(", ").append(somejsonarray);
+        sb.append(", ").append(somevertxjsonobject);
         sb.append(", ").append(sometimestamp);
 
         sb.append(")");
@@ -330,6 +353,7 @@ public class Something implements VertxPojo, ISomething {
         setSomejsonobject(from.getSomejsonobject());
         setSomecustomjsonobject(from.getSomecustomjsonobject());
         setSomejsonarray(from.getSomejsonarray());
+        setSomevertxjsonobject(from.getSomevertxjsonobject());
         setSometimestamp(from.getSometimestamp());
     }
 

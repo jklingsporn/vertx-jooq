@@ -2,6 +2,8 @@ package io.github.jklingsporn.vertx.jooq.generate;
 
 import io.github.jklingsporn.vertx.jooq.generate.converter.SomeJsonPojo;
 import io.github.jklingsporn.vertx.jooq.generate.converter.SomeJsonPojoConverter;
+import io.github.jklingsporn.vertx.jooq.shared.postgres.JSONBToJsonObjectConverter;
+import io.vertx.core.json.JsonObject;
 import org.jooq.SQLDialect;
 import org.jooq.impl.DefaultConfiguration;
 import org.jooq.meta.jaxb.Configuration;
@@ -44,7 +46,7 @@ public class PostgresConfigurationProvider extends AbstractDatabaseConfiguration
                     "  \"someJsonObject\" VARCHAR(45) NULL,\n" +
                     "  \"someCustomJsonObject\" JSONB NULL,\n" +
                     "  \"someJsonArray\" VARCHAR(45) NULL,\n" +
-//                    "  \"someJsonBObject\" JSONB NULL,\n" +
+                    "  \"someVertxJsonObject\" JSONB NULL,\n" +
                     "  \"someTimestamp\" TIMESTAMP NULL,\n" +
                     "  PRIMARY KEY (\"someId\"));").execute();
             connection.prepareStatement("CREATE TABLE \"somethingComposite\" (\n" +
@@ -74,8 +76,15 @@ public class PostgresConfigurationProvider extends AbstractDatabaseConfiguration
         customJsonMapping.setConverter(SomeJsonPojoConverter.class.getName());
         customJsonMapping.setExpression("someCustomJsonObject");
         customJsonMapping.setTypes(".*");
+
+        ForcedType jsonbToJsonObjectMapping = new ForcedType();
+        jsonbToJsonObjectMapping.setUserType(JsonObject.class.getName());
+        jsonbToJsonObjectMapping.setConverter(JSONBToJsonObjectConverter.class.getName());
+        jsonbToJsonObjectMapping.setExpression("someVertxJsonObject");
+        jsonbToJsonObjectMapping.setTypes(".*");
         List<ForcedType> forcedTypes = new ArrayList<>(generatorConfig.getGenerator().getDatabase().getForcedTypes());
         forcedTypes.add(customJsonMapping);
+        forcedTypes.add(jsonbToJsonObjectMapping);
         generatorConfig.getGenerator().getDatabase().setForcedTypes(forcedTypes);
         return generatorConfig;
     }
