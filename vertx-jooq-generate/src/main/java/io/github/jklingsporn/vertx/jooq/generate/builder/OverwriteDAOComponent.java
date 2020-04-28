@@ -1,8 +1,7 @@
 package io.github.jklingsporn.vertx.jooq.generate.builder;
 
 import org.jooq.codegen.JavaWriter;
-
-import java.util.Objects;
+import org.jooq.meta.SchemaDefinition;
 
 /**
  * Created by jensklingsporn on 09.02.18.
@@ -10,6 +9,6 @@ import java.util.Objects;
 @FunctionalInterface
 interface OverwriteDAOComponent {
 
-    public void overwrite(JavaWriter out, String className, String tableIdentifier, String tableRecord, String pType, String tType);
+    public void overwrite(SchemaDefinition schema, JavaWriter out, String className, String tableIdentifier, String tableRecord, String pType, String tType);
 
 }

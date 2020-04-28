@@ -2,9 +2,12 @@ package io.github.jklingsporn.vertx.jooq.shared.reactive;
 
 import io.github.jklingsporn.vertx.jooq.shared.internal.AbstractVertxDAO;
 import io.github.jklingsporn.vertx.jooq.shared.internal.QueryExecutor;
-import io.vertx.core.impl.Arguments;
 import io.vertx.sqlclient.Row;
-import org.jooq.*;
+import io.vertx.sqlclient.RowSet;
+import org.jooq.SQLDialect;
+import org.jooq.Table;
+import org.jooq.TableField;
+import org.jooq.UpdatableRecord;
 
 import java.util.function.Function;
 
@@ -20,16 +23,28 @@ import java.util.function.Function;
  */
 public abstract class AbstractReactiveVertxDAO<R extends UpdatableRecord<R>, P, T, FIND_MANY, FIND_ONE,EXECUTE, INSERT_RETURNING> extends AbstractVertxDAO<R,P,T,FIND_MANY,FIND_ONE, EXECUTE, INSERT_RETURNING>{
 
+    private final Function<Object,T> keyConverter;
+
     protected AbstractReactiveVertxDAO(Table<R> table, Class<P> type, QueryExecutor<R, T, FIND_MANY, FIND_ONE, EXECUTE, INSERT_RETURNING> queryExecutor) {
         super(table, type, queryExecutor);
+        if(queryExecutor.configuration().dialect().family().equals(SQLDialect.POSTGRES)){
+            this.keyConverter = generatePostgresKeyConverter(table);
+        }else{
+            if(table.getPrimaryKey().getFieldsArray().length == 1){
+                this.keyConverter = generateMySQLKeyConverter(table);
+            }else{
+                this.keyConverter = o -> {
+                    throw new UnsupportedOperationException("Only single numeric primary keys allowed");
+                };
+            }
+        }
     }
 
-    @Override
     @SuppressWarnings("unchecked")
-    protected Function<Object,T> keyConverter(){
+    private Function<Object,T> generatePostgresKeyConverter(Table<R> table){
         return o -> {
             Row row = (Row) o;
-            TableField<R, ?>[] fields = getTable().getPrimaryKey().getFieldsArray();
+            TableField<R, ?>[] fields = table.getPrimaryKey().getFieldsArray();
             if(fields.length == 1){
                 return (T)row.getValue(fields[0].getName());
             }
@@ -39,6 +54,42 @@ public abstract class AbstractReactiveVertxDAO<R extends UpdatableRecord<R>, P, 
             }
             return compositeKeyRecord(values);
         };
+    }
+
+    @SuppressWarnings("unchecked")
+    private Function<Object,T> generateMySQLKeyConverter(Table<R> table){
+        Class<?> pkType = table.getPrimaryKey().getFieldsArray()[0].getType();
+        if(pkType.equals(Long.class)){
+            return o -> {
+                RowSet<Row> rs = (RowSet<Row>) o;
+                return (T) extractMysqlLastInsertProperty().apply(rs);
+            };
+        }else if(pkType.equals(Integer.class)){
+            return o -> {
+                RowSet<Row> rs = (RowSet<Row>) o;
+                return (T)(Integer) (extractMysqlLastInsertProperty().apply(rs).intValue());
+            };
+        }else if(pkType.equals(Short.class)){
+            return o -> {
+                RowSet<Row> rs = (RowSet<Row>) o;
+                return (T)(Short) (extractMysqlLastInsertProperty().apply(rs).shortValue());
+            };
+        }else if(pkType.equals(Byte.class)){
+            return o -> {
+                RowSet<Row> rs = (RowSet<Row>) o;
+                return (T)(Byte) (extractMysqlLastInsertProperty().apply(rs).byteValue());
+            };
+        }
+        throw new UnsupportedOperationException("Unsupported primary key type "+pkType);
+    }
+
+    protected Function<RowSet<Row>,Long> extractMysqlLastInsertProperty(){
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    protected Function<Object,T> keyConverter(){
+        return this.keyConverter;
     }
 
     @Override

@@ -88,8 +88,8 @@ class ComponentBasedVertxGenerator extends VertxGenerator {
     }
 
     @Override
-    public void overwriteDAOMethods(JavaWriter out, String className, String tableIdentifier, String rType, String pType, String tType) {
-        overwriteDAODelegates.forEach(o -> o.overwrite(out, className, tableIdentifier, rType, pType, tType));
+    public void overwriteDAOMethods(SchemaDefinition schema, JavaWriter out, String className, String tableIdentifier, String rType, String pType, String tType) {
+        overwriteDAODelegates.forEach(o -> o.overwrite(schema, out, className, tableIdentifier, rType, pType, tType));
     }
 
     @Override
