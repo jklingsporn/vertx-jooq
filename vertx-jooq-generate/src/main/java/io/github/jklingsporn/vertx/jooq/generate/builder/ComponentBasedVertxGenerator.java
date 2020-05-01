@@ -225,4 +225,18 @@ class ComponentBasedVertxGenerator extends VertxGenerator {
         this.activeGenerator = activeGenerator;
         return this;
     }
+
+    final public File generateTargetFile(SchemaDefinition schema, String pkg, String name) {
+      java.nio.file.Path p = java.nio.file.Paths.get(getActiveGenerator().getStrategy().getTargetDirectory())
+          // Resolve the package
+          .resolve( (getActiveGenerator().getStrategy().getJavaPackageName(schema) + pkg).replaceAll("\\.", File.separator)).toAbsolutePath();
+        try {
+          java.nio.file.Files.createDirectories(p);
+        } catch (java.io.IOException e) {
+          throw new RuntimeException("Cannot create target file parent " + p, e);
+        }
+      return p.resolve(name).toFile();
+    }
+
+
 }
