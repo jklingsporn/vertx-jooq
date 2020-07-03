@@ -14,9 +14,11 @@ import org.jooq.codegen.JavaGenerator;
 import org.jooq.codegen.JavaWriter;
 import org.jooq.meta.*;
 import org.jooq.tools.JooqLogger;
+import org.jooq.tools.StringUtils;
 
 import java.io.File;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -538,6 +540,138 @@ public abstract class VertxGenerator extends JavaGenerator {
         }
         VertxJavaWriter out = (VertxJavaWriter) out1;
         generateDAO(key, table, out);
+    }
+
+    //TODO --> remove copy from JavaGenerator start
+
+    @Override
+    protected void generatePojo(TableDefinition tableOrUDT, JavaWriter out) {
+        final String className = getStrategy().getJavaClassName(tableOrUDT, GeneratorStrategy.Mode.POJO);
+        final String interfaceName = generateInterfaces()
+                ? out.ref(getStrategy().getFullJavaClassName(tableOrUDT, GeneratorStrategy.Mode.INTERFACE))
+                : "";
+        final String superName = out.ref(getStrategy().getJavaClassExtends(tableOrUDT, GeneratorStrategy.Mode.POJO));
+        final List<String> interfaces = out.ref(getStrategy().getJavaClassImplements(tableOrUDT, GeneratorStrategy.Mode.POJO));
+        final List<String> superTypes = list(superName, interfaces);
+
+        if (generateInterfaces())
+            interfaces.add(interfaceName);
+
+        printPackage(out, tableOrUDT, GeneratorStrategy.Mode.POJO);
+
+        if (tableOrUDT instanceof TableDefinition)
+            generatePojoClassJavadoc((TableDefinition) tableOrUDT, out);
+        else
+            generateUDTPojoClassJavadoc((UDTDefinition) tableOrUDT, out);
+
+        printClassAnnotations(out, tableOrUDT.getSchema());
+        generatePojoClassAnnotations(out,tableOrUDT);
+
+        if (tableOrUDT instanceof TableDefinition)
+            printTableJPAAnnotation(out, (TableDefinition) tableOrUDT);
+
+        int maxLength = 0;
+        for (TypedElementDefinition<?> column : getTypedElements(tableOrUDT))
+            maxLength = Math.max(maxLength, out.ref(getJavaType(column.getType(resolver(GeneratorStrategy.Mode.POJO)), GeneratorStrategy.Mode.POJO)).length());
+
+        out.println("public class %s[[before= extends ][%s]][[before= implements ][%s]] {", className, list(superName), interfaces);
+
+        if (generateSerializablePojos() || generateSerializableInterfaces())
+            out.printSerial();
+
+        out.println();
+
+        for (TypedElementDefinition<?> column : getTypedElements(tableOrUDT)) {
+            out.tab(1).println("private %s%s %s;",
+                    generateImmutablePojos() ? "final " : "",
+                    StringUtils.rightPad(out.ref(getJavaType(column.getType(resolver(GeneratorStrategy.Mode.POJO)), GeneratorStrategy.Mode.POJO)), maxLength),
+                    getStrategy().getJavaMemberName(column, GeneratorStrategy.Mode.POJO));
+        }
+
+        // Constructors
+        // ---------------------------------------------------------------------
+
+        // Default constructor
+        if (!generateImmutablePojos())
+            generatePojoDefaultConstructor(tableOrUDT, out);
+
+        // [#1363] [#7055] copy constructor
+        generatePojoCopyConstructor(tableOrUDT, out);
+
+        // Multi-constructor
+        generatePojoMultiConstructor(tableOrUDT, out);
+
+        List<? extends TypedElementDefinition<?>> elements = getTypedElements(tableOrUDT);
+        for (int i = 0; i < elements.size(); i++) {
+            TypedElementDefinition<?> column = elements.get(i);
+
+            if (tableOrUDT instanceof TableDefinition)
+                generatePojoGetter(column, i, out);
+            else
+                generateUDTPojoGetter(column, i, out);
+
+            // Setter
+            if (!generateImmutablePojos())
+                if (tableOrUDT instanceof TableDefinition)
+                    generatePojoSetter(column, i, out);
+                else
+                    generateUDTPojoSetter(column, i, out);
+        }
+
+        if (generatePojosEqualsAndHashCode())
+            generatePojoEqualsAndHashCode(tableOrUDT, out);
+
+        if (generatePojosToString())
+            generatePojoToString(tableOrUDT, out);
+
+        if (generateInterfaces() && !generateImmutablePojos())
+            printFromAndInto(out, tableOrUDT);
+
+        if (tableOrUDT instanceof TableDefinition)
+            generatePojoClassFooter((TableDefinition) tableOrUDT, out);
+        else
+            generateUDTPojoClassFooter((UDTDefinition) tableOrUDT, out);
+
+        out.println("}");
+        closeJavaWriter(out);
+    }
+
+    private static final <T> List<T> list(T... objects) {
+        List<T> result = new ArrayList<>();
+
+        if (objects != null)
+            for (T object : objects)
+                if (object != null && !"".equals(object))
+                    result.add(object);
+
+        return result;
+    }
+
+    private static final <T> List<T> list(T first, List<T> remaining) {
+        List<T> result = new ArrayList<>();
+
+        result.addAll(list(first));
+        result.addAll(remaining);
+
+        return result;
+    }
+
+    private List<? extends TypedElementDefinition<? extends Definition>> getTypedElements(Definition definition) {
+        if (definition instanceof TableDefinition)
+            return ((TableDefinition) definition).getColumns();
+        else if (definition instanceof EmbeddableDefinition)
+            return ((EmbeddableDefinition) definition).getColumns();
+        else if (definition instanceof UDTDefinition)
+            return ((UDTDefinition) definition).getAttributes();
+        else if (definition instanceof RoutineDefinition)
+            return ((RoutineDefinition) definition).getAllParameters();
+        else
+            throw new IllegalArgumentException("Unsupported type : " + definition);
+    }
+
+    //TODO remove copy from JavaGenerator end <--
+
+    protected void generatePojoClassAnnotations(JavaWriter out, TableDefinition schema) {
     }
 
     private void generateDAO(UniqueKeyDefinition key, TableDefinition table, VertxJavaWriter out) {

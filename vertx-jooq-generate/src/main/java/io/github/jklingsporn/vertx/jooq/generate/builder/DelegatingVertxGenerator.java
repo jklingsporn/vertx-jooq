@@ -4,6 +4,7 @@ import io.github.jklingsporn.vertx.jooq.generate.VertxGenerator;
 import org.jooq.codegen.GeneratorStrategy;
 import org.jooq.codegen.JavaWriter;
 import org.jooq.meta.SchemaDefinition;
+import org.jooq.meta.TableDefinition;
 import org.jooq.meta.TypedElementDefinition;
 
 import java.io.File;
@@ -103,6 +104,11 @@ public class DelegatingVertxGenerator extends VertxGenerator {
     public void setStrategy(GeneratorStrategy strategy) {
         super.setStrategy(strategy);
         delegate.setStrategy(strategy);
+    }
+
+    @Override
+    protected void generatePojoClassAnnotations(JavaWriter out, TableDefinition schema) {
+        delegate.generatePojoClassAnnotations(out,schema);
     }
 }
 
