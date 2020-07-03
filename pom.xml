@@ -24,7 +24,7 @@
     </modules>
     <properties>
         <jooq.version>3.13.1</jooq.version>
-        <vertx.version>3.9.0</vertx.version>
+        <vertx.version>3.9.1</vertx.version>
         <hsqldb.version>2.5.0</hsqldb.version>
         <junit.version>4.12</junit.version>
         <guice.version>4.1.0</guice.version>
