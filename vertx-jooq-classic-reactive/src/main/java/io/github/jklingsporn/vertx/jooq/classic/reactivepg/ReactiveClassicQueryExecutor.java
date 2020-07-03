@@ -8,6 +8,7 @@ import io.vertx.sqlclient.Transaction;
 import org.jooq.*;
 
 import java.util.List;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -17,12 +18,22 @@ import java.util.stream.Collectors;
 public class ReactiveClassicQueryExecutor<R extends UpdatableRecord<R>,P,T> extends ReactiveClassicGenericQueryExecutor implements QueryExecutor<R,T,Future<List<P>>,Future<P>,Future<Integer>,Future<T>>{
 
     private final Function<Row,P> pojoMapper;
-    private final boolean isPostgres;
+    private final BiFunction<Function<DSLContext, ? extends InsertResultStep<R>>, Function<Object, T>,Future<T>> insertReturningDelegate;
 
     public ReactiveClassicQueryExecutor(Configuration configuration, SqlClient delegate, Function<Row, P> pojoMapper) {
         super(configuration, delegate);
         this.pojoMapper = pojoMapper;
-        this.isPostgres = configuration.dialect().family().equals(SQLDialect.POSTGRES);
+        /*
+         * Support insert returning in mysql using lastinsertid: https://github.com/jklingsporn/vertx-jooq/issues/149
+         */
+        this.insertReturningDelegate =
+                configuration.dialect().family().equals(SQLDialect.POSTGRES)
+                        ? (queryFunction,keyMapper) -> executeAny(queryFunction)
+                                .map(rows -> rows.iterator().next())
+                                .map(keyMapper::apply)
+                        : (queryFunction,keyMapper) -> executeAny(queryFunction)
+                        .map(keyMapper::apply)
+        ;
     }
 
     @Override
@@ -37,15 +48,7 @@ public class ReactiveClassicQueryExecutor<R extends UpdatableRecord<R>,P,T> exte
 
     @Override
     public Future<T> insertReturning(Function<DSLContext, ? extends InsertResultStep<R>> queryFunction, Function<Object, T> keyMapper) {
-        /*
-         * Support insert returning in mysql using lastinsertid: https://github.com/jklingsporn/vertx-jooq/issues/149
-         */
-        return isPostgres ?
-                executeAny(queryFunction)
-                .map(rows -> rows.iterator().next())
-                .map(keyMapper::apply)
-                : executeAny(queryFunction)
-                .map(keyMapper::apply);
+        return insertReturningDelegate.apply(queryFunction,keyMapper);
     }
 
     @Override
