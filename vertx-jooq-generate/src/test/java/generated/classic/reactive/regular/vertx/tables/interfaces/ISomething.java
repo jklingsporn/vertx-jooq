@@ -123,6 +123,16 @@ public interface ISomething extends VertxPojo, Serializable {
     public JsonArray getSomejsonarray();
 
     /**
+     * Setter for <code>vertx.something.someVertxJsonObject</code>.
+     */
+    public ISomething setSomevertxjsonobject(JsonObject value);
+
+    /**
+     * Getter for <code>vertx.something.someVertxJsonObject</code>.
+     */
+    public JsonObject getSomevertxjsonobject();
+
+    /**
      * Setter for <code>vertx.something.someTimestamp</code>.
      */
     public ISomething setSometimestamp(LocalDateTime value);
@@ -199,6 +209,11 @@ public interface ISomething extends VertxPojo, Serializable {
             throw new UnexpectedJsonValueType("someJsonArray","io.vertx.core.json.JsonArray",e);
         }
         try {
+            setSomevertxjsonobject(generated.classic.reactive.regular.vertx.tables.converters.Converters.IO_GITHUB_JKLINGSPORN_VERTX_JOOQ_SHARED_POSTGRES_JSONBTOJSONOBJECTCONVERTER_INSTANCE.pgConverter().from(json.getJsonObject("someVertxJsonObject")));
+        } catch (java.lang.ClassCastException e) {
+            throw new UnexpectedJsonValueType("someVertxJsonObject","io.vertx.core.json.JsonObject",e);
+        }
+        try {
             // Omitting unrecognized type java.time.LocalDateTime for column someTimestamp!
         } catch (java.lang.ClassCastException e) {
             throw new UnexpectedJsonValueType("someTimestamp","java.time.LocalDateTime",e);
@@ -220,6 +235,7 @@ public interface ISomething extends VertxPojo, Serializable {
         json.put("someJsonObject",getSomejsonobject());
         json.put("someCustomJsonObject",generated.classic.reactive.regular.vertx.tables.converters.Converters.IO_GITHUB_JKLINGSPORN_VERTX_JOOQ_GENERATE_CONVERTER_SOMEJSONPOJOCONVERTER_INSTANCE.pgConverter().to(getSomecustomjsonobject()));
         json.put("someJsonArray",getSomejsonarray());
+        json.put("someVertxJsonObject",generated.classic.reactive.regular.vertx.tables.converters.Converters.IO_GITHUB_JKLINGSPORN_VERTX_JOOQ_SHARED_POSTGRES_JSONBTOJSONOBJECTCONVERTER_INSTANCE.pgConverter().to(getSomevertxjsonobject()));
         // Omitting unrecognized type java.time.LocalDateTime for column someTimestamp!
         return json;
     }

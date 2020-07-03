@@ -13,6 +13,7 @@ import io.github.jklingsporn.vertx.jooq.generate.converter.SomeJsonPojo;
 import io.github.jklingsporn.vertx.jooq.generate.converter.SomeJsonPojoConverter;
 import io.github.jklingsporn.vertx.jooq.shared.JsonArrayConverter;
 import io.github.jklingsporn.vertx.jooq.shared.JsonObjectConverter;
+import io.github.jklingsporn.vertx.jooq.shared.postgres.JSONBToJsonObjectConverter;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
@@ -25,7 +26,7 @@ import org.jooq.ForeignKey;
 import org.jooq.Identity;
 import org.jooq.Name;
 import org.jooq.Record;
-import org.jooq.Row11;
+import org.jooq.Row12;
 import org.jooq.Schema;
 import org.jooq.Table;
 import org.jooq.TableField;
@@ -41,7 +42,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Something extends TableImpl<SomethingRecord> {
 
-    private static final long serialVersionUID = -1379833906;
+    private static final long serialVersionUID = -121511613;
 
     /**
      * The reference instance of <code>vertx.something</code>
@@ -105,6 +106,11 @@ public class Something extends TableImpl<SomethingRecord> {
      * The column <code>vertx.something.someJsonArray</code>.
      */
     public final TableField<SomethingRecord, JsonArray> SOMEJSONARRAY = createField(DSL.name("someJsonArray"), org.jooq.impl.SQLDataType.VARCHAR(45), this, "", new JsonArrayConverter());
+
+    /**
+     * The column <code>vertx.something.someVertxJsonObject</code>.
+     */
+    public final TableField<SomethingRecord, JsonObject> SOMEVERTXJSONOBJECT = createField(DSL.name("someVertxJsonObject"), org.jooq.impl.SQLDataType.JSONB, this, "", new JSONBToJsonObjectConverter());
 
     /**
      * The column <code>vertx.something.someTimestamp</code>.
@@ -191,11 +197,11 @@ public class Something extends TableImpl<SomethingRecord> {
     }
 
     // -------------------------------------------------------------------------
-    // Row11 type methods
+    // Row12 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row11<Integer, String, Long, Short, Integer, Double, Someenum, JsonObject, SomeJsonPojo, JsonArray, LocalDateTime> fieldsRow() {
-        return (Row11) super.fieldsRow();
+    public Row12<Integer, String, Long, Short, Integer, Double, Someenum, JsonObject, SomeJsonPojo, JsonArray, JsonObject, LocalDateTime> fieldsRow() {
+        return (Row12) super.fieldsRow();
     }
 }
