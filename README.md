@@ -3,6 +3,13 @@ A [jOOQ](http://www.jooq.org/)-CodeGenerator to create [vertx](http://vertx.io/)
 Perform all CRUD-operations asynchronously and convert your POJOs from/into a `io.vertx.core.json.JsonObject` using the API and
 driver of your choice.
 
+## release 5.1.2
+- fix [Generation fails when module's path contains `.`](https://github.com/jklingsporn/vertx-jooq/issues/151)
+- fix [dao.insertReturningPrimary fails with java.util.NoSuchElementException](https://github.com/jklingsporn/vertx-jooq/issues/149)
+- fix [JSONB to JsonObject Convertor Failure when using postgres reactive classic](https://github.com/jklingsporn/vertx-jooq/issues/148)
+- [vertx 3.9.1](http://vertx.io/) upgrade
+- [jooq 3.13.2](http://www.jooq.org/) upgrade
+
 ## release 5.1.1
 - [vertx 3.9.0](http://vertx.io/) support
 - `executeAny`-methods in `ReactiveQueryExecutor`-implementations.
