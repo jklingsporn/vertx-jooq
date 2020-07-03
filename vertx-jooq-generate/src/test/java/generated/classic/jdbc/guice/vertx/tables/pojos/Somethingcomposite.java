@@ -16,7 +16,7 @@ import io.vertx.core.json.JsonObject;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Somethingcomposite implements VertxPojo, ISomethingcomposite {
 
-    private static final long serialVersionUID = -135018924;
+    private static final long serialVersionUID = -1433854246;
 
     private Integer    someid;
     private Integer    somesecondid;
@@ -38,6 +38,11 @@ public class Somethingcomposite implements VertxPojo, ISomethingcomposite {
         this.someid = someid;
         this.somesecondid = somesecondid;
         this.somejsonobject = somejsonobject;
+    }
+
+    public Somethingcomposite(io.vertx.core.json.JsonObject json) {
+        this();
+        fromJson(json);
     }
 
     @Override
@@ -140,10 +145,5 @@ public class Somethingcomposite implements VertxPojo, ISomethingcomposite {
     public <E extends ISomethingcomposite> E into(E into) {
         into.from(this);
         return into;
-    }
-
-    public Somethingcomposite(io.vertx.core.json.JsonObject json) {
-        this();
-        fromJson(json);
     }
 }

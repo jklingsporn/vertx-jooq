@@ -17,7 +17,7 @@ import java.io.Serializable;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Somethingcomposite implements VertxPojo, Serializable {
 
-    private static final long serialVersionUID = 1361175237;
+    private static final long serialVersionUID = 1299530853;
 
     private Integer    someid;
     private Integer    somesecondid;
@@ -39,6 +39,11 @@ public class Somethingcomposite implements VertxPojo, Serializable {
         this.someid = someid;
         this.somesecondid = somesecondid;
         this.somejsonobject = somejsonobject;
+    }
+
+    public Somethingcomposite(io.vertx.core.json.JsonObject json) {
+        this();
+        fromJson(json);
     }
 
     public Integer getSomeid() {
@@ -118,11 +123,6 @@ public class Somethingcomposite implements VertxPojo, Serializable {
 
         sb.append(")");
         return sb.toString();
-    }
-
-    public Somethingcomposite(io.vertx.core.json.JsonObject json) {
-        this();
-        fromJson(json);
     }
 
     @Override

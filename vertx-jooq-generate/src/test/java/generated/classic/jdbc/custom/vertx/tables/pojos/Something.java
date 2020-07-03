@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Something implements VertxPojo, Serializable {
 
-    private static final long serialVersionUID = -1479727897;
+    private static final long serialVersionUID = 277778789;
 
     private Integer       someid;
     private String        somestring;
@@ -69,6 +69,11 @@ public class Something implements VertxPojo, Serializable {
         this.somejsonobject = somejsonobject;
         this.somejsonarray = somejsonarray;
         this.sometimestamp = sometimestamp;
+    }
+
+    public Something(io.vertx.core.json.JsonObject json) {
+        this();
+        fromJson(json);
     }
 
     public Integer getSomeid() {
@@ -267,11 +272,6 @@ public class Something implements VertxPojo, Serializable {
 
         sb.append(")");
         return sb.toString();
-    }
-
-    public Something(io.vertx.core.json.JsonObject json) {
-        this();
-        fromJson(json);
     }
 
     @Override

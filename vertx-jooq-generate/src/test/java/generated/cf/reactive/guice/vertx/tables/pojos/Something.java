@@ -21,7 +21,7 @@ import java.time.LocalDateTime;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Something implements VertxPojo, ISomething {
 
-    private static final long serialVersionUID = 470933088;
+    private static final long serialVersionUID = -1028566048;
 
     private Integer       someid;
     private String        somestring;
@@ -79,6 +79,11 @@ public class Something implements VertxPojo, ISomething {
         this.somejsonarray = somejsonarray;
         this.somevertxjsonobject = somevertxjsonobject;
         this.sometimestamp = sometimestamp;
+    }
+
+    public Something(io.vertx.core.json.JsonObject json) {
+        this();
+        fromJson(json);
     }
 
     @Override
@@ -361,10 +366,5 @@ public class Something implements VertxPojo, ISomething {
     public <E extends ISomething> E into(E into) {
         into.from(this);
         return into;
-    }
-
-    public Something(io.vertx.core.json.JsonObject json) {
-        this();
-        fromJson(json);
     }
 }

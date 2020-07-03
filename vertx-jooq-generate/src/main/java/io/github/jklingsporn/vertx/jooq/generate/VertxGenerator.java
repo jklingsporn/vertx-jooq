@@ -185,10 +185,17 @@ public abstract class VertxGenerator extends JavaGenerator {
     }
 
     @Override
+    protected void generatePojoMultiConstructor(Definition tableOrUDT, JavaWriter out) {
+        super.generatePojoMultiConstructor(tableOrUDT, out);
+        if(generateJson) {
+            generateFromJsonConstructor(tableOrUDT, out, GeneratorStrategy.Mode.POJO);
+        }
+    }
+
+    @Override
     protected void generatePojoClassFooter(TableDefinition table, JavaWriter out) {
         super.generatePojoClassFooter(table, out);
         if(generateJson){
-            generateFromJsonConstructor(table,out, GeneratorStrategy.Mode.POJO);
             if(!generateInterfaces()){
                 generateFromJson(table,out, GeneratorStrategy.Mode.POJO);
                 generateToJson(table, out, GeneratorStrategy.Mode.POJO);
@@ -400,7 +407,7 @@ public abstract class VertxGenerator extends JavaGenerator {
         return vertxGeneratorStrategy;
     }
 
-    private void generateFromJsonConstructor(TableDefinition table, JavaWriter out, GeneratorStrategy.Mode mode){
+    private void generateFromJsonConstructor(Definition table, JavaWriter out, GeneratorStrategy.Mode mode){
         final String className = getStrategy().getJavaClassName(table, mode);
         out.println();
         out.tab(1).println("public %s(io.vertx.core.json.JsonObject json) {", className);
