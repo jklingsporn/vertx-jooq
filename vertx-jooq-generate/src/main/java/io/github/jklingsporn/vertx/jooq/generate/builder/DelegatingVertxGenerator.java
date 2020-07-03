@@ -75,8 +75,8 @@ public class DelegatingVertxGenerator extends VertxGenerator {
     }
 
     @Override
-    protected void overwriteDAOMethods(JavaWriter out, String className, String tableIdentifier, String rType, String pType, String tType) {
-        delegate.overwriteDAOMethods(out, className, tableIdentifier, rType, pType, tType);
+    protected void overwriteDAOMethods(SchemaDefinition schema, JavaWriter out, String className, String tableIdentifier, String rType, String pType, String tType) {
+        delegate.overwriteDAOMethods(schema, out, className, tableIdentifier, rType, pType, tType);
     }
 
     @Override

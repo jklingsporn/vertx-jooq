@@ -8,6 +8,7 @@ import io.vertx.core.buffer.Buffer;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import org.jooq.Configuration;
+import org.jooq.SQLDialect;
 import org.jooq.codegen.GeneratorStrategy;
 import org.jooq.codegen.JavaWriter;
 import org.jooq.impl.SQLDataType;
@@ -61,7 +62,7 @@ public class VertxGeneratorBuilder {
 
         APIStepImpl(ComponentBasedVertxGenerator base) {
             this.base = base;
-            this.base.addOverwriteDAODelegate((out, className, tableIdentifier, tableRecord, pType, tType) -> {
+            this.base.addOverwriteDAODelegate((schema, out, className, tableIdentifier, tableRecord, pType, tType) -> {
                 out.println();
                 out.tab(1).override();
                 out.tab(1).println("public %s queryExecutor(){", base.renderQueryExecutor(tableRecord, pType, tType));
@@ -221,7 +222,7 @@ public class VertxGeneratorBuilder {
         @Override
         public DIStep withAsyncDriver() {
             base.setRenderDAOExtendsDelegate(()->"io.github.jklingsporn.vertx.jooq.shared.async.AbstractAsyncVertxDAO");
-            base.addOverwriteDAODelegate((out, className, tableIdentifier, tableRecord, pType, tType) -> {
+            base.addOverwriteDAODelegate((schema, out, className, tableIdentifier, tableRecord, pType, tType) -> {
                 if (SUPPORTED_MYSQL_INSERT_RETURNING_TYPES_MAP.containsKey(tType)) {
                     out.println();
                     out.tab(1).override();
@@ -275,15 +276,19 @@ public class VertxGeneratorBuilder {
         @Override
         public DIStep withPostgresReactiveDriver() {
             base.setRenderDAOExtendsDelegate(()->"io.github.jklingsporn.vertx.jooq.shared.reactive.AbstractReactiveVertxDAO");
+            base.addOverwriteDAODelegate((schema, out, className, tableIdentifier, tableRecord, pType, tType) -> {
+                if (schema.getDatabase().getDialect().family().equals(SQLDialect.MYSQL)) {
+                    out.println();
+                    out.tab(1).override();
+                    out.tab(1).println("protected java.util.function.Function<io.vertx.sqlclient.RowSet<io.vertx.sqlclient.Row>,Long> extractMysqlLastInsertProperty(){");
+                    out.tab(2).println("return rs -> rs.property(io.vertx.mysqlclient.MySQLClient.LAST_INSERTED_ID);");
+                    out.tab(1).println("}");
+                }
+            });
             base.addWriteExtraDataDelegate((schema, writerGen) -> {
-
                 ComponentBasedVertxGenerator.logger.info("Generate RowMappers ... ");
                 String mappersSubPackage = base.getActiveGenerator().getVertxGeneratorStrategy().getRowMappersSubPackage();
-                String packageName = base.getActiveGenerator().getStrategy().getJavaPackageName(schema) + ".tables." + mappersSubPackage;
-                String dir = base.getActiveGenerator().getStrategy().getTargetDirectory();
-                dir = File.separator.equals("/") ? dir.replace("\\", File.separator) : dir.replace("/", File.separator);
-                dir = dir + File.separator + packageName.replace(".", File.separator);
-                File moduleFile = new File(dir, "RowMappers.java");
+                File moduleFile = base.generateTargetFile(schema, ".tables." + mappersSubPackage, "RowMappers.java");
                 JavaWriter out = writerGen.apply(moduleFile);
                 out.println("package " + base.getActiveGenerator().getStrategy().getJavaPackageName(schema) + ".tables."+mappersSubPackage+";");
                 out.println();
@@ -452,6 +457,8 @@ public class VertxGeneratorBuilder {
             super(base);
         }
 
+
+
         @Override
         public FinalStep withGuice(boolean generateGuiceModules, NamedInjectionStrategy namedInjectionStrategy) {
             base.setWriteDAOConstructorAnnotationDelegate((out)->out.tab(1).println("@javax.inject.Inject"));
@@ -474,8 +481,7 @@ public class VertxGeneratorBuilder {
                         default:
                             throw new UnsupportedOperationException(base.apiType.toString());
                     }
-                    String packageName = (base.getActiveGenerator().getStrategy().getTargetDirectory() + "/" + base.getActiveGenerator().getStrategy().getJavaPackageName(schema) + ".tables.modules").replaceAll("\\.", "/");
-                    File moduleFile = new File(packageName, "DaoModule.java");
+                    File moduleFile = base.generateTargetFile(schema,".tables.modules" , "DaoModule.java");
                     JavaWriter out = writerGen.apply(moduleFile);
                     out.println("package " + base.getActiveGenerator().getStrategy().getJavaPackageName(schema) + ".tables.modules;");
                     out.println();
@@ -534,16 +540,14 @@ public class VertxGeneratorBuilder {
             if(buildOptions.getConverterInstantiationMethod().equals(ConverterInstantiationMethod.SINGLETON)){
                 base.addWriteExtraDataDelegate((schema, writerGen) -> {
                     ComponentBasedVertxGenerator.logger.info("Generate Converters ... ");
-                    String packageName = (base.getActiveGenerator().getStrategy().getTargetDirectory() + "/" + base.getActiveGenerator().getStrategy().getJavaPackageName(schema) + ".tables.converters").replaceAll("\\.", "/");
-                    File moduleFile = new File(packageName, "Converters.java");
+                    File moduleFile = base.generateTargetFile(schema, ".tables.converters", "Converters.java");
                     JavaWriter out = writerGen.apply(moduleFile);
                     generateConverters(schema,out);
                     return out;
                 });
                 base.addWriteExtraDataDelegate((schema, writerGen) -> {
                     ComponentBasedVertxGenerator.logger.info("Generate Bindings ... ");
-                    String packageName = (base.getActiveGenerator().getStrategy().getTargetDirectory() + "/" + base.getActiveGenerator().getStrategy().getJavaPackageName(schema) + ".tables.converters").replaceAll("\\.", "/");
-                    File moduleFile = new File(packageName, "Bindings.java");
+                    File moduleFile = base.generateTargetFile(schema, ".tables.converters",  "Bindings.java");
                     JavaWriter out = writerGen.apply(moduleFile);
                     generateBindings(schema,out);
                     return out;

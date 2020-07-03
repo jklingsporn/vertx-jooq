@@ -150,6 +150,7 @@ public abstract class VertxGenerator extends JavaGenerator {
      * Can be used to overwrite certain methods, e.g. AsyncXYZ-strategies shouldn't
      * allow insertReturning for non-numeric or compound primary keys due to limitations
      * of the AsyncMySQL/Postgres client.
+     * @param schema
      * @param out the JavaWriter
      * @param className the class name of the generated DAO
      * @param tableIdentifier the table identifier
@@ -157,7 +158,7 @@ public abstract class VertxGenerator extends JavaGenerator {
      * @param pType the POJO type
      * @param tType the primary key type
      */
-    protected void overwriteDAOMethods(JavaWriter out, String className, String tableIdentifier, String rType, String pType, String tType){}
+    protected void overwriteDAOMethods(SchemaDefinition schema, JavaWriter out, String className, String tableIdentifier, String rType, String pType, String tType){}
 
     /**
      * @return the fully qualified class name of the DAO's extension
@@ -620,7 +621,7 @@ public abstract class VertxGenerator extends JavaGenerator {
         out.tab(1).println("}");
         generateFetchMethods(table,out);
         generateDaoClassFooter(table, out);
-        overwriteDAOMethods(out, className, tableIdentifier, tableRecord, pType, tType);
+        overwriteDAOMethods(table.getSchema(),out, className, tableIdentifier, tableRecord, pType, tType);
         out.println("}");
     }
 
