@@ -565,6 +565,7 @@ public abstract class VertxGenerator extends JavaGenerator {
             generateUDTPojoClassJavadoc((UDTDefinition) tableOrUDT, out);
 
         printClassAnnotations(out, tableOrUDT.getSchema());
+        //THE FOLLOWING LINE HAS BEEN ADDED
         generatePojoClassAnnotations(out,tableOrUDT);
 
         if (tableOrUDT instanceof TableDefinition)

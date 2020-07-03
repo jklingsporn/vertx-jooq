@@ -14,7 +14,6 @@ public class BuildOptions {
 
     public BuildOptions() {
         this(ConverterInstantiationMethod.SINGLETON, EnumSet.noneOf(BuildFlag.class));
-        addBuildFlags(BuildFlag.DATA_OBJECT);
     }
 
     public BuildOptions(ConverterInstantiationMethod converterInstantiationMethod,Set<BuildFlag> buildFlags) {
