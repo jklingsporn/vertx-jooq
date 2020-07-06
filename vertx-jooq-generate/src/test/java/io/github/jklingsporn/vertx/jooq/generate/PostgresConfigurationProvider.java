@@ -58,6 +58,14 @@ public class PostgresConfigurationProvider extends AbstractDatabaseConfiguration
                     "  \"someId\" SERIAL,\n" +
                     "  \"someString\" VARCHAR(45) DEFAULT NULL,\n" +
                     "  PRIMARY KEY (\"someId\"));\n").execute();
+            connection.prepareStatement("CREATE OR REPLACE FUNCTION get_something_by_id(id INT) \n" +
+                    "   RETURNS something as $$\n" +
+                    "   declare res something;\n" +
+                    "BEGIN\n" +
+                    "   select * into res from something where \"someId\" = id;\n" +
+                    "  return res;\n" +
+                    "END;\n" +
+                    "$$ language 'plpgsql' STRICT;").execute();
         }catch (Throwable e){
             Assert.fail(e.getMessage());
         }

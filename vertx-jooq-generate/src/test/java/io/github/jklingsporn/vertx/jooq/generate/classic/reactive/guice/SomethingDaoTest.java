@@ -1,5 +1,6 @@
 package io.github.jklingsporn.vertx.jooq.generate.classic.reactive.guice;
 
+import generated.classic.reactive.guice.vertx.Routines;
 import generated.classic.reactive.guice.vertx.Tables;
 import generated.classic.reactive.guice.vertx.enums.Someenum;
 import generated.classic.reactive.guice.vertx.tables.daos.SomethingDao;
@@ -7,15 +8,17 @@ import generated.classic.reactive.guice.vertx.tables.pojos.Something;
 import io.github.jklingsporn.vertx.jooq.generate.PostgresConfigurationProvider;
 import io.github.jklingsporn.vertx.jooq.generate.ReactiveDatabaseClientProvider;
 import io.github.jklingsporn.vertx.jooq.generate.classic.ClassicTestBase;
-import io.vertx.pgclient.PgException;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+import io.vertx.pgclient.PgException;
 import org.jooq.Condition;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Test;
 
 import java.time.LocalDateTime;
 import java.util.Random;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * Created by jensklingsporn on 02.11.16.
@@ -84,6 +87,28 @@ public class SomethingDaoTest extends ClassicTestBase<Something, Integer, Long, 
         Assert.assertEquals(PgException.class, x.getClass());
         PgException pgException = (PgException) x;
         Assert.assertEquals("23505", pgException.getCode());
+    }
+
+    @Test
+    public void functionShouldReturnValue(){
+        CountDownLatch latch = new CountDownLatch(1);
+//        System.out.println(DSL.select(Routines.getSomethingById(1)).getSQL(ParamType.NAMED));
+        insertAndReturn(create())
+                .compose(id -> dao.queryExecutor().query(dsl -> dsl.select(Routines.getSomethingById(id))).map(res -> res.get(0,Something.class)))
+                .compose(something -> dao
+                        .update(setSomeO(something, createSomeO()))
+                        .compose(updatedRows -> {
+                            Assert.assertEquals(1l, updatedRows.longValue());
+                            return dao
+                                    .deleteById(getId(something))
+                                    .map(deletedRows -> {
+                                        Assert.assertEquals(1l, deletedRows.longValue());
+                                        return null;
+                                    });
+                        }))
+                .setHandler(countdownLatchHandler(latch))
+        ;
+        await(latch);
     }
 
 }
