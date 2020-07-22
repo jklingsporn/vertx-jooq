@@ -5,6 +5,10 @@ import io.github.jklingsporn.vertx.jooq.generate.AbstractJsonConversionTest;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.OffsetDateTime;
 import java.util.Random;
 
 /**
@@ -28,6 +32,10 @@ public class SomethingJsonConversionTest extends AbstractJsonConversionTest<Some
         something.setSomejsonobject(new JsonObject().put("key", "value"));
         something.setSomesmallnumber((short) random.nextInt(Short.MAX_VALUE));
         something.setSomestring("my_string");
+        something.setSometimestamp(LocalDateTime.now());
+        something.setSometime(LocalTime.now());
+        something.setSomedate(LocalDate.now());
+        something.setSometimestampwithtz(OffsetDateTime.now());
         return something;
     }
 

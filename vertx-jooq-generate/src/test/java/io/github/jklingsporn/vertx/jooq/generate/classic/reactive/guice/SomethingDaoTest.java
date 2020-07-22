@@ -14,7 +14,10 @@ import org.jooq.Condition;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.OffsetDateTime;
 import java.util.Random;
 
 /**
@@ -51,6 +54,9 @@ public class SomethingDaoTest extends ClassicTestBase<Something, Integer, Long, 
         something.setSomeenum(Someenum.values()[random.nextInt(Someenum.values().length)]);
         something.setSomestring("my_string");
         something.setSometimestamp(LocalDateTime.now());
+        something.setSometime(LocalTime.now());
+        something.setSomedate(LocalDate.now());
+        something.setSometimestampwithtz(OffsetDateTime.now());
         return something;
     }
 

@@ -17,7 +17,10 @@ import io.github.jklingsporn.vertx.jooq.shared.postgres.JSONBToJsonObjectConvert
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.List;
 
@@ -26,7 +29,7 @@ import org.jooq.ForeignKey;
 import org.jooq.Identity;
 import org.jooq.Name;
 import org.jooq.Record;
-import org.jooq.Row12;
+import org.jooq.Row15;
 import org.jooq.Schema;
 import org.jooq.Table;
 import org.jooq.TableField;
@@ -42,7 +45,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Something extends TableImpl<SomethingRecord> {
 
-    private static final long serialVersionUID = -633587447;
+    private static final long serialVersionUID = 997242696;
 
     /**
      * The reference instance of <code>vertx.something</code>
@@ -113,9 +116,24 @@ public class Something extends TableImpl<SomethingRecord> {
     public final TableField<SomethingRecord, JsonObject> SOMEVERTXJSONOBJECT = createField(DSL.name("someVertxJsonObject"), org.jooq.impl.SQLDataType.JSONB, this, "", new JSONBToJsonObjectConverter());
 
     /**
+     * The column <code>vertx.something.someTime</code>.
+     */
+    public final TableField<SomethingRecord, LocalTime> SOMETIME = createField(DSL.name("someTime"), org.jooq.impl.SQLDataType.LOCALTIME, this, "");
+
+    /**
+     * The column <code>vertx.something.someDate</code>.
+     */
+    public final TableField<SomethingRecord, LocalDate> SOMEDATE = createField(DSL.name("someDate"), org.jooq.impl.SQLDataType.LOCALDATE, this, "");
+
+    /**
      * The column <code>vertx.something.someTimestamp</code>.
      */
     public final TableField<SomethingRecord, LocalDateTime> SOMETIMESTAMP = createField(DSL.name("someTimestamp"), org.jooq.impl.SQLDataType.LOCALDATETIME, this, "");
+
+    /**
+     * The column <code>vertx.something.someTimestampWithTZ</code>.
+     */
+    public final TableField<SomethingRecord, OffsetDateTime> SOMETIMESTAMPWITHTZ = createField(DSL.name("someTimestampWithTZ"), org.jooq.impl.SQLDataType.TIMESTAMPWITHTIMEZONE, this, "");
 
     /**
      * Create a <code>vertx.something</code> table reference
@@ -197,11 +215,11 @@ public class Something extends TableImpl<SomethingRecord> {
     }
 
     // -------------------------------------------------------------------------
-    // Row12 type methods
+    // Row15 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row12<Integer, String, Long, Short, Integer, Double, Someenum, JsonObject, SomeJsonPojo, JsonArray, JsonObject, LocalDateTime> fieldsRow() {
-        return (Row12) super.fieldsRow();
+    public Row15<Integer, String, Long, Short, Integer, Double, Someenum, JsonObject, SomeJsonPojo, JsonArray, JsonObject, LocalTime, LocalDate, LocalDateTime, OffsetDateTime> fieldsRow() {
+        return (Row15) super.fieldsRow();
     }
 }

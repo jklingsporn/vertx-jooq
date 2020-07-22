@@ -13,7 +13,10 @@ import io.github.jklingsporn.vertx.jooq.shared.reactive.AbstractReactiveVertxDAO
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.OffsetDateTime;
 import java.util.Collection;
 
 import org.jooq.Configuration;
@@ -112,10 +115,31 @@ public class SomethingDao extends AbstractReactiveVertxDAO<SomethingRecord, gene
     }
 
     /**
+     * Find records that have <code>someTime IN (values)</code> asynchronously
+     */
+    public Future<List<generated.classic.reactive.regular.vertx.tables.pojos.Something>> findManyBySometime(Collection<LocalTime> values) {
+        return findManyByCondition(Something.SOMETHING.SOMETIME.in(values));
+    }
+
+    /**
+     * Find records that have <code>someDate IN (values)</code> asynchronously
+     */
+    public Future<List<generated.classic.reactive.regular.vertx.tables.pojos.Something>> findManyBySomedate(Collection<LocalDate> values) {
+        return findManyByCondition(Something.SOMETHING.SOMEDATE.in(values));
+    }
+
+    /**
      * Find records that have <code>someTimestamp IN (values)</code> asynchronously
      */
     public Future<List<generated.classic.reactive.regular.vertx.tables.pojos.Something>> findManyBySometimestamp(Collection<LocalDateTime> values) {
         return findManyByCondition(Something.SOMETHING.SOMETIMESTAMP.in(values));
+    }
+
+    /**
+     * Find records that have <code>someTimestampWithTZ IN (values)</code> asynchronously
+     */
+    public Future<List<generated.classic.reactive.regular.vertx.tables.pojos.Something>> findManyBySometimestampwithtz(Collection<OffsetDateTime> values) {
+        return findManyByCondition(Something.SOMETHING.SOMETIMESTAMPWITHTZ.in(values));
     }
 
     @Override

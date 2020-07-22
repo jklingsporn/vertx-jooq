@@ -12,7 +12,10 @@ import io.github.jklingsporn.vertx.jooq.shared.internal.VertxPojo;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.OffsetDateTime;
 
 
 /**
@@ -21,20 +24,23 @@ import java.time.LocalDateTime;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Something implements VertxPojo, ISomething {
 
-    private static final long serialVersionUID = -609769444;
+    private static final long serialVersionUID = -560433648;
 
-    private Integer       someid;
-    private String        somestring;
-    private Long          somehugenumber;
-    private Short         somesmallnumber;
-    private Integer       someregularnumber;
-    private Double        somedouble;
-    private Someenum      someenum;
-    private JsonObject    somejsonobject;
-    private SomeJsonPojo  somecustomjsonobject;
-    private JsonArray     somejsonarray;
-    private JsonObject    somevertxjsonobject;
-    private LocalDateTime sometimestamp;
+    private Integer        someid;
+    private String         somestring;
+    private Long           somehugenumber;
+    private Short          somesmallnumber;
+    private Integer        someregularnumber;
+    private Double         somedouble;
+    private Someenum       someenum;
+    private JsonObject     somejsonobject;
+    private SomeJsonPojo   somecustomjsonobject;
+    private JsonArray      somejsonarray;
+    private JsonObject     somevertxjsonobject;
+    private LocalTime      sometime;
+    private LocalDate      somedate;
+    private LocalDateTime  sometimestamp;
+    private OffsetDateTime sometimestampwithtz;
 
     public Something() {}
 
@@ -50,22 +56,28 @@ public class Something implements VertxPojo, ISomething {
         this.somecustomjsonobject = value.getSomecustomjsonobject();
         this.somejsonarray = value.getSomejsonarray();
         this.somevertxjsonobject = value.getSomevertxjsonobject();
+        this.sometime = value.getSometime();
+        this.somedate = value.getSomedate();
         this.sometimestamp = value.getSometimestamp();
+        this.sometimestampwithtz = value.getSometimestampwithtz();
     }
 
     public Something(
-        Integer       someid,
-        String        somestring,
-        Long          somehugenumber,
-        Short         somesmallnumber,
-        Integer       someregularnumber,
-        Double        somedouble,
-        Someenum      someenum,
-        JsonObject    somejsonobject,
-        SomeJsonPojo  somecustomjsonobject,
-        JsonArray     somejsonarray,
-        JsonObject    somevertxjsonobject,
-        LocalDateTime sometimestamp
+        Integer        someid,
+        String         somestring,
+        Long           somehugenumber,
+        Short          somesmallnumber,
+        Integer        someregularnumber,
+        Double         somedouble,
+        Someenum       someenum,
+        JsonObject     somejsonobject,
+        SomeJsonPojo   somecustomjsonobject,
+        JsonArray      somejsonarray,
+        JsonObject     somevertxjsonobject,
+        LocalTime      sometime,
+        LocalDate      somedate,
+        LocalDateTime  sometimestamp,
+        OffsetDateTime sometimestampwithtz
     ) {
         this.someid = someid;
         this.somestring = somestring;
@@ -78,7 +90,10 @@ public class Something implements VertxPojo, ISomething {
         this.somecustomjsonobject = somecustomjsonobject;
         this.somejsonarray = somejsonarray;
         this.somevertxjsonobject = somevertxjsonobject;
+        this.sometime = sometime;
+        this.somedate = somedate;
         this.sometimestamp = sometimestamp;
+        this.sometimestampwithtz = sometimestampwithtz;
     }
 
     @Override
@@ -203,6 +218,28 @@ public class Something implements VertxPojo, ISomething {
     }
 
     @Override
+    public LocalTime getSometime() {
+        return this.sometime;
+    }
+
+    @Override
+    public Something setSometime(LocalTime sometime) {
+        this.sometime = sometime;
+        return this;
+    }
+
+    @Override
+    public LocalDate getSomedate() {
+        return this.somedate;
+    }
+
+    @Override
+    public Something setSomedate(LocalDate somedate) {
+        this.somedate = somedate;
+        return this;
+    }
+
+    @Override
     public LocalDateTime getSometimestamp() {
         return this.sometimestamp;
     }
@@ -210,6 +247,17 @@ public class Something implements VertxPojo, ISomething {
     @Override
     public Something setSometimestamp(LocalDateTime sometimestamp) {
         this.sometimestamp = sometimestamp;
+        return this;
+    }
+
+    @Override
+    public OffsetDateTime getSometimestampwithtz() {
+        return this.sometimestampwithtz;
+    }
+
+    @Override
+    public Something setSometimestampwithtz(OffsetDateTime sometimestampwithtz) {
+        this.sometimestampwithtz = sometimestampwithtz;
         return this;
     }
 
@@ -288,11 +336,29 @@ public class Something implements VertxPojo, ISomething {
         }
         else if (!somevertxjsonobject.equals(other.somevertxjsonobject))
             return false;
+        if (sometime == null) {
+            if (other.sometime != null)
+                return false;
+        }
+        else if (!sometime.equals(other.sometime))
+            return false;
+        if (somedate == null) {
+            if (other.somedate != null)
+                return false;
+        }
+        else if (!somedate.equals(other.somedate))
+            return false;
         if (sometimestamp == null) {
             if (other.sometimestamp != null)
                 return false;
         }
         else if (!sometimestamp.equals(other.sometimestamp))
+            return false;
+        if (sometimestampwithtz == null) {
+            if (other.sometimestampwithtz != null)
+                return false;
+        }
+        else if (!sometimestampwithtz.equals(other.sometimestampwithtz))
             return false;
         return true;
     }
@@ -312,7 +378,10 @@ public class Something implements VertxPojo, ISomething {
         result = prime * result + ((this.somecustomjsonobject == null) ? 0 : this.somecustomjsonobject.hashCode());
         result = prime * result + ((this.somejsonarray == null) ? 0 : this.somejsonarray.hashCode());
         result = prime * result + ((this.somevertxjsonobject == null) ? 0 : this.somevertxjsonobject.hashCode());
+        result = prime * result + ((this.sometime == null) ? 0 : this.sometime.hashCode());
+        result = prime * result + ((this.somedate == null) ? 0 : this.somedate.hashCode());
         result = prime * result + ((this.sometimestamp == null) ? 0 : this.sometimestamp.hashCode());
+        result = prime * result + ((this.sometimestampwithtz == null) ? 0 : this.sometimestampwithtz.hashCode());
         return result;
     }
 
@@ -331,7 +400,10 @@ public class Something implements VertxPojo, ISomething {
         sb.append(", ").append(somecustomjsonobject);
         sb.append(", ").append(somejsonarray);
         sb.append(", ").append(somevertxjsonobject);
+        sb.append(", ").append(sometime);
+        sb.append(", ").append(somedate);
         sb.append(", ").append(sometimestamp);
+        sb.append(", ").append(sometimestampwithtz);
 
         sb.append(")");
         return sb.toString();
@@ -354,7 +426,10 @@ public class Something implements VertxPojo, ISomething {
         setSomecustomjsonobject(from.getSomecustomjsonobject());
         setSomejsonarray(from.getSomejsonarray());
         setSomevertxjsonobject(from.getSomevertxjsonobject());
+        setSometime(from.getSometime());
+        setSomedate(from.getSomedate());
         setSometimestamp(from.getSometimestamp());
+        setSometimestampwithtz(from.getSometimestampwithtz());
     }
 
     @Override

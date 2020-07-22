@@ -9,15 +9,18 @@ import io.github.jklingsporn.vertx.jooq.completablefuture.reactivepg.ReactiveCom
 import io.github.jklingsporn.vertx.jooq.generate.PostgresConfigurationProvider;
 import io.github.jklingsporn.vertx.jooq.generate.ReactiveDatabaseClientProvider;
 import io.github.jklingsporn.vertx.jooq.generate.completablefuture.CompletableFutureTestBase;
-import io.vertx.pgclient.PgException;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+import io.vertx.pgclient.PgException;
 import org.jooq.Condition;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.OffsetDateTime;
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
@@ -55,6 +58,9 @@ public class SomethingDaoTest extends CompletableFutureTestBase<Something, Integ
         something.setSomeenum(Someenum.values()[random.nextInt(Someenum.values().length)]);
         something.setSomestring("my_string");
         something.setSometimestamp(LocalDateTime.now());
+        something.setSometime(LocalTime.now());
+        something.setSomedate(LocalDate.now());
+        something.setSometimestampwithtz(OffsetDateTime.now());
         return something;
     }
 

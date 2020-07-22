@@ -20,7 +20,10 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.OffsetDateTime;
 import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 
@@ -57,6 +60,9 @@ public class SomethingDaoTest extends RXTestBase<Something, Integer, Long, Somet
         something.setSomeenum(Someenum.values()[random.nextInt(Someenum.values().length)]);
         something.setSomestring("my_string");
         something.setSometimestamp(LocalDateTime.now());
+        something.setSometime(LocalTime.now());
+        something.setSomedate(LocalDate.now());
+        something.setSometimestampwithtz(OffsetDateTime.now());
         return something;
     }
 

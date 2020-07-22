@@ -13,7 +13,10 @@ import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.OffsetDateTime;
 
 
 /**
@@ -133,6 +136,26 @@ public interface ISomething extends VertxPojo, Serializable {
     public JsonObject getSomevertxjsonobject();
 
     /**
+     * Setter for <code>vertx.something.someTime</code>.
+     */
+    public ISomething setSometime(LocalTime value);
+
+    /**
+     * Getter for <code>vertx.something.someTime</code>.
+     */
+    public LocalTime getSometime();
+
+    /**
+     * Setter for <code>vertx.something.someDate</code>.
+     */
+    public ISomething setSomedate(LocalDate value);
+
+    /**
+     * Getter for <code>vertx.something.someDate</code>.
+     */
+    public LocalDate getSomedate();
+
+    /**
      * Setter for <code>vertx.something.someTimestamp</code>.
      */
     public ISomething setSometimestamp(LocalDateTime value);
@@ -141,6 +164,16 @@ public interface ISomething extends VertxPojo, Serializable {
      * Getter for <code>vertx.something.someTimestamp</code>.
      */
     public LocalDateTime getSometimestamp();
+
+    /**
+     * Setter for <code>vertx.something.someTimestampWithTZ</code>.
+     */
+    public ISomething setSometimestampwithtz(OffsetDateTime value);
+
+    /**
+     * Getter for <code>vertx.something.someTimestampWithTZ</code>.
+     */
+    public OffsetDateTime getSometimestampwithtz();
 
     // -------------------------------------------------------------------------
     // FROM and INTO
@@ -214,10 +247,28 @@ public interface ISomething extends VertxPojo, Serializable {
             throw new UnexpectedJsonValueType("someVertxJsonObject","io.vertx.core.json.JsonObject",e);
         }
         try {
+            String someTimeString = json.getString("someTime");
+            setSometime(someTimeString == null?null:java.time.LocalTime.parse(someTimeString));
+        } catch (java.lang.ClassCastException e) {
+            throw new UnexpectedJsonValueType("someTime","java.time.LocalTime",e);
+        }
+        try {
+            String someDateString = json.getString("someDate");
+            setSomedate(someDateString == null?null:java.time.LocalDate.parse(someDateString));
+        } catch (java.lang.ClassCastException e) {
+            throw new UnexpectedJsonValueType("someDate","java.time.LocalDate",e);
+        }
+        try {
             String someTimestampString = json.getString("someTimestamp");
             setSometimestamp(someTimestampString == null?null:java.time.LocalDateTime.parse(someTimestampString));
         } catch (java.lang.ClassCastException e) {
             throw new UnexpectedJsonValueType("someTimestamp","java.time.LocalDateTime",e);
+        }
+        try {
+            String someTimestampWithTZString = json.getString("someTimestampWithTZ");
+            setSometimestampwithtz(someTimestampWithTZString == null?null:java.time.OffsetDateTime.parse(someTimestampWithTZString));
+        } catch (java.lang.ClassCastException e) {
+            throw new UnexpectedJsonValueType("someTimestampWithTZ","java.time.OffsetDateTime",e);
         }
         return this;
     }
@@ -237,7 +288,10 @@ public interface ISomething extends VertxPojo, Serializable {
         json.put("someCustomJsonObject",generated.classic.reactive.regular.vertx.tables.converters.Converters.IO_GITHUB_JKLINGSPORN_VERTX_JOOQ_GENERATE_CONVERTER_SOMEJSONPOJOCONVERTER_INSTANCE.pgConverter().to(getSomecustomjsonobject()));
         json.put("someJsonArray",getSomejsonarray());
         json.put("someVertxJsonObject",generated.classic.reactive.regular.vertx.tables.converters.Converters.IO_GITHUB_JKLINGSPORN_VERTX_JOOQ_SHARED_POSTGRES_JSONBTOJSONOBJECTCONVERTER_INSTANCE.pgConverter().to(getSomevertxjsonobject()));
+        json.put("someTime",getSometime()==null?null:getSometime().toString());
+        json.put("someDate",getSomedate()==null?null:getSomedate().toString());
         json.put("someTimestamp",getSometimestamp()==null?null:getSometimestamp().toString());
+        json.put("someTimestampWithTZ",getSometimestampwithtz()==null?null:getSometimestampwithtz().toString());
         return json;
     }
 

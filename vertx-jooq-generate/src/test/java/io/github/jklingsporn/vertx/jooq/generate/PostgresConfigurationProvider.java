@@ -47,7 +47,10 @@ public class PostgresConfigurationProvider extends AbstractDatabaseConfiguration
                     "  \"someCustomJsonObject\" JSONB NULL,\n" +
                     "  \"someJsonArray\" VARCHAR(45) NULL,\n" +
                     "  \"someVertxJsonObject\" JSONB NULL,\n" +
+                    "  \"someTime\" TIME NULL,\n" +
+                    "  \"someDate\" DATE NULL,\n" +
                     "  \"someTimestamp\" TIMESTAMP NULL,\n" +
+                    "  \"someTimestampWithTZ\" TIMESTAMP WITH TIME ZONE NULL,\n" +
                     "  PRIMARY KEY (\"someId\"));").execute();
             connection.prepareStatement("CREATE TABLE \"somethingComposite\" (\n" +
                     "  \"someId\" INTEGER NOT NULL,\n" +

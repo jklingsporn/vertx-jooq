@@ -21,7 +21,10 @@ public class RowMappers {
             pojo.setSomecustomjsonobject(generated.rx.reactive.guice.vertx.tables.converters.Converters.IO_GITHUB_JKLINGSPORN_VERTX_JOOQ_GENERATE_CONVERTER_SOMEJSONPOJOCONVERTER_INSTANCE.pgConverter().from(row.get(io.vertx.core.json.JsonObject.class,row.getColumnIndex("someCustomJsonObject"))));
             pojo.setSomejsonarray(row.get(io.vertx.core.json.JsonArray.class,row.getColumnIndex("someJsonArray")));
             pojo.setSomevertxjsonobject(row.get(io.vertx.core.json.JsonObject.class,row.getColumnIndex("someVertxJsonObject")));
+            pojo.setSometime(row.getLocalTime("someTime"));
+            pojo.setSomedate(row.getLocalDate("someDate"));
             pojo.setSometimestamp(row.getLocalDateTime("someTimestamp"));
+            pojo.setSometimestampwithtz(row.getOffsetDateTime("someTimestampWithTZ"));
             return pojo;
         };
     }
