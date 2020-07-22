@@ -74,14 +74,14 @@ public class PostgresConfigurationProvider extends AbstractDatabaseConfiguration
         ForcedType customJsonMapping = new ForcedType();
         customJsonMapping.setUserType(SomeJsonPojo.class.getName());
         customJsonMapping.setConverter(SomeJsonPojoConverter.class.getName());
-        customJsonMapping.setExpression("someCustomJsonObject");
-        customJsonMapping.setTypes(".*");
+        customJsonMapping.setIncludeExpression("someCustomJsonObject");
+        customJsonMapping.setIncludeTypes(".*");
 
         ForcedType jsonbToJsonObjectMapping = new ForcedType();
         jsonbToJsonObjectMapping.setUserType(JsonObject.class.getName());
         jsonbToJsonObjectMapping.setConverter(JSONBToJsonObjectConverter.class.getName());
-        jsonbToJsonObjectMapping.setExpression("someVertxJsonObject");
-        jsonbToJsonObjectMapping.setTypes(".*");
+        jsonbToJsonObjectMapping.setIncludeExpression("someVertxJsonObject");
+        jsonbToJsonObjectMapping.setIncludeTypes(".*");
         List<ForcedType> forcedTypes = new ArrayList<>(generatorConfig.getGenerator().getDatabase().getForcedTypes());
         forcedTypes.add(customJsonMapping);
         forcedTypes.add(jsonbToJsonObjectMapping);

@@ -62,7 +62,7 @@ public class MySQLConfigurationProvider extends AbstractDatabaseConfigurationPro
         jdbcConfig.setUser(Credentials.MYSQL.getUser());
         jdbcConfig.setPassword(Credentials.MYSQL.getPassword());
         jdbcConfig.setSchema("vertx");
-        return createGeneratorConfig(generatorName,packageName,generatorStrategy,jdbcConfig, MySQLDatabase.class.getName());
+        return createGeneratorConfig(generatorName, packageName, generatorStrategy, jdbcConfig, MySQLDatabase.class.getName());
     }
 
     @Override
