@@ -16,7 +16,7 @@ import org.jooq.meta.*;
 import org.jooq.tools.JooqLogger;
 
 import java.io.File;
-import java.time.Instant;
+import java.time.*;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -275,6 +275,9 @@ public abstract class VertxGenerator extends JavaGenerator {
                 out.tab(3).println("%s(json.getBinary(\"%s\"));", setter, javaMemberName);
             }else if(isType(columnType,Instant.class)){
                 out.tab(3).println("%s(json.getInstant(\"%s\"));", setter, javaMemberName);
+            }else if(isJavaTimeType(columnType)){
+                out.tab(3).println("String %sString = json.getString(\"%s\");", javaMemberName, javaMemberName);
+                out.tab(3).println("%s(%sString == null?null:%s.parse(%sString));", setter, javaMemberName, columnType, javaMemberName);
             }else if(isEnum(table, column)) {
                 //if this is an enum from the database (no converter) it has getLiteral defined
                 if(column.getType().getConverter() == null){
@@ -353,6 +356,8 @@ public abstract class VertxGenerator extends JavaGenerator {
                 }
             }else if(isAllowedJsonType(column, columnType)){
                 out.tab(2).println("json.put(\"%s\",%s());", getJsonKeyName(column),getter);
+            }else if(isJavaTimeType(columnType)){
+                out.tab(2).println("json.put(\"%s\",%s()==null?null:%s().toString());", getJsonKeyName(column),getter,getter);
             }else{
                 logger.warn(String.format("Omitting unrecognized type %s for column %s in table %s!",columnType,column.getName(),table.getName()));
                 out.tab(2).println(String.format("// Omitting unrecognized type %s for column %s!",columnType,column.getName()));
@@ -383,6 +388,12 @@ public abstract class VertxGenerator extends JavaGenerator {
                 columnType.equals(byte.class.getName()+"[]") || (column.getType().getConverter() != null &&
                 (isType(column.getType().getConverter(),JsonObjectConverter.class) || isType(column.getType().getConverter(),JsonArrayConverter.class)))
                 || (column.getType().getBinding() != null && isType(column.getType().getBinding(),ObjectToJsonObjectBinding.class));
+    }
+
+    private boolean isJavaTimeType(String columnType){
+        return isType(columnType, LocalDateTime.class) || isType(columnType, LocalTime.class)
+                || isType(columnType, ZonedDateTime.class) || isType(columnType, OffsetDateTime.class)
+                || isType(columnType, LocalDate.class);
     }
 
     @Override

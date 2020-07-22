@@ -100,7 +100,7 @@ If you are new to jOOQ, I recommend to read the awesome [jOOQ documentation](htt
     <dependency>
       <groupId>io.github.jklingsporn</groupId>
       <artifactId>vertx-jooq-future</artifactId>
-      <version>5.1.2</version>
+      <version>5.2.0</version>
     </dependency>
   </dependencies>
   <build>
@@ -129,7 +129,7 @@ If you are new to jOOQ, I recommend to read the awesome [jOOQ documentation](htt
               <dependency>
                   <groupId>io.github.jklingsporn</groupId>
                   <artifactId>vertx-jooq-generate</artifactId>
-                  <version>5.1.2</version>
+                  <version>5.2.0</version>
               </dependency>
           </dependencies>
 

@@ -27,12 +27,12 @@ public abstract class AbstractVertxGeneratorTest {
 
     @Test
     public void generateCodeShouldSucceed() throws Exception {
-        configurationProvider.setupDatabase();
-        Configuration configuration = configurationProvider.createGeneratorConfig(
-                generator.getName(), packageLocation, strategy);
-        configuration.setOnError(OnError.FAIL);
-        configuration.setLogging(Logging.WARN);
         try {
+            configurationProvider.setupDatabase();
+            Configuration configuration = configurationProvider.createGeneratorConfig(
+                    generator.getName(), packageLocation, strategy);
+            configuration.setOnError(OnError.FAIL);
+            configuration.setLogging(Logging.WARN);
             GenerationTool.generate(configuration);
             Assert.assertTrue(true);
         } catch (Throwable e) {

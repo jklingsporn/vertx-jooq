@@ -181,7 +181,8 @@ public interface ISomething extends VertxPojo, Serializable {
             throw new UnexpectedJsonValueType("SOMEJSONARRAY","io.vertx.core.json.JsonArray",e);
         }
         try {
-            // Omitting unrecognized type java.time.LocalDateTime for column SOMETIMESTAMP!
+            String SOMETIMESTAMPString = json.getString("SOMETIMESTAMP");
+            setSometimestamp(SOMETIMESTAMPString == null?null:java.time.LocalDateTime.parse(SOMETIMESTAMPString));
         } catch (java.lang.ClassCastException e) {
             throw new UnexpectedJsonValueType("SOMETIMESTAMP","java.time.LocalDateTime",e);
         }
@@ -201,7 +202,7 @@ public interface ISomething extends VertxPojo, Serializable {
         json.put("SOMEDOUBLE",getSomedouble());
         json.put("SOMEJSONOBJECT",getSomejsonobject());
         json.put("SOMEJSONARRAY",getSomejsonarray());
-        // Omitting unrecognized type java.time.LocalDateTime for column SOMETIMESTAMP!
+        json.put("SOMETIMESTAMP",getSometimestamp()==null?null:getSometimestamp().toString());
         return json;
     }
 
