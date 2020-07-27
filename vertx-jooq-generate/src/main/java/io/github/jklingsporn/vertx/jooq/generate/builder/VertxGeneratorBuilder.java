@@ -336,6 +336,7 @@ public class VertxGeneratorBuilder {
                         String javaType = base.getActiveGenerator().getJavaType(column.getType());
                         //is there a better way to check for enum type rather than checking the package?
                         boolean isEnumType = javaType.contains("enums.") || (column.getType().getConverter()!= null && column.getType().getConverter().endsWith("EnumConverter"));
+                        boolean isByteArray = javaType.equals("byte[]");
                         if(supportedRowTypes.contains(javaType)) {
                             try {
                                 out.tab(3).println("pojo.%s(row.get%s(\"%s\"));", setter, Class.forName(javaType).getSimpleName(), column.getName());
@@ -370,6 +371,9 @@ public class VertxGeneratorBuilder {
                                     setter,
                                     resolveConverterInstance(column.getType().getBinding(),schema,base),
                                     column.getName());
+                        }else if(isByteArray){
+                            out.tab(3).println("io.vertx.core.buffer.Buffer %sBuffer = row.getBuffer(\"%s\");", column.getName(), column.getName());
+                            out.tab(3).println("pojo.%s(%sBuffer == null?null:%sBuffer.getBytes());", setter, column.getName(), column.getName());
                         }else{
                             ComponentBasedVertxGenerator.logger.warn(String.format("Omitting unrecognized type %s (%s) for column %s in table %s!",column.getType(),javaType,column.getName(),table.getName()));
                             out.tab(3).println(String.format("// Omitting unrecognized type %s (%s) for column %s!",column.getType(),javaType, column.getName()));
