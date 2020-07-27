@@ -100,7 +100,7 @@ public abstract class ClassicTestBase<P,T,O, DAO extends GenericVertxDAO<?,P, T,
                                         return null;
                                     });
                         }))
-                .setHandler(countdownLatchHandler(latch))
+                .onComplete(countdownLatchHandler(latch))
         ;
         await(latch);
     }
@@ -118,7 +118,7 @@ public abstract class ClassicTestBase<P,T,O, DAO extends GenericVertxDAO<?,P, T,
                     return dao.deleteByIds(values.stream().map(this::getId).collect(Collectors.toList()));
                 })
                 .map(toVoid(deleted -> Assert.assertEquals(2L,deleted.longValue())))
-                .setHandler(countdownLatchHandler(latch))
+                .onComplete(countdownLatchHandler(latch))
         ;
         await(latch);
     }
@@ -136,7 +136,7 @@ public abstract class ClassicTestBase<P,T,O, DAO extends GenericVertxDAO<?,P, T,
                     return null;
                 })
                 .compose(v -> dao.deleteByCondition(DSL.trueCondition()))
-                .setHandler(countdownLatchHandler(latch));
+                .onComplete(countdownLatchHandler(latch));
         await(latch);
     }
 
@@ -148,7 +148,7 @@ public abstract class ClassicTestBase<P,T,O, DAO extends GenericVertxDAO<?,P, T,
                 compose(v -> dao.findOneByCondition(eqPrimaryKey(insertFuture.result())))
                 .map(toVoid(Assert::assertNotNull))
                 .compose(v -> dao.deleteByCondition(eqPrimaryKey(insertFuture.result())))
-                .setHandler(countdownLatchHandler(latch));
+                .onComplete(countdownLatchHandler(latch));
         await(latch);
     }
 
@@ -167,7 +167,7 @@ public abstract class ClassicTestBase<P,T,O, DAO extends GenericVertxDAO<?,P, T,
                     return null;
                 }).
                 compose(v -> dao.deleteByCondition(otherfield.eq(someO))).
-                setHandler(countdownLatchHandler(latch));
+                onComplete(countdownLatchHandler(latch));
         await(latch);
     }
 
@@ -181,7 +181,7 @@ public abstract class ClassicTestBase<P,T,O, DAO extends GenericVertxDAO<?,P, T,
                 compose(v -> dao.findManyByCondition(otherfield.eq(someO))).
                 map(toVoid(values -> Assert.assertEquals(2, values.size()))).
                 compose(v -> dao.deleteByCondition(otherfield.eq(someO))).
-                setHandler(countdownLatchHandler(latch));
+                onComplete(countdownLatchHandler(latch));
         await(latch);
     }
 
@@ -198,7 +198,7 @@ public abstract class ClassicTestBase<P,T,O, DAO extends GenericVertxDAO<?,P, T,
                     Assert.assertEquals(2, list.size());
                 })).
                 compose(v -> dao.deleteByCondition(DSL.trueCondition())).
-                setHandler(countdownLatchHandler(latch));
+                onComplete(countdownLatchHandler(latch));
         await(latch);
     }
 
@@ -207,7 +207,7 @@ public abstract class ClassicTestBase<P,T,O, DAO extends GenericVertxDAO<?,P, T,
         CountDownLatch latch = new CountDownLatch(1);
         dao.findOneByCondition(DSL.falseCondition())
                 .map(toVoid(Assert::assertNull))
-                .setHandler(countdownLatchHandler(latch));
+                .onComplete(countdownLatchHandler(latch));
         await(latch);
     }
 
@@ -216,7 +216,7 @@ public abstract class ClassicTestBase<P,T,O, DAO extends GenericVertxDAO<?,P, T,
         CountDownLatch latch = new CountDownLatch(1);
         dao.findManyByCondition(DSL.falseCondition())
                 .map(toVoid(res->Assert.assertTrue(res.isEmpty())))
-                .setHandler(countdownLatchHandler(latch));
+                .onComplete(countdownLatchHandler(latch));
         await(latch);
     }
 
@@ -234,7 +234,7 @@ public abstract class ClassicTestBase<P,T,O, DAO extends GenericVertxDAO<?,P, T,
                     Assert.assertEquals(0L, i.longValue());
                     return dao.deleteById(getId(withId));
                 })
-                .setHandler(countdownLatchHandler(latch))
+                .onComplete(countdownLatchHandler(latch))
                 ;
         await(latch);
     }
@@ -274,7 +274,7 @@ public abstract class ClassicTestBase<P,T,O, DAO extends GenericVertxDAO<?,P, T,
                 }))
                 .compose(v -> queryExecutor().execute(dslContext -> dslContext.deleteFrom(table).where(eqPrimaryKey(getId(pojo)))))
                 .map(toVoid(i -> Assert.assertEquals(1L, i.longValue())))
-                .setHandler(countdownLatchHandler(latch))
+                .onComplete(countdownLatchHandler(latch))
         ;
         await(latch);
     }
@@ -323,11 +323,26 @@ public abstract class ClassicTestBase<P,T,O, DAO extends GenericVertxDAO<?,P, T,
                         Assert.fail("Expected NoSuchElementException");
                     }
                 }))
-                .setHandler(countdownLatchHandler(latch))
+                .onComplete(countdownLatchHandler(latch))
         ;
         await(latch);
     }
 
+    @Test
+    public void findManyWithLimitShouldReturnLimitedResults() throws InterruptedException{
+        CountDownLatch latch = new CountDownLatch(1);
+        Future<T> insertFuture1 = insertAndReturn(create());
+        Future<T> insertFuture2 = insertAndReturn(create());
+        CompositeFuture.all(insertFuture1, insertFuture2).
+                compose(v -> dao.findManyByCondition(DSL.trueCondition(),1)).
+                map(toVoid(list -> {
+                    Assert.assertNotNull(list);
+                    Assert.assertEquals(1, list.size());
+                })).
+                compose(v -> dao.deleteByCondition(DSL.trueCondition())).
+                onComplete(countdownLatchHandler(latch));
+        await(latch);
+    }
 
 
 }

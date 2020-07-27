@@ -78,8 +78,18 @@ public abstract class AbstractVertxDAO<R extends UpdatableRecord<R>, P, T, FIND_
     }
 
     @Override
+    public FIND_MANY findManyByCondition(Condition condition, int limit) {
+        return queryExecutor().findMany(selectQuery(condition).andThen(sel -> sel.limit(limit)));
+    }
+
+    @Override
     public FIND_MANY findManyByCondition(Condition condition, OrderField<?>... orderField) {
         return queryExecutor().findMany(selectQuery(condition).andThen(sel->sel.orderBy(orderField)));
+    }
+
+    @Override
+    public FIND_MANY findManyByCondition(Condition condition, int limit, OrderField<?>... orderField) {
+        return queryExecutor().findMany(selectQuery(condition).andThen(sel->sel.orderBy(orderField).limit(limit)));
     }
 
     @Override

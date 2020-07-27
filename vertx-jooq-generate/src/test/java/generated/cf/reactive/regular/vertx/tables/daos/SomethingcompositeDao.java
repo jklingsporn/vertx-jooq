@@ -47,10 +47,24 @@ public class SomethingcompositeDao extends AbstractReactiveVertxDAO<Somethingcom
     }
 
     /**
+     * Find records that have <code>someSecondId IN (values)</code> asynchronously limited by the given limit
+     */
+    public CompletableFuture<List<generated.cf.reactive.regular.vertx.tables.pojos.Somethingcomposite>> findManyBySomesecondid(Collection<Integer> values, int limit) {
+        return findManyByCondition(Somethingcomposite.SOMETHINGCOMPOSITE.SOMESECONDID.in(values),limit);
+    }
+
+    /**
      * Find records that have <code>someJsonObject IN (values)</code> asynchronously
      */
     public CompletableFuture<List<generated.cf.reactive.regular.vertx.tables.pojos.Somethingcomposite>> findManyBySomejsonobject(Collection<JsonObject> values) {
         return findManyByCondition(Somethingcomposite.SOMETHINGCOMPOSITE.SOMEJSONOBJECT.in(values));
+    }
+
+    /**
+     * Find records that have <code>someJsonObject IN (values)</code> asynchronously limited by the given limit
+     */
+    public CompletableFuture<List<generated.cf.reactive.regular.vertx.tables.pojos.Somethingcomposite>> findManyBySomejsonobject(Collection<JsonObject> values, int limit) {
+        return findManyByCondition(Somethingcomposite.SOMETHINGCOMPOSITE.SOMEJSONOBJECT.in(values),limit);
     }
 
     @Override

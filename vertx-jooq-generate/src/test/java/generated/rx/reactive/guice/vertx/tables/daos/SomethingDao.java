@@ -55,10 +55,24 @@ public class SomethingDao extends AbstractReactiveVertxDAO<SomethingRecord, gene
     }
 
     /**
+     * Find records that have <code>someString IN (values)</code> asynchronously limited by the given limit
+     */
+    public Single<List<generated.rx.reactive.guice.vertx.tables.pojos.Something>> findManyBySomestring(Collection<String> values, int limit) {
+        return findManyByCondition(Something.SOMETHING.SOMESTRING.in(values),limit);
+    }
+
+    /**
      * Find records that have <code>someHugeNumber IN (values)</code> asynchronously
      */
     public Single<List<generated.rx.reactive.guice.vertx.tables.pojos.Something>> findManyBySomehugenumber(Collection<Long> values) {
         return findManyByCondition(Something.SOMETHING.SOMEHUGENUMBER.in(values));
+    }
+
+    /**
+     * Find records that have <code>someHugeNumber IN (values)</code> asynchronously limited by the given limit
+     */
+    public Single<List<generated.rx.reactive.guice.vertx.tables.pojos.Something>> findManyBySomehugenumber(Collection<Long> values, int limit) {
+        return findManyByCondition(Something.SOMETHING.SOMEHUGENUMBER.in(values),limit);
     }
 
     /**
@@ -69,10 +83,24 @@ public class SomethingDao extends AbstractReactiveVertxDAO<SomethingRecord, gene
     }
 
     /**
+     * Find records that have <code>someSmallNumber IN (values)</code> asynchronously limited by the given limit
+     */
+    public Single<List<generated.rx.reactive.guice.vertx.tables.pojos.Something>> findManyBySomesmallnumber(Collection<Short> values, int limit) {
+        return findManyByCondition(Something.SOMETHING.SOMESMALLNUMBER.in(values),limit);
+    }
+
+    /**
      * Find records that have <code>someRegularNumber IN (values)</code> asynchronously
      */
     public Single<List<generated.rx.reactive.guice.vertx.tables.pojos.Something>> findManyBySomeregularnumber(Collection<Integer> values) {
         return findManyByCondition(Something.SOMETHING.SOMEREGULARNUMBER.in(values));
+    }
+
+    /**
+     * Find records that have <code>someRegularNumber IN (values)</code> asynchronously limited by the given limit
+     */
+    public Single<List<generated.rx.reactive.guice.vertx.tables.pojos.Something>> findManyBySomeregularnumber(Collection<Integer> values, int limit) {
+        return findManyByCondition(Something.SOMETHING.SOMEREGULARNUMBER.in(values),limit);
     }
 
     /**
@@ -83,10 +111,24 @@ public class SomethingDao extends AbstractReactiveVertxDAO<SomethingRecord, gene
     }
 
     /**
+     * Find records that have <code>someDouble IN (values)</code> asynchronously limited by the given limit
+     */
+    public Single<List<generated.rx.reactive.guice.vertx.tables.pojos.Something>> findManyBySomedouble(Collection<Double> values, int limit) {
+        return findManyByCondition(Something.SOMETHING.SOMEDOUBLE.in(values),limit);
+    }
+
+    /**
      * Find records that have <code>someEnum IN (values)</code> asynchronously
      */
     public Single<List<generated.rx.reactive.guice.vertx.tables.pojos.Something>> findManyBySomeenum(Collection<Someenum> values) {
         return findManyByCondition(Something.SOMETHING.SOMEENUM.in(values));
+    }
+
+    /**
+     * Find records that have <code>someEnum IN (values)</code> asynchronously limited by the given limit
+     */
+    public Single<List<generated.rx.reactive.guice.vertx.tables.pojos.Something>> findManyBySomeenum(Collection<Someenum> values, int limit) {
+        return findManyByCondition(Something.SOMETHING.SOMEENUM.in(values),limit);
     }
 
     /**
@@ -97,10 +139,24 @@ public class SomethingDao extends AbstractReactiveVertxDAO<SomethingRecord, gene
     }
 
     /**
+     * Find records that have <code>someJsonObject IN (values)</code> asynchronously limited by the given limit
+     */
+    public Single<List<generated.rx.reactive.guice.vertx.tables.pojos.Something>> findManyBySomejsonobject(Collection<JsonObject> values, int limit) {
+        return findManyByCondition(Something.SOMETHING.SOMEJSONOBJECT.in(values),limit);
+    }
+
+    /**
      * Find records that have <code>someCustomJsonObject IN (values)</code> asynchronously
      */
     public Single<List<generated.rx.reactive.guice.vertx.tables.pojos.Something>> findManyBySomecustomjsonobject(Collection<SomeJsonPojo> values) {
         return findManyByCondition(Something.SOMETHING.SOMECUSTOMJSONOBJECT.in(values));
+    }
+
+    /**
+     * Find records that have <code>someCustomJsonObject IN (values)</code> asynchronously limited by the given limit
+     */
+    public Single<List<generated.rx.reactive.guice.vertx.tables.pojos.Something>> findManyBySomecustomjsonobject(Collection<SomeJsonPojo> values, int limit) {
+        return findManyByCondition(Something.SOMETHING.SOMECUSTOMJSONOBJECT.in(values),limit);
     }
 
     /**
@@ -111,10 +167,24 @@ public class SomethingDao extends AbstractReactiveVertxDAO<SomethingRecord, gene
     }
 
     /**
+     * Find records that have <code>someJsonArray IN (values)</code> asynchronously limited by the given limit
+     */
+    public Single<List<generated.rx.reactive.guice.vertx.tables.pojos.Something>> findManyBySomejsonarray(Collection<JsonArray> values, int limit) {
+        return findManyByCondition(Something.SOMETHING.SOMEJSONARRAY.in(values),limit);
+    }
+
+    /**
      * Find records that have <code>someVertxJsonObject IN (values)</code> asynchronously
      */
     public Single<List<generated.rx.reactive.guice.vertx.tables.pojos.Something>> findManyBySomevertxjsonobject(Collection<JsonObject> values) {
         return findManyByCondition(Something.SOMETHING.SOMEVERTXJSONOBJECT.in(values));
+    }
+
+    /**
+     * Find records that have <code>someVertxJsonObject IN (values)</code> asynchronously limited by the given limit
+     */
+    public Single<List<generated.rx.reactive.guice.vertx.tables.pojos.Something>> findManyBySomevertxjsonobject(Collection<JsonObject> values, int limit) {
+        return findManyByCondition(Something.SOMETHING.SOMEVERTXJSONOBJECT.in(values),limit);
     }
 
     /**
@@ -125,10 +195,24 @@ public class SomethingDao extends AbstractReactiveVertxDAO<SomethingRecord, gene
     }
 
     /**
+     * Find records that have <code>someTime IN (values)</code> asynchronously limited by the given limit
+     */
+    public Single<List<generated.rx.reactive.guice.vertx.tables.pojos.Something>> findManyBySometime(Collection<LocalTime> values, int limit) {
+        return findManyByCondition(Something.SOMETHING.SOMETIME.in(values),limit);
+    }
+
+    /**
      * Find records that have <code>someDate IN (values)</code> asynchronously
      */
     public Single<List<generated.rx.reactive.guice.vertx.tables.pojos.Something>> findManyBySomedate(Collection<LocalDate> values) {
         return findManyByCondition(Something.SOMETHING.SOMEDATE.in(values));
+    }
+
+    /**
+     * Find records that have <code>someDate IN (values)</code> asynchronously limited by the given limit
+     */
+    public Single<List<generated.rx.reactive.guice.vertx.tables.pojos.Something>> findManyBySomedate(Collection<LocalDate> values, int limit) {
+        return findManyByCondition(Something.SOMETHING.SOMEDATE.in(values),limit);
     }
 
     /**
@@ -139,10 +223,24 @@ public class SomethingDao extends AbstractReactiveVertxDAO<SomethingRecord, gene
     }
 
     /**
+     * Find records that have <code>someTimestamp IN (values)</code> asynchronously limited by the given limit
+     */
+    public Single<List<generated.rx.reactive.guice.vertx.tables.pojos.Something>> findManyBySometimestamp(Collection<LocalDateTime> values, int limit) {
+        return findManyByCondition(Something.SOMETHING.SOMETIMESTAMP.in(values),limit);
+    }
+
+    /**
      * Find records that have <code>someTimestampWithTZ IN (values)</code> asynchronously
      */
     public Single<List<generated.rx.reactive.guice.vertx.tables.pojos.Something>> findManyBySometimestampwithtz(Collection<OffsetDateTime> values) {
         return findManyByCondition(Something.SOMETHING.SOMETIMESTAMPWITHTZ.in(values));
+    }
+
+    /**
+     * Find records that have <code>someTimestampWithTZ IN (values)</code> asynchronously limited by the given limit
+     */
+    public Single<List<generated.rx.reactive.guice.vertx.tables.pojos.Something>> findManyBySometimestampwithtz(Collection<OffsetDateTime> values, int limit) {
+        return findManyByCondition(Something.SOMETHING.SOMETIMESTAMPWITHTZ.in(values),limit);
     }
 
     @Override

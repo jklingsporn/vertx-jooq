@@ -336,4 +336,20 @@ public abstract class CompletableFutureTestBase<P,T,O, DAO extends GenericVertxD
         await(latch);
     }
 
+    @Test
+    public void findManyWithLimitShouldReturnLimitedResults() throws InterruptedException {
+        CountDownLatch latch = new CountDownLatch(1);
+        CompletableFuture<T> insertFuture1 = insertAndReturn(create());
+        CompletableFuture<T> insertFuture2 = insertAndReturn(create());
+        VertxCompletableFuture.allOf(insertFuture1, insertFuture2).
+                thenCompose(v -> dao.findManyByCondition(DSL.trueCondition(),1)).
+                thenAccept(list -> {
+                    Assert.assertNotNull(list);
+                    Assert.assertEquals(1, list.size());
+                }).
+                thenCompose(v -> dao.deleteByCondition(DSL.trueCondition())).
+                whenComplete(countdownLatchHandler(latch));
+        await(latch);
+    }
+
 }

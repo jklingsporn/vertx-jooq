@@ -356,4 +356,20 @@ public abstract class RXTestBase<P,T,O, DAO extends GenericVertxDAO<?,P, T, Sing
         ;
         await(latch);
     }
+
+    @Test
+    public void findManyWithLimitShouldReturnLimitedResults() throws InterruptedException {
+        CountDownLatch latch = new CountDownLatch(1);
+        Single<T> insertFuture1 = insertAndReturn(create());
+        Single<T> insertFuture2 = insertAndReturn(create());
+        Single.zip(insertFuture1, insertFuture2,(i1, i2) -> i1).
+                flatMap(v -> dao.findManyByCondition(DSL.trueCondition(),1)).
+                doOnSuccess(list -> {
+                    Assert.assertNotNull(list);
+                    Assert.assertEquals(1, list.size());
+                }).
+                flatMap(v -> dao.deleteByCondition(DSL.trueCondition())).
+                subscribe(countdownLatchHandler(latch));
+        await(latch);
+    }
 }

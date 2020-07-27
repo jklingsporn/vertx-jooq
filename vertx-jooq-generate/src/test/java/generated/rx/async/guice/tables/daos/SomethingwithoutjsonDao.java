@@ -46,6 +46,13 @@ public class SomethingwithoutjsonDao extends AbstractAsyncVertxDAO<Somethingwith
         return findManyByCondition(Somethingwithoutjson.SOMETHINGWITHOUTJSON.SOMESTRING.in(values));
     }
 
+    /**
+     * Find records that have <code>someString IN (values)</code> asynchronously limited by the given limit
+     */
+    public Single<List<generated.rx.async.guice.tables.pojos.Somethingwithoutjson>> findManyBySomestring(Collection<String> values, int limit) {
+        return findManyByCondition(Somethingwithoutjson.SOMETHINGWITHOUTJSON.SOMESTRING.in(values),limit);
+    }
+
     @Override
     public AsyncRXQueryExecutor<SomethingwithoutjsonRecord,generated.rx.async.guice.tables.pojos.Somethingwithoutjson,Integer> queryExecutor(){
         return (AsyncRXQueryExecutor<SomethingwithoutjsonRecord,generated.rx.async.guice.tables.pojos.Somethingwithoutjson,Integer>) super.queryExecutor();

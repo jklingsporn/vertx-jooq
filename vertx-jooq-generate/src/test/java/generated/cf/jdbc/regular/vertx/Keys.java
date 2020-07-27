@@ -32,8 +32,8 @@ public class Keys {
     // UNIQUE and PRIMARY KEY definitions
     // -------------------------------------------------------------------------
 
-    public static final UniqueKey<SomethingRecord> SYS_PK_10328 = UniqueKeys0.SYS_PK_10328;
-    public static final UniqueKey<SomethingcompositeRecord> SYS_PK_10332 = UniqueKeys0.SYS_PK_10332;
+    public static final UniqueKey<SomethingRecord> SYS_PK_10334 = UniqueKeys0.SYS_PK_10334;
+    public static final UniqueKey<SomethingcompositeRecord> SYS_PK_10338 = UniqueKeys0.SYS_PK_10338;
 
     // -------------------------------------------------------------------------
     // FOREIGN KEY definitions
@@ -49,7 +49,7 @@ public class Keys {
     }
 
     private static class UniqueKeys0 {
-        public static final UniqueKey<SomethingRecord> SYS_PK_10328 = Internal.createUniqueKey(Something.SOMETHING, "SYS_PK_10328", new TableField[] { Something.SOMETHING.SOMEID }, true);
-        public static final UniqueKey<SomethingcompositeRecord> SYS_PK_10332 = Internal.createUniqueKey(Somethingcomposite.SOMETHINGCOMPOSITE, "SYS_PK_10332", new TableField[] { Somethingcomposite.SOMETHINGCOMPOSITE.SOMEID, Somethingcomposite.SOMETHINGCOMPOSITE.SOMESECONDID }, true);
+        public static final UniqueKey<SomethingRecord> SYS_PK_10334 = Internal.createUniqueKey(Something.SOMETHING, "SYS_PK_10334", new TableField[] { Something.SOMETHING.SOMEID }, true);
+        public static final UniqueKey<SomethingcompositeRecord> SYS_PK_10338 = Internal.createUniqueKey(Somethingcomposite.SOMETHINGCOMPOSITE, "SYS_PK_10338", new TableField[] { Somethingcomposite.SOMETHINGCOMPOSITE.SOMEID, Somethingcomposite.SOMETHINGCOMPOSITE.SOMESECONDID }, true);
     }
 }

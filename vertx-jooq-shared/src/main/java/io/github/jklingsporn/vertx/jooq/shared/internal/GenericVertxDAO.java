@@ -117,12 +117,29 @@ public interface GenericVertxDAO<R extends UpdatableRecord<R>,P, T, FIND_MANY, F
     public FIND_MANY findManyByCondition(Condition condition);
 
     /**
+     * Performs an async <code>SELECT</code> using the given condition and limit.
+     * @param condition
+     * @param limit
+     * @return the result type returned for all find-many-values-operations.
+     */
+    public FIND_MANY findManyByCondition(Condition condition,int limit);
+
+    /**
      * Performs an async <code>SELECT</code> using the given condition with specific order.
      * @param condition
      * @param orderFields
      * @return the result type returned for all find-many-values-operations.
      */
     public FIND_MANY findManyByCondition(Condition condition, OrderField<?> ... orderFields);
+
+    /**
+     * Performs an async <code>SELECT</code> using the given condition with specific order and limit.
+     * @param condition
+     * @param limit
+     * @param orderFields
+     * @return the result type returned for all find-many-values-operations.
+     */
+    public FIND_MANY findManyByCondition(Condition condition, int limit, OrderField<?> ... orderFields);
 
     /**
      * Performs an async <code>SELECT</code>.

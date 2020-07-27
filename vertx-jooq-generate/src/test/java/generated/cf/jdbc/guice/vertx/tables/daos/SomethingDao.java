@@ -50,10 +50,24 @@ public class SomethingDao extends AbstractVertxDAO<SomethingRecord, generated.cf
     }
 
     /**
+     * Find records that have <code>SOMESTRING IN (values)</code> asynchronously limited by the given limit
+     */
+    public CompletableFuture<List<generated.cf.jdbc.guice.vertx.tables.pojos.Something>> findManyBySomestring(Collection<String> values, int limit) {
+        return findManyByCondition(Something.SOMETHING.SOMESTRING.in(values),limit);
+    }
+
+    /**
      * Find records that have <code>SOMEHUGENUMBER IN (values)</code> asynchronously
      */
     public CompletableFuture<List<generated.cf.jdbc.guice.vertx.tables.pojos.Something>> findManyBySomehugenumber(Collection<Long> values) {
         return findManyByCondition(Something.SOMETHING.SOMEHUGENUMBER.in(values));
+    }
+
+    /**
+     * Find records that have <code>SOMEHUGENUMBER IN (values)</code> asynchronously limited by the given limit
+     */
+    public CompletableFuture<List<generated.cf.jdbc.guice.vertx.tables.pojos.Something>> findManyBySomehugenumber(Collection<Long> values, int limit) {
+        return findManyByCondition(Something.SOMETHING.SOMEHUGENUMBER.in(values),limit);
     }
 
     /**
@@ -64,10 +78,24 @@ public class SomethingDao extends AbstractVertxDAO<SomethingRecord, generated.cf
     }
 
     /**
+     * Find records that have <code>SOMESMALLNUMBER IN (values)</code> asynchronously limited by the given limit
+     */
+    public CompletableFuture<List<generated.cf.jdbc.guice.vertx.tables.pojos.Something>> findManyBySomesmallnumber(Collection<Short> values, int limit) {
+        return findManyByCondition(Something.SOMETHING.SOMESMALLNUMBER.in(values),limit);
+    }
+
+    /**
      * Find records that have <code>SOMEREGULARNUMBER IN (values)</code> asynchronously
      */
     public CompletableFuture<List<generated.cf.jdbc.guice.vertx.tables.pojos.Something>> findManyBySomeregularnumber(Collection<Integer> values) {
         return findManyByCondition(Something.SOMETHING.SOMEREGULARNUMBER.in(values));
+    }
+
+    /**
+     * Find records that have <code>SOMEREGULARNUMBER IN (values)</code> asynchronously limited by the given limit
+     */
+    public CompletableFuture<List<generated.cf.jdbc.guice.vertx.tables.pojos.Something>> findManyBySomeregularnumber(Collection<Integer> values, int limit) {
+        return findManyByCondition(Something.SOMETHING.SOMEREGULARNUMBER.in(values),limit);
     }
 
     /**
@@ -78,10 +106,24 @@ public class SomethingDao extends AbstractVertxDAO<SomethingRecord, generated.cf
     }
 
     /**
+     * Find records that have <code>SOMEBOOLEAN IN (values)</code> asynchronously limited by the given limit
+     */
+    public CompletableFuture<List<generated.cf.jdbc.guice.vertx.tables.pojos.Something>> findManyBySomeboolean(Collection<Boolean> values, int limit) {
+        return findManyByCondition(Something.SOMETHING.SOMEBOOLEAN.in(values),limit);
+    }
+
+    /**
      * Find records that have <code>SOMEDOUBLE IN (values)</code> asynchronously
      */
     public CompletableFuture<List<generated.cf.jdbc.guice.vertx.tables.pojos.Something>> findManyBySomedouble(Collection<Double> values) {
         return findManyByCondition(Something.SOMETHING.SOMEDOUBLE.in(values));
+    }
+
+    /**
+     * Find records that have <code>SOMEDOUBLE IN (values)</code> asynchronously limited by the given limit
+     */
+    public CompletableFuture<List<generated.cf.jdbc.guice.vertx.tables.pojos.Something>> findManyBySomedouble(Collection<Double> values, int limit) {
+        return findManyByCondition(Something.SOMETHING.SOMEDOUBLE.in(values),limit);
     }
 
     /**
@@ -92,6 +134,13 @@ public class SomethingDao extends AbstractVertxDAO<SomethingRecord, generated.cf
     }
 
     /**
+     * Find records that have <code>SOMEJSONOBJECT IN (values)</code> asynchronously limited by the given limit
+     */
+    public CompletableFuture<List<generated.cf.jdbc.guice.vertx.tables.pojos.Something>> findManyBySomejsonobject(Collection<JsonObject> values, int limit) {
+        return findManyByCondition(Something.SOMETHING.SOMEJSONOBJECT.in(values),limit);
+    }
+
+    /**
      * Find records that have <code>SOMEJSONARRAY IN (values)</code> asynchronously
      */
     public CompletableFuture<List<generated.cf.jdbc.guice.vertx.tables.pojos.Something>> findManyBySomejsonarray(Collection<JsonArray> values) {
@@ -99,10 +148,24 @@ public class SomethingDao extends AbstractVertxDAO<SomethingRecord, generated.cf
     }
 
     /**
+     * Find records that have <code>SOMEJSONARRAY IN (values)</code> asynchronously limited by the given limit
+     */
+    public CompletableFuture<List<generated.cf.jdbc.guice.vertx.tables.pojos.Something>> findManyBySomejsonarray(Collection<JsonArray> values, int limit) {
+        return findManyByCondition(Something.SOMETHING.SOMEJSONARRAY.in(values),limit);
+    }
+
+    /**
      * Find records that have <code>SOMETIMESTAMP IN (values)</code> asynchronously
      */
     public CompletableFuture<List<generated.cf.jdbc.guice.vertx.tables.pojos.Something>> findManyBySometimestamp(Collection<LocalDateTime> values) {
         return findManyByCondition(Something.SOMETHING.SOMETIMESTAMP.in(values));
+    }
+
+    /**
+     * Find records that have <code>SOMETIMESTAMP IN (values)</code> asynchronously limited by the given limit
+     */
+    public CompletableFuture<List<generated.cf.jdbc.guice.vertx.tables.pojos.Something>> findManyBySometimestamp(Collection<LocalDateTime> values, int limit) {
+        return findManyByCondition(Something.SOMETHING.SOMETIMESTAMP.in(values),limit);
     }
 
     @Override

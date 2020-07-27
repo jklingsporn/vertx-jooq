@@ -50,10 +50,24 @@ public class SomethingDao extends AbstractAsyncVertxDAO<SomethingRecord, generat
     }
 
     /**
+     * Find records that have <code>someString IN (values)</code> asynchronously limited by the given limit
+     */
+    public CompletableFuture<List<generated.cf.async.regular.tables.pojos.Something>> findManyBySomestring(Collection<String> values, int limit) {
+        return findManyByCondition(Something.SOMETHING.SOMESTRING.in(values),limit);
+    }
+
+    /**
      * Find records that have <code>someHugeNumber IN (values)</code> asynchronously
      */
     public CompletableFuture<List<generated.cf.async.regular.tables.pojos.Something>> findManyBySomehugenumber(Collection<Long> values) {
         return findManyByCondition(Something.SOMETHING.SOMEHUGENUMBER.in(values));
+    }
+
+    /**
+     * Find records that have <code>someHugeNumber IN (values)</code> asynchronously limited by the given limit
+     */
+    public CompletableFuture<List<generated.cf.async.regular.tables.pojos.Something>> findManyBySomehugenumber(Collection<Long> values, int limit) {
+        return findManyByCondition(Something.SOMETHING.SOMEHUGENUMBER.in(values),limit);
     }
 
     /**
@@ -64,10 +78,24 @@ public class SomethingDao extends AbstractAsyncVertxDAO<SomethingRecord, generat
     }
 
     /**
+     * Find records that have <code>someSmallNumber IN (values)</code> asynchronously limited by the given limit
+     */
+    public CompletableFuture<List<generated.cf.async.regular.tables.pojos.Something>> findManyBySomesmallnumber(Collection<Short> values, int limit) {
+        return findManyByCondition(Something.SOMETHING.SOMESMALLNUMBER.in(values),limit);
+    }
+
+    /**
      * Find records that have <code>someRegularNumber IN (values)</code> asynchronously
      */
     public CompletableFuture<List<generated.cf.async.regular.tables.pojos.Something>> findManyBySomeregularnumber(Collection<Integer> values) {
         return findManyByCondition(Something.SOMETHING.SOMEREGULARNUMBER.in(values));
+    }
+
+    /**
+     * Find records that have <code>someRegularNumber IN (values)</code> asynchronously limited by the given limit
+     */
+    public CompletableFuture<List<generated.cf.async.regular.tables.pojos.Something>> findManyBySomeregularnumber(Collection<Integer> values, int limit) {
+        return findManyByCondition(Something.SOMETHING.SOMEREGULARNUMBER.in(values),limit);
     }
 
     /**
@@ -78,10 +106,24 @@ public class SomethingDao extends AbstractAsyncVertxDAO<SomethingRecord, generat
     }
 
     /**
+     * Find records that have <code>someDouble IN (values)</code> asynchronously limited by the given limit
+     */
+    public CompletableFuture<List<generated.cf.async.regular.tables.pojos.Something>> findManyBySomedouble(Collection<Double> values, int limit) {
+        return findManyByCondition(Something.SOMETHING.SOMEDOUBLE.in(values),limit);
+    }
+
+    /**
      * Find records that have <code>someEnum IN (values)</code> asynchronously
      */
     public CompletableFuture<List<generated.cf.async.regular.tables.pojos.Something>> findManyBySomeenum(Collection<SomethingSomeenum> values) {
         return findManyByCondition(Something.SOMETHING.SOMEENUM.in(values));
+    }
+
+    /**
+     * Find records that have <code>someEnum IN (values)</code> asynchronously limited by the given limit
+     */
+    public CompletableFuture<List<generated.cf.async.regular.tables.pojos.Something>> findManyBySomeenum(Collection<SomethingSomeenum> values, int limit) {
+        return findManyByCondition(Something.SOMETHING.SOMEENUM.in(values),limit);
     }
 
     /**
@@ -92,6 +134,13 @@ public class SomethingDao extends AbstractAsyncVertxDAO<SomethingRecord, generat
     }
 
     /**
+     * Find records that have <code>someJsonObject IN (values)</code> asynchronously limited by the given limit
+     */
+    public CompletableFuture<List<generated.cf.async.regular.tables.pojos.Something>> findManyBySomejsonobject(Collection<JsonObject> values, int limit) {
+        return findManyByCondition(Something.SOMETHING.SOMEJSONOBJECT.in(values),limit);
+    }
+
+    /**
      * Find records that have <code>someJsonArray IN (values)</code> asynchronously
      */
     public CompletableFuture<List<generated.cf.async.regular.tables.pojos.Something>> findManyBySomejsonarray(Collection<JsonArray> values) {
@@ -99,10 +148,24 @@ public class SomethingDao extends AbstractAsyncVertxDAO<SomethingRecord, generat
     }
 
     /**
+     * Find records that have <code>someJsonArray IN (values)</code> asynchronously limited by the given limit
+     */
+    public CompletableFuture<List<generated.cf.async.regular.tables.pojos.Something>> findManyBySomejsonarray(Collection<JsonArray> values, int limit) {
+        return findManyByCondition(Something.SOMETHING.SOMEJSONARRAY.in(values),limit);
+    }
+
+    /**
      * Find records that have <code>someTimestamp IN (values)</code> asynchronously
      */
     public CompletableFuture<List<generated.cf.async.regular.tables.pojos.Something>> findManyBySometimestamp(Collection<LocalDateTime> values) {
         return findManyByCondition(Something.SOMETHING.SOMETIMESTAMP.in(values));
+    }
+
+    /**
+     * Find records that have <code>someTimestamp IN (values)</code> asynchronously limited by the given limit
+     */
+    public CompletableFuture<List<generated.cf.async.regular.tables.pojos.Something>> findManyBySometimestamp(Collection<LocalDateTime> values, int limit) {
+        return findManyByCondition(Something.SOMETHING.SOMETIMESTAMP.in(values),limit);
     }
 
     @Override

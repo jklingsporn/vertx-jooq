@@ -48,10 +48,24 @@ public class SomethingcompositeDao extends AbstractVertxDAO<SomethingcompositeRe
     }
 
     /**
+     * Find records that have <code>SOMESECONDID IN (values)</code> asynchronously limited by the given limit
+     */
+    public Future<List<generated.classic.jdbc.guice.vertx.tables.pojos.Somethingcomposite>> findManyBySomesecondid(Collection<Integer> values, int limit) {
+        return findManyByCondition(Somethingcomposite.SOMETHINGCOMPOSITE.SOMESECONDID.in(values),limit);
+    }
+
+    /**
      * Find records that have <code>SOMEJSONOBJECT IN (values)</code> asynchronously
      */
     public Future<List<generated.classic.jdbc.guice.vertx.tables.pojos.Somethingcomposite>> findManyBySomejsonobject(Collection<JsonObject> values) {
         return findManyByCondition(Somethingcomposite.SOMETHINGCOMPOSITE.SOMEJSONOBJECT.in(values));
+    }
+
+    /**
+     * Find records that have <code>SOMEJSONOBJECT IN (values)</code> asynchronously limited by the given limit
+     */
+    public Future<List<generated.classic.jdbc.guice.vertx.tables.pojos.Somethingcomposite>> findManyBySomejsonobject(Collection<JsonObject> values, int limit) {
+        return findManyByCondition(Somethingcomposite.SOMETHINGCOMPOSITE.SOMEJSONOBJECT.in(values),limit);
     }
 
     @Override
