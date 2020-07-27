@@ -241,6 +241,20 @@ public class SomethingDao extends AbstractReactiveVertxDAO<SomethingRecord, gene
         return findManyByCondition(Something.SOMETHING.SOMETIMESTAMPWITHTZ.in(values),limit);
     }
 
+    /**
+     * Find records that have <code>someByteA IN (values)</code> asynchronously
+     */
+    public Single<List<generated.rx.reactive.regular.vertx.tables.pojos.Something>> findManyBySomebytea(Collection<byte[]> values) {
+        return findManyByCondition(Something.SOMETHING.SOMEBYTEA.in(values));
+    }
+
+    /**
+     * Find records that have <code>someByteA IN (values)</code> asynchronously limited by the given limit
+     */
+    public Single<List<generated.rx.reactive.regular.vertx.tables.pojos.Something>> findManyBySomebytea(Collection<byte[]> values, int limit) {
+        return findManyByCondition(Something.SOMETHING.SOMEBYTEA.in(values),limit);
+    }
+
     @Override
     public ReactiveRXQueryExecutor<SomethingRecord,generated.rx.reactive.regular.vertx.tables.pojos.Something,Integer> queryExecutor(){
         return (ReactiveRXQueryExecutor<SomethingRecord,generated.rx.reactive.regular.vertx.tables.pojos.Something,Integer>) super.queryExecutor();

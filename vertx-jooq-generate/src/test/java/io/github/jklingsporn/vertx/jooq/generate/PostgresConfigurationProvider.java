@@ -51,6 +51,7 @@ public class PostgresConfigurationProvider extends AbstractDatabaseConfiguration
                     "  \"someDate\" DATE NULL,\n" +
                     "  \"someTimestamp\" TIMESTAMP NULL,\n" +
                     "  \"someTimestampWithTZ\" TIMESTAMP WITH TIME ZONE NULL,\n" +
+                    "  \"someByteA\" bytea NULL,\n" +
                     "  PRIMARY KEY (\"someId\"));").execute();
             connection.prepareStatement("CREATE TABLE \"somethingComposite\" (\n" +
                     "  \"someId\" INTEGER NOT NULL,\n" +

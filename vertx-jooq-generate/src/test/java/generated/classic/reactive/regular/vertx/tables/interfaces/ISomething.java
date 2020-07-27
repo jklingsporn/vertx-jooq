@@ -175,6 +175,16 @@ public interface ISomething extends VertxPojo, Serializable {
      */
     public OffsetDateTime getSometimestampwithtz();
 
+    /**
+     * Setter for <code>vertx.something.someByteA</code>.
+     */
+    public ISomething setSomebytea(byte[] value);
+
+    /**
+     * Getter for <code>vertx.something.someByteA</code>.
+     */
+    public byte[] getSomebytea();
+
     // -------------------------------------------------------------------------
     // FROM and INTO
     // -------------------------------------------------------------------------
@@ -270,6 +280,11 @@ public interface ISomething extends VertxPojo, Serializable {
         } catch (java.lang.ClassCastException e) {
             throw new UnexpectedJsonValueType("someTimestampWithTZ","java.time.OffsetDateTime",e);
         }
+        try {
+            setSomebytea(json.getBinary("someByteA"));
+        } catch (java.lang.ClassCastException e) {
+            throw new UnexpectedJsonValueType("someByteA","byte[]",e);
+        }
         return this;
     }
 
@@ -292,6 +307,7 @@ public interface ISomething extends VertxPojo, Serializable {
         json.put("someDate",getSomedate()==null?null:getSomedate().toString());
         json.put("someTimestamp",getSometimestamp()==null?null:getSometimestamp().toString());
         json.put("someTimestampWithTZ",getSometimestampwithtz()==null?null:getSometimestampwithtz().toString());
+        json.put("someByteA",getSomebytea());
         return json;
     }
 

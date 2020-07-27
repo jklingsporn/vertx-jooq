@@ -29,7 +29,7 @@ import org.jooq.ForeignKey;
 import org.jooq.Identity;
 import org.jooq.Name;
 import org.jooq.Record;
-import org.jooq.Row15;
+import org.jooq.Row16;
 import org.jooq.Schema;
 import org.jooq.Table;
 import org.jooq.TableField;
@@ -45,7 +45,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Something extends TableImpl<SomethingRecord> {
 
-    private static final long serialVersionUID = -2040808920;
+    private static final long serialVersionUID = -1110468358;
 
     /**
      * The reference instance of <code>vertx.something</code>
@@ -136,6 +136,11 @@ public class Something extends TableImpl<SomethingRecord> {
     public final TableField<SomethingRecord, OffsetDateTime> SOMETIMESTAMPWITHTZ = createField(DSL.name("someTimestampWithTZ"), org.jooq.impl.SQLDataType.TIMESTAMPWITHTIMEZONE, this, "");
 
     /**
+     * The column <code>vertx.something.someByteA</code>.
+     */
+    public final TableField<SomethingRecord, byte[]> SOMEBYTEA = createField(DSL.name("someByteA"), org.jooq.impl.SQLDataType.BLOB, this, "");
+
+    /**
      * Create a <code>vertx.something</code> table reference
      */
     public Something() {
@@ -215,11 +220,11 @@ public class Something extends TableImpl<SomethingRecord> {
     }
 
     // -------------------------------------------------------------------------
-    // Row15 type methods
+    // Row16 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row15<Integer, String, Long, Short, Integer, Double, Someenum, JsonObject, SomeJsonPojo, JsonArray, JsonObject, LocalTime, LocalDate, LocalDateTime, OffsetDateTime> fieldsRow() {
-        return (Row15) super.fieldsRow();
+    public Row16<Integer, String, Long, Short, Integer, Double, Someenum, JsonObject, SomeJsonPojo, JsonArray, JsonObject, LocalTime, LocalDate, LocalDateTime, OffsetDateTime, byte[]> fieldsRow() {
+        return (Row16) super.fieldsRow();
     }
 }

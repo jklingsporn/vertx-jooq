@@ -25,6 +25,7 @@ public class RowMappers {
             pojo.setSomedate(row.getLocalDate("someDate"));
             pojo.setSometimestamp(row.getLocalDateTime("someTimestamp"));
             pojo.setSometimestampwithtz(row.getOffsetDateTime("someTimestampWithTZ"));
+            // Omitting unrecognized type DataType [ t=bytea; p=0; s=0; u="pg_catalog"."bytea"; j=null ] (byte[]) for column someByteA!
             return pojo;
         };
     }

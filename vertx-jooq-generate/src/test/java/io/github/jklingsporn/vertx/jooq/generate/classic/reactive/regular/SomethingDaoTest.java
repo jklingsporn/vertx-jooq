@@ -62,6 +62,7 @@ public class SomethingDaoTest extends ClassicTestBase<Something, Integer, Long, 
         something.setSometime(LocalTime.now());
         something.setSomedate(LocalDate.now());
         something.setSometimestampwithtz(OffsetDateTime.now());
+        something.setSomebytea("foo".getBytes());
         return something;
     }
 

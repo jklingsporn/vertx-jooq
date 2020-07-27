@@ -16,6 +16,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
+import java.util.Arrays;
 
 
 /**
@@ -24,7 +25,7 @@ import java.time.OffsetDateTime;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Something implements VertxPojo, ISomething {
 
-    private static final long serialVersionUID = -700886996;
+    private static final long serialVersionUID = -282843274;
 
     private Integer        someid;
     private String         somestring;
@@ -41,6 +42,7 @@ public class Something implements VertxPojo, ISomething {
     private LocalDate      somedate;
     private LocalDateTime  sometimestamp;
     private OffsetDateTime sometimestampwithtz;
+    private byte[]         somebytea;
 
     public Something() {}
 
@@ -60,6 +62,7 @@ public class Something implements VertxPojo, ISomething {
         this.somedate = value.getSomedate();
         this.sometimestamp = value.getSometimestamp();
         this.sometimestampwithtz = value.getSometimestampwithtz();
+        this.somebytea = value.getSomebytea();
     }
 
     public Something(
@@ -77,7 +80,8 @@ public class Something implements VertxPojo, ISomething {
         LocalTime      sometime,
         LocalDate      somedate,
         LocalDateTime  sometimestamp,
-        OffsetDateTime sometimestampwithtz
+        OffsetDateTime sometimestampwithtz,
+        byte[]         somebytea
     ) {
         this.someid = someid;
         this.somestring = somestring;
@@ -94,6 +98,7 @@ public class Something implements VertxPojo, ISomething {
         this.somedate = somedate;
         this.sometimestamp = sometimestamp;
         this.sometimestampwithtz = sometimestampwithtz;
+        this.somebytea = somebytea;
     }
 
     @Override
@@ -262,6 +267,17 @@ public class Something implements VertxPojo, ISomething {
     }
 
     @Override
+    public byte[] getSomebytea() {
+        return this.somebytea;
+    }
+
+    @Override
+    public Something setSomebytea(byte[] somebytea) {
+        this.somebytea = somebytea;
+        return this;
+    }
+
+    @Override
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
@@ -360,6 +376,12 @@ public class Something implements VertxPojo, ISomething {
         }
         else if (!sometimestampwithtz.equals(other.sometimestampwithtz))
             return false;
+        if (somebytea == null) {
+            if (other.somebytea != null)
+                return false;
+        }
+        else if (!Arrays.equals(somebytea, other.somebytea))
+            return false;
         return true;
     }
 
@@ -382,6 +404,7 @@ public class Something implements VertxPojo, ISomething {
         result = prime * result + ((this.somedate == null) ? 0 : this.somedate.hashCode());
         result = prime * result + ((this.sometimestamp == null) ? 0 : this.sometimestamp.hashCode());
         result = prime * result + ((this.sometimestampwithtz == null) ? 0 : this.sometimestampwithtz.hashCode());
+        result = prime * result + ((this.somebytea == null) ? 0 : Arrays.hashCode(this.somebytea));
         return result;
     }
 
@@ -404,6 +427,7 @@ public class Something implements VertxPojo, ISomething {
         sb.append(", ").append(somedate);
         sb.append(", ").append(sometimestamp);
         sb.append(", ").append(sometimestampwithtz);
+        sb.append(", ").append("[binary...]");
 
         sb.append(")");
         return sb.toString();
@@ -430,6 +454,7 @@ public class Something implements VertxPojo, ISomething {
         setSomedate(from.getSomedate());
         setSometimestamp(from.getSometimestamp());
         setSometimestampwithtz(from.getSometimestampwithtz());
+        setSomebytea(from.getSomebytea());
     }
 
     @Override
