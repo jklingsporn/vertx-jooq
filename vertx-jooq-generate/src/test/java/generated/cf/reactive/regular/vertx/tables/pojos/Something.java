@@ -25,7 +25,7 @@ import java.util.Arrays;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Something implements VertxPojo, ISomething {
 
-    private static final long serialVersionUID = 1664905213;
+    private static final long serialVersionUID = -817828675;
 
     private Integer        someid;
     private String         somestring;
@@ -99,6 +99,11 @@ public class Something implements VertxPojo, ISomething {
         this.sometimestamp = sometimestamp;
         this.sometimestampwithtz = sometimestampwithtz;
         this.somebytea = somebytea;
+    }
+
+    public Something(io.vertx.core.json.JsonObject json) {
+        this();
+        fromJson(json);
     }
 
     @Override
@@ -461,10 +466,5 @@ public class Something implements VertxPojo, ISomething {
     public <E extends ISomething> E into(E into) {
         into.from(this);
         return into;
-    }
-
-    public Something(io.vertx.core.json.JsonObject json) {
-        this();
-        fromJson(json);
     }
 }
