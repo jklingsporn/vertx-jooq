@@ -71,7 +71,7 @@ SomethingDao dao = new SomethingDao(configuration,vertx);
 
 //fetch something with ID 123...
 dao.findOneById(123)
-    .setHandler(res->{
+    .onComplete(res->{
     		if(res.succeeded()){
         		vertx.eventBus().send("sendSomething", res.result().toJson())
     		}else{
@@ -103,7 +103,7 @@ Future<Integer> updatedCustom = queryExecutor.execute(dslContext ->
 );
 
 //check for completion
-updatedCustom.setHandler(res->{
+updatedCustom.onComplete(res->{
 		if(res.succeeded()){
 				System.out.println("Rows updated: "+res.result());
 		}else{
