@@ -27,7 +27,7 @@ If you are new to jOOQ, I recommend to read the awesome [jOOQ documentation](htt
     <dependency>
       <groupId>org.jooq</groupId>
       <artifactId>jooq</artifactId>
-      <version>3.11.9</version>
+      <version>3.13.3</version>
     </dependency>
     <dependency>
       <groupId>io.github.jklingsporn</groupId>
@@ -41,7 +41,7 @@ If you are new to jOOQ, I recommend to read the awesome [jOOQ documentation](htt
           <!-- Specify the maven code generator plugin -->
           <groupId>org.jooq</groupId>
           <artifactId>jooq-codegen-maven</artifactId>
-          <version>3.11.9</version>
+          <version>3.13.3</version>
 
           <!-- The plugin should hook into the generate goal -->
           <executions>
@@ -91,20 +91,6 @@ If you are new to jOOQ, I recommend to read the awesome [jOOQ documentation](htt
                           <forcedType>
                               <name>BOOLEAN</name>
                               <types>(?i:TINYINT)</types>
-                          </forcedType>
-                          <!-- Convert varchar column with name 'someJsonObject' to a io.vertx.core.json.JsonObject-->
-                          <forcedType>
-                              <userType>io.vertx.core.json.JsonObject</userType>
-                              <converter>io.github.jklingsporn.vertx.jooq.shared.JsonObjectConverter</converter>
-                              <expression>someJsonObject</expression>
-                              <types>.*</types>
-                          </forcedType>
-                          <!-- Convert varchar column with name 'someJsonArray' to a io.vertx.core.json.JsonArray-->
-                          <forcedType>
-                              <userType>io.vertx.core.json.JsonArray</userType>
-                              <converter>io.github.jklingsporn.vertx.jooq.shared.JsonArrayConverter</converter>
-                              <expression>someJsonArray</expression>
-                              <types>.*</types>
                           </forcedType>
                       </forcedTypes>
                   </database>
