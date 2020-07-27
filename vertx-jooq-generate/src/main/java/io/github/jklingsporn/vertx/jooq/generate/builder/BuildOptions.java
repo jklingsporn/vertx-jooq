@@ -6,7 +6,7 @@ import java.util.Set;
 public class BuildOptions {
 
     public enum BuildFlag {
-        DATA_OBJECT
+        GENERATE_DATA_OBJECT_ANNOTATION
     }
 
     private ConverterInstantiationMethod converterInstantiationMethod;

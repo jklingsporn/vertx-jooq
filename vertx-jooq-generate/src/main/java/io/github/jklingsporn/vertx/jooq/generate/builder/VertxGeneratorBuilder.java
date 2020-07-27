@@ -557,7 +557,7 @@ public class VertxGeneratorBuilder {
                     return out;
                 });
             }
-            if(buildOptions.isEnabled(BuildOptions.BuildFlag.DATA_OBJECT)){
+            if(buildOptions.isEnabled(BuildOptions.BuildFlag.GENERATE_DATA_OBJECT_ANNOTATION)){
                 base.addGeneratePojoClassAnnotationDelegate((out,td)->out.println("@io.vertx.codegen.annotations.DataObject"));
             }
             return base;
