@@ -5,6 +5,7 @@ import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import org.jooq.codegen.JavaWriter;
 import org.jooq.meta.SchemaDefinition;
+import org.jooq.meta.TableDefinition;
 import org.jooq.meta.TypedElementDefinition;
 import org.jooq.tools.JooqLogger;
 import org.jooq.tools.json.JSONArray;
@@ -12,10 +13,7 @@ import org.jooq.tools.json.JSONArray;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Supplier;
+import java.util.function.*;
 import java.util.stream.Collectors;
 
 /**
@@ -38,6 +36,8 @@ class ComponentBasedVertxGenerator extends VertxGenerator {
     Consumer<JavaWriter> writeDAOClassAnnotationDelegate = (w)->{};
     Consumer<JavaWriter> writeDAOConstructorAnnotationDelegate = (w)->{};
     Collection<BiFunction<SchemaDefinition,Function<File,JavaWriter>,JavaWriter>> writeExtraDataDelegates = new ArrayList<>();
+    Collection<BiConsumer<JavaWriter, TableDefinition>> pojoClassAnnotationsDelegates = new ArrayList<>();
+
     NamedInjectionStrategy namedInjectionStrategy = PredefinedNamedInjectionStrategy.DISABLED;
     BuildOptions buildOptions = new BuildOptions();
     VertxGenerator activeGenerator = this;
@@ -212,6 +212,11 @@ class ComponentBasedVertxGenerator extends VertxGenerator {
         return this;
     }
 
+    ComponentBasedVertxGenerator addGeneratePojoClassAnnotationDelegate(BiConsumer<JavaWriter,TableDefinition> consumer) {
+        this.pojoClassAnnotationsDelegates.add(consumer);
+        return this;
+    }
+
     /**
      *
      * @return The {@code VertxGenerator} that is actually used. When using a {@code ComponentBasedVertxGenerator} inside a {@code DelegatingVertxGenerator}
@@ -238,5 +243,8 @@ class ComponentBasedVertxGenerator extends VertxGenerator {
       return p.resolve(name).toFile();
     }
 
-
+    @Override
+    protected void generatePojoClassAnnotations(JavaWriter out, TableDefinition schema) {
+        pojoClassAnnotationsDelegates.forEach(c -> c.accept(out,schema));
+    }
 }
