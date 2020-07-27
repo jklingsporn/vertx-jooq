@@ -13,7 +13,7 @@ driver of your choice.
   - Conveniently find many POJOs limited by your choice 
 - [Default conversion of java.util.time types](https://github.com/jklingsporn/vertx-jooq/issues/146)
   - Finally handles the `to/fromJson`-conversion of `LocalDateTime`, `OffsetDateTime`, `ZonedDateTime`, `LocalTime` and `LocalDate`
-- Fixed [Vertx postgres Reactive Driver bytea data Insert Fails](https://github.com/jklingsporn/vertx-jooq/issues/153)
+- [Support postgres bytea type in the reactive driver](https://github.com/jklingsporn/vertx-jooq/issues/153)
 - Upgrade to vert.x 3.9.2
 - Upgrade to jOOQ 3.13.3
 - [Link to all resolved issues](https://github.com/jklingsporn/vertx-jooq/milestone/21?closed=1)
