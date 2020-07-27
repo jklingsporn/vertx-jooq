@@ -8,7 +8,7 @@ driver of your choice.
   - This nice enhancement allows you to add the `@DataObject` annotation to the generated POJOs. This is very handy when you
   are working with `ServiceProxies` etc.
   - Due to the dependency to the `vertx-codegen`-module this feature is disabled by default. This is how you enable it 
-  for the classic reactive generator using the `BuildOptions`: `VertxGeneratorBuilder.init().withClassicAPI().withPostgresReactiveDriver().build(new BuildOptions().withBuildFlags(EnumSet.of(BuildOptions.BuildFlag.DATA_OBJECT)))`  
+  for the classic reactive generator: `VertxGeneratorBuilder.init().withClassicAPI().withPostgresReactiveDriver().build(new BuildOptions().withBuildFlags(EnumSet.of(BuildOptions.BuildFlag.GENERATE_DATA_OBJECT_ANNOTATION)))`  
 - [Add limit to generated findMany-methods](https://github.com/jklingsporn/vertx-jooq/issues/147)
   - Conveniently find many POJOs limited by your choice 
 - [Default conversion of java.util.time types](https://github.com/jklingsporn/vertx-jooq/issues/146)
@@ -16,9 +16,7 @@ driver of your choice.
 - Fixed [Vertx postgres Reactive Driver bytea data Insert Fails](https://github.com/jklingsporn/vertx-jooq/issues/153)
 - Upgrade to vert.x 3.9.2
 - Upgrade to jOOQ 3.13.3
-
-### Resolved issues
-https://github.com/jklingsporn/vertx-jooq/milestone/21?closed=1
+- [Link to all resolved issues](https://github.com/jklingsporn/vertx-jooq/milestone/21?closed=1)
 
 ## different needs, different apis
 ![What do you want](https://media.giphy.com/media/E87jjnSCANThe/giphy.gif)
@@ -33,7 +31,10 @@ Before you start generating code using vertx-jooq, you have to answer these ques
   - Using good old JDBC, check for the modules with `-jdbc` suffix.
   - Using this [asynchronous](https://github.com/jasync-sql/jasync-sql) database driver, check for `-async` modules.
   - Using this [reactive](https://github.com/reactiverse/reactive-pg-client) postgres database driver, check for `-reactive` modules.
-- Do you use [Guice](https://github.com/google/guice) for dependency injection?
+- Advanced configuration:
+  - Support for [Guice](https://github.com/google/guice) dependency injection
+  - Generation of `io.vertx.codegen.annotations.@DataObject`-annotations for your POJOs
+  
 
 When you made your choice, you can start to configure the code-generator. This can be either done programmatically or
  using a maven- / gradle-plugin (recommended way). Please check the documentation in the module of the API of your choice how to set it up:
