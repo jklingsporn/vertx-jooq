@@ -3,30 +3,22 @@ A [jOOQ](http://www.jooq.org/)-CodeGenerator to create [vertx](http://vertx.io/)
 Perform all CRUD-operations asynchronously and convert your POJOs from/into a `io.vertx.core.json.JsonObject` using the API and
 driver of your choice.
 
-## release 5.1.2
-- fix [Generation fails when module's path contains `.`](https://github.com/jklingsporn/vertx-jooq/issues/151)
-- fix [dao.insertReturningPrimary fails with java.util.NoSuchElementException](https://github.com/jklingsporn/vertx-jooq/issues/149)
-- fix [JSONB to JsonObject Convertor Failure when using postgres reactive classic](https://github.com/jklingsporn/vertx-jooq/issues/148)
-- [vertx 3.9.1](http://vertx.io/) upgrade
-- [jooq 3.13.2](http://www.jooq.org/) upgrade
+## release 5.2.0
+- [Add @DataObject for generated POJOs](https://github.com/jklingsporn/vertx-jooq/issues/140) 
+  - This nice enhancement allows you to add the `@DataObject` annotation to the generated POJOs. This is very handy when you
+  are working with `ServiceProxies` etc.
+  - Due to the dependency to the `vertx-codegen`-module this feature is disabled by default. This is how you enable it 
+  for the classic reactive generator using the `BuildOptions`: `VertxGeneratorBuilder.init().withClassicAPI().withPostgresReactiveDriver().build(new BuildOptions().withBuildFlags(EnumSet.of(BuildOptions.BuildFlag.DATA_OBJECT)))`  
+- [Add limit to generated findMany-methods](https://github.com/jklingsporn/vertx-jooq/issues/147)
+  - Conveniently find many POJOs limited by your choice 
+- [Default conversion of java.util.time types](https://github.com/jklingsporn/vertx-jooq/issues/146)
+  - Finally handles the `to/fromJson`-conversion of `LocalDateTime`, `OffsetDateTime`, `ZonedDateTime`, `LocalTime` and `LocalDate`
+- Fixed [Vertx postgres Reactive Driver bytea data Insert Fails](https://github.com/jklingsporn/vertx-jooq/issues/153)
+- Upgrade to vert.x 3.9.2
+- Upgrade to jOOQ 3.13.3
 
-## release 5.1.1
-- [vertx 3.9.0](http://vertx.io/) support
-- `executeAny`-methods in `ReactiveQueryExecutor`-implementations.
-- Fix enum handling if enum is not defined in database (e.g. the database-field is of type `TEXT` and needs to be mapped to a 
-user defined enum)
-
-## release 5.1.0
-- Introduction of `PgConverter` for the reactive modules. This gives users finally the opportunity to use custom POJOs 
-instead of `JsonObjects`. The generators are also properly used in the `fromJson` and `toJson`-methods.
-- New `BuildOptions` when creating a code generator using `VertxGeneratorBuilder`. Currently one flag 
-can be set which determines whether to use singletons (default) for converters or 
-instantiate them every time. When set to `SINGLETON`-mode, this will create two classes 
-with references to all `Converters` and `Bindings` that are used.
-- Upgrade to jOOQ 3.13.1
-- `findManyBy`-methods now take `Collection` as argument
 ### Resolved issues
-https://github.com/jklingsporn/vertx-jooq/milestone/18?closed=1
+https://github.com/jklingsporn/vertx-jooq/milestone/21?closed=1
 
 ## different needs, different apis
 ![What do you want](https://media.giphy.com/media/E87jjnSCANThe/giphy.gif)
