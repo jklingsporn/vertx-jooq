@@ -6,7 +6,7 @@ driver of your choice.
 ## release 5.2.0
 - [Add @DataObject for generated POJOs](https://github.com/jklingsporn/vertx-jooq/issues/140) 
   - This nice enhancement allows you to add the `@DataObject` annotation to the generated POJOs. This is very handy when you
-  are working with `ServiceProxies` etc.
+  are working with [ServiceProxies](https://vertx.io/docs/vertx-service-proxy/java/) etc.
   - Due to the dependency to the `vertx-codegen`-module this feature is disabled by default. This is how you enable it 
   for the classic reactive generator: `VertxGeneratorBuilder.init().withClassicAPI().withPostgresReactiveDriver().build(new BuildOptions().withBuildFlags(EnumSet.of(BuildOptions.BuildFlag.GENERATE_DATA_OBJECT_ANNOTATION)))`  
 - [Add limit to generated findMany-methods](https://github.com/jklingsporn/vertx-jooq/issues/147)
