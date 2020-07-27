@@ -25,7 +25,8 @@ public class RowMappers {
             pojo.setSomedate(row.getLocalDate("someDate"));
             pojo.setSometimestamp(row.getLocalDateTime("someTimestamp"));
             pojo.setSometimestampwithtz(row.getOffsetDateTime("someTimestampWithTZ"));
-            // Omitting unrecognized type DataType [ t=bytea; p=0; s=0; u="pg_catalog"."bytea"; j=null ] (byte[]) for column someByteA!
+            io.vertx.core.buffer.Buffer someByteABuffer = row.getBuffer("someByteA");
+            pojo.setSomebytea(someByteABuffer == null?null:someByteABuffer.getBytes());
             return pojo;
         };
     }
