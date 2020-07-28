@@ -15,7 +15,7 @@
         <dependency>
             <groupId>me.escoffier.vertx</groupId>
             <artifactId>vertx-completable-future</artifactId>
-            <version>0.1.1</version>
+            <version>0.1.2</version>
         </dependency>
         <dependency>
             <groupId>io.github.jklingsporn</groupId>
