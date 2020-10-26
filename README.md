@@ -11,7 +11,7 @@ The following dependencies have been upgraded:
 The following bug has been fixed
 - fix an issue for windows users and the generated package names #159 
 
-Note: this will most likely be the last release depending on the vertx 3.x and jooq 3.13.x branches. As vertx now integrates first-class `CompletionStage` support and the `io.vertx.Future`-API has improved dramatically, we will most likely drop the `-completablefuture` modules entirely in vertx-jooq 6.  
+**Note**: this will most likely be the last release depending on the vertx 3.x and jooq 3.13.x branches. As vertx now integrates first-class `CompletionStage` support and the `io.vertx.core.Future`-API has improved dramatically, we will most likely drop the `-completablefuture` modules entirely in vertx-jooq 6.  
 
 ## different needs, different apis
 ![What do you want](https://media.giphy.com/media/E87jjnSCANThe/giphy.gif)
