@@ -38,7 +38,7 @@
         <postgresql.driver.version>42.2.2</postgresql.driver.version>
     </properties>
     <groupId>io.github.jklingsporn</groupId>
-    <version>5.2.0</version>
+    <version>5.2.1</version>
     <artifactId>vertx-jooq</artifactId>
     <name>${project.groupId}:${project.artifactId}</name>
     <description>A jOOQ-CodeGenerator to create vertxified DAOs and POJOs</description>
