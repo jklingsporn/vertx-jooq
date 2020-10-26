@@ -14,6 +14,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.function.*;
+import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 
 /**
@@ -234,7 +235,7 @@ class ComponentBasedVertxGenerator extends VertxGenerator {
     final public File generateTargetFile(SchemaDefinition schema, String pkg, String name) {
       java.nio.file.Path p = java.nio.file.Paths.get(getActiveGenerator().getStrategy().getTargetDirectory())
           // Resolve the package
-          .resolve( (getActiveGenerator().getStrategy().getJavaPackageName(schema) + pkg).replaceAll("\\.", File.separator)).toAbsolutePath();
+          .resolve( (getActiveGenerator().getStrategy().getJavaPackageName(schema) + pkg).replaceAll("\\.", Matcher.quoteReplacement(File.separator))).toAbsolutePath();
         try {
           java.nio.file.Files.createDirectories(p);
         } catch (java.io.IOException e) {
