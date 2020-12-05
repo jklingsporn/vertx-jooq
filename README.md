@@ -5,13 +5,7 @@ driver of your choice.
 
 ## release 6.0.0
 The following dependencies have been upgraded:
-- upgrade junit to 4.13.1
-- upgrade vertx to 3.9.4
-- upgrade jooq to 3.13.5
-The following bug has been fixed
-- fix an issue for windows users and the generated package names #159 
-
-**Note**: this will most likely be the last release depending on the vertx 3.x and jooq 3.13.x branches. As vertx now integrates first-class `CompletionStage` support and the `io.vertx.core.Future`-API has improved dramatically, we will most likely drop the `-completablefuture` modules entirely in vertx-jooq 6.  
+- upgrade vertx to 4.0.0.CR2
 
 ## different needs, different apis
 ![What do you want](https://media.giphy.com/media/E87jjnSCANThe/giphy.gif)
@@ -20,11 +14,8 @@ Before you start generating code using vertx-jooq, you have to answer these ques
 - What API do you want to use? There are three options:
   - a `io.vertx.core.Future`-based API. This is `vertx-jooq-classic`.
   - a [rxjava2](https://github.com/ReactiveX/RxJava) based API. This is `vertx-jooq-rx`.
-  - an API that returns a [vertx-ified implementation](https://github.com/cescoffier/vertx-completable-future)
-  of `java.util.concurrent.CompletableFuture` for all async DAO operations. This is `vertx-jooq-completablefuture`.
 - How do you want to communicate with the database? There are two options:
   - Using good old JDBC, check for the modules with `-jdbc` suffix.
-  - Using this [asynchronous](https://github.com/jasync-sql/jasync-sql) database driver, check for `-async` modules.
   - Using this [reactive](https://github.com/reactiverse/reactive-pg-client) postgres database driver, check for `-reactive` modules.
 - Advanced configuration:
   - Support for [Guice](https://github.com/google/guice) dependency injection
@@ -38,9 +29,6 @@ When you made your choice, you can start to configure the code-generator. This c
 - [`vertx-jooq-classic-reactive`](vertx-jooq-classic-reactive)
 - [`vertx-jooq-rx-jdbc`](vertx-jooq-rx-jdbc)
 - [`vertx-jooq-rx-reactive`](vertx-jooq-rx-reactive)
-- [`vertx-jooq-completablefuture-jdbc`](vertx-jooq-completablefuture-jdbc)
-- [`vertx-jooq-completablefuture-reactive`](vertx-jooq-completablefuture-reactive)
-
 
 ## example
 Once the generator is set up, it will create DAOs like in the code snippet below (classic-API, JDBC, no dependency injection):
@@ -97,6 +85,65 @@ updatedCustom.onComplete(res->{
 });
 ```
 
+Gradle example:
+
+```
+buildscript {
+    ext {
+        vertx_jooq_version = '6.0.0'
+        postgresql_version = '42.2.16'
+    }
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+    dependencies {
+        classpath "io.github.jklingsporn:vertx-jooq-generate:$vertx_jooq_version"
+        classpath "org.postgresql:postgresql:$postgresql_version"
+    }
+}
+
+import org.jooq.codegen.GenerationTool
+import org.jooq.meta.jaxb.*
+
+task generate {
+    def configuration = new Configuration()
+    configuration
+            .withJdbc(new Jdbc()
+                    .withDriver('org.postgresql.Driver')
+                    .withUrl('jdbc:postgresql://host:5432/databasename')
+                    .withUser('username')
+                    .withPassword('password'))
+            .withGenerator(new Generator()
+                    .withName('io.github.jklingsporn.vertx.jooq.generate.classic.ClassicReactiveVertxGenerator')
+                    .withDatabase(new Database()
+                            .withName('org.jooq.meta.postgres.PostgresDatabase')
+                            .withInputSchema('public')
+                            .withIncludeTables(true)
+                            .withIncludeRoutines(true)
+                            .withIncludePackages(false)
+                            .withIncludeUDTs(true)
+                            .withIncludeSequences(true)
+                            .withExcludes('schema_version')
+                            .withIncludes('.*'))
+                    .withGenerate(new Generate()
+                            .withDeprecated(false)
+                            .withRecords(false)
+                            .withInterfaces(true)
+                            .withFluentSetters(true)
+                            .withPojos(true)
+                            .withDaos(true))
+                    .withTarget(new Target()
+                            .withPackageName('package.name')
+                            .withDirectory("$projectDir/src/generated/java"))
+                    .withStrategy(new Strategy()
+                            .withName('io.github.jklingsporn.vertx.jooq.generate.VertxGeneratorStrategy')))
+    doLast {
+        GenerationTool.generate(configuration)
+    }
+}
+```
+
 # handling custom datatypes
 The generator will omit datatypes that it does not know, e.g. `java.sql.Timestamp`. To fix this, you can subclass the generator, handle these types and generate the code using your generator.
  See the `handleCustomTypeFromJson` and `handleCustomTypeToJson` methods in the `AbstractVertxGenerator` or checkout the [`CustomVertxGenerator`](vertx-jooq-generate/src/test/java/io/github/jklingsporn/vertx/jooq/generate/custom)
@@ -107,6 +154,14 @@ This library comes without any warranty - just take it or leave it. Also, the au
 company behind vertx nor the one behind jOOQ.
 
 # How to run tests
+
+##### postgres
+- Build postgres image: `cd docker && docker build -t vertx-jooq-pg -f DockerPostgres .`
+- Run postgres image: `docker run -p 5432:5432 vertx-jooq-pg`
+
+##### mysql
+- Run MySQL image: `docker run -p 127.0.0.1:3306:3306 -e MYSQL_ROOT_PASSWORD=vertx -e MYSQL_ROOT_HOST=% mysql:8 --max_connections=500 --default-authentication-plugin=mysql_native_password`
+
 
 > I receive a "Too many open files" exception on **macOS**
 
