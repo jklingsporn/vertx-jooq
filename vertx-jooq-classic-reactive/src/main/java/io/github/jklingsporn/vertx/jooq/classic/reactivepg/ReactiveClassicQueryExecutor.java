@@ -20,8 +20,8 @@ public class ReactiveClassicQueryExecutor<R extends UpdatableRecord<R>,P,T> exte
     private final Function<Row,P> pojoMapper;
     private final BiFunction<Function<DSLContext, ? extends InsertResultStep<R>>, Function<Object, T>,Future<T>> insertReturningDelegate;
 
-    public ReactiveClassicQueryExecutor(Configuration configuration, SqlClient delegate, Function<Row, P> pojoMapper) {
-        super(configuration, delegate);
+    public ReactiveClassicQueryExecutor(Configuration configuration, SqlClient delegate, Function<Row, P> pojoMapper, Transaction transaction) {
+        super(configuration, delegate, transaction);
         this.pojoMapper = pojoMapper;
         /*
          * Support insert returning in mysql using lastinsertid: https://github.com/jklingsporn/vertx-jooq/issues/149
@@ -36,7 +36,11 @@ public class ReactiveClassicQueryExecutor<R extends UpdatableRecord<R>,P,T> exte
         ;
     }
 
-    @Override
+    public ReactiveClassicQueryExecutor(Configuration configuration, SqlClient delegate, Function<Row, P> pojoMapper) {
+        this(configuration,delegate,pojoMapper,null);
+    }
+
+        @Override
     public Future<List<P>> findMany(Function<DSLContext, ? extends ResultQuery<R>> queryFunction) {
         return findManyRow(queryFunction).map(rows->rows.stream().map(pojoMapper).collect(Collectors.toList()));
     }
@@ -58,8 +62,8 @@ public class ReactiveClassicQueryExecutor<R extends UpdatableRecord<R>,P,T> exte
     }
 
     @Override
-    protected Function<Transaction, ReactiveClassicQueryExecutor<R,P,T>> newInstance() {
-        return pgTransaction -> new ReactiveClassicQueryExecutor<>(configuration(), pgTransaction, pojoMapper);
+    protected Function<Transaction, ReactiveClassicQueryExecutor<R,P,T>> newInstance(SqlClient connection) {
+        return pgTransaction -> new ReactiveClassicQueryExecutor<>(configuration(), connection, pojoMapper, pgTransaction);
     }
 
 }

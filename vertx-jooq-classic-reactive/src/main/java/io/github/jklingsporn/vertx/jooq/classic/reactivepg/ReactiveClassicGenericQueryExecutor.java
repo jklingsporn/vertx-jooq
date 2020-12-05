@@ -15,6 +15,7 @@ import org.jooq.Query;
 import org.jooq.exception.TooManyRowsException;
 
 import java.util.List;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -25,10 +26,16 @@ import java.util.stream.StreamSupport;
 public class ReactiveClassicGenericQueryExecutor extends AbstractReactiveQueryExecutor implements ReactiveQueryExecutor<Future<List<Row>>,Future<Row>,Future<Integer>>,ClassicQueryExecutor {
 
     protected final SqlClient delegate;
+    protected final Transaction transaction;
 
     public ReactiveClassicGenericQueryExecutor(Configuration configuration, SqlClient delegate) {
+        this(configuration, delegate, null);
+    }
+
+    public ReactiveClassicGenericQueryExecutor(Configuration configuration, SqlClient delegate, Transaction transaction) {
         super(configuration);
         this.delegate = delegate;
+        this.transaction = transaction;
     }
 
 
@@ -70,16 +77,19 @@ public class ReactiveClassicGenericQueryExecutor extends AbstractReactiveQueryEx
      * or <code>rollback</code> on the QueryExecutor returned.
      */
     public Future<? extends ReactiveClassicGenericQueryExecutor> beginTransaction(){
-        if(delegate instanceof Transaction){
-            throw new IllegalStateException("Already in transaction");
+        if(transaction!=null){
+            return Future.failedFuture(new IllegalStateException("Already in transaction"));
         }
-        Promise<Transaction> transactionPromise = Promise.promise();
-        ((Pool) delegate).begin(transactionPromise);
-        return transactionPromise.future().map(newInstance());
+        if (!(delegate instanceof Pool)) {
+           return Future.failedFuture(new IllegalStateException("pool not given"));
+        }
+        Pool pool = (Pool)delegate;
+        return pool.getConnection()
+            .compose(conn-> conn.begin().map(newInstance(conn)));
     }
 
-    protected Function<Transaction, ? extends ReactiveClassicGenericQueryExecutor> newInstance() {
-        return transaction -> new ReactiveClassicGenericQueryExecutor(configuration(),transaction);
+    protected Function<Transaction, ? extends ReactiveClassicGenericQueryExecutor> newInstance(SqlClient connection) {
+        return transaction -> new ReactiveClassicGenericQueryExecutor(configuration(), connection, transaction);
     }
 
     /**
@@ -88,12 +98,10 @@ public class ReactiveClassicGenericQueryExecutor extends AbstractReactiveQueryEx
      * @throws IllegalStateException if not called <code>beginTransaction</code> before.
      */
     public Future<Void> commit(){
-        if(!(delegate instanceof Transaction)){
-            throw new IllegalStateException("Not in transaction");
+        if(transaction==null){
+            return Future.failedFuture(new IllegalStateException("Not in transaction"));
         }
-        Promise<Void> commit = Promise.promise();
-        ((Transaction) delegate).commit(commit);
-        return commit.future();
+        return transaction.commit().compose(v->delegate.close());
     }
 
     /**
@@ -102,12 +110,10 @@ public class ReactiveClassicGenericQueryExecutor extends AbstractReactiveQueryEx
      * @throws IllegalStateException if not called <code>beginTransaction</code> before.
      */
     public Future<Void> rollback(){
-        if(!(delegate instanceof Transaction)){
-            throw new IllegalStateException("Not in transaction");
-        }
-        Promise<Void> commit = Promise.promise();
-        ((Transaction) delegate).rollback(commit);
-        return commit.future();
+	    if(transaction==null){
+		    return Future.failedFuture(new IllegalStateException("Not in transaction"));
+	    }
+	    return transaction.rollback();
     }
 
     /**

@@ -100,7 +100,7 @@ public class SomethingDaoTest extends ClassicTestBase<Something, Integer, Long, 
                                         return null;
                                     });
                         }))
-                .setHandler(countdownLatchHandler(latch))
+                .onComplete(countdownLatchHandler(latch))
         ;
         await(latch);
     }

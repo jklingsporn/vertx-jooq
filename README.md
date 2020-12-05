@@ -3,7 +3,7 @@ A [jOOQ](http://www.jooq.org/)-CodeGenerator to create [vertx](http://vertx.io/)
 Perform all CRUD-operations asynchronously and convert your POJOs from/into a `io.vertx.core.json.JsonObject` using the API and
 driver of your choice.
 
-## release 5.2.1
+## release 6.0.0
 The following dependencies have been upgraded:
 - upgrade junit to 4.13.1
 - upgrade vertx to 3.9.4
@@ -34,13 +34,10 @@ Before you start generating code using vertx-jooq, you have to answer these ques
 When you made your choice, you can start to configure the code-generator. This can be either done programmatically or
  using a maven- / gradle-plugin (recommended way). Please check the documentation in the module of the API of your choice how to set it up:
 
-- [`vertx-jooq-classic-async`](vertx-jooq-classic-async)
 - [`vertx-jooq-classic-jdbc`](vertx-jooq-classic-jdbc)
 - [`vertx-jooq-classic-reactive`](vertx-jooq-classic-reactive)
-- [`vertx-jooq-rx-async`](vertx-jooq-rx-async)
 - [`vertx-jooq-rx-jdbc`](vertx-jooq-rx-jdbc)
 - [`vertx-jooq-rx-reactive`](vertx-jooq-rx-reactive)
-- [`vertx-jooq-completablefuture-async`](vertx-jooq-completablefuture-async)
 - [`vertx-jooq-completablefuture-jdbc`](vertx-jooq-completablefuture-jdbc)
 - [`vertx-jooq-completablefuture-reactive`](vertx-jooq-completablefuture-reactive)
 
@@ -108,3 +105,16 @@ The generator will omit datatypes that it does not know, e.g. `java.sql.Timestam
 # disclaimer
 This library comes without any warranty - just take it or leave it. Also, the author is neither connected to the
 company behind vertx nor the one behind jOOQ.
+
+# How to run tests
+
+> I receive a "Too many open files" exception on **macOS**
+
+Increase your file limits:
+
+```
+sudo sysctl -w kern.maxfiles=5242880
+sudo sysctl -w kern.maxfilesperproc=524288
+ulimit -n 200000
+sudo launchctl limit maxfiles 524288 5242880
+```

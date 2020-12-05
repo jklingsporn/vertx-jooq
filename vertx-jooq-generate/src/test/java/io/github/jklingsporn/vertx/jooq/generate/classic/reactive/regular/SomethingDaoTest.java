@@ -114,7 +114,7 @@ public class SomethingDaoTest extends ClassicTestBase<Something, Integer, Long, 
                                         return null;
                                     });
                         }))
-                .setHandler(countdownLatchHandler(latch))
+                .onComplete(countdownLatchHandler(latch))
         ;
         await(latch);
     }
@@ -143,7 +143,7 @@ public class SomethingDaoTest extends ClassicTestBase<Something, Integer, Long, 
                                 .map(toVoid(Assert::assertNotNull))
                                 .compose(v -> dao.deleteById(pojo.getSomeid()))
                                 .map(toVoid(deleted -> Assert.assertEquals(1, deleted.intValue()))))
-                .setHandler(countdownLatchHandler(completionLatch));
+                .onComplete(countdownLatchHandler(completionLatch));
         await(completionLatch);
     }
 
@@ -157,29 +157,29 @@ public class SomethingDaoTest extends ClassicTestBase<Something, Integer, Long, 
                     Assert.assertNotNull(x);
                     Assert.assertEquals(IllegalStateException.class,x.getClass());
                     return null;
-                }).setHandler(countdownLatchHandler(latch));
+                }).onComplete(countdownLatchHandler(latch));
         await(latch);
     }
 
     @Test
     public void commitTransactionCanNotBeCalledOutsideTransaction(){
         CountDownLatch latch = new CountDownLatch(1);
-        try{
-            dao.queryExecutor().commit();
-        }catch (IllegalStateException x){
-            latch.countDown();
-        }
+//        try{
+            dao.queryExecutor().commit().onFailure(t->latch.countDown());
+//        }catch (IllegalStateException x){
+//            latch.countDown();
+//        }
         await(latch);
     }
 
     @Test
     public void rollbackTransactionCanNotBeCalledOutsideTransaction(){
         CountDownLatch latch = new CountDownLatch(1);
-        try{
-            dao.queryExecutor().rollback();
-        }catch (IllegalStateException x){
-            latch.countDown();
-        }
+//        try{
+            dao.queryExecutor().rollback().onFailure(t->latch.countDown());
+//        }catch (IllegalStateException x){
+//            latch.countDown();
+//        }
         await(latch);
     }
 
@@ -204,7 +204,7 @@ public class SomethingDaoTest extends ClassicTestBase<Something, Integer, Long, 
                                     Assert.assertTrue("Wrong exception. Got: " + x.getMessage(), x.getMessage().contains("Transaction already completed"));
                                     return null;
                                 })
-                ).setHandler(countdownLatchHandler(completionLatch));
+                ).onComplete(countdownLatchHandler(completionLatch));
         await(completionLatch);
     }
 
@@ -218,7 +218,7 @@ public class SomethingDaoTest extends ClassicTestBase<Something, Integer, Long, 
                                 .compose(v -> transactionQE.rollback())
                                 .compose(v -> dao.findOneById(pojo.getSomeid()))
                                 .map(toVoid(Assert::assertNull))
-                ).setHandler(countdownLatchHandler(completionLatch));
+                ).onComplete(countdownLatchHandler(completionLatch));
         await(completionLatch);
     }
 
@@ -243,7 +243,7 @@ public class SomethingDaoTest extends ClassicTestBase<Something, Integer, Long, 
                 .map(toVoid(Assert::assertNotNull))
                 .compose(v -> dao.deleteById(pojo.getSomeid()))
                 .map(toVoid(deleted -> Assert.assertEquals(1, deleted.intValue())))
-                .setHandler(countdownLatchHandler(completionLatch)
+                .onComplete(countdownLatchHandler(completionLatch)
                 );
         await(completionLatch);
     }

@@ -27,10 +27,17 @@ import java.util.stream.StreamSupport;
 public class ReactiveRXGenericQueryExecutor extends AbstractReactiveQueryExecutor implements ReactiveQueryExecutor<Single<List<Row>>,Single<Optional<Row>>,Single<Integer>>, RXQueryExecutor {
 
     protected final SqlClient delegate;
+    protected final Transaction transaction;
+
 
     public ReactiveRXGenericQueryExecutor(Configuration configuration, SqlClient delegate) {
+        this(configuration, delegate, null);
+    }
+
+    public ReactiveRXGenericQueryExecutor(Configuration configuration, SqlClient delegate, Transaction transaction) {
         super(configuration);
         this.delegate = delegate;
+        this.transaction = transaction;
     }
 
     @Override
@@ -91,14 +98,17 @@ public class ReactiveRXGenericQueryExecutor extends AbstractReactiveQueryExecuto
      * or <code>rollback</code> on the QueryExecutor returned.
      */
     public Single<? extends ReactiveRXGenericQueryExecutor> beginTransaction(){
-        if(delegate instanceof Transaction){
+        if(transaction != null){
             throw new IllegalStateException("Already in transaction");
         }
-        return ((Pool) delegate).rxBegin().map(newInstance());
+
+        Pool pool = (Pool) this.delegate;
+        return pool.rxGetConnection()
+            .flatMap(conn->conn.rxBegin().map(newInstance(conn)));
     }
 
-    protected io.reactivex.functions.Function<Transaction, ? extends ReactiveRXGenericQueryExecutor> newInstance() {
-        return transaction -> new ReactiveRXGenericQueryExecutor(configuration(),transaction);
+    protected io.reactivex.functions.Function<Transaction, ? extends ReactiveRXGenericQueryExecutor> newInstance(SqlConnection conn) {
+        return transaction -> new ReactiveRXGenericQueryExecutor(configuration(),conn,transaction);
     }
 
     /**
@@ -107,10 +117,10 @@ public class ReactiveRXGenericQueryExecutor extends AbstractReactiveQueryExecuto
      * @throws IllegalStateException if not called <code>beginTransaction</code> before.
      */
     public Completable commit(){
-        if(!(delegate instanceof Transaction)){
+        if(transaction==null){
             throw new IllegalStateException("Not in transaction");
         }
-        return ((Transaction) delegate).rxCommit();
+        return transaction.rxCommit();
     }
 
     /**
@@ -119,10 +129,10 @@ public class ReactiveRXGenericQueryExecutor extends AbstractReactiveQueryExecuto
      * @throws IllegalStateException if not called <code>beginTransaction</code> before.
      */
     public Completable rollback(){
-        if(!(delegate instanceof Transaction)){
+        if(transaction==null){
             throw new IllegalStateException("Not in transaction");
         }
-        return ((Transaction) delegate).rxRollback();
+        return transaction.rxRollback();
     }
 
     /**

@@ -346,10 +346,22 @@ public class VertxGeneratorBuilder {
                         }else if(javaType.equals(JsonObject.class.getName())
                                 || (column.getType().getConverter() != null && column.getType().getConverter().equalsIgnoreCase(JsonObjectConverter.class.getName()))
                                 || (column.getType().getBinding() != null && column.getType().getBinding().equalsIgnoreCase(ObjectToJsonObjectBinding.class.getName()))){
-                            out.tab(3).println("pojo.%s(row.get(io.vertx.core.json.JsonObject.class,row.getColumnIndex(\"%s\")));", setter, column.getName());
+                            // TODO: Not sure why these aren't converting using the bound converters
+                            out.tab(3).println("if (!(row instanceof io.vertx.mysqlclient.impl.MySQLRowImpl) && row.get(Object.class, \"%s\") instanceof io.vertx.core.json.JsonObject) {", column.getName(), column.getName());
+                            out.tab(4).println("pojo.%s(row.get(io.vertx.core.json.JsonObject.class,row.getColumnIndex(\"%s\")));", setter, column.getName());
+                            out.tab(3).println("} else {");
+                            out.tab(4).println("String %sString = row.getString(\"%s\");", column.getName(), column.getName());
+                            out.tab(4).println("pojo.%s(%sString == null ? null : new io.vertx.core.json.JsonObject(%sString));", setter, column.getName(), column.getName());
+                            out.tab(3).println("}");
                         }else if(javaType.equals(JsonArray.class.getName())
                                 || (column.getType().getConverter() != null && column.getType().getConverter().equalsIgnoreCase(JsonArrayConverter.class.getName()))){
-                            out.tab(3).println("pojo.%s(row.get(io.vertx.core.json.JsonArray.class,row.getColumnIndex(\"%s\")));", setter, column.getName());
+                            // TODO: Not sure why these aren't converting using the bound converters
+                            out.tab(3).println("if (!(row instanceof io.vertx.mysqlclient.impl.MySQLRowImpl) && row.get(Object.class, \"%s\") instanceof io.vertx.core.json.JsonArray) {", column.getName(), column.getName());
+                            out.tab(4).println("pojo.%s(row.get(io.vertx.core.json.JsonArray.class,row.getColumnIndex(\"%s\")));", setter, column.getName());
+                            out.tab(3).println("} else {");
+                            out.tab(4).println("String %sString = row.getString(\"%s\");", column.getName(), column.getName());
+                            out.tab(4).println("pojo.%s(%sString == null ? null : new io.vertx.core.json.JsonArray(%sString));", setter, column.getName(), column.getName());
+                            out.tab(3).println("}");
                         }else if(isEnumType) {
                             if(column.getType().getConverter() == null){
                                 out.tab(3).println("pojo.%s(java.util.Arrays.stream(%s.values()).filter(td -> td.getLiteral().equals(row.getString(\"%s\"))).findFirst().orElse(null));", setter, javaType, column.getName());

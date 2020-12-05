@@ -6,25 +6,19 @@
     <packaging>pom</packaging>
     <modules>
         <module>vertx-jooq-shared</module>
-        <module>vertx-jooq-shared-async</module>
         <module>vertx-jooq-classic</module>
         <module>vertx-jooq-classic-jdbc</module>
-        <module>vertx-jooq-classic-async</module>
-        <module>vertx-jooq-completablefuture</module>
-        <module>vertx-jooq-completablefuture-jdbc</module>
-        <module>vertx-jooq-completablefuture-async</module>
         <module>vertx-jooq-rx</module>
         <module>vertx-jooq-rx-jdbc</module>
-        <module>vertx-jooq-rx-async</module>
         <module>vertx-jooq-generate</module>
         <module>vertx-jooq-classic-reactive</module>
         <module>vertx-jooq-shared-reactive</module>
-        <module>vertx-jooq-completablefuture-reactive</module>
         <module>vertx-jooq-rx-reactive</module>
     </modules>
     <properties>
         <jooq.version>3.13.5</jooq.version>
-        <vertx.version>3.9.3</vertx.version>
+        <vertx.version>4.0.0.CR2</vertx.version>
+        <jackson.databind.version>2.11.3</jackson.databind.version>
         <hsqldb.version>2.5.0</hsqldb.version>
         <junit.version>4.13.1</junit.version>
         <guice.version>4.1.0</guice.version>
@@ -38,7 +32,7 @@
         <postgresql.driver.version>42.2.2</postgresql.driver.version>
     </properties>
     <groupId>io.github.jklingsporn</groupId>
-    <version>5.2.1</version>
+    <version>6.0.0</version>
     <artifactId>vertx-jooq</artifactId>
     <name>${project.groupId}:${project.artifactId}</name>
     <description>A jOOQ-CodeGenerator to create vertxified DAOs and POJOs</description>
@@ -61,6 +55,11 @@
             <groupId>io.vertx</groupId>
             <artifactId>vertx-core</artifactId>
             <version>${vertx.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.databind.version}</version>
         </dependency>
         <dependency>
             <groupId>org.jooq</groupId>

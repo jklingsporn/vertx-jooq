@@ -7,7 +7,6 @@ import io.github.jklingsporn.vertx.jooq.shared.internal.jdbc.JDBCQueryResult;
 import io.github.jklingsporn.vertx.jooq.shared.internal.jdbc.JDBCQueryExecutor;
 import io.reactivex.Single;
 import io.vertx.core.Handler;
-import io.vertx.reactivex.core.Future;
 import io.vertx.reactivex.core.Promise;
 import io.vertx.reactivex.core.Vertx;
 import org.jooq.*;

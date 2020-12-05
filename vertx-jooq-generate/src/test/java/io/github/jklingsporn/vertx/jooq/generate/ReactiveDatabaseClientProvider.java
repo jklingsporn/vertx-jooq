@@ -22,7 +22,7 @@ public class ReactiveDatabaseClientProvider {
 
     private ReactiveDatabaseClientProvider() {
         this.vertx = Vertx.vertx();
-        this.pgClient = PgPool.pool(vertx, getOptions(), new PoolOptions());
+        this.pgClient = PgPool.pool(vertx, getOptions(), new PoolOptions().setMaxSize(32));
         this.rxPgClient = new io.vertx.reactivex.sqlclient.Pool(pgClient);
     }
 
