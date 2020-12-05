@@ -1,5 +1,7 @@
 package io.github.jklingsporn.vertx.jooq.shared.postgres;
 
+import io.vertx.core.json.Json;
+import io.vertx.core.json.jackson.DatabindCodec;
 import io.vertx.core.spi.json.JsonCodec;
 import org.jooq.Converter;
 import org.jooq.JSON;
@@ -18,7 +20,7 @@ public class JSONToJsonPojoConverter<U> implements Converter<JSON, U> {
     }
 
     public JSONToJsonPojoConverter(Class<U> userType) {
-        this(userType,JsonCodec.INSTANCE);
+        this(userType, Json.CODEC);
     }
 
     @Override

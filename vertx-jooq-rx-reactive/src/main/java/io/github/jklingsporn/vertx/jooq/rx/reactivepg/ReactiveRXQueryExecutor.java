@@ -3,6 +3,7 @@ package io.github.jklingsporn.vertx.jooq.rx.reactivepg;
 import io.github.jklingsporn.vertx.jooq.shared.internal.QueryExecutor;
 import io.reactivex.Single;
 import io.vertx.reactivex.sqlclient.SqlClient;
+import io.vertx.reactivex.sqlclient.SqlConnection;
 import io.vertx.reactivex.sqlclient.Transaction;
 import io.vertx.sqlclient.Row;
 import org.jooq.*;
@@ -25,7 +26,11 @@ public class ReactiveRXQueryExecutor<R extends UpdatableRecord<R>,P,T> extends R
     }
 
     public ReactiveRXQueryExecutor(Configuration configuration, SqlClient delegate, Function<Row, P> pojoMapper) {
-        super(configuration,delegate);
+        this(configuration, delegate, pojoMapper, null);
+    }
+
+    public ReactiveRXQueryExecutor(Configuration configuration, SqlClient delegate, Function<Row, P> pojoMapper, Transaction transaction) {
+        super(configuration,delegate,transaction);
         this.pojoMapper = pojoMapper;
     }
 
@@ -49,8 +54,8 @@ public class ReactiveRXQueryExecutor<R extends UpdatableRecord<R>,P,T> extends R
 
 
     @Override
-    protected io.reactivex.functions.Function<Transaction, ? extends ReactiveRXGenericQueryExecutor> newInstance() {
-        return transaction-> new ReactiveRXQueryExecutor<R,P,T>(configuration(),transaction,pojoMapper);
+    protected io.reactivex.functions.Function<Transaction, ? extends ReactiveRXGenericQueryExecutor> newInstance(SqlConnection conn) {
+        return transaction-> new ReactiveRXQueryExecutor<R,P,T>(configuration(),conn,pojoMapper,transaction);
     }
 
     @Override

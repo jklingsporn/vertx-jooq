@@ -1,7 +1,6 @@
 package io.github.jklingsporn.vertx.jooq.rx.jdbc;
 
 import io.vertx.core.Handler;
-import io.vertx.reactivex.core.Future;
 import io.vertx.reactivex.core.Promise;
 import io.vertx.reactivex.core.Vertx;
 import io.reactivex.Observable;

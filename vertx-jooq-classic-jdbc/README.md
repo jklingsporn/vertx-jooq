@@ -3,7 +3,7 @@
 <dependency>
   <groupId>io.github.jklingsporn</groupId>
   <artifactId>vertx-jooq-classic-jdbc</artifactId>
-  <version>5.2.1</version>
+  <version>6.0.0</version>
 </dependency>
 ```
 
@@ -32,7 +32,7 @@ If you are new to jOOQ, I recommend to read the awesome [jOOQ documentation](htt
     <dependency>
       <groupId>io.github.jklingsporn</groupId>
       <artifactId>vertx-jooq-classic-jdbc</artifactId>
-      <version>5.2.1</version>
+      <version>6.0.0</version>
     </dependency>
   </dependencies>
   <build>
@@ -61,7 +61,7 @@ If you are new to jOOQ, I recommend to read the awesome [jOOQ documentation](htt
               <dependency>
                   <groupId>io.github.jklingsporn</groupId>
                   <artifactId>vertx-jooq-generate</artifactId>
-                  <version>5.2.1</version>
+                  <version>6.0.0</version>
               </dependency>
           </dependencies>
 
@@ -231,7 +231,7 @@ SomethingDao dao = new SomethingDao(configuration,vertx);
 
 //fetch something with ID 123...
 dao.findOneById(123)
-    .setHandler(res->{
+    .onComplete(res->{
     		if(res.succeeded()){
         		vertx.eventBus().send("sendSomething", res.result().toJson());
     		}else{
@@ -261,7 +261,7 @@ Future<Integer> updatedCustom = queryExecutor.execute(dslContext ->
 );
 
 //check for completion
-updatedCustom.setHandler(res->{
+updatedCustom.onComplete(res->{
 		if(res.succeeded()){
 				System.out.println("Rows updated: "+res.result());
 		}else{
