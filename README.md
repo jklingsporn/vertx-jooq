@@ -85,13 +85,16 @@ updatedCustom.onComplete(res->{
 });
 ```
 
-Gradle example:
+### Gradle example:
+
+Observe importing `vertx-core` into your build script to enable `JSONB` to `JsonObject` mapping.
 
 ```
 buildscript {
     ext {
         vertx_jooq_version = '6.0.0'
         postgresql_version = '42.2.16'
+        vertx_version = '4.0.0'
     }
     repositories {
         mavenLocal()
@@ -100,11 +103,14 @@ buildscript {
     dependencies {
         classpath "io.github.jklingsporn:vertx-jooq-generate:$vertx_jooq_version"
         classpath "org.postgresql:postgresql:$postgresql_version"
+        classpath "io.vertx:vertx-core:$vertx_version"
     }
 }
 
 import org.jooq.codegen.GenerationTool
 import org.jooq.meta.jaxb.*
+import io.github.jklingsporn.vertx.jooq.shared.postgres.JSONBToJsonObjectConverter
+import io.vertx.core.json.JsonObject;
 
 task generate {
     def configuration = new Configuration()
@@ -126,6 +132,10 @@ task generate {
                             .withIncludeSequences(true)
                             .withExcludes('schema_version')
                             .withIncludes('.*'))
+                            .withForcedTypes(new ForcedType()
+                                .withUserType(JsonObject.class.getName())
+                                .withConverter(JSONBToJsonObjectConverter.class.getName())
+                                .withIncludeTypes("jsonb"))
                     .withGenerate(new Generate()
                             .withDeprecated(false)
                             .withRecords(false)
