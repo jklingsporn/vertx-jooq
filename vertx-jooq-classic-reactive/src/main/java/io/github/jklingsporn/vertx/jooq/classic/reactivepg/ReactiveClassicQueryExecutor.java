@@ -20,7 +20,7 @@ public class ReactiveClassicQueryExecutor<R extends UpdatableRecord<R>,P,T> exte
     private final Function<Row,P> pojoMapper;
     private final BiFunction<Function<DSLContext, ? extends InsertResultStep<R>>, Function<Object, T>,Future<T>> insertReturningDelegate;
 
-    public ReactiveClassicQueryExecutor(Configuration configuration, SqlClient delegate, Function<Row, P> pojoMapper, Transaction transaction) {
+    ReactiveClassicQueryExecutor(Configuration configuration, SqlClient delegate, Function<Row, P> pojoMapper, Transaction transaction) {
         super(configuration, delegate, transaction);
         this.pojoMapper = pojoMapper;
         /*

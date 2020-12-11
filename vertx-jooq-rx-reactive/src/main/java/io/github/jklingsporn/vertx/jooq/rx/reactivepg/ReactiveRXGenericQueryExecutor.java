@@ -34,7 +34,7 @@ public class ReactiveRXGenericQueryExecutor extends AbstractReactiveQueryExecuto
         this(configuration, delegate, null);
     }
 
-    public ReactiveRXGenericQueryExecutor(Configuration configuration, SqlClient delegate, Transaction transaction) {
+    ReactiveRXGenericQueryExecutor(Configuration configuration, SqlClient delegate, Transaction transaction) {
         super(configuration);
         this.delegate = delegate;
         this.transaction = transaction;

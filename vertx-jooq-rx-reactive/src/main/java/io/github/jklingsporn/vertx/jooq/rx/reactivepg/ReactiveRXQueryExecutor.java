@@ -29,7 +29,7 @@ public class ReactiveRXQueryExecutor<R extends UpdatableRecord<R>,P,T> extends R
         this(configuration, delegate, pojoMapper, null);
     }
 
-    public ReactiveRXQueryExecutor(Configuration configuration, SqlClient delegate, Function<Row, P> pojoMapper, Transaction transaction) {
+    ReactiveRXQueryExecutor(Configuration configuration, SqlClient delegate, Function<Row, P> pojoMapper, Transaction transaction) {
         super(configuration,delegate,transaction);
         this.pojoMapper = pojoMapper;
     }

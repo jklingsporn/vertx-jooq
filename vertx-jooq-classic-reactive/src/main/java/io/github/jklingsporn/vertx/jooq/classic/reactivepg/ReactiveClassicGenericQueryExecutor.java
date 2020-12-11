@@ -5,17 +5,16 @@ import io.github.jklingsporn.vertx.jooq.shared.internal.QueryResult;
 import io.github.jklingsporn.vertx.jooq.shared.reactive.AbstractReactiveQueryExecutor;
 import io.github.jklingsporn.vertx.jooq.shared.reactive.ReactiveQueryExecutor;
 import io.github.jklingsporn.vertx.jooq.shared.reactive.ReactiveQueryResult;
-import io.vertx.core.Promise;
-import io.vertx.sqlclient.*;
 import io.vertx.core.Future;
+import io.vertx.core.Promise;
 import io.vertx.sqlclient.Row;
 import io.vertx.sqlclient.Transaction;
-import org.jooq.*;
+import io.vertx.sqlclient.*;
 import org.jooq.Query;
+import org.jooq.*;
 import org.jooq.exception.TooManyRowsException;
 
 import java.util.List;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -32,7 +31,7 @@ public class ReactiveClassicGenericQueryExecutor extends AbstractReactiveQueryEx
         this(configuration, delegate, null);
     }
 
-    public ReactiveClassicGenericQueryExecutor(Configuration configuration, SqlClient delegate, Transaction transaction) {
+    ReactiveClassicGenericQueryExecutor(Configuration configuration, SqlClient delegate, Transaction transaction) {
         super(configuration);
         this.delegate = delegate;
         this.transaction = transaction;
