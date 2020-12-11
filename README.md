@@ -5,13 +5,13 @@ driver of your choice.
 
 ## release 6.0.0
 The following dependencies have been upgraded:
-- upgrade vertx to 4.0.0.CR2
+- upgrade vertx to 4.0.0
 
 ## different needs, different apis
 ![What do you want](https://media.giphy.com/media/E87jjnSCANThe/giphy.gif)
 
 Before you start generating code using vertx-jooq, you have to answer these questions:
-- What API do you want to use? There are three options:
+- What API do you want to use? There are two options:
   - a `io.vertx.core.Future`-based API. This is `vertx-jooq-classic`.
   - a [rxjava2](https://github.com/ReactiveX/RxJava) based API. This is `vertx-jooq-rx`.
 - How do you want to communicate with the database? There are two options:
