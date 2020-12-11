@@ -17,7 +17,7 @@
     </modules>
     <properties>
         <jooq.version>3.13.5</jooq.version>
-        <vertx.version>4.0.0.CR2</vertx.version>
+        <vertx.version>4.0.0</vertx.version>
         <jackson.databind.version>2.11.3</jackson.databind.version>
         <hsqldb.version>2.5.0</hsqldb.version>
         <junit.version>4.13.1</junit.version>
