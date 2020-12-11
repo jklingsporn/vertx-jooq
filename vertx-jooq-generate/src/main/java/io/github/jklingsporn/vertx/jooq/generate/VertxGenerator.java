@@ -243,6 +243,8 @@ public abstract class VertxGenerator extends JavaGenerator {
             writeUnexpectedJsonValueTypeImport(out);
         }else if(generateJson && mode.equals(GeneratorStrategy.Mode.POJO)) {
             writeUnexpectedJsonValueTypeImport(out);
+        }else if(generateJson && mode.equals(GeneratorStrategy.Mode.RECORD)) {
+            writeUnexpectedJsonValueTypeImport(out);
         }
     }
 
