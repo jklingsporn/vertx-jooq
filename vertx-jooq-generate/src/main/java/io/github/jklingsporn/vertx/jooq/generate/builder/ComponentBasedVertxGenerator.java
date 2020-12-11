@@ -117,13 +117,13 @@ class ComponentBasedVertxGenerator extends VertxGenerator {
     protected boolean handleCustomTypeFromJson(TypedElementDefinition<?> column, String setter, String columnType, String javaMemberName, JavaWriter out) {
         if(column.getType().getConverter() != null){
             if(JsonObject.class.equals(getPgConverterFromType(columnType, column.getType().getConverter()))) {
-                out.tab(3).println("%s(%s.pgConverter().from(json.getJsonObject(\"%s\")));",
+                out.tab(2).println("%s(%s.pgConverter().from(json.getJsonObject(\"%s\")));",
                         setter,
                         VertxGeneratorBuilder.resolveConverterInstance(column.getType().getConverter(),column.getSchema(),this),
                         javaMemberName);
                 return true;
             }else if(JsonArray.class.equals(getPgConverterFromType(columnType, column.getType().getConverter()))) {
-                out.tab(3).println("%s(%s.pgConverter().from(json.getJsonArray(\"%s\")));",
+                out.tab(2).println("%s(%s.pgConverter().from(json.getJsonArray(\"%s\")));",
                         setter,
                         VertxGeneratorBuilder.resolveConverterInstance(column.getType().getConverter(),column.getSchema(),this),
                         javaMemberName);

@@ -6,7 +6,6 @@ package generated.classic.jdbc.custom.vertx.tables.records;
 
 import generated.classic.jdbc.custom.vertx.tables.Somethingcomposite;
 
-import io.github.jklingsporn.vertx.jooq.shared.UnexpectedJsonValueType;
 import io.github.jklingsporn.vertx.jooq.shared.internal.VertxPojo;
 import io.vertx.core.json.JsonObject;
 
@@ -23,7 +22,7 @@ import org.jooq.impl.UpdatableRecordImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class SomethingcompositeRecord extends UpdatableRecordImpl<SomethingcompositeRecord> implements VertxPojo, Record3<Integer, Integer, JsonObject> {
 
-    private static final long serialVersionUID = 1639605990;
+    private static final long serialVersionUID = -83877513;
 
     /**
      * Setter for <code>VERTX.SOMETHINGCOMPOSITE.SOMEID</code>.
@@ -193,21 +192,9 @@ public class SomethingcompositeRecord extends UpdatableRecordImpl<Somethingcompo
 
     @Override
     public SomethingcompositeRecord fromJson(io.vertx.core.json.JsonObject json) {
-        try {
-            setSomeid(json.getInteger("SOMEID"));
-        } catch (java.lang.ClassCastException e) {
-            throw new UnexpectedJsonValueType("SOMEID","java.lang.Integer",e);
-        }
-        try {
-            setSomesecondid(json.getInteger("SOMESECONDID"));
-        } catch (java.lang.ClassCastException e) {
-            throw new UnexpectedJsonValueType("SOMESECONDID","java.lang.Integer",e);
-        }
-        try {
-            setSomejsonobject(json.getJsonObject("SOMEJSONOBJECT"));
-        } catch (java.lang.ClassCastException e) {
-            throw new UnexpectedJsonValueType("SOMEJSONOBJECT","io.vertx.core.json.JsonObject",e);
-        }
+        setOrThrow(this::setSomeid,json::getInteger,"SOMEID","java.lang.Integer");
+        setOrThrow(this::setSomesecondid,json::getInteger,"SOMESECONDID","java.lang.Integer");
+        setOrThrow(this::setSomejsonobject,json::getJsonObject,"SOMEJSONOBJECT","io.vertx.core.json.JsonObject");
         return this;
     }
 

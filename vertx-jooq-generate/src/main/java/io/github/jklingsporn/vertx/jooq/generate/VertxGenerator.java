@@ -4,6 +4,7 @@ import io.github.jklingsporn.vertx.jooq.shared.JsonArrayConverter;
 import io.github.jklingsporn.vertx.jooq.shared.JsonObjectConverter;
 import io.github.jklingsporn.vertx.jooq.shared.ObjectToJsonObjectBinding;
 import io.github.jklingsporn.vertx.jooq.shared.internal.AbstractVertxDAO;
+import io.github.jklingsporn.vertx.jooq.shared.internal.VertxPojo;
 import io.github.jklingsporn.vertx.jooq.shared.postgres.PgConverter;
 import io.vertx.core.Vertx;
 import io.vertx.core.impl.Arguments;
@@ -18,7 +19,6 @@ import org.jooq.tools.StringUtils;
 
 import java.io.File;
 import java.time.*;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -239,7 +239,15 @@ public abstract class VertxGenerator extends JavaGenerator {
         if(mode.equals(GeneratorStrategy.Mode.DAO)){
             out.println("import %s;",List.class.getName());
             writeDAOImports(out);
+        }else if(generateJson && generateInterfaces() && mode.equals(GeneratorStrategy.Mode.INTERFACE)) {
+            writeUnexpectedJsonValueTypeImport(out);
+        }else if(generateJson && mode.equals(GeneratorStrategy.Mode.POJO)) {
+            writeUnexpectedJsonValueTypeImport(out);
         }
+    }
+
+    private void writeUnexpectedJsonValueTypeImport(JavaWriter out){
+        out.println("import static %s.*;", VertxPojo.class.getName());
     }
 
     @Override
@@ -262,54 +270,51 @@ public abstract class VertxGenerator extends JavaGenerator {
             String setter = getStrategy().getJavaSetterName(column, GeneratorStrategy.Mode.INTERFACE);
             String columnType = getJavaType(column.getType());
             String javaMemberName = getJsonKeyName(column);
-            out.tab(2).println("try {");            
+            String jsonValueExtractor = null;
             if(handleCustomTypeFromJson(column, setter, columnType, javaMemberName, out)) {
                 //handled by user
             }else if(isType(columnType, Integer.class)){
-                out.tab(3).println("%s(json.getInteger(\"%s\"));", setter, javaMemberName);
+                jsonValueExtractor = "json::getInteger";
             }else if(isType(columnType, Short.class)){
-                out.tab(3).println("%s(json.getInteger(\"%s\")==null?null:json.getInteger(\"%s\").shortValue());", setter, javaMemberName, javaMemberName);
+                jsonValueExtractor = "key -> {Integer i = json.getInteger(key); return i==null?null:i.shortValue();}";
             }else if(isType(columnType, Byte.class)){
-                out.tab(3).println("%s(json.getInteger(\"%s\")==null?null:json.getInteger(\"%s\").byteValue());", setter, javaMemberName, javaMemberName);
+                jsonValueExtractor = "key -> {Integer i = json.getInteger(key); return i==null?null:i.byteValue();}";
             }else if(isType(columnType, Long.class)){
-                out.tab(3).println("%s(json.getLong(\"%s\"));", setter, javaMemberName);
+                jsonValueExtractor = "json::getLong";
             }else if(isType(columnType, Float.class)){
-                out.tab(3).println("%s(json.getFloat(\"%s\"));", setter, javaMemberName);
+                jsonValueExtractor = "json::getFloat";
             }else if(isType(columnType, Double.class)){
-                out.tab(3).println("%s(json.getDouble(\"%s\"));", setter, javaMemberName);
+                jsonValueExtractor = "json::getDouble";
             }else if(isType(columnType, Boolean.class)){
-                out.tab(3).println("%s(json.getBoolean(\"%s\"));", setter, javaMemberName);
+                jsonValueExtractor = "json::getBoolean";
             }else if(isType(columnType, String.class)){
-                out.tab(3).println("%s(json.getString(\"%s\"));", setter, javaMemberName);
+                jsonValueExtractor = "json::getString";
             }else if(columnType.equals(byte.class.getName()+"[]")){
-                out.tab(3).println("%s(json.getBinary(\"%s\"));", setter, javaMemberName);
+                jsonValueExtractor = "json::getBinary";
             }else if(isType(columnType,Instant.class)){
-                out.tab(3).println("%s(json.getInstant(\"%s\"));", setter, javaMemberName);
+                jsonValueExtractor = "json::getInstant";
             }else if(isJavaTimeType(columnType)){
-                out.tab(3).println("String %sString = json.getString(\"%s\");", javaMemberName, javaMemberName);
-                out.tab(3).println("%s(%sString == null?null:%s.parse(%sString));", setter, javaMemberName, columnType, javaMemberName);
+                jsonValueExtractor = String.format("key -> {String s = json.getString(key); return s==null?null:%s.parse(s);}",columnType);
             }else if(isEnum(table, column)) {
                 //if this is an enum from the database (no converter) it has getLiteral defined
                 if(column.getType().getConverter() == null){
-                    out.tab(3).println("%s(java.util.Arrays.stream(%s.values()).filter(td -> td.getLiteral().equals(json.getString(\"%s\"))).findFirst().orElse(null));", setter, columnType, javaMemberName);
+                    jsonValueExtractor = String.format("key -> java.util.Arrays.stream(%s.values()).filter(td -> td.getLiteral().equals(json.getString(key))).findFirst().orElse(null)",columnType);
                 //otherwise just use valueOf
                 }else{
-                    out.tab(3).println("String %sString = json.getString(\"%s\");", javaMemberName, javaMemberName);
-                    out.tab(3).println("%s(%sString == null ? null : %s.valueOf(%sString));", setter, javaMemberName, columnType,javaMemberName);
+                    jsonValueExtractor = String.format("key -> {String s = json.getString(key); return s==null?null:%s.valueOf(s);}",columnType);
                 }
             }else if((column.getType().getConverter() != null && isType(column.getType().getConverter(),JsonObjectConverter.class)) ||
                     (column.getType().getBinding() != null && isType(column.getType().getBinding(),ObjectToJsonObjectBinding.class))){
-                out.tab(3).println("%s(json.getJsonObject(\"%s\"));", setter, javaMemberName);
+                jsonValueExtractor = "json::getJsonObject";
             }else if(column.getType().getConverter() != null && isType(column.getType().getConverter(),JsonArrayConverter.class)){
-                out.tab(3).println("%s(json.getJsonArray(\"%s\"));", setter, javaMemberName);
+                jsonValueExtractor = "json::getJsonArray";
             }else{
                 logger.warn(String.format("Omitting unrecognized type %s for column %s in table %s!",columnType,column.getName(),table.getName()));
-                out.tab(3).println(String.format("// Omitting unrecognized type %s for column %s!",columnType,column.getName()));
+                out.tab(2).println(String.format("// Omitting unrecognized type %s for column %s!",columnType,column.getName()));
             }
-            out.ref("io.github.jklingsporn.vertx.jooq.shared.UnexpectedJsonValueType");
-            out.tab(2).println("} catch (java.lang.ClassCastException e) {");
-            out.tab(3).println("throw new UnexpectedJsonValueType(\"%s\",\"%s\",e);", javaMemberName, columnType);
-            out.tab(2).println("}");
+            if(jsonValueExtractor != null){
+                out.tab(2).println("setOrThrow(this::%s,%s,\"%s\",\"%s\");", setter, jsonValueExtractor, javaMemberName, columnType);
+            }
         }
         out.tab(2).println("return this;");
         out.tab(1).println("}");
