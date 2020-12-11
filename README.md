@@ -4,8 +4,15 @@ Perform all CRUD-operations asynchronously and convert your POJOs from/into a `i
 driver of your choice.
 
 ## release 6.0.0
-The following dependencies have been upgraded:
-- upgrade vertx to 4.0.0
+- Upgrade vertx to 4.0.0. A big shout out to vertx-jooq user [doctorpangloss](https://github.com/doctorpangloss) for the
+groundwork. 
+- Removal of the async driver. There is actually no reason to use this driver over the reactive driver from vertx. It 
+  just adds confusion for initial users and worsens maintainability.
+- Removal of the `CompletableFuture`-API. When this project was started, the `io.vertx.core.Future` was in a bad shape. 
+Many methods for composition and error handling were missing and made it hard to actually use. In the past couple 
+  of months this has been fixed - making the `io.vertx.core.Future`-API a first-class choice. In case you really need 
+  the interoperability with `CompletionStage/CompletableFuture` just call `io.vertx.core.Future#toCompletionStage()` to 
+  convert it into, or the static method Future.createFromCompletionStage to convert from a `CompletionStage`.
 
 ## different needs, different apis
 ![What do you want](https://media.giphy.com/media/E87jjnSCANThe/giphy.gif)
@@ -16,7 +23,7 @@ Before you start generating code using vertx-jooq, you have to answer these ques
   - a [rxjava2](https://github.com/ReactiveX/RxJava) based API. This is `vertx-jooq-rx`.
 - How do you want to communicate with the database? There are two options:
   - Using good old JDBC, check for the modules with `-jdbc` suffix.
-  - Using this [reactive](https://github.com/reactiverse/reactive-pg-client) postgres database driver, check for `-reactive` modules.
+  - Using this [reactive](https://github.com/eclipse-vertx/vertx-sql-client) database driver, check for `-reactive` modules.
 - Advanced configuration:
   - Support for [Guice](https://github.com/google/guice) dependency injection
   - Generation of `io.vertx.codegen.annotations.@DataObject`-annotations for your POJOs
