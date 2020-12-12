@@ -1,8 +1,5 @@
 package io.github.jklingsporn.vertx.jooq.generate.builder;
 
-import io.github.jklingsporn.vertx.jooq.shared.JsonArrayConverter;
-import io.github.jklingsporn.vertx.jooq.shared.JsonObjectConverter;
-import io.github.jklingsporn.vertx.jooq.shared.ObjectToJsonObjectBinding;
 import io.github.jklingsporn.vertx.jooq.shared.internal.AbstractVertxDAO;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.json.JsonArray;
@@ -11,7 +8,6 @@ import org.jooq.Configuration;
 import org.jooq.SQLDialect;
 import org.jooq.codegen.GeneratorStrategy;
 import org.jooq.codegen.JavaWriter;
-import org.jooq.impl.SQLDataType;
 import org.jooq.meta.ColumnDefinition;
 import org.jooq.meta.SchemaDefinition;
 import org.jooq.meta.TableDefinition;
@@ -343,38 +339,20 @@ public class VertxGeneratorBuilder {
                             } catch (ClassNotFoundException e) {
                                 ComponentBasedVertxGenerator.logger.error(e.getMessage(), e);
                             }
-                        }else if(javaType.equals(JsonObject.class.getName())
-                                || (column.getType().getConverter() != null && column.getType().getConverter().equalsIgnoreCase(JsonObjectConverter.class.getName()))
-                                || (column.getType().getBinding() != null && column.getType().getBinding().equalsIgnoreCase(ObjectToJsonObjectBinding.class.getName()))){
-                            // TODO: Not sure why these aren't converting using the bound converters
-                            out.tab(3).println("try {");
-                            // retrieving object is only supported in Postgres
-                            out.tab(4).println("if (row.get(Object.class, \"%s\") instanceof io.vertx.core.json.JsonObject) {", column.getName(), column.getName());
-                            out.tab(5).println("pojo.%s(row.get(io.vertx.core.json.JsonObject.class,row.getColumnIndex(\"%s\")));", setter, column.getName());
-                            out.tab(4).println("} else {");
-                            out.tab(5).println("String %sString = row.getString(\"%s\");", column.getName(), column.getName());
-                            out.tab(5).println("pojo.%s(%sString == null ? null : new io.vertx.core.json.JsonObject(%sString));", setter, column.getName(), column.getName());
-                            out.tab(4).println("}");
-                            out.tab(3).println("} catch (UnsupportedOperationException t) {");
-                            // is io.vertx.mysqlclient.impl.MySQLRowImpl
-                            out.tab(4).println("String %sString = row.getString(\"%s\");", column.getName(), column.getName());
-                            out.tab(4).println("pojo.%s(%sString == null ? null : new io.vertx.core.json.JsonObject(%sString));", setter, column.getName(), column.getName());
-                            out.tab(3).println("}");
-                        }else if(javaType.equals(JsonArray.class.getName())
-                                || (column.getType().getConverter() != null && column.getType().getConverter().equalsIgnoreCase(JsonArrayConverter.class.getName()))){
-                            out.tab(3).println("try {");
-                            // retrieving object is only supported in Postgres
-                            out.tab(4).println("if (row.get(Object.class, \"%s\") instanceof io.vertx.core.json.JsonArray) {", column.getName(), column.getName());
-                            out.tab(5).println("pojo.%s(row.get(io.vertx.core.json.JsonArray.class,row.getColumnIndex(\"%s\")));", setter, column.getName());
-                            out.tab(4).println("} else {");
-                            out.tab(5).println("String %sString = row.getString(\"%s\");", column.getName(), column.getName());
-                            out.tab(5).println("pojo.%s(%sString == null ? null : new io.vertx.core.json.JsonArray(%sString));", setter, column.getName(), column.getName());
-                            out.tab(4).println("}");
-                            out.tab(3).println("} catch (UnsupportedOperationException t) {");
-                            // is io.vertx.mysqlclient.impl.MySQLRowImpl
-                            out.tab(4).println("String %sString = row.getString(\"%s\");", column.getName(), column.getName());
-                            out.tab(4).println("pojo.%s(%sString == null ? null : new io.vertx.core.json.JsonArray(%sString));", setter, column.getName(), column.getName());
-                            out.tab(3).println("}");
+                        }else if(javaType.equals(JsonObject.class.getName())){
+                            if(base.isJson(column.getType())){
+                                out.tab(3).println("pojo.%s(row.getJsonObject(\"%s\"));", setter, column.getName());
+                            }else{
+                                out.tab(3).println("String %sString = row.getString(\"%s\");", column.getName(), column.getName());
+                                out.tab(3).println("pojo.%s(%sString == null ? null : new %s(%sString));", setter, column.getName(), JsonObject.class.getName(),column.getName());
+                            }
+                        }else if(javaType.equals(JsonArray.class.getName())){
+                            if(base.isJson(column.getType())){
+                                out.tab(3).println("pojo.%s(row.getJsonArray(\"%s\"));", setter, column.getName());
+                            }else{
+                                out.tab(3).println("String %sString = row.getString(\"%s\");", column.getName(), column.getName());
+                                out.tab(3).println("pojo.%s(%sString == null ? null : new %s(%sString));", setter, column.getName(), JsonArray.class.getName(),column.getName());
+                            }
                         }else if(isEnumType) {
                             if(column.getType().getConverter() == null){
                                 out.tab(3).println("pojo.%s(java.util.Arrays.stream(%s.values()).filter(td -> td.getLiteral().equals(row.getString(\"%s\"))).findFirst().orElse(null));", setter, javaType, column.getName());
@@ -382,21 +360,32 @@ public class VertxGeneratorBuilder {
                                 out.tab(3).println("String %sString = row.getString(\"%s\");", column.getName(), column.getName());
                                 out.tab(3).println("pojo.%s(%sString == null ? null : %s.valueOf(%sString));", setter, column.getName(), javaType,column.getName());
                             }
-                        }else if(column.getType().getConverter() != null && (
-                                column.getType().getType().equalsIgnoreCase(SQLDataType.JSONB.getTypeName())
-                                        || column.getType().getType().equalsIgnoreCase(SQLDataType.JSON.getTypeName()))){
-                            out.tab(3).println("pojo.%s(%s.pgConverter().from(row.get(io.vertx.core.json.JsonObject.class,row.getColumnIndex(\"%s\"))));",
-                                    setter,
-                                    resolveConverterInstance(column.getType().getConverter(),schema,base),
-                                    column.getName());
-                        }else if(column.getType().getBinding() != null&& (
-                                column.getType().getType().equalsIgnoreCase(SQLDataType.JSONB.getTypeName())
-                                        || column.getType().getType().equalsIgnoreCase(SQLDataType.JSON.getTypeName()))){
-                            out.tab(3).println("pojo.%s(%s.converter().pgConverter().from(row.get(io.vertx.core.json.JsonObject.class,row.getColumnIndex(\"%s\"))));",
-                                    setter,
-                                    resolveConverterInstance(column.getType().getBinding(),schema,base),
-                                    column.getName());
-                        }else if(isByteArray){
+                        }else if(column.getType().getConverter() != null ){
+                            //assuming javaType is a POJO. We implicitly excluded JsonObject and JsonArray above (they both have a converter too)
+                            if(base.isJson(column.getType())){
+                                //we are assuming the converter is a PgConverter
+                                out.tab(3).println("pojo.%s(%s.pgConverter().from(row.getJsonObject(\"%s\")));",
+                                        setter,
+                                        resolveConverterInstance(column.getType().getConverter(),schema,base),
+                                        column.getName());
+                            }else{
+                                //we have a converter but don't know how to extract it from the Row
+                                ComponentBasedVertxGenerator.logger.warn(String.format("Omitting unrecognized converter %s (%s) for column %s in table %s!",column.getType().getConverter().getClass().getName(),javaType,column.getName(),table.getName()));
+                                out.tab(3).println("//Omitting unrecognized converter %s (%s) for column %s in table %s!",column.getType().getConverter().getClass().getName(),javaType,column.getName(),table.getName());
+                            }
+                        }else if(column.getType().getBinding() != null){
+                            //assuming javaType is a POJO. We implicitly excluded JsonObject and JsonArray above (they both have a converter too)
+                            if(base.isJson(column.getType())){
+                                out.tab(3).println("pojo.%s(%s.converter().pgConverter().from(row.getJsonObject(\"%s\")));",
+                                        setter,
+                                        resolveConverterInstance(column.getType().getBinding(),schema,base),
+                                        column.getName());
+                            }else{
+                                //we have a binding but don't know how to extract it from the Row
+                                ComponentBasedVertxGenerator.logger.warn(String.format("Omitting unrecognized binding %s (%s) for column %s in table %s!",column.getType().getBinding().getClass().getName(),javaType,column.getName(),table.getName()));
+                                out.tab(3).println("//Omitting unrecognized binding %s (%s) for column %s in table %s!",column.getType().getBinding().getClass().getName(),javaType,column.getName(),table.getName());
+                            }
+                    }else if(isByteArray){
                             out.tab(3).println("io.vertx.core.buffer.Buffer %sBuffer = row.getBuffer(\"%s\");", column.getName(), column.getName());
                             out.tab(3).println("pojo.%s(%sBuffer == null?null:%sBuffer.getBytes());", setter, column.getName(), column.getName());
                         }else{

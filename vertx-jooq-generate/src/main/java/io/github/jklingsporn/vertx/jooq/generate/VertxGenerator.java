@@ -2,6 +2,7 @@ package io.github.jklingsporn.vertx.jooq.generate;
 
 import io.github.jklingsporn.vertx.jooq.shared.JsonArrayConverter;
 import io.github.jklingsporn.vertx.jooq.shared.JsonObjectConverter;
+import io.github.jklingsporn.vertx.jooq.shared.ObjectToJsonArrayBinding;
 import io.github.jklingsporn.vertx.jooq.shared.ObjectToJsonObjectBinding;
 import io.github.jklingsporn.vertx.jooq.shared.internal.AbstractVertxDAO;
 import io.github.jklingsporn.vertx.jooq.shared.internal.VertxPojo;
@@ -13,6 +14,7 @@ import org.jooq.Record;
 import org.jooq.codegen.GeneratorStrategy;
 import org.jooq.codegen.JavaGenerator;
 import org.jooq.codegen.JavaWriter;
+import org.jooq.impl.SQLDataType;
 import org.jooq.meta.*;
 import org.jooq.tools.JooqLogger;
 import org.jooq.tools.StringUtils;
@@ -308,7 +310,8 @@ public abstract class VertxGenerator extends JavaGenerator {
             }else if((column.getType().getConverter() != null && isType(column.getType().getConverter(),JsonObjectConverter.class)) ||
                     (column.getType().getBinding() != null && isType(column.getType().getBinding(),ObjectToJsonObjectBinding.class))){
                 jsonValueExtractor = "json::getJsonObject";
-            }else if(column.getType().getConverter() != null && isType(column.getType().getConverter(),JsonArrayConverter.class)){
+            }else if((column.getType().getConverter() != null && isType(column.getType().getConverter(),JsonArrayConverter.class)) ||
+                    (column.getType().getBinding() != null && isType(column.getType().getBinding(), ObjectToJsonArrayBinding.class))){
                 jsonValueExtractor = "json::getJsonArray";
             }else{
                 logger.warn(String.format("Omitting unrecognized type %s for column %s in table %s!",columnType,column.getName(),table.getName()));
@@ -326,6 +329,10 @@ public abstract class VertxGenerator extends JavaGenerator {
     public boolean isEnum(TableDefinition table, TypedElementDefinition<?> column) {
         return table.getDatabase().getEnum(table.getSchema(), column.getType().getUserType()) != null ||
                 (column.getType().getConverter()!= null && column.getType().getConverter().endsWith("EnumConverter"));
+    }
+
+    public boolean isJson(DataTypeDefinition columnType) {
+        return columnType.getType().equals(SQLDataType.JSON.getTypeName()) || columnType.getType().equals(SQLDataType.JSONB.getTypeName());
     }
 
     protected boolean isType(String columnType, Class<?> clazz) {
