@@ -21,10 +21,7 @@ import org.jooq.tools.StringUtils;
 
 import java.io.File;
 import java.time.*;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.function.Function;
 
 /**
@@ -275,6 +272,7 @@ public abstract class VertxGenerator extends JavaGenerator {
             String columnType = getJavaType(column.getType());
             String javaMemberName = getJsonKeyName(column);
             String jsonValueExtractor = null;
+            //converters are handled in ComponentBasedVertxGenerator
             if(handleCustomTypeFromJson(column, setter, columnType, javaMemberName, out)) {
                 //handled by user
             }else if(isType(columnType, Integer.class)){
@@ -313,6 +311,9 @@ public abstract class VertxGenerator extends JavaGenerator {
             }else if((column.getType().getConverter() != null && isType(column.getType().getConverter(),JsonArrayConverter.class)) ||
                     (column.getType().getBinding() != null && isType(column.getType().getBinding(), ObjectToJsonArrayBinding.class))){
                 jsonValueExtractor = "json::getJsonArray";
+            }else if(isType(columnType,List.class)){
+                String genericType = columnType.substring(columnType.indexOf("<")+1,columnType.lastIndexOf(">"));
+                jsonValueExtractor = String.format("key -> {io.vertx.core.json.JsonArray arr = json.getJsonArray(key); return arr==null?null:new java.util.ArrayList<%s>(arr.getList());}",genericType);
             }else{
                 logger.warn(String.format("Omitting unrecognized type %s for column %s in table %s!",columnType,column.getName(),table.getName()));
                 out.tab(2).println(String.format("// Omitting unrecognized type %s for column %s!",columnType,column.getName()));
@@ -336,15 +337,16 @@ public abstract class VertxGenerator extends JavaGenerator {
     }
 
     protected boolean isType(String columnType, Class<?> clazz) {
-        return columnType.equals(clazz.getName());
+        int i = columnType.indexOf("<");
+        return (i==-1?columnType:columnType.substring(0, i )).equals(clazz.getName());
     }
 
-    protected Class<?> getPgConverterFromType(String columnType, String converter) {
+    protected Class<?> tryGetPgConverterFromType(String columnType, String converter) {
         try {
             Class<?> converterClazz = Class.forName(converter);
             if(PgConverter.class.isAssignableFrom(converterClazz)){
                 PgConverter<?,?,?> converterInstance = (PgConverter<?, ?, ?>) converterClazz.newInstance();
-                return converterInstance.pgConverter().fromType();
+                return converterInstance.rowConverter().fromType();
             }
             return null;
         } catch (ClassNotFoundException e) {
@@ -382,6 +384,8 @@ public abstract class VertxGenerator extends JavaGenerator {
                 out.tab(2).println("json.put(\"%s\",%s());", getJsonKeyName(column),getter);
             }else if(isJavaTimeType(columnType)){
                 out.tab(2).println("json.put(\"%s\",%s()==null?null:%s().toString());", getJsonKeyName(column),getter,getter);
+            }else if(isCollectionType(columnType)){
+                out.tab(2).println("json.put(\"%s\",%s()==null?null: new io.vertx.core.json.JsonArray(%s()));", getJsonKeyName(column),getter,getter);
             }else{
                 logger.warn(String.format("Omitting unrecognized type %s for column %s in table %s!",columnType,column.getName(),table.getName()));
                 out.tab(2).println(String.format("// Omitting unrecognized type %s for column %s!",columnType,column.getName()));
@@ -419,6 +423,11 @@ public abstract class VertxGenerator extends JavaGenerator {
                 || isType(columnType, ZonedDateTime.class) || isType(columnType, OffsetDateTime.class)
                 || isType(columnType, LocalDate.class);
     }
+
+    private boolean isCollectionType(String columnType){
+        return isType(columnType,Collection.class) || isType(columnType,List.class) || isType(columnType,Set.class);
+    }
+
 
     @Override
     public void setStrategy(GeneratorStrategy strategy) {

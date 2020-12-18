@@ -58,7 +58,7 @@ public abstract class AbstractReactiveQueryExecutor extends AbstractQueryExecuto
             return Buffer.buffer(bytes);
         }
         if(param.getBinding().converter() instanceof PgConverter){
-            return ((PgConverter)param.getBinding().converter()).pgConverter().to(param.getValue());
+            return ((PgConverter)param.getBinding().converter()).rowConverter().to(param.getValue());
         }
         return param.getBinding().converter().to(param.getValue());
     }

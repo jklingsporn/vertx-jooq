@@ -32,8 +32,8 @@ abstract class AbstractDatabaseConfigurationProvider {
         ForcedType jsonObjectType = new ForcedType();
         jsonObjectType.setUserType(JsonObject.class.getName());
         jsonObjectType.setConverter(JsonObjectConverter.class.getName());
-        jsonObjectType.setExpression("someJsonObject");
-        jsonObjectType.setTypes(".*");
+        jsonObjectType.setIncludeExpression("someJsonObject");
+        jsonObjectType.setIncludeTypes(".*");
 
         /*
          * We convert the field someJsonArray to a JsonArray by using the JsonArrayConverter
@@ -41,8 +41,8 @@ abstract class AbstractDatabaseConfigurationProvider {
         ForcedType jsonArrayType = new ForcedType();
         jsonArrayType.setUserType(JsonArray.class.getName());
         jsonArrayType.setConverter(JsonArrayConverter.class.getName());
-        jsonArrayType.setExpression("someJsonArray");
-        jsonArrayType.setTypes(".*");
+        jsonArrayType.setIncludeExpression("someJsonArray");
+        jsonArrayType.setIncludeTypes(".*");
 
         /**
          * jsonB column to JsonObject
@@ -55,7 +55,11 @@ abstract class AbstractDatabaseConfigurationProvider {
         Configuration configuration = new Configuration();
         Database databaseConfig = new Database();
         databaseConfig.setName(dbType);
-        databaseConfig.setIncludes("something|somethingComposite|somethingWithoutJson|something_someEnum|someEnum|dateAndTimeTypes");
+        databaseConfig.setInputSchema("vertx");
+        databaseConfig.setOutputSchema("vertx");
+        databaseConfig.setOutputSchemaToDefault(false);
+        databaseConfig.setOutputCatalogToDefault(false);
+//        databaseConfig.setIncludes("something|somethingComposite|somethingWithoutJson|something_someEnum|someEnum|dateAndTimeTypes");
         databaseConfig.setForcedTypes(Arrays.asList(jsonArrayType, jsonObjectType));
 //        databaseConfig.setEnumTypes(Collections.singletonList(new EnumType().withName("someEnum").withLiterals("FOO,BAR,BAZ")));
 

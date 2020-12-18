@@ -361,34 +361,24 @@ public class VertxGeneratorBuilder {
                                 out.tab(3).println("pojo.%s(%sString == null ? null : %s.valueOf(%sString));", setter, column.getName(), javaType,column.getName());
                             }
                         }else if(column.getType().getConverter() != null ){
-                            //assuming javaType is a POJO. We implicitly excluded JsonObject and JsonArray above (they both have a converter too)
-                            if(base.isJson(column.getType())){
-                                //we are assuming the converter is a PgConverter
-                                out.tab(3).println("pojo.%s(%s.pgConverter().from(row.getJsonObject(\"%s\")));",
-                                        setter,
-                                        resolveConverterInstance(column.getType().getConverter(),schema,base),
-                                        column.getName());
-                            }else{
-                                //we have a converter but don't know how to extract it from the Row
-                                ComponentBasedVertxGenerator.logger.warn(String.format("Omitting unrecognized converter %s (%s) for column %s in table %s!",column.getType().getConverter().getClass().getName(),javaType,column.getName(),table.getName()));
-                                out.tab(3).println("//Omitting unrecognized converter %s (%s) for column %s in table %s!",column.getType().getConverter().getClass().getName(),javaType,column.getName(),table.getName());
-                            }
+                            String converterInstance = resolveConverterInstance(column.getType().getConverter(), schema, base);
+                            out.tab(3).println("pojo.%s(%s.rowConverter().fromRow(key->row.get(%s.rowConverter().fromType(),key),\"%s\"));",
+                                    setter,
+                                    converterInstance,
+                                    converterInstance,
+                                    column.getName());
                         }else if(column.getType().getBinding() != null){
-                            //assuming javaType is a POJO. We implicitly excluded JsonObject and JsonArray above (they both have a converter too)
-                            if(base.isJson(column.getType())){
-                                out.tab(3).println("pojo.%s(%s.converter().pgConverter().from(row.getJsonObject(\"%s\")));",
-                                        setter,
-                                        resolveConverterInstance(column.getType().getBinding(),schema,base),
-                                        column.getName());
-                            }else{
-                                //we have a binding but don't know how to extract it from the Row
-                                ComponentBasedVertxGenerator.logger.warn(String.format("Omitting unrecognized binding %s (%s) for column %s in table %s!",column.getType().getBinding().getClass().getName(),javaType,column.getName(),table.getName()));
-                                out.tab(3).println("//Omitting unrecognized binding %s (%s) for column %s in table %s!",column.getType().getBinding().getClass().getName(),javaType,column.getName(),table.getName());
-                            }
-                    }else if(isByteArray){
+                            String converterInstance = resolveConverterInstance(column.getType().getBinding(), schema, base);
+                            out.tab(3).println("pojo.%s(%s.rowConverter().fromRow(key->row.get(%s.rowConverter().fromType(),key),\"%s\"));",
+                                    setter,
+                                    converterInstance,
+                                    converterInstance,
+                                    column.getName());
+                        }else if(isByteArray){
                             out.tab(3).println("io.vertx.core.buffer.Buffer %sBuffer = row.getBuffer(\"%s\");", column.getName(), column.getName());
                             out.tab(3).println("pojo.%s(%sBuffer == null?null:%sBuffer.getBytes());", setter, column.getName(), column.getName());
                         }else{
+                            ComponentBasedVertxGenerator.logger.warn(column.getType().getConverter());
                             ComponentBasedVertxGenerator.logger.warn(String.format("Omitting unrecognized type %s (%s) for column %s in table %s!",column.getType(),javaType,column.getName(),table.getName()));
                             out.tab(3).println(String.format("// Omitting unrecognized type %s (%s) for column %s!",column.getType(),javaType, column.getName()));
                         }

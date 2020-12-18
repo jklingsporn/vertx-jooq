@@ -61,7 +61,6 @@ public class MySQLConfigurationProvider extends AbstractDatabaseConfigurationPro
         jdbcConfig.setUrl("jdbc:mysql://127.0.0.1:3306/");
         jdbcConfig.setUser(Credentials.MYSQL.getUser());
         jdbcConfig.setPassword(Credentials.MYSQL.getPassword());
-        jdbcConfig.setSchema("vertx");
         return createGeneratorConfig(generatorName, packageName, generatorStrategy, jdbcConfig, MySQLDatabase.class.getName());
     }
 

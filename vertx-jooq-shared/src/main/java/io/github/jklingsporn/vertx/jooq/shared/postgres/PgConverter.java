@@ -15,6 +15,13 @@ public interface PgConverter<P,T,U> extends Converter<T,U> {
 
     /**
      * @return convert from the PGClient-type to the user-type
+     * @deprecated use {@link #rowConverter()} instead.
      */
+    @Deprecated
     Converter<P,U> pgConverter();
+
+    /**
+     * @return convert from the PGClient-type to the user-type using a {@link RowConverter}
+     */
+    RowConverter<P,U> rowConverter();
 }

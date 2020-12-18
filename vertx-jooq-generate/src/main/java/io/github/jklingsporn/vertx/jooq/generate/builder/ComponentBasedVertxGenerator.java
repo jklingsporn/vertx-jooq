@@ -115,17 +115,20 @@ class ComponentBasedVertxGenerator extends VertxGenerator {
 
     @Override
     protected boolean handleCustomTypeFromJson(TypedElementDefinition<?> column, String setter, String columnType, String javaMemberName, JavaWriter out) {
-        if(column.getType().getConverter() != null){
-            if(JsonObject.class.equals(getPgConverterFromType(columnType, column.getType().getConverter()))) {
+        boolean hasConverter = column.getType().getConverter() != null;
+        boolean hasBinding = column.getType().getBinding() != null;
+        if(hasConverter || hasBinding){
+            String instance = hasConverter ? column.getType().getConverter() : column.getType().getBinding();
+            if(JsonObject.class.equals(tryGetPgConverterFromType(columnType, instance))) {
                 out.tab(2).println("%s(%s.pgConverter().from(json.getJsonObject(\"%s\")));",
                         setter,
-                        VertxGeneratorBuilder.resolveConverterInstance(column.getType().getConverter(),column.getSchema(),this),
+                        VertxGeneratorBuilder.resolveConverterInstance(instance,column.getSchema(),this),
                         javaMemberName);
                 return true;
-            }else if(JsonArray.class.equals(getPgConverterFromType(columnType, column.getType().getConverter()))) {
+            }else if(JsonArray.class.equals(tryGetPgConverterFromType(columnType, instance))) {
                 out.tab(2).println("%s(%s.pgConverter().from(json.getJsonArray(\"%s\")));",
                         setter,
-                        VertxGeneratorBuilder.resolveConverterInstance(column.getType().getConverter(),column.getSchema(),this),
+                        VertxGeneratorBuilder.resolveConverterInstance(instance,column.getSchema(),this),
                         javaMemberName);
                 return true;
             }
@@ -135,12 +138,15 @@ class ComponentBasedVertxGenerator extends VertxGenerator {
 
     @Override
     protected boolean handleCustomTypeToJson(TypedElementDefinition<?> column, String getter, String columnType, String javaMemberName, JavaWriter out) {
-        if(column.getType().getConverter() != null){
-            Class<?> pgConverterFromType = getPgConverterFromType(columnType, column.getType().getConverter());
+        boolean hasConverter = column.getType().getConverter() != null;
+        boolean hasBinding = column.getType().getBinding() != null;
+        if(hasConverter || hasBinding){
+            String instance = hasConverter ? column.getType().getConverter() : column.getType().getBinding();
+            Class<?> pgConverterFromType = tryGetPgConverterFromType(columnType, instance);
             if(JsonObject.class.equals(pgConverterFromType) || JSONArray.class.equals(pgConverterFromType)) {
                 out.tab(2).println("json.put(\"%s\",%s.pgConverter().to(%s()));",
                         getJsonKeyName(column),
-                        VertxGeneratorBuilder.resolveConverterInstance(column.getType().getConverter(),column.getSchema(),this),
+                        VertxGeneratorBuilder.resolveConverterInstance(instance,column.getSchema(),this),
                         getter);
                 return true;
             }

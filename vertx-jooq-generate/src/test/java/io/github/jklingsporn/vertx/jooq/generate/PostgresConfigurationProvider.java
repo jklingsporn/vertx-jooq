@@ -1,5 +1,6 @@
 package io.github.jklingsporn.vertx.jooq.generate;
 
+import io.github.jklingsporn.vertx.jooq.generate.converter.CommaSeparatedStringIntoListConverter;
 import io.github.jklingsporn.vertx.jooq.generate.converter.SomeJsonPojo;
 import io.github.jklingsporn.vertx.jooq.generate.converter.SomeJsonPojoConverter;
 import io.github.jklingsporn.vertx.jooq.shared.postgres.JSONBToJsonObjectConverter;
@@ -34,7 +35,7 @@ public class PostgresConfigurationProvider extends AbstractDatabaseConfiguration
             connection.prepareStatement("DROP SCHEMA IF EXISTS vertx CASCADE;").execute();
             connection.prepareStatement("CREATE SCHEMA vertx;").execute();
             connection.prepareStatement("SET SCHEMA 'vertx';").execute();
-                    connection.prepareStatement("CREATE TYPE \"someEnum\" AS ENUM('FOO', 'BAR', 'BAZ');").execute();
+            connection.prepareStatement("CREATE TYPE \"someEnum\" AS ENUM('FOO', 'BAR', 'BAZ');").execute();
             connection.prepareStatement("CREATE TABLE something (\n" +
                     "  \"someId\" SERIAL,\n" +
                     "  \"someString\" VARCHAR(45) NULL,\n" +
@@ -52,6 +53,7 @@ public class PostgresConfigurationProvider extends AbstractDatabaseConfiguration
                     "  \"someTimestamp\" TIMESTAMP NULL,\n" +
                     "  \"someTimestampWithTZ\" TIMESTAMP WITH TIME ZONE NULL,\n" +
                     "  \"someByteA\" bytea NULL,\n" +
+                    "  \"someStringAsList\" VARCHAR(45) NULL,\n" +
                     "  PRIMARY KEY (\"someId\"));").execute();
             connection.prepareStatement("CREATE TABLE \"somethingComposite\" (\n" +
                     "  \"someId\" INTEGER NOT NULL,\n" +
@@ -86,9 +88,17 @@ public class PostgresConfigurationProvider extends AbstractDatabaseConfiguration
         jsonbToJsonObjectMapping.setConverter(JSONBToJsonObjectConverter.class.getName());
         jsonbToJsonObjectMapping.setIncludeExpression("someVertxJsonObject");
         jsonbToJsonObjectMapping.setIncludeTypes(".*");
+
+        ForcedType stringToLocalDateTimeMapping = new ForcedType();
+        stringToLocalDateTimeMapping.setUserType("java.util.List<String>");
+        stringToLocalDateTimeMapping.setConverter(CommaSeparatedStringIntoListConverter.class.getName());
+        stringToLocalDateTimeMapping.setIncludeExpression("someStringAsList");
+        stringToLocalDateTimeMapping.setIncludeTypes(".*");
+
         List<ForcedType> forcedTypes = new ArrayList<>(generatorConfig.getGenerator().getDatabase().getForcedTypes());
         forcedTypes.add(customJsonMapping);
         forcedTypes.add(jsonbToJsonObjectMapping);
+        forcedTypes.add(stringToLocalDateTimeMapping);
         generatorConfig.getGenerator().getDatabase().setForcedTypes(forcedTypes);
         return generatorConfig;
     }

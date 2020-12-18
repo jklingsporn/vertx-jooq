@@ -5,7 +5,9 @@ driver of your choice.
 
 ## release 6.0.0
 - Upgrade vertx to 4.0.0. A big shout out to vertx-jooq user [doctorpangloss](https://github.com/doctorpangloss) for the
-groundwork. 
+groundwork.
+- Enhanced `PgConverter`: previously, `PGConverter` was only considered when converting from or into a `JsonObject`. With 
+  the new release you can now convert anything from a `io.vertx.sqlclient.Row` into your user object.
 - Removal of the async driver. There is actually no reason to use this driver over the reactive driver from vertx. It 
   just adds confusion for initial users and worsens maintainability.
 - Removal of the `CompletableFuture`-API. When this project was started, the `io.vertx.core.Future` was in a bad shape. 

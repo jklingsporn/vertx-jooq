@@ -3,14 +3,13 @@ package io.github.jklingsporn.vertx.jooq.shared.postgres;
 import io.vertx.core.json.JsonObject;
 import org.jooq.Converter;
 import org.jooq.JSON;
-import org.jooq.impl.IdentityConverter;
 
 /**
  * @author jensklingsporn
  */
 public class JSONToJsonObjectConverter implements PgConverter<JsonObject, JSON, JsonObject> {
 
-    private static final IdentityConverter<JsonObject> identityConverter = new IdentityConverter<>(JsonObject.class);
+    private static final IdentityRowConverter<JsonObject> identityConverter = new IdentityRowConverter<>(JsonObject.class);
 
     private static JSONToJsonObjectConverter INSTANCE;
     public static JSONToJsonObjectConverter getInstance() {
@@ -39,6 +38,11 @@ public class JSONToJsonObjectConverter implements PgConverter<JsonObject, JSON, 
 
     @Override
     public Converter<JsonObject, JsonObject> pgConverter() {
+        return rowConverter();
+    }
+
+    @Override
+    public RowConverter<JsonObject, JsonObject> rowConverter() {
         return identityConverter;
     }
 }

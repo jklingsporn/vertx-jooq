@@ -57,7 +57,10 @@ public class HsqldbConfigurationProvider extends AbstractDatabaseConfigurationPr
         jdbcConfig.setUrl("jdbc:hsqldb:mem:test");
         jdbcConfig.setUser(Credentials.HSQLDB.getUser());
         jdbcConfig.setPassword(Credentials.HSQLDB.getPassword());
-        return createGeneratorConfig(generatorName, packageName, generatorStrategy, jdbcConfig, HSQLDBDatabase.class.getName());
+        Configuration generatorConfig = createGeneratorConfig(generatorName, packageName, generatorStrategy, jdbcConfig, HSQLDBDatabase.class.getName());
+        generatorConfig.getGenerator().getDatabase().setIncludes("something|somethingComposite");
+        generatorConfig.getGenerator().getDatabase().setInputSchema(null);
+        return generatorConfig;
     }
 
     @Override

@@ -25,7 +25,7 @@ public class ReactiveQueryResult extends AbstractReactiveQueryResult<Row,RowSet<
     public <T> T get(Field<T> field) {
         return supplyOrThrow(()->Convert.convert(current.getValue(field.getName()),
                 field.getConverter() instanceof PgConverter ?
-                        ((PgConverter<?,?,T>)field.getConverter()).pgConverter() :
+                        ((PgConverter<?,?,T>)field.getConverter()).rowConverter() :
                         field.getConverter()
         ));
     }
