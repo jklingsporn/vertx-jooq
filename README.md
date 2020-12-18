@@ -8,9 +8,9 @@ driver of your choice.
 groundwork.
 - Enhanced `PgConverter`: previously, `PGConverter` was only considered when converting from or into a `JsonObject`. With 
   the new release you can now convert anything from a `io.vertx.sqlclient.Row` into your user object. For that reason I've
-  introduced the new `io.github.jklingsporn.vertx.jooq.shared.postgres.RowConverter`. For an example check out the 
-  `io.github.jklingsporn.vertx.jooq.generate.converter.CommaSeparatedStringIntoListConverter`. 
-- Added support of user-types like `java.util.List<U>` in your POJOs. Checkout the [`PostgresConfigurationProvider`](https://github.com/jklingsporn/vertx-jooq/blob/9c9c7cd168dd5358699875e6b8d0c10cb95e5665/vertx-jooq-generate/src/test/java/io/github/jklingsporn/vertx/jooq/generate/PostgresConfigurationProvider.java#L92-L96) of how to configure it.
+  introduced the new [`RowConverter`](https://github.com/jklingsporn/vertx-jooq/blob/master/vertx-jooq-shared/src/main/java/io/github/jklingsporn/vertx/jooq/shared/postgres/RowConverter.java). For an example check out the 
+  [`CommaSeparatedStringIntoListConverter`](https://github.com/jklingsporn/vertx-jooq/blob/master/vertx-jooq-generate/src/test/java/io/github/jklingsporn/vertx/jooq/generate/converter/CommaSeparatedStringIntoListConverter.java). 
+- Added support of user-types like `java.util.List<U>` in your POJOs. Checkout the [`PostgresConfigurationProvider`](https://github.com/jklingsporn/vertx-jooq/blob/master/vertx-jooq-generate/src/test/java/io/github/jklingsporn/vertx/jooq/generate/PostgresConfigurationProvider.java#L92-L96) of how to configure it.
 - Removal of the async driver. There is actually no reason to use this driver over the reactive driver from vertx. It 
   just adds confusion for initial users and worsens maintainability.
 - Removal of the `CompletableFuture`-API. When this project was started, the `io.vertx.core.Future` was in a bad shape. 
