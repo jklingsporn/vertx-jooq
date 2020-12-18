@@ -4,8 +4,6 @@
 package generated.classic.reactive.regular;
 
 
-import generated.classic.reactive.regular.vertx.Vertx;
-
 import java.util.Arrays;
 import java.util.List;
 
@@ -19,7 +17,7 @@ import org.jooq.impl.CatalogImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class DefaultCatalog extends CatalogImpl {
 
-    private static final long serialVersionUID = -1910666444;
+    private static final long serialVersionUID = -2015949280;
 
     /**
      * The reference instance of <code>DEFAULT_CATALOG</code>

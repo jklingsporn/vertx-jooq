@@ -1,6 +1,6 @@
 package io.github.jklingsporn.vertx.jooq.generate.classic.reactive.guice;
 
-import generated.classic.reactive.guice.vertx.tables.pojos.Somethingcomposite;
+import generated.classic.reactive.guice.tables.pojos.Somethingcomposite;
 import io.github.jklingsporn.vertx.jooq.generate.AbstractJsonConversionTest;
 import io.vertx.core.json.JsonObject;
 

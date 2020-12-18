@@ -1,10 +1,10 @@
 package io.github.jklingsporn.vertx.jooq.generate.rx.reactive.guice;
 
 import io.vertx.pgclient.PgException;
-import generated.rx.reactive.guice.vertx.Tables;
-import generated.rx.reactive.guice.vertx.tables.daos.SomethingcompositeDao;
-import generated.rx.reactive.guice.vertx.tables.pojos.Somethingcomposite;
-import generated.rx.reactive.guice.vertx.tables.records.SomethingcompositeRecord;
+import generated.rx.reactive.guice.Tables;
+import generated.rx.reactive.guice.tables.daos.SomethingcompositeDao;
+import generated.rx.reactive.guice.tables.pojos.Somethingcomposite;
+import generated.rx.reactive.guice.tables.records.SomethingcompositeRecord;
 import io.github.jklingsporn.vertx.jooq.generate.ReactiveDatabaseClientProvider;
 import io.github.jklingsporn.vertx.jooq.generate.PostgresConfigurationProvider;
 import io.github.jklingsporn.vertx.jooq.generate.rx.RXTestBase;

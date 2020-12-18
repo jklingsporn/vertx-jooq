@@ -1,9 +1,9 @@
 package io.github.jklingsporn.vertx.jooq.generate.classic.reactive.regular;
 
-import generated.classic.reactive.regular.vertx.Tables;
-import generated.classic.reactive.regular.vertx.tables.daos.SomethingcompositeDao;
-import generated.classic.reactive.regular.vertx.tables.pojos.Somethingcomposite;
-import generated.classic.reactive.regular.vertx.tables.records.SomethingcompositeRecord;
+import generated.classic.reactive.regular.Tables;
+import generated.classic.reactive.regular.tables.daos.SomethingcompositeDao;
+import generated.classic.reactive.regular.tables.pojos.Somethingcomposite;
+import generated.classic.reactive.regular.tables.records.SomethingcompositeRecord;
 import io.github.jklingsporn.vertx.jooq.generate.PostgresConfigurationProvider;
 import io.github.jklingsporn.vertx.jooq.generate.ReactiveDatabaseClientProvider;
 import io.github.jklingsporn.vertx.jooq.generate.classic.ClassicTestBase;

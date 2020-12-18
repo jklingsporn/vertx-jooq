@@ -1,9 +1,9 @@
 package io.github.jklingsporn.vertx.jooq.generate.classic.reactive.regular;
 
-import generated.classic.reactive.regular.vertx.Tables;
-import generated.classic.reactive.regular.vertx.enums.Someenum;
-import generated.classic.reactive.regular.vertx.tables.daos.SomethingDao;
-import generated.classic.reactive.regular.vertx.tables.pojos.Something;
+import generated.classic.reactive.regular.Tables;
+import generated.classic.reactive.regular.enums.Someenum;
+import generated.classic.reactive.regular.tables.daos.SomethingDao;
+import generated.classic.reactive.regular.tables.pojos.Something;
 import io.github.jklingsporn.vertx.jooq.classic.reactivepg.ReactiveClassicQueryExecutor;
 import io.github.jklingsporn.vertx.jooq.generate.PostgresConfigurationProvider;
 import io.github.jklingsporn.vertx.jooq.generate.ReactiveDatabaseClientProvider;

@@ -1,6 +1,6 @@
 package io.github.jklingsporn.vertx.jooq.generate.rx.reactive.regular;
 
-import generated.rx.reactive.regular.vertx.tables.pojos.Something;
+import generated.rx.reactive.regular.tables.pojos.Something;
 import io.github.jklingsporn.vertx.jooq.generate.AbstractJsonConversionTest;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
