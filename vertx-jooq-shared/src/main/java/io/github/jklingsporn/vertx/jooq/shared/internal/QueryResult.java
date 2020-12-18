@@ -15,7 +15,7 @@ public interface QueryResult {
     /**
      * Returns a value for a {@code Field}.
      * @param field the {@code Field} to get.
-     * @param <T>
+     * @param <T> the return type
      * @return The field's value or {@code null}.
      * @throws java.util.NoSuchElementException if the database returned no result at all.
      */
@@ -26,7 +26,7 @@ public interface QueryResult {
      * {@code QueryResult#get(Field<T>)} method.
      * @param index the index of the column's value you wish to get.
      * @param type the expected type of that column.
-     * @param <T>
+     * @param <T> the return type
      * @return The field's value or {@code null}.
      * @throws ClassCastException If the column is mapped by a jOOQ-{@code Converter}, the underlying implementation
      * might throw a {@code ClassCastException} because the non-jdbc drivers are not aware of converters. For correct
@@ -40,7 +40,7 @@ public interface QueryResult {
      * {@code QueryResult#get(Field<T>)} method.
      * @param columnName the name of the column you wish to get.
      * @param type the expected type of that column.
-     * @param <T>
+     * @param <T> the return type
      * @return The field's value or {@code null}.
      * @throws ClassCastException If the column is mapped by a jOOQ-{@code Converter}, the underlying implementation
      * might throw a {@code ClassCastException} because the non-jdbc drivers are not aware of converters. For correct
@@ -50,7 +50,7 @@ public interface QueryResult {
     public <T> T get(String columnName, Class<T> type);
 
     /**
-     * @param <T>
+     * @param <T> the implementation type
      * @return the driver's implementation of this result, e.g. {@code org.jooq.Result}.
      */
     public <T> T unwrap();

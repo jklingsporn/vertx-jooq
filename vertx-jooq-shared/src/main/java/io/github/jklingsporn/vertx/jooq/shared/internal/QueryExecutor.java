@@ -19,21 +19,21 @@ public interface QueryExecutor<R extends UpdatableRecord<R>, T, FIND_MANY, FIND_
 
     /**
      * Runs and returns a query to return many values.
-     * @param queryFunction
+     * @param queryFunction the query function
      * @return the result type returned for all find-many-values-operations.
      */
     FIND_MANY findMany(Function<DSLContext, ? extends ResultQuery<R>> queryFunction);
 
     /**
      * Runs a query and returns at most one value or <code>null</code>.
-     * @param queryFunction
+     * @param queryFunction the query function
      * @return the result type returned for all find-one-value-operations.
      */
     FIND_ONE findOne(Function<DSLContext, ? extends ResultQuery<R>> queryFunction);
 
     /**
      * Performs an async <code>INSERT</code> statement for a given POJO and returns it's primary key.
-     * @param queryFunction
+     * @param queryFunction the query function
      * @param keyMapper a function to map the result returned by the underlying executor into the key type.
      * @return the result type returned for INSERT_RETURNING.
      */

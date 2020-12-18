@@ -236,8 +236,8 @@ public abstract class AbstractVertxDAO<R extends UpdatableRecord<R>, P, T, FIND_
     }
 
     /**
-     * @param dslContext
-     * @param pojo
+     * @param dslContext the {@link DSLContext}
+     * @param pojo the pojo
      * @return a new {@code Record} based on the pojo.
      */
     protected Record newRecord(DSLContext dslContext, P pojo) {

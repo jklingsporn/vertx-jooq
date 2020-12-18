@@ -12,8 +12,8 @@ public abstract class AbstractQueryResult implements QueryResult{
 
     /**
      *
-     * @param supplier
-     * @param <T>
+     * @param supplier the supplier to return they type
+     * @param <T> the return type
      * @return the value supplied by supplier or throw a NoSuchElementException if the
      * underlying result has no results.
      */

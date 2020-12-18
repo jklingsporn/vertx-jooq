@@ -22,14 +22,14 @@ public interface GenericVertxDAO<R extends UpdatableRecord<R>,P, T, FIND_MANY, F
     /**
      * Performs an async <code>INSERT</code> statement for a given POJO. This is the same as calling
      * #insert(pojo,false).
-     * @param pojo
+     * @param pojo the pojo
      * @return the result type returned for all insert, update and delete-operations.
      */
     public EXECUTE insert(P pojo);
 
     /**
      * Performs an async <code>INSERT</code> statement for a given POJO.
-     * @param pojo
+     * @param pojo the pojo
      * @param onDuplicateKeyIgnore whether or not to set onDuplicateKeyIgnore option
      * @return the result type returned for all insert, update and delete-operations.
      */
@@ -38,14 +38,14 @@ public interface GenericVertxDAO<R extends UpdatableRecord<R>,P, T, FIND_MANY, F
     /**
      * Performs an async <code>INSERT</code> statement for all given POJOs. This is the same as calling
      * #insert(pojos,false).
-     * @param pojos
+     * @param pojos the pojos
      * @return the result type returned for all insert, update and delete-operations.
      */
     public EXECUTE insert(Collection<P> pojos);
 
     /**
      * Performs an async <code>INSERT</code> statement for all given POJOs.
-     * @param pojos
+     * @param pojos the pojos
      * @param onDuplicateKeyIgnore whether or not to set onDuplicateKeyIgnore option
      * @return the result type returned for all insert, update and delete-operations.
      */
@@ -53,7 +53,7 @@ public interface GenericVertxDAO<R extends UpdatableRecord<R>,P, T, FIND_MANY, F
 
     /**
      * Performs an async <code>INSERT</code> statement for a given POJO and returns it's primary key.
-     * @param pojo
+     * @param pojo the pojo
      * @return the result type returned for INSERT_RETURNING.
      */
     public INSERT_RETURNING insertReturningPrimary(P pojo);
@@ -61,28 +61,28 @@ public interface GenericVertxDAO<R extends UpdatableRecord<R>,P, T, FIND_MANY, F
     /**
      * Performs an async <code>UPDATE</code> statement for a given POJO. For performance reasons, consider writing
      * your own update-statements by using a <code>QueryExecutor</code> directly.
-     * @param pojo
+     * @param pojo the pojo
      * @return the result type returned for all insert, update and delete-operations.
      */
     public EXECUTE update(P pojo);
 
     /**
      * Performs an async <code>DELETE</code> statement using the given id
-     * @param id
+     * @param id the id
      * @return the result type returned for all insert, update and delete-operations.
      */
     public EXECUTE deleteById(T id);
 
     /**
      * Performs an async <code>DELETE</code> statement using the given ids
-     * @param ids
+     * @param ids the ids
      * @return the result type returned for all insert, update and delete-operations.
      */
     public EXECUTE deleteByIds(Collection<T> ids);
 
     /**
      * Performs an async <code>DELETE</code> statement using the given <code>Condition</code>
-     * @param condition
+     * @param condition the query condition
      * @return the result type returned for all insert, update and delete-operations.
      */
     public EXECUTE deleteByCondition(Condition condition);
@@ -90,53 +90,53 @@ public interface GenericVertxDAO<R extends UpdatableRecord<R>,P, T, FIND_MANY, F
     /**
      * Performs an async <code>SELECT</code> using the given condition. If more than one row is found, a
      * <code>TooManyRowsException</code> is raised.
-     * @param condition
+     * @param condition the query condition
      * @return the result type returned for all find-one-value-operations.
      */
     public FIND_ONE findOneByCondition(Condition condition);
 
     /**
      * Performs an async <code>SELECT</code> using the given primary key.
-     * @param id
+     * @param id the id
      * @return the result type returned for all find-one-value-operations.
      */
     public FIND_ONE findOneById(T id);
 
     /**
      * Performs an async <code>SELECT</code> using the given primary keys.
-     * @param ids
+     * @param ids the ids
      * @return the result type returned for all find-many-values-operations.
      */
     public FIND_MANY findManyByIds(Collection<T> ids);
 
     /**
      * Performs an async <code>SELECT</code> using the given condition.
-     * @param condition
+     * @param condition the query condition
      * @return the result type returned for all find-many-values-operations.
      */
     public FIND_MANY findManyByCondition(Condition condition);
 
     /**
      * Performs an async <code>SELECT</code> using the given condition and limit.
-     * @param condition
-     * @param limit
+     * @param condition the query condition
+     * @param limit the limit
      * @return the result type returned for all find-many-values-operations.
      */
     public FIND_MANY findManyByCondition(Condition condition,int limit);
 
     /**
      * Performs an async <code>SELECT</code> using the given condition with specific order.
-     * @param condition
-     * @param orderFields
+     * @param condition the query condition
+     * @param orderFields the order fields (optional)
      * @return the result type returned for all find-many-values-operations.
      */
     public FIND_MANY findManyByCondition(Condition condition, OrderField<?> ... orderFields);
 
     /**
      * Performs an async <code>SELECT</code> using the given condition with specific order and limit.
-     * @param condition
-     * @param limit
-     * @param orderFields
+     * @param condition the query condition
+     * @param limit the limit
+     * @param orderFields the order fields (optional)
      * @return the result type returned for all find-many-values-operations.
      */
     public FIND_MANY findManyByCondition(Condition condition, int limit, OrderField<?> ... orderFields);

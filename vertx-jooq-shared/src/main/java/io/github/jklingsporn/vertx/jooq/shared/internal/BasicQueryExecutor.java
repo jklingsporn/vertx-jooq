@@ -13,7 +13,7 @@ public interface BasicQueryExecutor<EXECUTE> extends Attachable{
 
     /**
      * Executes a query and returns the result of the execution (usually an <code>Integer</code>-value)
-     * @param queryFunction
+     * @param queryFunction the query function
      * @return the result type returned for all insert, update and delete-operations.
      * @see Query#execute()
      */

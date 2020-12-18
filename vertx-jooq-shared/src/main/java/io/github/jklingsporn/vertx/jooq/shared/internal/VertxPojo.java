@@ -25,9 +25,9 @@ public interface VertxPojo {
     /**
      * For internal purposes only.<br>
      * Function to safely set a value inside a POJO. Helps users to find bugs if they accidentally put a value into
-     * a <{@code JsonObject} with a wrong type.
+     * a {@code JsonObject} with a wrong type.
      * @param pojoSetter the setter of this POJO's property
-     * @param jsonGetter the function to obtain the value from the <{@code JsonObject}
+     * @param jsonGetter the function to obtain the value from the {@code JsonObject}
      * @param fieldName the name of the POJO / JSON-property
      * @param expectedFieldType the type of the property/field
      * @param <T> the value type

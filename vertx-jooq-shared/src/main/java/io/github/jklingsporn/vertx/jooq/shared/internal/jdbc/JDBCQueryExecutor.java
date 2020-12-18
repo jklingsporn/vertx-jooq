@@ -12,8 +12,8 @@ public interface JDBCQueryExecutor<T> {
 
     /**
      * Executes any <code>DSLContext</code>-aware function using <code>Vertx#executeBlocking</code>.
-     * @param function
-     * @param <X>
+     * @param function the function to be executed
+     * @param <X> the type returned by the function
      * @return the result of this operation.
      */
     public <X> T executeAny(Function<DSLContext, X> function);
