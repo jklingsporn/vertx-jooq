@@ -89,16 +89,16 @@ public class PostgresConfigurationProvider extends AbstractDatabaseConfiguration
         jsonbToJsonObjectMapping.setIncludeExpression("someVertxJsonObject");
         jsonbToJsonObjectMapping.setIncludeTypes(".*");
 
-        ForcedType stringToLocalDateTimeMapping = new ForcedType();
-        stringToLocalDateTimeMapping.setUserType("java.util.List<String>");
-        stringToLocalDateTimeMapping.setConverter(CommaSeparatedStringIntoListConverter.class.getName());
-        stringToLocalDateTimeMapping.setIncludeExpression("someStringAsList");
-        stringToLocalDateTimeMapping.setIncludeTypes(".*");
+        ForcedType stringToCSListMapping = new ForcedType();
+        stringToCSListMapping.setUserType("java.util.List<String>");
+        stringToCSListMapping.setConverter(CommaSeparatedStringIntoListConverter.class.getName());
+        stringToCSListMapping.setIncludeExpression("someStringAsList");
+        stringToCSListMapping.setIncludeTypes(".*");
 
         List<ForcedType> forcedTypes = new ArrayList<>(generatorConfig.getGenerator().getDatabase().getForcedTypes());
         forcedTypes.add(customJsonMapping);
         forcedTypes.add(jsonbToJsonObjectMapping);
-        forcedTypes.add(stringToLocalDateTimeMapping);
+        forcedTypes.add(stringToCSListMapping);
         generatorConfig.getGenerator().getDatabase().setForcedTypes(forcedTypes);
         return generatorConfig;
     }
