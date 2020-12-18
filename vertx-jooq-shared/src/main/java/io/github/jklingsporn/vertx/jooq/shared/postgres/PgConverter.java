@@ -9,7 +9,7 @@ import org.jooq.Converter;
  * and the user type.
  * @param <P> the PgClient-type, e.g. <code>io.vertx.core.json.JsonObject</code>
  * @param <T> the jooq data type, e.g. <code>org.jooq.JSONB</code>
- * @param <U> the user type
+ * @param <U> the user-type
  */
 public interface PgConverter<P,T,U> extends Converter<T,U> {
 
