@@ -273,7 +273,7 @@ public class VertxGeneratorBuilder {
         public DIStep withPostgresReactiveDriver() {
             base.setRenderDAOExtendsDelegate(()->"io.github.jklingsporn.vertx.jooq.shared.reactive.AbstractReactiveVertxDAO");
             base.addOverwriteDAODelegate((schema, out, className, tableIdentifier, tableRecord, pType, tType) -> {
-                if (schema.getDatabase().getDialect().family().equals(SQLDialect.MYSQL)) {
+                if (schema.getDatabase().getDialect().family().equals(SQLDialect.MYSQL) || schema.getDatabase().getDialect().family().equals(SQLDialect.MARIADB)) {
                     out.println();
                     out.tab(1).override();
                     out.tab(1).println("protected java.util.function.Function<io.vertx.sqlclient.RowSet<io.vertx.sqlclient.Row>,Long> extractMysqlLastInsertProperty(){");
