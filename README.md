@@ -5,8 +5,8 @@ driver of your choice.
 
 ## release 6.1.0
 Some enhancements have been done in this minor release:
-- Add `offset` option in `findManyByCondition` to support pagination. #172
-- MariaDB support for lastInsertId #173
+- Add `offset` option in `findManyByCondition` to support pagination [#172](#172)
+- MariaDB support for lastInsertId [#173](#173)
 
 ## release 6.0.0
 - Upgrade vertx to 4.0.0. A big shout out to vertx-jooq user [doctorpangloss](https://github.com/doctorpangloss) for the
