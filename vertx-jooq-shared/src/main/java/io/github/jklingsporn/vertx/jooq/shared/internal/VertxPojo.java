@@ -2,6 +2,7 @@ package io.github.jklingsporn.vertx.jooq.shared.internal;
 
 import io.github.jklingsporn.vertx.jooq.shared.UnexpectedJsonValueTypeException;
 
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
@@ -34,9 +35,9 @@ public interface VertxPojo {
      * @see <a href="https://github.com/jklingsporn/vertx-jooq/pull/110">Related PR</a>
      * @see <a href="https://github.com/jklingsporn/vertx-jooq/issues/170">Related Issue</a>
      */
-    public static <T> void setOrThrow(Function<T,?> pojoSetter, Function<String,T> jsonGetter, String fieldName, String expectedFieldType){
+    public static <T> void setOrThrow(Consumer<T> pojoSetter, Function<String,T> jsonGetter, String fieldName, String expectedFieldType){
         try {
-            pojoSetter.apply(jsonGetter.apply(fieldName));
+            pojoSetter.accept(jsonGetter.apply(fieldName));
         } catch (java.lang.ClassCastException e) {
             throw new UnexpectedJsonValueTypeException(fieldName,expectedFieldType,e);
         }
