@@ -3,7 +3,7 @@ A [jOOQ](http://www.jooq.org/)-CodeGenerator to create [vertx](http://vertx.io/)
 Perform all CRUD-operations asynchronously and convert your POJOs from/into a `io.vertx.core.json.JsonObject` using the API and
 driver of your choice.
 
-## release 6.1.0
+## release 6.1.1
 Some enhancements have been done in this minor release:
 - [Add `offset` option in `findManyByCondition` to support pagination](https://github.com/jklingsporn/vertx-jooq/issues/172)
 - [MariaDB support for lastInsertId](https://github.com/jklingsporn/vertx-jooq/issues/173)
