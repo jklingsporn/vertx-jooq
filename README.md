@@ -3,12 +3,10 @@ A [jOOQ](http://www.jooq.org/)-CodeGenerator to create [vertx](http://vertx.io/)
 Perform all CRUD-operations asynchronously and convert your POJOs from/into a `io.vertx.core.json.JsonObject` using the API and
 driver of your choice.
 
-## release 6.1.1
-Some enhancements have been done in this minor release:
-- [Add `offset` option in `findManyByCondition` to support pagination](https://github.com/jklingsporn/vertx-jooq/issues/172)
-- [MariaDB support for lastInsertId](https://github.com/jklingsporn/vertx-jooq/issues/173)
+## release 6.2.0
+- Finally added support for the jooq 3.14 - branch.
 
-## release 6.0.0
+## release 6.1.x
 - Upgrade vertx to 4.0.0. A big shout out to vertx-jooq user [doctorpangloss](https://github.com/doctorpangloss) for the
 groundwork.
 - Enhanced `PgConverter`: previously, `PGConverter` was only considered when converting from or into a `JsonObject`. With 
@@ -23,6 +21,8 @@ Many methods for composition and error handling were missing and made it hard to
   of months this has been fixed - making the `io.vertx.core.Future`-API a first-class choice. In case you really need 
   the interoperability with `CompletionStage/CompletableFuture` just call `io.vertx.core.Future#toCompletionStage()` to 
   convert it into, or the static method Future.createFromCompletionStage to convert from a `CompletionStage`.
+- [Add `offset` option in `findManyByCondition` to support pagination](https://github.com/jklingsporn/vertx-jooq/issues/172)
+- [MariaDB support for lastInsertId](https://github.com/jklingsporn/vertx-jooq/issues/173)
 
 ## different needs, different apis
 ![What do you want](https://media.giphy.com/media/E87jjnSCANThe/giphy.gif)
