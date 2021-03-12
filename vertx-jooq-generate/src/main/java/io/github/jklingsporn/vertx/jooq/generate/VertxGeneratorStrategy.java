@@ -2,18 +2,16 @@ package io.github.jklingsporn.vertx.jooq.generate;
 
 import io.github.jklingsporn.vertx.jooq.shared.internal.VertxPojo;
 import org.jooq.codegen.DefaultGeneratorStrategy;
-import org.jooq.meta.Definition;
 import org.jooq.codegen.GeneratorStrategy;
+import org.jooq.meta.Definition;
 import org.jooq.meta.TypedElementDefinition;
 
-import java.io.File;
-import java.util.Collection;
 import java.util.List;
 
 /**
  * Created by jensklingsporn on 08.02.18.
  */
-public class VertxGeneratorStrategy implements GeneratorStrategy {
+public class VertxGeneratorStrategy extends DefaultGeneratorStrategy {
 
     private final GeneratorStrategy delegate;
 
@@ -43,102 +41,6 @@ public class VertxGeneratorStrategy implements GeneratorStrategy {
         return javaClassImplements;
     }
 
-    @Override
-    public String getFileName(Definition definition) {
-        return delegate.getFileName(definition);
-    }
-
-    @Override
-    public String getFileName(Definition definition, Mode mode) {
-        return delegate.getFileName(definition, mode);
-    }
-
-    @Override
-    public File getFileRoot() {
-        return delegate.getFileRoot();
-    }
-
-    @Override
-    public File getFile(Definition definition) {
-        return delegate.getFile(definition);
-    }
-
-    @Override
-    public File getFile(Definition definition, Mode mode) {
-        return delegate.getFile(definition, mode);
-    }
-
-    @Override
-    public File getFile(String fileName) {
-        return delegate.getFile(fileName);
-    }
-    @Override
-    public String getFileHeader(Definition definition) {
-        return delegate.getFileHeader(definition);
-    }
-
-    @Override
-    public String getFullJavaIdentifier(Definition definition) {
-        return delegate.getFullJavaIdentifier(definition);
-    }
-    @Override
-    public String getJavaSetterName(Definition definition) {
-        return delegate.getJavaSetterName(definition);
-    }
-    @Override
-    public String getJavaGetterName(Definition definition) {
-        return delegate.getJavaGetterName(definition);
-    }
-    @Override
-    public String getJavaMethodName(Definition definition) {
-        return delegate.getJavaMethodName(definition);
-    }
-    @Override
-    public String getJavaClassExtends(Definition definition) {
-        return delegate.getJavaClassExtends(definition);
-    }
-    @Override
-    public List<String> getJavaClassImplements(Definition definition) {
-        return delegate.getJavaClassImplements(definition);
-    }
-    @Override
-    public String getJavaClassName(Definition definition) {
-        return delegate.getJavaClassName(definition);
-    }
-    @Override
-    public String getJavaPackageName(Definition definition) {
-        return delegate.getJavaPackageName(definition);
-    }
-    @Override
-    public String getJavaMemberName(Definition definition) {
-        return delegate.getJavaMemberName(definition);
-    }
-
-    @Override
-    public String getFullJavaClassName(Definition definition) {
-        return delegate.getFullJavaClassName(definition);
-    }
-
-    @Override
-    public String getFullJavaClassName(Definition definition, Mode mode) {
-        return delegate.getFullJavaClassName(definition, mode);
-    }
-    @Override
-    public List<String> getJavaIdentifiers(Collection<? extends Definition> definitions) {
-        return delegate.getJavaIdentifiers(definitions);
-    }
-    @Override
-    public List<String> getJavaIdentifiers(Definition... definitions) {
-        return delegate.getJavaIdentifiers(definitions);
-    }
-    @Override
-    public List<String> getFullJavaIdentifiers(Collection<? extends Definition> definitions) {
-        return delegate.getFullJavaIdentifiers(definitions);
-    }
-    @Override
-    public List<String> getFullJavaIdentifiers(Definition... definitions) {
-        return delegate.getFullJavaIdentifiers(definitions);
-    }
     @Override
     public void setInstanceFields(boolean instanceFields) {
         delegate.setInstanceFields(instanceFields);
