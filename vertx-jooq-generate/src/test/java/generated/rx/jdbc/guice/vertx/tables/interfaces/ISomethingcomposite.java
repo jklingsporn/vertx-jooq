@@ -61,22 +61,22 @@ public interface ISomethingcomposite extends VertxPojo, Serializable {
      */
     public <E extends ISomethingcomposite> E into(E into);
 
-    @Override
-    public default ISomethingcomposite fromJson(io.vertx.core.json.JsonObject json) {
-        setOrThrow(this::setSomeid,json::getInteger,"SOMEID","java.lang.Integer");
-        setOrThrow(this::setSomesecondid,json::getInteger,"SOMESECONDID","java.lang.Integer");
-        setOrThrow(this::setSomejsonobject,json::getJsonObject,"SOMEJSONOBJECT","io.vertx.core.json.JsonObject");
-        return this;
-    }
+        @Override
+        public default ISomethingcomposite fromJson(io.vertx.core.json.JsonObject json) {
+                setOrThrow(this::setSomeid,json::getInteger,"SOMEID","java.lang.Integer");
+                setOrThrow(this::setSomesecondid,json::getInteger,"SOMESECONDID","java.lang.Integer");
+                setOrThrow(this::setSomejsonobject,json::getJsonObject,"SOMEJSONOBJECT","io.vertx.core.json.JsonObject");
+                return this;
+        }
 
 
-    @Override
-    public default io.vertx.core.json.JsonObject toJson() {
-        io.vertx.core.json.JsonObject json = new io.vertx.core.json.JsonObject();
-        json.put("SOMEID",getSomeid());
-        json.put("SOMESECONDID",getSomesecondid());
-        json.put("SOMEJSONOBJECT",getSomejsonobject());
-        return json;
-    }
+        @Override
+        public default io.vertx.core.json.JsonObject toJson() {
+                io.vertx.core.json.JsonObject json = new io.vertx.core.json.JsonObject();
+                json.put("SOMEID",getSomeid());
+                json.put("SOMESECONDID",getSomesecondid());
+                json.put("SOMEJSONOBJECT",getSomejsonobject());
+                return json;
+        }
 
 }

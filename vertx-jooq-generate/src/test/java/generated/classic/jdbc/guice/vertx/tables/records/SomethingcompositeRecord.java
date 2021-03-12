@@ -24,7 +24,7 @@ import static io.github.jklingsporn.vertx.jooq.shared.internal.VertxPojo.*;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class SomethingcompositeRecord extends UpdatableRecordImpl<SomethingcompositeRecord> implements VertxPojo, Record3<Integer, Integer, JsonObject>, ISomethingcomposite {
 
-    private static final long serialVersionUID = -679000369;
+    private static final long serialVersionUID = 1L;
 
     /**
      * Setter for <code>VERTX.SOMETHINGCOMPOSITE.SOMEID</code>.
@@ -205,13 +205,13 @@ public class SomethingcompositeRecord extends UpdatableRecordImpl<Somethingcompo
     public SomethingcompositeRecord(Integer someid, Integer somesecondid, JsonObject somejsonobject) {
         super(Somethingcomposite.SOMETHINGCOMPOSITE);
 
-        set(0, someid);
-        set(1, somesecondid);
-        set(2, somejsonobject);
+        setSomeid(someid);
+        setSomesecondid(somesecondid);
+        setSomejsonobject(somejsonobject);
     }
 
-    public SomethingcompositeRecord(io.vertx.core.json.JsonObject json) {
-        this();
-        fromJson(json);
-    }
+        public SomethingcompositeRecord(io.vertx.core.json.JsonObject json) {
+                this();
+                fromJson(json);
+        }
 }

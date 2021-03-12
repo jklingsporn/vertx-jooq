@@ -210,50 +210,50 @@ public interface ISomething extends VertxPojo, Serializable {
      */
     public <E extends ISomething> E into(E into);
 
-    @Override
-    public default ISomething fromJson(io.vertx.core.json.JsonObject json) {
-        setOrThrow(this::setSomeid,json::getInteger,"someId","java.lang.Integer");
-        setOrThrow(this::setSomestring,json::getString,"someString","java.lang.String");
-        setOrThrow(this::setSomehugenumber,json::getLong,"someHugeNumber","java.lang.Long");
-        setOrThrow(this::setSomesmallnumber,key -> {Integer i = json.getInteger(key); return i==null?null:i.shortValue();},"someSmallNumber","java.lang.Short");
-        setOrThrow(this::setSomeregularnumber,json::getInteger,"someRegularNumber","java.lang.Integer");
-        setOrThrow(this::setSomedouble,json::getDouble,"someDouble","java.lang.Double");
-        setOrThrow(this::setSomeenum,key -> java.util.Arrays.stream(generated.rx.reactive.guice.enums.Someenum.values()).filter(td -> td.getLiteral().equals(json.getString(key))).findFirst().orElse(null),"someEnum","generated.rx.reactive.guice.enums.Someenum");
-        setOrThrow(this::setSomejsonobject,json::getJsonObject,"someJsonObject","io.vertx.core.json.JsonObject");
-        setSomecustomjsonobject(generated.rx.reactive.guice.tables.converters.Converters.IO_GITHUB_JKLINGSPORN_VERTX_JOOQ_GENERATE_CONVERTER_SOMEJSONPOJOCONVERTER_INSTANCE.pgConverter().from(json.getJsonObject("someCustomJsonObject")));
-        setOrThrow(this::setSomejsonarray,json::getJsonArray,"someJsonArray","io.vertx.core.json.JsonArray");
-        setSomevertxjsonobject(generated.rx.reactive.guice.tables.converters.Converters.IO_GITHUB_JKLINGSPORN_VERTX_JOOQ_SHARED_POSTGRES_JSONBTOJSONOBJECTCONVERTER_INSTANCE.pgConverter().from(json.getJsonObject("someVertxJsonObject")));
-        setOrThrow(this::setSometime,key -> {String s = json.getString(key); return s==null?null:java.time.LocalTime.parse(s);},"someTime","java.time.LocalTime");
-        setOrThrow(this::setSomedate,key -> {String s = json.getString(key); return s==null?null:java.time.LocalDate.parse(s);},"someDate","java.time.LocalDate");
-        setOrThrow(this::setSometimestamp,key -> {String s = json.getString(key); return s==null?null:java.time.LocalDateTime.parse(s);},"someTimestamp","java.time.LocalDateTime");
-        setOrThrow(this::setSometimestampwithtz,key -> {String s = json.getString(key); return s==null?null:java.time.OffsetDateTime.parse(s);},"someTimestampWithTZ","java.time.OffsetDateTime");
-        setOrThrow(this::setSomebytea,json::getBinary,"someByteA","byte[]");
-        setOrThrow(this::setSomestringaslist,key -> {io.vertx.core.json.JsonArray arr = json.getJsonArray(key); return arr==null?null:new java.util.ArrayList<String>(arr.getList());},"someStringAsList","java.util.List<String>");
-        return this;
-    }
+        @Override
+        public default ISomething fromJson(io.vertx.core.json.JsonObject json) {
+                setOrThrow(this::setSomeid,json::getInteger,"someId","java.lang.Integer");
+                setOrThrow(this::setSomestring,json::getString,"someString","java.lang.String");
+                setOrThrow(this::setSomehugenumber,json::getLong,"someHugeNumber","java.lang.Long");
+                setOrThrow(this::setSomesmallnumber,key -> {Integer i = json.getInteger(key); return i==null?null:i.shortValue();},"someSmallNumber","java.lang.Short");
+                setOrThrow(this::setSomeregularnumber,json::getInteger,"someRegularNumber","java.lang.Integer");
+                setOrThrow(this::setSomedouble,json::getDouble,"someDouble","java.lang.Double");
+                setOrThrow(this::setSomeenum,key -> java.util.Arrays.stream(generated.rx.reactive.guice.enums.Someenum.values()).filter(td -> td.getLiteral().equals(json.getString(key))).findFirst().orElse(null),"someEnum","generated.rx.reactive.guice.enums.Someenum");
+                setOrThrow(this::setSomejsonobject,json::getJsonObject,"someJsonObject","io.vertx.core.json.JsonObject");
+                setSomecustomjsonobject(generated.rx.reactive.guice.tables.converters.Converters.IO_GITHUB_JKLINGSPORN_VERTX_JOOQ_GENERATE_CONVERTER_SOMEJSONPOJOCONVERTER_INSTANCE.pgConverter().from(json.getJsonObject("someCustomJsonObject")));
+                setOrThrow(this::setSomejsonarray,json::getJsonArray,"someJsonArray","io.vertx.core.json.JsonArray");
+                setSomevertxjsonobject(generated.rx.reactive.guice.tables.converters.Converters.IO_GITHUB_JKLINGSPORN_VERTX_JOOQ_SHARED_POSTGRES_JSONBTOJSONOBJECTCONVERTER_INSTANCE.pgConverter().from(json.getJsonObject("someVertxJsonObject")));
+                setOrThrow(this::setSometime,key -> {String s = json.getString(key); return s==null?null:java.time.LocalTime.parse(s);},"someTime","java.time.LocalTime");
+                setOrThrow(this::setSomedate,key -> {String s = json.getString(key); return s==null?null:java.time.LocalDate.parse(s);},"someDate","java.time.LocalDate");
+                setOrThrow(this::setSometimestamp,key -> {String s = json.getString(key); return s==null?null:java.time.LocalDateTime.parse(s);},"someTimestamp","java.time.LocalDateTime");
+                setOrThrow(this::setSometimestampwithtz,key -> {String s = json.getString(key); return s==null?null:java.time.OffsetDateTime.parse(s);},"someTimestampWithTZ","java.time.OffsetDateTime");
+                setOrThrow(this::setSomebytea,json::getBinary,"someByteA","byte[]");
+                setOrThrow(this::setSomestringaslist,key -> {io.vertx.core.json.JsonArray arr = json.getJsonArray(key); return arr==null?null:new java.util.ArrayList<String>(arr.getList());},"someStringAsList","java.util.List<String>");
+                return this;
+        }
 
 
-    @Override
-    public default io.vertx.core.json.JsonObject toJson() {
-        io.vertx.core.json.JsonObject json = new io.vertx.core.json.JsonObject();
-        json.put("someId",getSomeid());
-        json.put("someString",getSomestring());
-        json.put("someHugeNumber",getSomehugenumber());
-        json.put("someSmallNumber",getSomesmallnumber());
-        json.put("someRegularNumber",getSomeregularnumber());
-        json.put("someDouble",getSomedouble());
-        json.put("someEnum",getSomeenum()==null?null:getSomeenum().getLiteral());
-        json.put("someJsonObject",getSomejsonobject());
-        json.put("someCustomJsonObject",generated.rx.reactive.guice.tables.converters.Converters.IO_GITHUB_JKLINGSPORN_VERTX_JOOQ_GENERATE_CONVERTER_SOMEJSONPOJOCONVERTER_INSTANCE.pgConverter().to(getSomecustomjsonobject()));
-        json.put("someJsonArray",getSomejsonarray());
-        json.put("someVertxJsonObject",generated.rx.reactive.guice.tables.converters.Converters.IO_GITHUB_JKLINGSPORN_VERTX_JOOQ_SHARED_POSTGRES_JSONBTOJSONOBJECTCONVERTER_INSTANCE.pgConverter().to(getSomevertxjsonobject()));
-        json.put("someTime",getSometime()==null?null:getSometime().toString());
-        json.put("someDate",getSomedate()==null?null:getSomedate().toString());
-        json.put("someTimestamp",getSometimestamp()==null?null:getSometimestamp().toString());
-        json.put("someTimestampWithTZ",getSometimestampwithtz()==null?null:getSometimestampwithtz().toString());
-        json.put("someByteA",getSomebytea());
-        json.put("someStringAsList",getSomestringaslist()==null?null: new io.vertx.core.json.JsonArray(getSomestringaslist()));
-        return json;
-    }
+        @Override
+        public default io.vertx.core.json.JsonObject toJson() {
+                io.vertx.core.json.JsonObject json = new io.vertx.core.json.JsonObject();
+                json.put("someId",getSomeid());
+                json.put("someString",getSomestring());
+                json.put("someHugeNumber",getSomehugenumber());
+                json.put("someSmallNumber",getSomesmallnumber());
+                json.put("someRegularNumber",getSomeregularnumber());
+                json.put("someDouble",getSomedouble());
+                json.put("someEnum",getSomeenum()==null?null:getSomeenum().getLiteral());
+                json.put("someJsonObject",getSomejsonobject());
+                json.put("someCustomJsonObject",generated.rx.reactive.guice.tables.converters.Converters.IO_GITHUB_JKLINGSPORN_VERTX_JOOQ_GENERATE_CONVERTER_SOMEJSONPOJOCONVERTER_INSTANCE.pgConverter().to(getSomecustomjsonobject()));
+                json.put("someJsonArray",getSomejsonarray());
+                json.put("someVertxJsonObject",generated.rx.reactive.guice.tables.converters.Converters.IO_GITHUB_JKLINGSPORN_VERTX_JOOQ_SHARED_POSTGRES_JSONBTOJSONOBJECTCONVERTER_INSTANCE.pgConverter().to(getSomevertxjsonobject()));
+                json.put("someTime",getSometime()==null?null:getSometime().toString());
+                json.put("someDate",getSomedate()==null?null:getSomedate().toString());
+                json.put("someTimestamp",getSometimestamp()==null?null:getSometimestamp().toString());
+                json.put("someTimestampWithTZ",getSometimestampwithtz()==null?null:getSometimestampwithtz().toString());
+                json.put("someByteA",getSomebytea());
+                json.put("someStringAsList",getSomestringaslist()==null?null: new io.vertx.core.json.JsonArray(getSomestringaslist()));
+                return json;
+        }
 
 }

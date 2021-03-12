@@ -10,7 +10,7 @@ import generated.classic.reactive.guice.tables.Somethingwithoutjson;
 
 
 /**
- * Convenience access to all tables in vertx
+ * Convenience access to all tables in vertx.
  */
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Tables {

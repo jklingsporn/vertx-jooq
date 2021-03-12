@@ -28,7 +28,7 @@ import static io.github.jklingsporn.vertx.jooq.shared.internal.VertxPojo.*;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class SomethingRecord extends UpdatableRecordImpl<SomethingRecord> implements VertxPojo, Record10<Integer, String, Long, Short, Integer, Double, SomethingSomeenum, JsonObject, JsonArray, LocalDateTime>, ISomething {
 
-    private static final long serialVersionUID = 203522691;
+    private static final long serialVersionUID = 1L;
 
     /**
      * Setter for <code>vertx.something.someId</code>.
@@ -489,20 +489,20 @@ public class SomethingRecord extends UpdatableRecordImpl<SomethingRecord> implem
     public SomethingRecord(Integer someid, String somestring, Long somehugenumber, Short somesmallnumber, Integer someregularnumber, Double somedouble, SomethingSomeenum someenum, JsonObject somejsonobject, JsonArray somejsonarray, LocalDateTime sometimestamp) {
         super(Something.SOMETHING);
 
-        set(0, someid);
-        set(1, somestring);
-        set(2, somehugenumber);
-        set(3, somesmallnumber);
-        set(4, someregularnumber);
-        set(5, somedouble);
-        set(6, someenum);
-        set(7, somejsonobject);
-        set(8, somejsonarray);
-        set(9, sometimestamp);
+        setSomeid(someid);
+        setSomestring(somestring);
+        setSomehugenumber(somehugenumber);
+        setSomesmallnumber(somesmallnumber);
+        setSomeregularnumber(someregularnumber);
+        setSomedouble(somedouble);
+        setSomeenum(someenum);
+        setSomejsonobject(somejsonobject);
+        setSomejsonarray(somejsonarray);
+        setSometimestamp(sometimestamp);
     }
 
-    public SomethingRecord(io.vertx.core.json.JsonObject json) {
-        this();
-        fromJson(json);
-    }
+        public SomethingRecord(io.vertx.core.json.JsonObject json) {
+                this();
+                fromJson(json);
+        }
 }

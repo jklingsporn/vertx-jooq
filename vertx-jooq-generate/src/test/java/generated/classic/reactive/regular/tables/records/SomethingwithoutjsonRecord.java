@@ -23,7 +23,7 @@ import static io.github.jklingsporn.vertx.jooq.shared.internal.VertxPojo.*;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class SomethingwithoutjsonRecord extends UpdatableRecordImpl<SomethingwithoutjsonRecord> implements VertxPojo, Record2<Integer, String>, ISomethingwithoutjson {
 
-    private static final long serialVersionUID = -1381859030;
+    private static final long serialVersionUID = 1L;
 
     /**
      * Setter for <code>vertx.somethingWithoutJson.someId</code>.
@@ -164,12 +164,12 @@ public class SomethingwithoutjsonRecord extends UpdatableRecordImpl<Somethingwit
     public SomethingwithoutjsonRecord(Integer someid, String somestring) {
         super(Somethingwithoutjson.SOMETHINGWITHOUTJSON);
 
-        set(0, someid);
-        set(1, somestring);
+        setSomeid(someid);
+        setSomestring(somestring);
     }
 
-    public SomethingwithoutjsonRecord(io.vertx.core.json.JsonObject json) {
-        this();
-        fromJson(json);
-    }
+        public SomethingwithoutjsonRecord(io.vertx.core.json.JsonObject json) {
+                this();
+                fromJson(json);
+        }
 }

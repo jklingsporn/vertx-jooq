@@ -26,7 +26,7 @@ import static io.github.jklingsporn.vertx.jooq.shared.internal.VertxPojo.*;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class SomethingRecord extends UpdatableRecordImpl<SomethingRecord> implements VertxPojo, Record10<Integer, String, Long, Short, Integer, Boolean, Double, JsonObject, JsonArray, LocalDateTime> {
 
-    private static final long serialVersionUID = 1063159032;
+    private static final long serialVersionUID = 1L;
 
     /**
      * Setter for <code>VERTX.SOMETHING.SOMEID</code>.
@@ -443,53 +443,53 @@ public class SomethingRecord extends UpdatableRecordImpl<SomethingRecord> implem
     public SomethingRecord(Integer someid, String somestring, Long somehugenumber, Short somesmallnumber, Integer someregularnumber, Boolean someboolean, Double somedouble, JsonObject somejsonobject, JsonArray somejsonarray, LocalDateTime sometimestamp) {
         super(Something.SOMETHING);
 
-        set(0, someid);
-        set(1, somestring);
-        set(2, somehugenumber);
-        set(3, somesmallnumber);
-        set(4, someregularnumber);
-        set(5, someboolean);
-        set(6, somedouble);
-        set(7, somejsonobject);
-        set(8, somejsonarray);
-        set(9, sometimestamp);
+        setSomeid(someid);
+        setSomestring(somestring);
+        setSomehugenumber(somehugenumber);
+        setSomesmallnumber(somesmallnumber);
+        setSomeregularnumber(someregularnumber);
+        setSomeboolean(someboolean);
+        setSomedouble(somedouble);
+        setSomejsonobject(somejsonobject);
+        setSomejsonarray(somejsonarray);
+        setSometimestamp(sometimestamp);
     }
 
-    public SomethingRecord(io.vertx.core.json.JsonObject json) {
-        this();
-        fromJson(json);
-    }
+        public SomethingRecord(io.vertx.core.json.JsonObject json) {
+                this();
+                fromJson(json);
+        }
 
-    @Override
-    public SomethingRecord fromJson(io.vertx.core.json.JsonObject json) {
-        setOrThrow(this::setSomeid,json::getInteger,"SOMEID","java.lang.Integer");
-        setOrThrow(this::setSomestring,json::getString,"SOMESTRING","java.lang.String");
-        setOrThrow(this::setSomehugenumber,json::getLong,"SOMEHUGENUMBER","java.lang.Long");
-        setOrThrow(this::setSomesmallnumber,key -> {Integer i = json.getInteger(key); return i==null?null:i.shortValue();},"SOMESMALLNUMBER","java.lang.Short");
-        setOrThrow(this::setSomeregularnumber,json::getInteger,"SOMEREGULARNUMBER","java.lang.Integer");
-        setOrThrow(this::setSomeboolean,json::getBoolean,"SOMEBOOLEAN","java.lang.Boolean");
-        setOrThrow(this::setSomedouble,json::getDouble,"SOMEDOUBLE","java.lang.Double");
-        setOrThrow(this::setSomejsonobject,json::getJsonObject,"SOMEJSONOBJECT","io.vertx.core.json.JsonObject");
-        setOrThrow(this::setSomejsonarray,json::getJsonArray,"SOMEJSONARRAY","io.vertx.core.json.JsonArray");
-        setSometimestamp(json.getString("SOMETIMESTAMP")==null?null:LocalDateTime.parse(json.getString("SOMETIMESTAMP")));
-        return this;
-    }
+        @Override
+        public SomethingRecord fromJson(io.vertx.core.json.JsonObject json) {
+                setOrThrow(this::setSomeid,json::getInteger,"SOMEID","java.lang.Integer");
+                setOrThrow(this::setSomestring,json::getString,"SOMESTRING","java.lang.String");
+                setOrThrow(this::setSomehugenumber,json::getLong,"SOMEHUGENUMBER","java.lang.Long");
+                setOrThrow(this::setSomesmallnumber,key -> {Integer i = json.getInteger(key); return i==null?null:i.shortValue();},"SOMESMALLNUMBER","java.lang.Short");
+                setOrThrow(this::setSomeregularnumber,json::getInteger,"SOMEREGULARNUMBER","java.lang.Integer");
+                setOrThrow(this::setSomeboolean,json::getBoolean,"SOMEBOOLEAN","java.lang.Boolean");
+                setOrThrow(this::setSomedouble,json::getDouble,"SOMEDOUBLE","java.lang.Double");
+                setOrThrow(this::setSomejsonobject,json::getJsonObject,"SOMEJSONOBJECT","io.vertx.core.json.JsonObject");
+                setOrThrow(this::setSomejsonarray,json::getJsonArray,"SOMEJSONARRAY","io.vertx.core.json.JsonArray");
+                setSometimestamp(json.getString("SOMETIMESTAMP")==null?null:LocalDateTime.parse(json.getString("SOMETIMESTAMP")));
+                return this;
+        }
 
 
-    @Override
-    public io.vertx.core.json.JsonObject toJson() {
-        io.vertx.core.json.JsonObject json = new io.vertx.core.json.JsonObject();
-        json.put("SOMEID",getSomeid());
-        json.put("SOMESTRING",getSomestring());
-        json.put("SOMEHUGENUMBER",getSomehugenumber());
-        json.put("SOMESMALLNUMBER",getSomesmallnumber());
-        json.put("SOMEREGULARNUMBER",getSomeregularnumber());
-        json.put("SOMEBOOLEAN",getSomeboolean());
-        json.put("SOMEDOUBLE",getSomedouble());
-        json.put("SOMEJSONOBJECT",getSomejsonobject());
-        json.put("SOMEJSONARRAY",getSomejsonarray());
-        json.put("SOMETIMESTAMP",getSometimestamp()==null?null:getSometimestamp().toString());
-        return json;
-    }
+        @Override
+        public io.vertx.core.json.JsonObject toJson() {
+                io.vertx.core.json.JsonObject json = new io.vertx.core.json.JsonObject();
+                json.put("SOMEID",getSomeid());
+                json.put("SOMESTRING",getSomestring());
+                json.put("SOMEHUGENUMBER",getSomehugenumber());
+                json.put("SOMESMALLNUMBER",getSomesmallnumber());
+                json.put("SOMEREGULARNUMBER",getSomeregularnumber());
+                json.put("SOMEBOOLEAN",getSomeboolean());
+                json.put("SOMEDOUBLE",getSomedouble());
+                json.put("SOMEJSONOBJECT",getSomejsonobject());
+                json.put("SOMEJSONARRAY",getSomejsonarray());
+                json.put("SOMETIMESTAMP",getSometimestamp()==null?null:getSometimestamp().toString());
+                return json;
+        }
 
 }

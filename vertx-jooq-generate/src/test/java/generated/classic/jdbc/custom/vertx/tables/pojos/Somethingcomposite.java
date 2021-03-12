@@ -17,7 +17,7 @@ import static io.github.jklingsporn.vertx.jooq.shared.internal.VertxPojo.*;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Somethingcomposite implements VertxPojo, Serializable {
 
-    private static final long serialVersionUID = -29017027;
+    private static final long serialVersionUID = 1L;
 
     private Integer    someid;
     private Integer    somesecondid;
@@ -41,33 +41,51 @@ public class Somethingcomposite implements VertxPojo, Serializable {
         this.somejsonobject = somejsonobject;
     }
 
-    public Somethingcomposite(io.vertx.core.json.JsonObject json) {
-        this();
-        fromJson(json);
-    }
+        public Somethingcomposite(io.vertx.core.json.JsonObject json) {
+                this();
+                fromJson(json);
+        }
 
+    /**
+     * Getter for <code>VERTX.SOMETHINGCOMPOSITE.SOMEID</code>.
+     */
     public Integer getSomeid() {
         return this.someid;
     }
 
+    /**
+     * Setter for <code>VERTX.SOMETHINGCOMPOSITE.SOMEID</code>.
+     */
     public Somethingcomposite setSomeid(Integer someid) {
         this.someid = someid;
         return this;
     }
 
+    /**
+     * Getter for <code>VERTX.SOMETHINGCOMPOSITE.SOMESECONDID</code>.
+     */
     public Integer getSomesecondid() {
         return this.somesecondid;
     }
 
+    /**
+     * Setter for <code>VERTX.SOMETHINGCOMPOSITE.SOMESECONDID</code>.
+     */
     public Somethingcomposite setSomesecondid(Integer somesecondid) {
         this.somesecondid = somesecondid;
         return this;
     }
 
+    /**
+     * Getter for <code>VERTX.SOMETHINGCOMPOSITE.SOMEJSONOBJECT</code>.
+     */
     public JsonObject getSomejsonobject() {
         return this.somejsonobject;
     }
 
+    /**
+     * Setter for <code>VERTX.SOMETHINGCOMPOSITE.SOMEJSONOBJECT</code>.
+     */
     public Somethingcomposite setSomejsonobject(JsonObject somejsonobject) {
         this.somejsonobject = somejsonobject;
         return this;
@@ -125,22 +143,22 @@ public class Somethingcomposite implements VertxPojo, Serializable {
         return sb.toString();
     }
 
-    @Override
-    public Somethingcomposite fromJson(io.vertx.core.json.JsonObject json) {
-        setOrThrow(this::setSomeid,json::getInteger,"SOMEID","java.lang.Integer");
-        setOrThrow(this::setSomesecondid,json::getInteger,"SOMESECONDID","java.lang.Integer");
-        setOrThrow(this::setSomejsonobject,json::getJsonObject,"SOMEJSONOBJECT","io.vertx.core.json.JsonObject");
-        return this;
-    }
+        @Override
+        public Somethingcomposite fromJson(io.vertx.core.json.JsonObject json) {
+                setOrThrow(this::setSomeid,json::getInteger,"SOMEID","java.lang.Integer");
+                setOrThrow(this::setSomesecondid,json::getInteger,"SOMESECONDID","java.lang.Integer");
+                setOrThrow(this::setSomejsonobject,json::getJsonObject,"SOMEJSONOBJECT","io.vertx.core.json.JsonObject");
+                return this;
+        }
 
 
-    @Override
-    public io.vertx.core.json.JsonObject toJson() {
-        io.vertx.core.json.JsonObject json = new io.vertx.core.json.JsonObject();
-        json.put("SOMEID",getSomeid());
-        json.put("SOMESECONDID",getSomesecondid());
-        json.put("SOMEJSONOBJECT",getSomejsonobject());
-        return json;
-    }
+        @Override
+        public io.vertx.core.json.JsonObject toJson() {
+                io.vertx.core.json.JsonObject json = new io.vertx.core.json.JsonObject();
+                json.put("SOMEID",getSomeid());
+                json.put("SOMESECONDID",getSomesecondid());
+                json.put("SOMEJSONOBJECT",getSomejsonobject());
+                return json;
+        }
 
 }

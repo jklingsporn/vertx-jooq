@@ -33,7 +33,7 @@ import static io.github.jklingsporn.vertx.jooq.shared.internal.VertxPojo.*;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class SomethingRecord extends UpdatableRecordImpl<SomethingRecord> implements VertxPojo, Record17<Integer, String, Long, Short, Integer, Double, Someenum, JsonObject, SomeJsonPojo, JsonArray, JsonObject, LocalTime, LocalDate, LocalDateTime, OffsetDateTime, byte[], List<String>>, ISomething {
 
-    private static final long serialVersionUID = 1453736790;
+    private static final long serialVersionUID = 1L;
 
     /**
      * Setter for <code>vertx.something.someId</code>.
@@ -774,27 +774,27 @@ public class SomethingRecord extends UpdatableRecordImpl<SomethingRecord> implem
     public SomethingRecord(Integer someid, String somestring, Long somehugenumber, Short somesmallnumber, Integer someregularnumber, Double somedouble, Someenum someenum, JsonObject somejsonobject, SomeJsonPojo somecustomjsonobject, JsonArray somejsonarray, JsonObject somevertxjsonobject, LocalTime sometime, LocalDate somedate, LocalDateTime sometimestamp, OffsetDateTime sometimestampwithtz, byte[] somebytea, List<String> somestringaslist) {
         super(Something.SOMETHING);
 
-        set(0, someid);
-        set(1, somestring);
-        set(2, somehugenumber);
-        set(3, somesmallnumber);
-        set(4, someregularnumber);
-        set(5, somedouble);
-        set(6, someenum);
-        set(7, somejsonobject);
-        set(8, somecustomjsonobject);
-        set(9, somejsonarray);
-        set(10, somevertxjsonobject);
-        set(11, sometime);
-        set(12, somedate);
-        set(13, sometimestamp);
-        set(14, sometimestampwithtz);
-        set(15, somebytea);
-        set(16, somestringaslist);
+        setSomeid(someid);
+        setSomestring(somestring);
+        setSomehugenumber(somehugenumber);
+        setSomesmallnumber(somesmallnumber);
+        setSomeregularnumber(someregularnumber);
+        setSomedouble(somedouble);
+        setSomeenum(someenum);
+        setSomejsonobject(somejsonobject);
+        setSomecustomjsonobject(somecustomjsonobject);
+        setSomejsonarray(somejsonarray);
+        setSomevertxjsonobject(somevertxjsonobject);
+        setSometime(sometime);
+        setSomedate(somedate);
+        setSometimestamp(sometimestamp);
+        setSometimestampwithtz(sometimestampwithtz);
+        setSomebytea(somebytea);
+        setSomestringaslist(somestringaslist);
     }
 
-    public SomethingRecord(io.vertx.core.json.JsonObject json) {
-        this();
-        fromJson(json);
-    }
+        public SomethingRecord(io.vertx.core.json.JsonObject json) {
+                this();
+                fromJson(json);
+        }
 }

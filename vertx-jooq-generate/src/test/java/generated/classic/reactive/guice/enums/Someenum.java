@@ -17,11 +17,11 @@ import org.jooq.Schema;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public enum Someenum implements EnumType {
 
+    FOO("FOO"),
+
     BAR("BAR"),
 
-    BAZ("BAZ"),
-
-    FOO("FOO");
+    BAZ("BAZ");
 
     private final String literal;
 
@@ -31,7 +31,7 @@ public enum Someenum implements EnumType {
 
     @Override
     public Catalog getCatalog() {
-        return getSchema() == null ? null : getSchema().getCatalog();
+        return getSchema().getCatalog();
     }
 
     @Override

@@ -59,5 +59,11 @@
             <version>${vertx.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-codegen</artifactId>
+            <version>${vertx.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 </project>

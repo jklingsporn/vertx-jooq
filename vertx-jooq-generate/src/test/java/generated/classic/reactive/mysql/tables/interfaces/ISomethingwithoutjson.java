@@ -50,20 +50,20 @@ public interface ISomethingwithoutjson extends VertxPojo, Serializable {
      */
     public <E extends ISomethingwithoutjson> E into(E into);
 
-    @Override
-    public default ISomethingwithoutjson fromJson(io.vertx.core.json.JsonObject json) {
-        setOrThrow(this::setSomeid,json::getInteger,"someId","java.lang.Integer");
-        setOrThrow(this::setSomestring,json::getString,"someString","java.lang.String");
-        return this;
-    }
+        @Override
+        public default ISomethingwithoutjson fromJson(io.vertx.core.json.JsonObject json) {
+                setOrThrow(this::setSomeid,json::getInteger,"someId","java.lang.Integer");
+                setOrThrow(this::setSomestring,json::getString,"someString","java.lang.String");
+                return this;
+        }
 
 
-    @Override
-    public default io.vertx.core.json.JsonObject toJson() {
-        io.vertx.core.json.JsonObject json = new io.vertx.core.json.JsonObject();
-        json.put("someId",getSomeid());
-        json.put("someString",getSomestring());
-        return json;
-    }
+        @Override
+        public default io.vertx.core.json.JsonObject toJson() {
+                io.vertx.core.json.JsonObject json = new io.vertx.core.json.JsonObject();
+                json.put("someId",getSomeid());
+                json.put("someString",getSomestring());
+                return json;
+        }
 
 }

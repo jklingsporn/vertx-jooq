@@ -133,36 +133,36 @@ public interface ISomething extends VertxPojo, Serializable {
      */
     public <E extends ISomething> E into(E into);
 
-    @Override
-    public default ISomething fromJson(io.vertx.core.json.JsonObject json) {
-        setOrThrow(this::setSomeid,json::getInteger,"SOMEID","java.lang.Integer");
-        setOrThrow(this::setSomestring,json::getString,"SOMESTRING","java.lang.String");
-        setOrThrow(this::setSomehugenumber,json::getLong,"SOMEHUGENUMBER","java.lang.Long");
-        setOrThrow(this::setSomesmallnumber,key -> {Integer i = json.getInteger(key); return i==null?null:i.shortValue();},"SOMESMALLNUMBER","java.lang.Short");
-        setOrThrow(this::setSomeregularnumber,json::getInteger,"SOMEREGULARNUMBER","java.lang.Integer");
-        setOrThrow(this::setSomeboolean,json::getBoolean,"SOMEBOOLEAN","java.lang.Boolean");
-        setOrThrow(this::setSomedouble,json::getDouble,"SOMEDOUBLE","java.lang.Double");
-        setOrThrow(this::setSomejsonobject,json::getJsonObject,"SOMEJSONOBJECT","io.vertx.core.json.JsonObject");
-        setOrThrow(this::setSomejsonarray,json::getJsonArray,"SOMEJSONARRAY","io.vertx.core.json.JsonArray");
-        setOrThrow(this::setSometimestamp,key -> {String s = json.getString(key); return s==null?null:java.time.LocalDateTime.parse(s);},"SOMETIMESTAMP","java.time.LocalDateTime");
-        return this;
-    }
+        @Override
+        public default ISomething fromJson(io.vertx.core.json.JsonObject json) {
+                setOrThrow(this::setSomeid,json::getInteger,"SOMEID","java.lang.Integer");
+                setOrThrow(this::setSomestring,json::getString,"SOMESTRING","java.lang.String");
+                setOrThrow(this::setSomehugenumber,json::getLong,"SOMEHUGENUMBER","java.lang.Long");
+                setOrThrow(this::setSomesmallnumber,key -> {Integer i = json.getInteger(key); return i==null?null:i.shortValue();},"SOMESMALLNUMBER","java.lang.Short");
+                setOrThrow(this::setSomeregularnumber,json::getInteger,"SOMEREGULARNUMBER","java.lang.Integer");
+                setOrThrow(this::setSomeboolean,json::getBoolean,"SOMEBOOLEAN","java.lang.Boolean");
+                setOrThrow(this::setSomedouble,json::getDouble,"SOMEDOUBLE","java.lang.Double");
+                setOrThrow(this::setSomejsonobject,json::getJsonObject,"SOMEJSONOBJECT","io.vertx.core.json.JsonObject");
+                setOrThrow(this::setSomejsonarray,json::getJsonArray,"SOMEJSONARRAY","io.vertx.core.json.JsonArray");
+                setOrThrow(this::setSometimestamp,key -> {String s = json.getString(key); return s==null?null:java.time.LocalDateTime.parse(s);},"SOMETIMESTAMP","java.time.LocalDateTime");
+                return this;
+        }
 
 
-    @Override
-    public default io.vertx.core.json.JsonObject toJson() {
-        io.vertx.core.json.JsonObject json = new io.vertx.core.json.JsonObject();
-        json.put("SOMEID",getSomeid());
-        json.put("SOMESTRING",getSomestring());
-        json.put("SOMEHUGENUMBER",getSomehugenumber());
-        json.put("SOMESMALLNUMBER",getSomesmallnumber());
-        json.put("SOMEREGULARNUMBER",getSomeregularnumber());
-        json.put("SOMEBOOLEAN",getSomeboolean());
-        json.put("SOMEDOUBLE",getSomedouble());
-        json.put("SOMEJSONOBJECT",getSomejsonobject());
-        json.put("SOMEJSONARRAY",getSomejsonarray());
-        json.put("SOMETIMESTAMP",getSometimestamp()==null?null:getSometimestamp().toString());
-        return json;
-    }
+        @Override
+        public default io.vertx.core.json.JsonObject toJson() {
+                io.vertx.core.json.JsonObject json = new io.vertx.core.json.JsonObject();
+                json.put("SOMEID",getSomeid());
+                json.put("SOMESTRING",getSomestring());
+                json.put("SOMEHUGENUMBER",getSomehugenumber());
+                json.put("SOMESMALLNUMBER",getSomesmallnumber());
+                json.put("SOMEREGULARNUMBER",getSomeregularnumber());
+                json.put("SOMEBOOLEAN",getSomeboolean());
+                json.put("SOMEDOUBLE",getSomedouble());
+                json.put("SOMEJSONOBJECT",getSomejsonobject());
+                json.put("SOMEJSONARRAY",getSomejsonarray());
+                json.put("SOMETIMESTAMP",getSometimestamp()==null?null:getSometimestamp().toString());
+                return json;
+        }
 
 }

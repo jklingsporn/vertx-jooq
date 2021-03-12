@@ -23,6 +23,7 @@ import org.jooq.TableField;
 import org.jooq.TableOptions;
 import org.jooq.UniqueKey;
 import org.jooq.impl.DSL;
+import org.jooq.impl.SQLDataType;
 import org.jooq.impl.TableImpl;
 
 
@@ -32,7 +33,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Somethingwithoutjson extends TableImpl<SomethingwithoutjsonRecord> {
 
-    private static final long serialVersionUID = 243559752;
+    private static final long serialVersionUID = 1L;
 
     /**
      * The reference instance of <code>vertx.somethingWithoutJson</code>
@@ -50,18 +51,19 @@ public class Somethingwithoutjson extends TableImpl<SomethingwithoutjsonRecord> 
     /**
      * The column <code>vertx.somethingWithoutJson.someId</code>.
      */
-    public final TableField<SomethingwithoutjsonRecord, Integer> SOMEID = createField(DSL.name("someId"), org.jooq.impl.SQLDataType.INTEGER.nullable(false).identity(true), this, "");
+    public final TableField<SomethingwithoutjsonRecord, Integer> SOMEID = createField(DSL.name("someId"), SQLDataType.INTEGER.nullable(false).identity(true), this, "");
 
     /**
      * The column <code>vertx.somethingWithoutJson.someString</code>.
      */
-    public final TableField<SomethingwithoutjsonRecord, String> SOMESTRING = createField(DSL.name("someString"), org.jooq.impl.SQLDataType.VARCHAR(45), this, "");
+    public final TableField<SomethingwithoutjsonRecord, String> SOMESTRING = createField(DSL.name("someString"), SQLDataType.VARCHAR(45), this, "");
 
-    /**
-     * Create a <code>vertx.somethingWithoutJson</code> table reference
-     */
-    public Somethingwithoutjson() {
-        this(DSL.name("somethingWithoutJson"), null);
+    private Somethingwithoutjson(Name alias, Table<SomethingwithoutjsonRecord> aliased) {
+        this(alias, aliased, null);
+    }
+
+    private Somethingwithoutjson(Name alias, Table<SomethingwithoutjsonRecord> aliased, Field<?>[] parameters) {
+        super(alias, null, aliased, parameters, DSL.comment(""), TableOptions.table());
     }
 
     /**
@@ -78,12 +80,11 @@ public class Somethingwithoutjson extends TableImpl<SomethingwithoutjsonRecord> 
         this(alias, SOMETHINGWITHOUTJSON);
     }
 
-    private Somethingwithoutjson(Name alias, Table<SomethingwithoutjsonRecord> aliased) {
-        this(alias, aliased, null);
-    }
-
-    private Somethingwithoutjson(Name alias, Table<SomethingwithoutjsonRecord> aliased, Field<?>[] parameters) {
-        super(alias, null, aliased, parameters, DSL.comment(""), TableOptions.table());
+    /**
+     * Create a <code>vertx.somethingWithoutJson</code> table reference
+     */
+    public Somethingwithoutjson() {
+        this(DSL.name("somethingWithoutJson"), null);
     }
 
     public <O extends Record> Somethingwithoutjson(Table<O> child, ForeignKey<O, SomethingwithoutjsonRecord> key) {
@@ -97,7 +98,7 @@ public class Somethingwithoutjson extends TableImpl<SomethingwithoutjsonRecord> 
 
     @Override
     public Identity<SomethingwithoutjsonRecord, Integer> getIdentity() {
-        return Keys.IDENTITY_SOMETHINGWITHOUTJSON;
+        return (Identity<SomethingwithoutjsonRecord, Integer>) super.getIdentity();
     }
 
     @Override

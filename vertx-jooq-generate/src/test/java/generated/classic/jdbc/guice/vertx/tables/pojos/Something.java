@@ -20,7 +20,7 @@ import static io.github.jklingsporn.vertx.jooq.shared.internal.VertxPojo.*;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Something implements VertxPojo, ISomething {
 
-    private static final long serialVersionUID = -58684497;
+    private static final long serialVersionUID = 1L;
 
     private Integer       someid;
     private String        somestring;
@@ -72,115 +72,175 @@ public class Something implements VertxPojo, ISomething {
         this.sometimestamp = sometimestamp;
     }
 
-    public Something(io.vertx.core.json.JsonObject json) {
-        this();
-        fromJson(json);
-    }
+        public Something(io.vertx.core.json.JsonObject json) {
+                this();
+                fromJson(json);
+        }
 
+    /**
+     * Getter for <code>VERTX.SOMETHING.SOMEID</code>.
+     */
     @Override
     public Integer getSomeid() {
         return this.someid;
     }
 
+    /**
+     * Setter for <code>VERTX.SOMETHING.SOMEID</code>.
+     */
     @Override
     public Something setSomeid(Integer someid) {
         this.someid = someid;
         return this;
     }
 
+    /**
+     * Getter for <code>VERTX.SOMETHING.SOMESTRING</code>.
+     */
     @Override
     public String getSomestring() {
         return this.somestring;
     }
 
+    /**
+     * Setter for <code>VERTX.SOMETHING.SOMESTRING</code>.
+     */
     @Override
     public Something setSomestring(String somestring) {
         this.somestring = somestring;
         return this;
     }
 
+    /**
+     * Getter for <code>VERTX.SOMETHING.SOMEHUGENUMBER</code>.
+     */
     @Override
     public Long getSomehugenumber() {
         return this.somehugenumber;
     }
 
+    /**
+     * Setter for <code>VERTX.SOMETHING.SOMEHUGENUMBER</code>.
+     */
     @Override
     public Something setSomehugenumber(Long somehugenumber) {
         this.somehugenumber = somehugenumber;
         return this;
     }
 
+    /**
+     * Getter for <code>VERTX.SOMETHING.SOMESMALLNUMBER</code>.
+     */
     @Override
     public Short getSomesmallnumber() {
         return this.somesmallnumber;
     }
 
+    /**
+     * Setter for <code>VERTX.SOMETHING.SOMESMALLNUMBER</code>.
+     */
     @Override
     public Something setSomesmallnumber(Short somesmallnumber) {
         this.somesmallnumber = somesmallnumber;
         return this;
     }
 
+    /**
+     * Getter for <code>VERTX.SOMETHING.SOMEREGULARNUMBER</code>.
+     */
     @Override
     public Integer getSomeregularnumber() {
         return this.someregularnumber;
     }
 
+    /**
+     * Setter for <code>VERTX.SOMETHING.SOMEREGULARNUMBER</code>.
+     */
     @Override
     public Something setSomeregularnumber(Integer someregularnumber) {
         this.someregularnumber = someregularnumber;
         return this;
     }
 
+    /**
+     * Getter for <code>VERTX.SOMETHING.SOMEBOOLEAN</code>.
+     */
     @Override
     public Boolean getSomeboolean() {
         return this.someboolean;
     }
 
+    /**
+     * Setter for <code>VERTX.SOMETHING.SOMEBOOLEAN</code>.
+     */
     @Override
     public Something setSomeboolean(Boolean someboolean) {
         this.someboolean = someboolean;
         return this;
     }
 
+    /**
+     * Getter for <code>VERTX.SOMETHING.SOMEDOUBLE</code>.
+     */
     @Override
     public Double getSomedouble() {
         return this.somedouble;
     }
 
+    /**
+     * Setter for <code>VERTX.SOMETHING.SOMEDOUBLE</code>.
+     */
     @Override
     public Something setSomedouble(Double somedouble) {
         this.somedouble = somedouble;
         return this;
     }
 
+    /**
+     * Getter for <code>VERTX.SOMETHING.SOMEJSONOBJECT</code>.
+     */
     @Override
     public JsonObject getSomejsonobject() {
         return this.somejsonobject;
     }
 
+    /**
+     * Setter for <code>VERTX.SOMETHING.SOMEJSONOBJECT</code>.
+     */
     @Override
     public Something setSomejsonobject(JsonObject somejsonobject) {
         this.somejsonobject = somejsonobject;
         return this;
     }
 
+    /**
+     * Getter for <code>VERTX.SOMETHING.SOMEJSONARRAY</code>.
+     */
     @Override
     public JsonArray getSomejsonarray() {
         return this.somejsonarray;
     }
 
+    /**
+     * Setter for <code>VERTX.SOMETHING.SOMEJSONARRAY</code>.
+     */
     @Override
     public Something setSomejsonarray(JsonArray somejsonarray) {
         this.somejsonarray = somejsonarray;
         return this;
     }
 
+    /**
+     * Getter for <code>VERTX.SOMETHING.SOMETIMESTAMP</code>.
+     */
     @Override
     public LocalDateTime getSometimestamp() {
         return this.sometimestamp;
     }
 
+    /**
+     * Setter for <code>VERTX.SOMETHING.SOMETIMESTAMP</code>.
+     */
     @Override
     public Something setSometimestamp(LocalDateTime sometimestamp) {
         this.sometimestamp = sometimestamp;

@@ -26,49 +26,49 @@ import io.github.jklingsporn.vertx.jooq.rx.reactivepg.ReactiveRXQueryExecutor;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class SomethingcompositeDao extends AbstractReactiveVertxDAO<SomethingcompositeRecord, generated.rx.reactive.regular.tables.pojos.Somethingcomposite, Record2<Integer, Integer>, Single<List<generated.rx.reactive.regular.tables.pojos.Somethingcomposite>>, Single<Optional<generated.rx.reactive.regular.tables.pojos.Somethingcomposite>>, Single<Integer>, Single<Record2<Integer, Integer>>> implements io.github.jklingsporn.vertx.jooq.rx.VertxDAO<SomethingcompositeRecord,generated.rx.reactive.regular.tables.pojos.Somethingcomposite,Record2<Integer, Integer>> {
 
-    /**
+        /**
      * @param configuration The Configuration used for rendering and query execution.
      * @param vertx the vertx instance
      */
-    public SomethingcompositeDao(Configuration configuration, io.vertx.reactivex.sqlclient.SqlClient delegate) {
-        super(Somethingcomposite.SOMETHINGCOMPOSITE, generated.rx.reactive.regular.tables.pojos.Somethingcomposite.class, new ReactiveRXQueryExecutor<SomethingcompositeRecord,generated.rx.reactive.regular.tables.pojos.Somethingcomposite,Record2<Integer, Integer>>(configuration,delegate,generated.rx.reactive.regular.tables.mappers.RowMappers.getSomethingcompositeMapper()));
-    }
+        public SomethingcompositeDao(Configuration configuration, io.vertx.reactivex.sqlclient.SqlClient delegate) {
+                super(Somethingcomposite.SOMETHINGCOMPOSITE, generated.rx.reactive.regular.tables.pojos.Somethingcomposite.class, new ReactiveRXQueryExecutor<SomethingcompositeRecord,generated.rx.reactive.regular.tables.pojos.Somethingcomposite,Record2<Integer, Integer>>(configuration,delegate,generated.rx.reactive.regular.tables.mappers.RowMappers.getSomethingcompositeMapper()));
+        }
 
-    @Override
-    protected Record2<Integer, Integer> getId(generated.rx.reactive.regular.tables.pojos.Somethingcomposite object) {
-        return compositeKeyRecord(object.getSomeid(), object.getSomesecondid());
-    }
+        @Override
+        protected Record2<Integer, Integer> getId(generated.rx.reactive.regular.tables.pojos.Somethingcomposite object) {
+                return compositeKeyRecord(object.getSomeid(), object.getSomesecondid());
+        }
 
-    /**
+        /**
      * Find records that have <code>someSecondId IN (values)</code> asynchronously
      */
-    public Single<List<generated.rx.reactive.regular.tables.pojos.Somethingcomposite>> findManyBySomesecondid(Collection<Integer> values) {
-        return findManyByCondition(Somethingcomposite.SOMETHINGCOMPOSITE.SOMESECONDID.in(values));
-    }
+        public Single<List<generated.rx.reactive.regular.tables.pojos.Somethingcomposite>> findManyBySomesecondid(Collection<Integer> values) {
+                return findManyByCondition(Somethingcomposite.SOMETHINGCOMPOSITE.SOMESECONDID.in(values));
+        }
 
-    /**
+        /**
      * Find records that have <code>someSecondId IN (values)</code> asynchronously limited by the given limit
      */
-    public Single<List<generated.rx.reactive.regular.tables.pojos.Somethingcomposite>> findManyBySomesecondid(Collection<Integer> values, int limit) {
-        return findManyByCondition(Somethingcomposite.SOMETHINGCOMPOSITE.SOMESECONDID.in(values),limit);
-    }
+        public Single<List<generated.rx.reactive.regular.tables.pojos.Somethingcomposite>> findManyBySomesecondid(Collection<Integer> values, int limit) {
+                return findManyByCondition(Somethingcomposite.SOMETHINGCOMPOSITE.SOMESECONDID.in(values),limit);
+        }
 
-    /**
+        /**
      * Find records that have <code>someJsonObject IN (values)</code> asynchronously
      */
-    public Single<List<generated.rx.reactive.regular.tables.pojos.Somethingcomposite>> findManyBySomejsonobject(Collection<JsonObject> values) {
-        return findManyByCondition(Somethingcomposite.SOMETHINGCOMPOSITE.SOMEJSONOBJECT.in(values));
-    }
+        public Single<List<generated.rx.reactive.regular.tables.pojos.Somethingcomposite>> findManyBySomejsonobject(Collection<JsonObject> values) {
+                return findManyByCondition(Somethingcomposite.SOMETHINGCOMPOSITE.SOMEJSONOBJECT.in(values));
+        }
 
-    /**
+        /**
      * Find records that have <code>someJsonObject IN (values)</code> asynchronously limited by the given limit
      */
-    public Single<List<generated.rx.reactive.regular.tables.pojos.Somethingcomposite>> findManyBySomejsonobject(Collection<JsonObject> values, int limit) {
-        return findManyByCondition(Somethingcomposite.SOMETHINGCOMPOSITE.SOMEJSONOBJECT.in(values),limit);
-    }
+        public Single<List<generated.rx.reactive.regular.tables.pojos.Somethingcomposite>> findManyBySomejsonobject(Collection<JsonObject> values, int limit) {
+                return findManyByCondition(Somethingcomposite.SOMETHINGCOMPOSITE.SOMEJSONOBJECT.in(values),limit);
+        }
 
-    @Override
-    public ReactiveRXQueryExecutor<SomethingcompositeRecord,generated.rx.reactive.regular.tables.pojos.Somethingcomposite,Record2<Integer, Integer>> queryExecutor(){
-        return (ReactiveRXQueryExecutor<SomethingcompositeRecord,generated.rx.reactive.regular.tables.pojos.Somethingcomposite,Record2<Integer, Integer>>) super.queryExecutor();
-    }
+        @Override
+        public ReactiveRXQueryExecutor<SomethingcompositeRecord,generated.rx.reactive.regular.tables.pojos.Somethingcomposite,Record2<Integer, Integer>> queryExecutor(){
+                return (ReactiveRXQueryExecutor<SomethingcompositeRecord,generated.rx.reactive.regular.tables.pojos.Somethingcomposite,Record2<Integer, Integer>>) super.queryExecutor();
+        }
 }

@@ -19,7 +19,7 @@ import static io.github.jklingsporn.vertx.jooq.shared.internal.VertxPojo.*;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Something implements VertxPojo, Serializable {
 
-    private static final long serialVersionUID = 703895937;
+    private static final long serialVersionUID = 1L;
 
     private Integer       someid;
     private String        somestring;
@@ -71,96 +71,156 @@ public class Something implements VertxPojo, Serializable {
         this.sometimestamp = sometimestamp;
     }
 
-    public Something(io.vertx.core.json.JsonObject json) {
-        this();
-        fromJson(json);
-    }
+        public Something(io.vertx.core.json.JsonObject json) {
+                this();
+                fromJson(json);
+        }
 
+    /**
+     * Getter for <code>VERTX.SOMETHING.SOMEID</code>.
+     */
     public Integer getSomeid() {
         return this.someid;
     }
 
+    /**
+     * Setter for <code>VERTX.SOMETHING.SOMEID</code>.
+     */
     public Something setSomeid(Integer someid) {
         this.someid = someid;
         return this;
     }
 
+    /**
+     * Getter for <code>VERTX.SOMETHING.SOMESTRING</code>.
+     */
     public String getSomestring() {
         return this.somestring;
     }
 
+    /**
+     * Setter for <code>VERTX.SOMETHING.SOMESTRING</code>.
+     */
     public Something setSomestring(String somestring) {
         this.somestring = somestring;
         return this;
     }
 
+    /**
+     * Getter for <code>VERTX.SOMETHING.SOMEHUGENUMBER</code>.
+     */
     public Long getSomehugenumber() {
         return this.somehugenumber;
     }
 
+    /**
+     * Setter for <code>VERTX.SOMETHING.SOMEHUGENUMBER</code>.
+     */
     public Something setSomehugenumber(Long somehugenumber) {
         this.somehugenumber = somehugenumber;
         return this;
     }
 
+    /**
+     * Getter for <code>VERTX.SOMETHING.SOMESMALLNUMBER</code>.
+     */
     public Short getSomesmallnumber() {
         return this.somesmallnumber;
     }
 
+    /**
+     * Setter for <code>VERTX.SOMETHING.SOMESMALLNUMBER</code>.
+     */
     public Something setSomesmallnumber(Short somesmallnumber) {
         this.somesmallnumber = somesmallnumber;
         return this;
     }
 
+    /**
+     * Getter for <code>VERTX.SOMETHING.SOMEREGULARNUMBER</code>.
+     */
     public Integer getSomeregularnumber() {
         return this.someregularnumber;
     }
 
+    /**
+     * Setter for <code>VERTX.SOMETHING.SOMEREGULARNUMBER</code>.
+     */
     public Something setSomeregularnumber(Integer someregularnumber) {
         this.someregularnumber = someregularnumber;
         return this;
     }
 
+    /**
+     * Getter for <code>VERTX.SOMETHING.SOMEBOOLEAN</code>.
+     */
     public Boolean getSomeboolean() {
         return this.someboolean;
     }
 
+    /**
+     * Setter for <code>VERTX.SOMETHING.SOMEBOOLEAN</code>.
+     */
     public Something setSomeboolean(Boolean someboolean) {
         this.someboolean = someboolean;
         return this;
     }
 
+    /**
+     * Getter for <code>VERTX.SOMETHING.SOMEDOUBLE</code>.
+     */
     public Double getSomedouble() {
         return this.somedouble;
     }
 
+    /**
+     * Setter for <code>VERTX.SOMETHING.SOMEDOUBLE</code>.
+     */
     public Something setSomedouble(Double somedouble) {
         this.somedouble = somedouble;
         return this;
     }
 
+    /**
+     * Getter for <code>VERTX.SOMETHING.SOMEJSONOBJECT</code>.
+     */
     public JsonObject getSomejsonobject() {
         return this.somejsonobject;
     }
 
+    /**
+     * Setter for <code>VERTX.SOMETHING.SOMEJSONOBJECT</code>.
+     */
     public Something setSomejsonobject(JsonObject somejsonobject) {
         this.somejsonobject = somejsonobject;
         return this;
     }
 
+    /**
+     * Getter for <code>VERTX.SOMETHING.SOMEJSONARRAY</code>.
+     */
     public JsonArray getSomejsonarray() {
         return this.somejsonarray;
     }
 
+    /**
+     * Setter for <code>VERTX.SOMETHING.SOMEJSONARRAY</code>.
+     */
     public Something setSomejsonarray(JsonArray somejsonarray) {
         this.somejsonarray = somejsonarray;
         return this;
     }
 
+    /**
+     * Getter for <code>VERTX.SOMETHING.SOMETIMESTAMP</code>.
+     */
     public LocalDateTime getSometimestamp() {
         return this.sometimestamp;
     }
 
+    /**
+     * Setter for <code>VERTX.SOMETHING.SOMETIMESTAMP</code>.
+     */
     public Something setSometimestamp(LocalDateTime sometimestamp) {
         this.sometimestamp = sometimestamp;
         return this;
@@ -274,36 +334,36 @@ public class Something implements VertxPojo, Serializable {
         return sb.toString();
     }
 
-    @Override
-    public Something fromJson(io.vertx.core.json.JsonObject json) {
-        setOrThrow(this::setSomeid,json::getInteger,"SOMEID","java.lang.Integer");
-        setOrThrow(this::setSomestring,json::getString,"SOMESTRING","java.lang.String");
-        setOrThrow(this::setSomehugenumber,json::getLong,"SOMEHUGENUMBER","java.lang.Long");
-        setOrThrow(this::setSomesmallnumber,key -> {Integer i = json.getInteger(key); return i==null?null:i.shortValue();},"SOMESMALLNUMBER","java.lang.Short");
-        setOrThrow(this::setSomeregularnumber,json::getInteger,"SOMEREGULARNUMBER","java.lang.Integer");
-        setOrThrow(this::setSomeboolean,json::getBoolean,"SOMEBOOLEAN","java.lang.Boolean");
-        setOrThrow(this::setSomedouble,json::getDouble,"SOMEDOUBLE","java.lang.Double");
-        setOrThrow(this::setSomejsonobject,json::getJsonObject,"SOMEJSONOBJECT","io.vertx.core.json.JsonObject");
-        setOrThrow(this::setSomejsonarray,json::getJsonArray,"SOMEJSONARRAY","io.vertx.core.json.JsonArray");
-        setSometimestamp(json.getString("SOMETIMESTAMP")==null?null:LocalDateTime.parse(json.getString("SOMETIMESTAMP")));
-        return this;
-    }
+        @Override
+        public Something fromJson(io.vertx.core.json.JsonObject json) {
+                setOrThrow(this::setSomeid,json::getInteger,"SOMEID","java.lang.Integer");
+                setOrThrow(this::setSomestring,json::getString,"SOMESTRING","java.lang.String");
+                setOrThrow(this::setSomehugenumber,json::getLong,"SOMEHUGENUMBER","java.lang.Long");
+                setOrThrow(this::setSomesmallnumber,key -> {Integer i = json.getInteger(key); return i==null?null:i.shortValue();},"SOMESMALLNUMBER","java.lang.Short");
+                setOrThrow(this::setSomeregularnumber,json::getInteger,"SOMEREGULARNUMBER","java.lang.Integer");
+                setOrThrow(this::setSomeboolean,json::getBoolean,"SOMEBOOLEAN","java.lang.Boolean");
+                setOrThrow(this::setSomedouble,json::getDouble,"SOMEDOUBLE","java.lang.Double");
+                setOrThrow(this::setSomejsonobject,json::getJsonObject,"SOMEJSONOBJECT","io.vertx.core.json.JsonObject");
+                setOrThrow(this::setSomejsonarray,json::getJsonArray,"SOMEJSONARRAY","io.vertx.core.json.JsonArray");
+                setSometimestamp(json.getString("SOMETIMESTAMP")==null?null:LocalDateTime.parse(json.getString("SOMETIMESTAMP")));
+                return this;
+        }
 
 
-    @Override
-    public io.vertx.core.json.JsonObject toJson() {
-        io.vertx.core.json.JsonObject json = new io.vertx.core.json.JsonObject();
-        json.put("SOMEID",getSomeid());
-        json.put("SOMESTRING",getSomestring());
-        json.put("SOMEHUGENUMBER",getSomehugenumber());
-        json.put("SOMESMALLNUMBER",getSomesmallnumber());
-        json.put("SOMEREGULARNUMBER",getSomeregularnumber());
-        json.put("SOMEBOOLEAN",getSomeboolean());
-        json.put("SOMEDOUBLE",getSomedouble());
-        json.put("SOMEJSONOBJECT",getSomejsonobject());
-        json.put("SOMEJSONARRAY",getSomejsonarray());
-        json.put("SOMETIMESTAMP",getSometimestamp()==null?null:getSometimestamp().toString());
-        return json;
-    }
+        @Override
+        public io.vertx.core.json.JsonObject toJson() {
+                io.vertx.core.json.JsonObject json = new io.vertx.core.json.JsonObject();
+                json.put("SOMEID",getSomeid());
+                json.put("SOMESTRING",getSomestring());
+                json.put("SOMEHUGENUMBER",getSomehugenumber());
+                json.put("SOMESMALLNUMBER",getSomesmallnumber());
+                json.put("SOMEREGULARNUMBER",getSomeregularnumber());
+                json.put("SOMEBOOLEAN",getSomeboolean());
+                json.put("SOMEDOUBLE",getSomedouble());
+                json.put("SOMEJSONOBJECT",getSomejsonobject());
+                json.put("SOMEJSONARRAY",getSomejsonarray());
+                json.put("SOMETIMESTAMP",getSometimestamp()==null?null:getSometimestamp().toString());
+                return json;
+        }
 
 }

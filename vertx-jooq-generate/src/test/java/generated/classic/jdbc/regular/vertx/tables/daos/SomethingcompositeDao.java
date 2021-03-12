@@ -25,49 +25,49 @@ import io.github.jklingsporn.vertx.jooq.classic.jdbc.JDBCClassicQueryExecutor;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class SomethingcompositeDao extends AbstractVertxDAO<SomethingcompositeRecord, generated.classic.jdbc.regular.vertx.tables.pojos.Somethingcomposite, Record2<Integer, Integer>, Future<List<generated.classic.jdbc.regular.vertx.tables.pojos.Somethingcomposite>>, Future<generated.classic.jdbc.regular.vertx.tables.pojos.Somethingcomposite>, Future<Integer>, Future<Record2<Integer, Integer>>> implements io.github.jklingsporn.vertx.jooq.classic.VertxDAO<SomethingcompositeRecord,generated.classic.jdbc.regular.vertx.tables.pojos.Somethingcomposite,Record2<Integer, Integer>> {
 
-    /**
+        /**
      * @param configuration The Configuration used for rendering and query execution.
      * @param vertx the vertx instance
      */
-    public SomethingcompositeDao(Configuration configuration, io.vertx.core.Vertx vertx) {
-        super(Somethingcomposite.SOMETHINGCOMPOSITE, generated.classic.jdbc.regular.vertx.tables.pojos.Somethingcomposite.class, new JDBCClassicQueryExecutor<SomethingcompositeRecord,generated.classic.jdbc.regular.vertx.tables.pojos.Somethingcomposite,Record2<Integer, Integer>>(configuration,generated.classic.jdbc.regular.vertx.tables.pojos.Somethingcomposite.class,vertx));
-    }
+        public SomethingcompositeDao(Configuration configuration, io.vertx.core.Vertx vertx) {
+                super(Somethingcomposite.SOMETHINGCOMPOSITE, generated.classic.jdbc.regular.vertx.tables.pojos.Somethingcomposite.class, new JDBCClassicQueryExecutor<SomethingcompositeRecord,generated.classic.jdbc.regular.vertx.tables.pojos.Somethingcomposite,Record2<Integer, Integer>>(configuration,generated.classic.jdbc.regular.vertx.tables.pojos.Somethingcomposite.class,vertx));
+        }
 
-    @Override
-    protected Record2<Integer, Integer> getId(generated.classic.jdbc.regular.vertx.tables.pojos.Somethingcomposite object) {
-        return compositeKeyRecord(object.getSomeid(), object.getSomesecondid());
-    }
+        @Override
+        protected Record2<Integer, Integer> getId(generated.classic.jdbc.regular.vertx.tables.pojos.Somethingcomposite object) {
+                return compositeKeyRecord(object.getSomeid(), object.getSomesecondid());
+        }
 
-    /**
+        /**
      * Find records that have <code>SOMESECONDID IN (values)</code> asynchronously
      */
-    public Future<List<generated.classic.jdbc.regular.vertx.tables.pojos.Somethingcomposite>> findManyBySomesecondid(Collection<Integer> values) {
-        return findManyByCondition(Somethingcomposite.SOMETHINGCOMPOSITE.SOMESECONDID.in(values));
-    }
+        public Future<List<generated.classic.jdbc.regular.vertx.tables.pojos.Somethingcomposite>> findManyBySomesecondid(Collection<Integer> values) {
+                return findManyByCondition(Somethingcomposite.SOMETHINGCOMPOSITE.SOMESECONDID.in(values));
+        }
 
-    /**
+        /**
      * Find records that have <code>SOMESECONDID IN (values)</code> asynchronously limited by the given limit
      */
-    public Future<List<generated.classic.jdbc.regular.vertx.tables.pojos.Somethingcomposite>> findManyBySomesecondid(Collection<Integer> values, int limit) {
-        return findManyByCondition(Somethingcomposite.SOMETHINGCOMPOSITE.SOMESECONDID.in(values),limit);
-    }
+        public Future<List<generated.classic.jdbc.regular.vertx.tables.pojos.Somethingcomposite>> findManyBySomesecondid(Collection<Integer> values, int limit) {
+                return findManyByCondition(Somethingcomposite.SOMETHINGCOMPOSITE.SOMESECONDID.in(values),limit);
+        }
 
-    /**
+        /**
      * Find records that have <code>SOMEJSONOBJECT IN (values)</code> asynchronously
      */
-    public Future<List<generated.classic.jdbc.regular.vertx.tables.pojos.Somethingcomposite>> findManyBySomejsonobject(Collection<JsonObject> values) {
-        return findManyByCondition(Somethingcomposite.SOMETHINGCOMPOSITE.SOMEJSONOBJECT.in(values));
-    }
+        public Future<List<generated.classic.jdbc.regular.vertx.tables.pojos.Somethingcomposite>> findManyBySomejsonobject(Collection<JsonObject> values) {
+                return findManyByCondition(Somethingcomposite.SOMETHINGCOMPOSITE.SOMEJSONOBJECT.in(values));
+        }
 
-    /**
+        /**
      * Find records that have <code>SOMEJSONOBJECT IN (values)</code> asynchronously limited by the given limit
      */
-    public Future<List<generated.classic.jdbc.regular.vertx.tables.pojos.Somethingcomposite>> findManyBySomejsonobject(Collection<JsonObject> values, int limit) {
-        return findManyByCondition(Somethingcomposite.SOMETHINGCOMPOSITE.SOMEJSONOBJECT.in(values),limit);
-    }
+        public Future<List<generated.classic.jdbc.regular.vertx.tables.pojos.Somethingcomposite>> findManyBySomejsonobject(Collection<JsonObject> values, int limit) {
+                return findManyByCondition(Somethingcomposite.SOMETHINGCOMPOSITE.SOMEJSONOBJECT.in(values),limit);
+        }
 
-    @Override
-    public JDBCClassicQueryExecutor<SomethingcompositeRecord,generated.classic.jdbc.regular.vertx.tables.pojos.Somethingcomposite,Record2<Integer, Integer>> queryExecutor(){
-        return (JDBCClassicQueryExecutor<SomethingcompositeRecord,generated.classic.jdbc.regular.vertx.tables.pojos.Somethingcomposite,Record2<Integer, Integer>>) super.queryExecutor();
-    }
+        @Override
+        public JDBCClassicQueryExecutor<SomethingcompositeRecord,generated.classic.jdbc.regular.vertx.tables.pojos.Somethingcomposite,Record2<Integer, Integer>> queryExecutor(){
+                return (JDBCClassicQueryExecutor<SomethingcompositeRecord,generated.classic.jdbc.regular.vertx.tables.pojos.Somethingcomposite,Record2<Integer, Integer>>) super.queryExecutor();
+        }
 }

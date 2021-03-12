@@ -25,6 +25,7 @@ import org.jooq.TableField;
 import org.jooq.TableOptions;
 import org.jooq.UniqueKey;
 import org.jooq.impl.DSL;
+import org.jooq.impl.SQLDataType;
 import org.jooq.impl.TableImpl;
 
 
@@ -34,7 +35,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Somethingcomposite extends TableImpl<SomethingcompositeRecord> {
 
-    private static final long serialVersionUID = -1012457216;
+    private static final long serialVersionUID = 1L;
 
     /**
      * The reference instance of <code>VERTX.SOMETHINGCOMPOSITE</code>
@@ -52,23 +53,24 @@ public class Somethingcomposite extends TableImpl<SomethingcompositeRecord> {
     /**
      * The column <code>VERTX.SOMETHINGCOMPOSITE.SOMEID</code>.
      */
-    public final TableField<SomethingcompositeRecord, Integer> SOMEID = createField(DSL.name("SOMEID"), org.jooq.impl.SQLDataType.INTEGER, this, "");
+    public final TableField<SomethingcompositeRecord, Integer> SOMEID = createField(DSL.name("SOMEID"), SQLDataType.INTEGER, this, "");
 
     /**
      * The column <code>VERTX.SOMETHINGCOMPOSITE.SOMESECONDID</code>.
      */
-    public final TableField<SomethingcompositeRecord, Integer> SOMESECONDID = createField(DSL.name("SOMESECONDID"), org.jooq.impl.SQLDataType.INTEGER, this, "");
+    public final TableField<SomethingcompositeRecord, Integer> SOMESECONDID = createField(DSL.name("SOMESECONDID"), SQLDataType.INTEGER, this, "");
 
     /**
      * The column <code>VERTX.SOMETHINGCOMPOSITE.SOMEJSONOBJECT</code>.
      */
-    public final TableField<SomethingcompositeRecord, JsonObject> SOMEJSONOBJECT = createField(DSL.name("SOMEJSONOBJECT"), org.jooq.impl.SQLDataType.VARCHAR(45), this, "", new JsonObjectConverter());
+    public final TableField<SomethingcompositeRecord, JsonObject> SOMEJSONOBJECT = createField(DSL.name("SOMEJSONOBJECT"), SQLDataType.VARCHAR(45), this, "", new JsonObjectConverter());
 
-    /**
-     * Create a <code>VERTX.SOMETHINGCOMPOSITE</code> table reference
-     */
-    public Somethingcomposite() {
-        this(DSL.name("SOMETHINGCOMPOSITE"), null);
+    private Somethingcomposite(Name alias, Table<SomethingcompositeRecord> aliased) {
+        this(alias, aliased, null);
+    }
+
+    private Somethingcomposite(Name alias, Table<SomethingcompositeRecord> aliased, Field<?>[] parameters) {
+        super(alias, null, aliased, parameters, DSL.comment(""), TableOptions.table());
     }
 
     /**
@@ -85,12 +87,11 @@ public class Somethingcomposite extends TableImpl<SomethingcompositeRecord> {
         this(alias, SOMETHINGCOMPOSITE);
     }
 
-    private Somethingcomposite(Name alias, Table<SomethingcompositeRecord> aliased) {
-        this(alias, aliased, null);
-    }
-
-    private Somethingcomposite(Name alias, Table<SomethingcompositeRecord> aliased, Field<?>[] parameters) {
-        super(alias, null, aliased, parameters, DSL.comment(""), TableOptions.table());
+    /**
+     * Create a <code>VERTX.SOMETHINGCOMPOSITE</code> table reference
+     */
+    public Somethingcomposite() {
+        this(DSL.name("SOMETHINGCOMPOSITE"), null);
     }
 
     public <O extends Record> Somethingcomposite(Table<O> child, ForeignKey<O, SomethingcompositeRecord> key) {
@@ -104,12 +105,12 @@ public class Somethingcomposite extends TableImpl<SomethingcompositeRecord> {
 
     @Override
     public UniqueKey<SomethingcompositeRecord> getPrimaryKey() {
-        return Keys.SYS_PK_10369;
+        return Keys.SYS_PK_10142;
     }
 
     @Override
     public List<UniqueKey<SomethingcompositeRecord>> getKeys() {
-        return Arrays.<UniqueKey<SomethingcompositeRecord>>asList(Keys.SYS_PK_10369);
+        return Arrays.<UniqueKey<SomethingcompositeRecord>>asList(Keys.SYS_PK_10142);
     }
 
     @Override

@@ -16,7 +16,7 @@ import static io.github.jklingsporn.vertx.jooq.shared.internal.VertxPojo.*;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Somethingwithoutjson implements VertxPojo, ISomethingwithoutjson {
 
-    private static final long serialVersionUID = -1878087818;
+    private static final long serialVersionUID = 1L;
 
     private Integer someid;
     private String  somestring;
@@ -36,27 +36,39 @@ public class Somethingwithoutjson implements VertxPojo, ISomethingwithoutjson {
         this.somestring = somestring;
     }
 
-    public Somethingwithoutjson(io.vertx.core.json.JsonObject json) {
-        this();
-        fromJson(json);
-    }
+        public Somethingwithoutjson(io.vertx.core.json.JsonObject json) {
+                this();
+                fromJson(json);
+        }
 
+    /**
+     * Getter for <code>vertx.somethingWithoutJson.someId</code>.
+     */
     @Override
     public Integer getSomeid() {
         return this.someid;
     }
 
+    /**
+     * Setter for <code>vertx.somethingWithoutJson.someId</code>.
+     */
     @Override
     public Somethingwithoutjson setSomeid(Integer someid) {
         this.someid = someid;
         return this;
     }
 
+    /**
+     * Getter for <code>vertx.somethingWithoutJson.someString</code>.
+     */
     @Override
     public String getSomestring() {
         return this.somestring;
     }
 
+    /**
+     * Setter for <code>vertx.somethingWithoutJson.someString</code>.
+     */
     @Override
     public Somethingwithoutjson setSomestring(String somestring) {
         this.somestring = somestring;

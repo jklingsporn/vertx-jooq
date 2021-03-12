@@ -17,7 +17,7 @@ import static io.github.jklingsporn.vertx.jooq.shared.internal.VertxPojo.*;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Somethingcomposite implements VertxPojo, ISomethingcomposite {
 
-    private static final long serialVersionUID = 331944023;
+    private static final long serialVersionUID = 1L;
 
     private Integer    someid;
     private Integer    somesecondid;
@@ -41,38 +41,56 @@ public class Somethingcomposite implements VertxPojo, ISomethingcomposite {
         this.somejsonobject = somejsonobject;
     }
 
-    public Somethingcomposite(io.vertx.core.json.JsonObject json) {
-        this();
-        fromJson(json);
-    }
+        public Somethingcomposite(io.vertx.core.json.JsonObject json) {
+                this();
+                fromJson(json);
+        }
 
+    /**
+     * Getter for <code>VERTX.SOMETHINGCOMPOSITE.SOMEID</code>.
+     */
     @Override
     public Integer getSomeid() {
         return this.someid;
     }
 
+    /**
+     * Setter for <code>VERTX.SOMETHINGCOMPOSITE.SOMEID</code>.
+     */
     @Override
     public Somethingcomposite setSomeid(Integer someid) {
         this.someid = someid;
         return this;
     }
 
+    /**
+     * Getter for <code>VERTX.SOMETHINGCOMPOSITE.SOMESECONDID</code>.
+     */
     @Override
     public Integer getSomesecondid() {
         return this.somesecondid;
     }
 
+    /**
+     * Setter for <code>VERTX.SOMETHINGCOMPOSITE.SOMESECONDID</code>.
+     */
     @Override
     public Somethingcomposite setSomesecondid(Integer somesecondid) {
         this.somesecondid = somesecondid;
         return this;
     }
 
+    /**
+     * Getter for <code>VERTX.SOMETHINGCOMPOSITE.SOMEJSONOBJECT</code>.
+     */
     @Override
     public JsonObject getSomejsonobject() {
         return this.somejsonobject;
     }
 
+    /**
+     * Setter for <code>VERTX.SOMETHINGCOMPOSITE.SOMEJSONOBJECT</code>.
+     */
     @Override
     public Somethingcomposite setSomejsonobject(JsonObject somejsonobject) {
         this.somejsonobject = somejsonobject;

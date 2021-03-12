@@ -29,6 +29,7 @@ import org.jooq.TableField;
 import org.jooq.TableOptions;
 import org.jooq.UniqueKey;
 import org.jooq.impl.DSL;
+import org.jooq.impl.SQLDataType;
 import org.jooq.impl.TableImpl;
 
 
@@ -38,7 +39,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Something extends TableImpl<SomethingRecord> {
 
-    private static final long serialVersionUID = -2028352692;
+    private static final long serialVersionUID = 1L;
 
     /**
      * The reference instance of <code>VERTX.SOMETHING</code>
@@ -56,58 +57,59 @@ public class Something extends TableImpl<SomethingRecord> {
     /**
      * The column <code>VERTX.SOMETHING.SOMEID</code>.
      */
-    public final TableField<SomethingRecord, Integer> SOMEID = createField(DSL.name("SOMEID"), org.jooq.impl.SQLDataType.INTEGER.nullable(false).identity(true), this, "");
+    public final TableField<SomethingRecord, Integer> SOMEID = createField(DSL.name("SOMEID"), SQLDataType.INTEGER.nullable(false).identity(true), this, "");
 
     /**
      * The column <code>VERTX.SOMETHING.SOMESTRING</code>.
      */
-    public final TableField<SomethingRecord, String> SOMESTRING = createField(DSL.name("SOMESTRING"), org.jooq.impl.SQLDataType.VARCHAR(45), this, "");
+    public final TableField<SomethingRecord, String> SOMESTRING = createField(DSL.name("SOMESTRING"), SQLDataType.VARCHAR(45), this, "");
 
     /**
      * The column <code>VERTX.SOMETHING.SOMEHUGENUMBER</code>.
      */
-    public final TableField<SomethingRecord, Long> SOMEHUGENUMBER = createField(DSL.name("SOMEHUGENUMBER"), org.jooq.impl.SQLDataType.BIGINT, this, "");
+    public final TableField<SomethingRecord, Long> SOMEHUGENUMBER = createField(DSL.name("SOMEHUGENUMBER"), SQLDataType.BIGINT, this, "");
 
     /**
      * The column <code>VERTX.SOMETHING.SOMESMALLNUMBER</code>.
      */
-    public final TableField<SomethingRecord, Short> SOMESMALLNUMBER = createField(DSL.name("SOMESMALLNUMBER"), org.jooq.impl.SQLDataType.SMALLINT, this, "");
+    public final TableField<SomethingRecord, Short> SOMESMALLNUMBER = createField(DSL.name("SOMESMALLNUMBER"), SQLDataType.SMALLINT, this, "");
 
     /**
      * The column <code>VERTX.SOMETHING.SOMEREGULARNUMBER</code>.
      */
-    public final TableField<SomethingRecord, Integer> SOMEREGULARNUMBER = createField(DSL.name("SOMEREGULARNUMBER"), org.jooq.impl.SQLDataType.INTEGER, this, "");
+    public final TableField<SomethingRecord, Integer> SOMEREGULARNUMBER = createField(DSL.name("SOMEREGULARNUMBER"), SQLDataType.INTEGER, this, "");
 
     /**
      * The column <code>VERTX.SOMETHING.SOMEBOOLEAN</code>.
      */
-    public final TableField<SomethingRecord, Boolean> SOMEBOOLEAN = createField(DSL.name("SOMEBOOLEAN"), org.jooq.impl.SQLDataType.BOOLEAN.nullable(false).defaultValue(org.jooq.impl.DSL.field("FALSE", org.jooq.impl.SQLDataType.BOOLEAN)), this, "");
+    public final TableField<SomethingRecord, Boolean> SOMEBOOLEAN = createField(DSL.name("SOMEBOOLEAN"), SQLDataType.BOOLEAN.nullable(false).defaultValue(DSL.field("FALSE", SQLDataType.BOOLEAN)), this, "");
 
     /**
      * The column <code>VERTX.SOMETHING.SOMEDOUBLE</code>.
      */
-    public final TableField<SomethingRecord, Double> SOMEDOUBLE = createField(DSL.name("SOMEDOUBLE"), org.jooq.impl.SQLDataType.DOUBLE, this, "");
+    public final TableField<SomethingRecord, Double> SOMEDOUBLE = createField(DSL.name("SOMEDOUBLE"), SQLDataType.DOUBLE, this, "");
 
     /**
      * The column <code>VERTX.SOMETHING.SOMEJSONOBJECT</code>.
      */
-    public final TableField<SomethingRecord, JsonObject> SOMEJSONOBJECT = createField(DSL.name("SOMEJSONOBJECT"), org.jooq.impl.SQLDataType.VARCHAR(45), this, "", new JsonObjectConverter());
+    public final TableField<SomethingRecord, JsonObject> SOMEJSONOBJECT = createField(DSL.name("SOMEJSONOBJECT"), SQLDataType.VARCHAR(45), this, "", new JsonObjectConverter());
 
     /**
      * The column <code>VERTX.SOMETHING.SOMEJSONARRAY</code>.
      */
-    public final TableField<SomethingRecord, JsonArray> SOMEJSONARRAY = createField(DSL.name("SOMEJSONARRAY"), org.jooq.impl.SQLDataType.VARCHAR(45), this, "", new JsonArrayConverter());
+    public final TableField<SomethingRecord, JsonArray> SOMEJSONARRAY = createField(DSL.name("SOMEJSONARRAY"), SQLDataType.VARCHAR(45), this, "", new JsonArrayConverter());
 
     /**
      * The column <code>VERTX.SOMETHING.SOMETIMESTAMP</code>.
      */
-    public final TableField<SomethingRecord, LocalDateTime> SOMETIMESTAMP = createField(DSL.name("SOMETIMESTAMP"), org.jooq.impl.SQLDataType.LOCALDATETIME, this, "");
+    public final TableField<SomethingRecord, LocalDateTime> SOMETIMESTAMP = createField(DSL.name("SOMETIMESTAMP"), SQLDataType.LOCALDATETIME(2), this, "");
 
-    /**
-     * Create a <code>VERTX.SOMETHING</code> table reference
-     */
-    public Something() {
-        this(DSL.name("SOMETHING"), null);
+    private Something(Name alias, Table<SomethingRecord> aliased) {
+        this(alias, aliased, null);
+    }
+
+    private Something(Name alias, Table<SomethingRecord> aliased, Field<?>[] parameters) {
+        super(alias, null, aliased, parameters, DSL.comment(""), TableOptions.table());
     }
 
     /**
@@ -124,12 +126,11 @@ public class Something extends TableImpl<SomethingRecord> {
         this(alias, SOMETHING);
     }
 
-    private Something(Name alias, Table<SomethingRecord> aliased) {
-        this(alias, aliased, null);
-    }
-
-    private Something(Name alias, Table<SomethingRecord> aliased, Field<?>[] parameters) {
-        super(alias, null, aliased, parameters, DSL.comment(""), TableOptions.table());
+    /**
+     * Create a <code>VERTX.SOMETHING</code> table reference
+     */
+    public Something() {
+        this(DSL.name("SOMETHING"), null);
     }
 
     public <O extends Record> Something(Table<O> child, ForeignKey<O, SomethingRecord> key) {
@@ -143,17 +144,17 @@ public class Something extends TableImpl<SomethingRecord> {
 
     @Override
     public Identity<SomethingRecord, Integer> getIdentity() {
-        return Keys.IDENTITY_SOMETHING;
+        return (Identity<SomethingRecord, Integer>) super.getIdentity();
     }
 
     @Override
     public UniqueKey<SomethingRecord> getPrimaryKey() {
-        return Keys.SYS_PK_10178;
+        return Keys.SYS_PK_10138;
     }
 
     @Override
     public List<UniqueKey<SomethingRecord>> getKeys() {
-        return Arrays.<UniqueKey<SomethingRecord>>asList(Keys.SYS_PK_10178);
+        return Arrays.<UniqueKey<SomethingRecord>>asList(Keys.SYS_PK_10138);
     }
 
     @Override

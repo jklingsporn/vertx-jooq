@@ -23,7 +23,7 @@ import static io.github.jklingsporn.vertx.jooq.shared.internal.VertxPojo.*;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class SomethingcompositeRecord extends UpdatableRecordImpl<SomethingcompositeRecord> implements VertxPojo, Record3<Integer, Integer, JsonObject> {
 
-    private static final long serialVersionUID = -720130024;
+    private static final long serialVersionUID = 1L;
 
     /**
      * Setter for <code>VERTX.SOMETHINGCOMPOSITE.SOMEID</code>.
@@ -181,32 +181,32 @@ public class SomethingcompositeRecord extends UpdatableRecordImpl<Somethingcompo
     public SomethingcompositeRecord(Integer someid, Integer somesecondid, JsonObject somejsonobject) {
         super(Somethingcomposite.SOMETHINGCOMPOSITE);
 
-        set(0, someid);
-        set(1, somesecondid);
-        set(2, somejsonobject);
+        setSomeid(someid);
+        setSomesecondid(somesecondid);
+        setSomejsonobject(somejsonobject);
     }
 
-    public SomethingcompositeRecord(io.vertx.core.json.JsonObject json) {
-        this();
-        fromJson(json);
-    }
+        public SomethingcompositeRecord(io.vertx.core.json.JsonObject json) {
+                this();
+                fromJson(json);
+        }
 
-    @Override
-    public SomethingcompositeRecord fromJson(io.vertx.core.json.JsonObject json) {
-        setOrThrow(this::setSomeid,json::getInteger,"SOMEID","java.lang.Integer");
-        setOrThrow(this::setSomesecondid,json::getInteger,"SOMESECONDID","java.lang.Integer");
-        setOrThrow(this::setSomejsonobject,json::getJsonObject,"SOMEJSONOBJECT","io.vertx.core.json.JsonObject");
-        return this;
-    }
+        @Override
+        public SomethingcompositeRecord fromJson(io.vertx.core.json.JsonObject json) {
+                setOrThrow(this::setSomeid,json::getInteger,"SOMEID","java.lang.Integer");
+                setOrThrow(this::setSomesecondid,json::getInteger,"SOMESECONDID","java.lang.Integer");
+                setOrThrow(this::setSomejsonobject,json::getJsonObject,"SOMEJSONOBJECT","io.vertx.core.json.JsonObject");
+                return this;
+        }
 
 
-    @Override
-    public io.vertx.core.json.JsonObject toJson() {
-        io.vertx.core.json.JsonObject json = new io.vertx.core.json.JsonObject();
-        json.put("SOMEID",getSomeid());
-        json.put("SOMESECONDID",getSomesecondid());
-        json.put("SOMEJSONOBJECT",getSomejsonobject());
-        return json;
-    }
+        @Override
+        public io.vertx.core.json.JsonObject toJson() {
+                io.vertx.core.json.JsonObject json = new io.vertx.core.json.JsonObject();
+                json.put("SOMEID",getSomeid());
+                json.put("SOMESECONDID",getSomesecondid());
+                json.put("SOMEJSONOBJECT",getSomejsonobject());
+                return json;
+        }
 
 }

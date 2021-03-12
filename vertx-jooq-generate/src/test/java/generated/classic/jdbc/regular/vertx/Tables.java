@@ -9,7 +9,7 @@ import generated.classic.jdbc.regular.vertx.tables.Somethingcomposite;
 
 
 /**
- * Convenience access to all tables in VERTX
+ * Convenience access to all tables in VERTX.
  */
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Tables {
