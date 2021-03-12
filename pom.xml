@@ -16,8 +16,8 @@
         <module>vertx-jooq-rx-reactive</module>
     </modules>
     <properties>
-        <jooq.version>3.13.6</jooq.version>
-        <vertx.version>4.0.0</vertx.version>
+        <jooq.version>3.14.8</jooq.version>
+        <vertx.version>4.0.2</vertx.version>
         <jackson.databind.version>2.11.3</jackson.databind.version>
         <hsqldb.version>2.5.0</hsqldb.version>
         <junit.version>4.13.1</junit.version>
@@ -32,7 +32,7 @@
         <postgresql.driver.version>42.2.2</postgresql.driver.version>
     </properties>
     <groupId>io.github.jklingsporn</groupId>
-    <version>6.1.1</version>
+    <version>6.2.0</version>
     <artifactId>vertx-jooq</artifactId>
     <name>${project.groupId}:${project.artifactId}</name>
     <description>A jOOQ-CodeGenerator to create vertxified DAOs and POJOs</description>

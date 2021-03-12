@@ -329,7 +329,7 @@ public class VertxGeneratorBuilder {
                     out.tab(3).println("%s pojo = new %s();",pType,pType);
                     for (ColumnDefinition column : table.getColumns()) {
                         String setter = base.getActiveGenerator().getStrategy().getJavaSetterName(column, GeneratorStrategy.Mode.INTERFACE);
-                        String javaType = base.getActiveGenerator().getJavaType(column.getType());
+                        String javaType = base.getActiveGenerator().getJavaType(column.getType(),out);
                         //is there a better way to check for enum type rather than checking the package?
                         boolean isEnumType = javaType.contains("enums.") || (column.getType().getConverter()!= null && column.getType().getConverter().endsWith("EnumConverter"));
                         boolean isByteArray = javaType.equals("byte[]");
@@ -506,7 +506,7 @@ public class VertxGeneratorBuilder {
                             ComponentBasedVertxGenerator.logger.info("{} has no primary key. Skipping...", out.file().getName());
                             continue;
                         }
-                        final String keyType = base.getActiveGenerator().getKeyType(key);
+                        final String keyType = base.getActiveGenerator().getKeyType(key,out);
                         final String tableRecord = base.getActiveGenerator().getStrategy().getFullJavaClassName(table, GeneratorStrategy.Mode.RECORD);
                         final String pType = base.getActiveGenerator().getStrategy().getFullJavaClassName(table, GeneratorStrategy.Mode.POJO);
                         final String className = base.getActiveGenerator().getStrategy().getFullJavaClassName(table, GeneratorStrategy.Mode.DAO);

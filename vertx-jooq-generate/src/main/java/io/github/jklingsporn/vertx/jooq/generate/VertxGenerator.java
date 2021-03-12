@@ -17,11 +17,13 @@ import org.jooq.codegen.JavaWriter;
 import org.jooq.impl.SQLDataType;
 import org.jooq.meta.*;
 import org.jooq.tools.JooqLogger;
-import org.jooq.tools.StringUtils;
 
 import java.io.File;
 import java.time.*;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
 
 /**
@@ -269,7 +271,7 @@ public abstract class VertxGenerator extends JavaGenerator {
         out.tab(1).println("public %s%s fromJson(io.vertx.core.json.JsonObject json) {", mode == GeneratorStrategy.Mode.INTERFACE?"default ":"",className);
         for (TypedElementDefinition<?> column : table.getColumns()) {
             String setter = getStrategy().getJavaSetterName(column, GeneratorStrategy.Mode.INTERFACE);
-            String columnType = getJavaType(column.getType());
+            String columnType = getJavaType(column.getType(),out);
             String javaMemberName = getJsonKeyName(column);
             String jsonValueExtractor = null;
             //converters are handled in ComponentBasedVertxGenerator
@@ -359,8 +361,8 @@ public abstract class VertxGenerator extends JavaGenerator {
     }
 
     @Override
-    public String getJavaType(DataTypeDefinition type) {
-        return super.getJavaType(type);
+    public String getJavaType(DataTypeDefinition type, JavaWriter out) {
+        return super.getJavaType(type,out);
     }
 
     private void generateToJson(TableDefinition table, JavaWriter out, GeneratorStrategy.Mode mode){
@@ -370,7 +372,7 @@ public abstract class VertxGenerator extends JavaGenerator {
         out.tab(2).println("io.vertx.core.json.JsonObject json = new io.vertx.core.json.JsonObject();");
         for (TypedElementDefinition<?> column : table.getColumns()) {
             String getter = getStrategy().getJavaGetterName(column, GeneratorStrategy.Mode.INTERFACE);
-            String columnType = getJavaType(column.getType());
+            String columnType = getJavaType(column.getType(),out);
             if(handleCustomTypeToJson(column,getter,columnType, getJsonKeyName(column), out)) {
                 //handled by user
             }else if(isEnum(table,column)){
@@ -468,7 +470,7 @@ public abstract class VertxGenerator extends JavaGenerator {
         for (ColumnDefinition column : table.getColumns()) {
             final String colName = column.getOutputName();
             final String colClass = getStrategy().getJavaClassName(column);
-            final String colType = vOut.ref(getJavaType(column.getType()));
+            final String colType = vOut.ref(getJavaType(column.getType(),out));
             final String colIdentifier = vOut.ref(getStrategy().getFullJavaIdentifier(column), colRefSegments(column));
 
 
@@ -494,7 +496,7 @@ public abstract class VertxGenerator extends JavaGenerator {
                 }
                 final String colName = column.getOutputName();
                 final String colClass = getStrategy().getJavaClassName(column);
-                final String colType = vOut.ref(getJavaType(column.getType()));
+                final String colType = vOut.ref(getJavaType(column.getType(),out));
                 final String colIdentifier = vOut.ref(getStrategy().getFullJavaIdentifier(column), colRefSegments(column));
                 generateFindOneByMethods(out, pType, colName, colClass, colType, colIdentifier);
             }
@@ -529,20 +531,20 @@ public abstract class VertxGenerator extends JavaGenerator {
      * @param key
      * @return
      */
-    public String getKeyType(UniqueKeyDefinition key){
+    public String getKeyType(UniqueKeyDefinition key, JavaWriter out){
         String tType;
 
         List<ColumnDefinition> keyColumns = key.getKeyColumns();
 
         if (keyColumns.size() == 1) {
-            tType = getJavaType(keyColumns.get(0).getType());
+            tType = getJavaType(keyColumns.get(0).getType(),out);
         }
         else if (keyColumns.size() <= Constants.MAX_ROW_DEGREE) {
             String generics = "";
             String separator = "";
 
             for (ColumnDefinition column : keyColumns) {
-                generics += separator + (getJavaType(column.getType()));
+                generics += separator + (getJavaType(column.getType(),out));
                 separator = ", ";
             }
 
@@ -586,136 +588,6 @@ public abstract class VertxGenerator extends JavaGenerator {
         generateDAO(key, table, out);
     }
 
-    //TODO --> remove copy from JavaGenerator start
-
-    @Override
-    protected void generatePojo(TableDefinition tableOrUDT, JavaWriter out) {
-        final String className = getStrategy().getJavaClassName(tableOrUDT, GeneratorStrategy.Mode.POJO);
-        final String interfaceName = generateInterfaces()
-                ? out.ref(getStrategy().getFullJavaClassName(tableOrUDT, GeneratorStrategy.Mode.INTERFACE))
-                : "";
-        final String superName = out.ref(getStrategy().getJavaClassExtends(tableOrUDT, GeneratorStrategy.Mode.POJO));
-        final List<String> interfaces = out.ref(getStrategy().getJavaClassImplements(tableOrUDT, GeneratorStrategy.Mode.POJO));
-        final List<String> superTypes = list(superName, interfaces);
-
-        if (generateInterfaces())
-            interfaces.add(interfaceName);
-
-        printPackage(out, tableOrUDT, GeneratorStrategy.Mode.POJO);
-
-        if (tableOrUDT instanceof TableDefinition)
-            generatePojoClassJavadoc((TableDefinition) tableOrUDT, out);
-        else
-            generateUDTPojoClassJavadoc((UDTDefinition) tableOrUDT, out);
-
-        printClassAnnotations(out, tableOrUDT.getSchema());
-        //THE FOLLOWING LINE HAS BEEN ADDED
-        generatePojoClassAnnotations(out,tableOrUDT);
-
-        if (tableOrUDT instanceof TableDefinition)
-            printTableJPAAnnotation(out, (TableDefinition) tableOrUDT);
-
-        int maxLength = 0;
-        for (TypedElementDefinition<?> column : getTypedElements(tableOrUDT))
-            maxLength = Math.max(maxLength, out.ref(getJavaType(column.getType(resolver(GeneratorStrategy.Mode.POJO)), GeneratorStrategy.Mode.POJO)).length());
-
-        out.println("public class %s[[before= extends ][%s]][[before= implements ][%s]] {", className, list(superName), interfaces);
-
-        if (generateSerializablePojos() || generateSerializableInterfaces())
-            out.printSerial();
-
-        out.println();
-
-        for (TypedElementDefinition<?> column : getTypedElements(tableOrUDT)) {
-            out.tab(1).println("private %s%s %s;",
-                    generateImmutablePojos() ? "final " : "",
-                    StringUtils.rightPad(out.ref(getJavaType(column.getType(resolver(GeneratorStrategy.Mode.POJO)), GeneratorStrategy.Mode.POJO)), maxLength),
-                    getStrategy().getJavaMemberName(column, GeneratorStrategy.Mode.POJO));
-        }
-
-        // Constructors
-        // ---------------------------------------------------------------------
-
-        // Default constructor
-        if (!generateImmutablePojos())
-            generatePojoDefaultConstructor(tableOrUDT, out);
-
-        // [#1363] [#7055] copy constructor
-        generatePojoCopyConstructor(tableOrUDT, out);
-
-        // Multi-constructor
-        generatePojoMultiConstructor(tableOrUDT, out);
-
-        List<? extends TypedElementDefinition<?>> elements = getTypedElements(tableOrUDT);
-        for (int i = 0; i < elements.size(); i++) {
-            TypedElementDefinition<?> column = elements.get(i);
-
-            if (tableOrUDT instanceof TableDefinition)
-                generatePojoGetter(column, i, out);
-            else
-                generateUDTPojoGetter(column, i, out);
-
-            // Setter
-            if (!generateImmutablePojos())
-                if (tableOrUDT instanceof TableDefinition)
-                    generatePojoSetter(column, i, out);
-                else
-                    generateUDTPojoSetter(column, i, out);
-        }
-
-        if (generatePojosEqualsAndHashCode())
-            generatePojoEqualsAndHashCode(tableOrUDT, out);
-
-        if (generatePojosToString())
-            generatePojoToString(tableOrUDT, out);
-
-        if (generateInterfaces() && !generateImmutablePojos())
-            printFromAndInto(out, tableOrUDT);
-
-        if (tableOrUDT instanceof TableDefinition)
-            generatePojoClassFooter((TableDefinition) tableOrUDT, out);
-        else
-            generateUDTPojoClassFooter((UDTDefinition) tableOrUDT, out);
-
-        out.println("}");
-        closeJavaWriter(out);
-    }
-
-    private static final <T> List<T> list(T... objects) {
-        List<T> result = new ArrayList<>();
-
-        if (objects != null)
-            for (T object : objects)
-                if (object != null && !"".equals(object))
-                    result.add(object);
-
-        return result;
-    }
-
-    private static final <T> List<T> list(T first, List<T> remaining) {
-        List<T> result = new ArrayList<>();
-
-        result.addAll(list(first));
-        result.addAll(remaining);
-
-        return result;
-    }
-
-    private List<? extends TypedElementDefinition<? extends Definition>> getTypedElements(Definition definition) {
-        if (definition instanceof TableDefinition)
-            return ((TableDefinition) definition).getColumns();
-        else if (definition instanceof EmbeddableDefinition)
-            return ((EmbeddableDefinition) definition).getColumns();
-        else if (definition instanceof UDTDefinition)
-            return ((UDTDefinition) definition).getAttributes();
-        else if (definition instanceof RoutineDefinition)
-            return ((RoutineDefinition) definition).getAllParameters();
-        else
-            throw new IllegalArgumentException("Unsupported type : " + definition);
-    }
-
-    //TODO remove copy from JavaGenerator end <--
-
     protected void generatePojoClassAnnotations(JavaWriter out, TableDefinition schema) {
     }
 
@@ -732,14 +604,14 @@ public abstract class VertxGenerator extends JavaGenerator {
         List<ColumnDefinition> keyColumns = key.getKeyColumns();
 
         if (keyColumns.size() == 1) {
-            tType = getJavaType(keyColumns.get(0).getType());
+            tType = getJavaType(keyColumns.get(0).getType(),out);
         }
         else if (keyColumns.size() <= Constants.MAX_ROW_DEGREE) {
             String generics = "";
             String separator = "";
 
             for (ColumnDefinition column : keyColumns) {
-                generics += separator + out.ref(getJavaType(column.getType()));
+                generics += separator + out.ref(getJavaType(column.getType(),out));
                 separator = ", ";
             }
 
@@ -754,7 +626,7 @@ public abstract class VertxGenerator extends JavaGenerator {
 
         printPackage(out, table, GeneratorStrategy.Mode.DAO);
         generateDaoClassJavadoc(table, out);
-        printClassAnnotations(out, table.getSchema());
+        printClassAnnotations(out, table.getSchema(), GeneratorStrategy.Mode.DAO);
 
         if (generateSpringAnnotations())
             out.println("@%s", out.ref("org.springframework.stereotype.Repository"));
@@ -809,6 +681,14 @@ public abstract class VertxGenerator extends JavaGenerator {
         generateDaoClassFooter(table, out);
         overwriteDAOMethods(table.getSchema(),out, className, tableIdentifier, tableRecord, pType, tType);
         out.println("}");
+    }
+
+    @Override
+    protected void printClassAnnotations(JavaWriter out, Definition definition, GeneratorStrategy.Mode mode){
+        super.printClassAnnotations(out, definition, mode);
+        if(mode.equals(GeneratorStrategy.Mode.POJO)){
+            generatePojoClassAnnotations(out, (TableDefinition) definition);
+        }
     }
 
 }
