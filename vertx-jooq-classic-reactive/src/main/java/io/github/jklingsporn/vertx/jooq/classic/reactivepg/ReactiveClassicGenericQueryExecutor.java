@@ -149,8 +149,6 @@ public class ReactiveClassicGenericQueryExecutor extends AbstractReactiveQueryEx
     public Future<RowSet<Row>> executeAny(Function<DSLContext, ? extends Query> queryFunction) {
         Query query = createQuery(queryFunction);
         log(query);
-        Promise<RowSet<Row>> rowPromise = Promise.promise();
-        delegate.preparedQuery(toPreparedQuery(query)).execute(getBindValues(query),rowPromise);
-        return rowPromise.future();
+        return delegate.preparedQuery(toPreparedQuery(query)).execute(getBindValues(query));
     }
 }
