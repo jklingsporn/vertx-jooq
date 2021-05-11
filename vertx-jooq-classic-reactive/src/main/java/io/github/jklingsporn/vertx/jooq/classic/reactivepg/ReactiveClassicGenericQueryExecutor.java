@@ -158,7 +158,7 @@ public class ReactiveClassicGenericQueryExecutor extends AbstractReactiveQueryEx
      * @param cursorFunction The function that processes the result set.
      * @return a <code>Future</code> that is completed when the <code>Cursor</code> has been processed.
      */
-    public Future<Void> withCursor(Function<DSLContext, ? extends Query> queryFunction, Function<Cursor,Future<?>> cursorFunction){
+    public <T> Future<Void> withCursor(Function<DSLContext, ? extends Query> queryFunction, Function<Cursor,Future<T>> cursorFunction){
         Query query = createQuery(queryFunction);
         return ((Pool)delegate).withTransaction(
                 sqlConnection -> sqlConnection
@@ -178,7 +178,7 @@ public class ReactiveClassicGenericQueryExecutor extends AbstractReactiveQueryEx
      * @param fetchSize the amount to fetch
      * @return a <code>Future</code> that is completed when the <code>RowStream</code> has been processed.
      */
-    public Future<Void> withRowStream(Function<DSLContext, ? extends Query> queryFunction, Function<RowStream<Row>,Future<?>> streamFunction, int fetchSize){
+    public <T> Future<Void> withRowStream(Function<DSLContext, ? extends Query> queryFunction, Function<RowStream<Row>,Future<T>> streamFunction, int fetchSize){
         Query query = createQuery(queryFunction);
         return ((Pool)delegate).withTransaction(
                 sqlConnection -> sqlConnection

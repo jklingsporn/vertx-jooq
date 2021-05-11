@@ -7,11 +7,12 @@ import io.github.jklingsporn.vertx.jooq.shared.reactive.ReactiveQueryExecutor;
 import io.reactivex.Completable;
 import io.reactivex.Maybe;
 import io.reactivex.Single;
-import io.vertx.reactivex.sqlclient.*;
+import io.vertx.reactivex.sqlclient.Cursor;
 import io.vertx.reactivex.sqlclient.Transaction;
+import io.vertx.reactivex.sqlclient.*;
 import io.vertx.sqlclient.Row;
-import org.jooq.*;
 import org.jooq.Query;
+import org.jooq.*;
 import org.jooq.exception.TooManyRowsException;
 
 import java.util.ArrayList;
@@ -179,5 +180,43 @@ public class ReactiveRXGenericQueryExecutor extends AbstractReactiveQueryExecuto
         Query query = createQuery(queryFunction);
         log(query);
         return delegate.preparedQuery(toPreparedQuery(query)).rxExecute(rxGetBindValues(query));
+    }
+
+    /**
+     * A convenient function to process a large result set using a {@link io.vertx.reactivex.sqlclient.Cursor}.
+     * @param queryFunction The function that fetches the result set.
+     * @param cursorFunction The function that processes the result set.
+     * @return a <code>Future</code> that is completed when the <code>Cursor</code> has been processed.
+     */
+    public Completable withCursor(Function<DSLContext, ? extends Query> queryFunction, Function<Cursor,Completable> cursorFunction){
+        Query query = createQuery(queryFunction);
+        io.reactivex.functions.Function<SqlConnection, Maybe<Object>> function = sqlConnection -> sqlConnection
+                .rxPrepare(toPreparedQuery(query))
+                .map(io.vertx.reactivex.sqlclient.PreparedStatement::cursor)
+                .flatMapCompletable(cursor -> cursorFunction
+                        .apply(cursor)
+                        .andThen(cursor.rxClose())
+                ).toMaybe();
+        return Completable.fromMaybe(((Pool) delegate).rxWithTransaction(function));
+    }
+
+
+    /**
+     * A convenient function to process a large result set using a {@link io.vertx.reactivex.sqlclient.RowStream<Row>}.
+     * @param queryFunction The function that fetches the result set.
+     * @param streamFunction The function that processes the result set.
+     * @param fetchSize the amount to fetch
+     * @return a <code>Completable</code> that is completed when the <code>RowStream</code> has been processed.
+     */
+    public <T> Completable withRowStream(Function<DSLContext, ? extends Query> queryFunction, Function<io.vertx.reactivex.sqlclient.RowStream<io.vertx.reactivex.sqlclient.Row>,Completable> streamFunction, int fetchSize){
+        Query query = createQuery(queryFunction);
+        io.reactivex.functions.Function<SqlConnection, Maybe<Object>> function = sqlConnection -> sqlConnection
+                .rxPrepare(toPreparedQuery(query))
+                .map(ps -> ps.createStream(fetchSize))
+                .flatMapCompletable(rowStream -> streamFunction
+                        .apply(rowStream)
+                        .andThen(rowStream.rxClose())
+                ).toMaybe();
+        return Completable.fromMaybe(((Pool) delegate).rxWithTransaction(function));
     }
 }

@@ -24,6 +24,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
+import java.util.Arrays;
 import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 
@@ -253,5 +254,62 @@ public class SomethingDaoTest extends RXTestBase<Something, Integer, Long, Somet
                 );
         await(completionLatch);
     }
+
+    @Test
+    public void withCursorShouldSucceed(){
+        Something pojo1 = createWithId();
+        Something pojo2 = createWithId();
+        CountDownLatch completionLatch = new CountDownLatch(1);
+        dao
+                .insert(Arrays.asList(pojo1,pojo2))
+                .flatMapCompletable(res -> dao.queryExecutor()
+                        .withCursor(
+                                dslContext -> dslContext.selectFrom(generated.classic.reactive.regular.Tables.SOMETHING),
+                                cursor -> cursor
+                                        .rxRead(2)
+                                        .doOnSuccess(rs -> {
+                                            Assert.assertEquals(2,rs.size());
+                                        })
+                                        .doOnError(x -> Assert.fail(x.getMessage()))
+                                        .ignoreElement()
+                        )
+                )
+                .toMaybe()
+                .flatMapSingle(v -> dao.deleteByIds(Arrays.asList(pojo1.getSomeid(),pojo2.getSomeid())))
+                .subscribe(countdownLatchHandler(completionLatch));
+        await(completionLatch);
+    }
+
+//    @Test
+//    public void withRowStreamShouldSucceed(){
+//        Something pojo1 = createWithId();
+//        Something pojo2 = createWithId();
+//        CountDownLatch completionLatch = new CountDownLatch(1);
+//        dao
+//                .insert(Arrays.asList(pojo1,pojo2))
+//                .flatMapCompletable(res -> dao.queryExecutor()
+//                        .withRowStream(
+//                                dslContext -> dslContext.selectFrom(generated.classic.reactive.regular.Tables.SOMETHING),
+//                                stream -> {
+//                                    CountDownLatch streamLatch = new CountDownLatch(2);
+//                                    Promise<Void> completed = Promise.promise();
+//                                    stream.handler(row -> {
+//                                        streamLatch.countDown();
+//                                        if(streamLatch.getCount() == 0){
+//                                            completed.complete();
+//                                        }
+//                                    });
+//                                    stream.exceptionHandler(completed::fail);
+//                                    return CompletableHelper.toCompletable(handler -> completed.future());
+//                                },
+//                                2
+//                        )
+//                )
+//                .toMaybe()
+//                .flatMapSingle(v -> dao.deleteByIds(Arrays.asList(pojo1.getSomeid(),pojo2.getSomeid())))
+//                .subscribe(countdownLatchHandler(completionLatch));
+//        await(completionLatch);
+//    }
+
 
 }

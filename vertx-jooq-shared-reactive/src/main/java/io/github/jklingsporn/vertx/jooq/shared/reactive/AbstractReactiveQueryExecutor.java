@@ -18,7 +18,7 @@ import org.jooq.conf.ParamType;
  */
 public abstract class AbstractReactiveQueryExecutor extends AbstractQueryExecutor {
 
-    private static final Logger logger = LoggerFactory.getLogger(AbstractReactiveQueryExecutor.class);
+    protected static final Logger logger = LoggerFactory.getLogger(AbstractReactiveQueryExecutor.class);
     /**
      * Replace ':' but not '::'
      */
