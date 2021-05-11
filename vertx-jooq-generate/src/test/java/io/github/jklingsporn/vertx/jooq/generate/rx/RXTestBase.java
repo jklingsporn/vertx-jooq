@@ -93,7 +93,7 @@ public abstract class RXTestBase<P,T,O, DAO extends GenericVertxDAO<?,P, T, Sing
             @Override
             public void onError(Throwable x) {
                 x.printStackTrace();
-//                Assert.fail(x.getMessage());
+                Assert.fail(x.getMessage());
                 latch.countDown();
             }
         };
