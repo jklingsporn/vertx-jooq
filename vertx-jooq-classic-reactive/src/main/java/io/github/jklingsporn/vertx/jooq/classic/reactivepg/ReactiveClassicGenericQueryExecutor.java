@@ -6,7 +6,7 @@ import io.github.jklingsporn.vertx.jooq.shared.reactive.AbstractReactiveQueryExe
 import io.github.jklingsporn.vertx.jooq.shared.reactive.ReactiveQueryExecutor;
 import io.github.jklingsporn.vertx.jooq.shared.reactive.ReactiveQueryResult;
 import io.vertx.core.Future;
-import io.vertx.core.Promise;
+import io.vertx.sqlclient.Cursor;
 import io.vertx.sqlclient.Row;
 import io.vertx.sqlclient.Transaction;
 import io.vertx.sqlclient.*;
@@ -151,4 +151,45 @@ public class ReactiveClassicGenericQueryExecutor extends AbstractReactiveQueryEx
         log(query);
         return delegate.preparedQuery(toPreparedQuery(query)).execute(getBindValues(query));
     }
+
+    /**
+     * A convenient function to process a large result set using a {@link io.vertx.sqlclient.Cursor}.
+     * @param queryFunction The function that fetches the result set.
+     * @param cursorFunction The function that processes the result set.
+     * @return a <code>Future</code> that is completed when the <code>Cursor</code> has been processed.
+     */
+    public Future<Void> withCursor(Function<DSLContext, ? extends Query> queryFunction, Function<Cursor,Future<?>> cursorFunction){
+        Query query = createQuery(queryFunction);
+        return ((Pool)delegate).withTransaction(
+                sqlConnection -> sqlConnection
+                    .prepare(toPreparedQuery(query))
+                    .map(PreparedStatement::cursor)
+                    .compose(cursor -> cursorFunction
+                            .apply(cursor)
+                            .transform(x -> cursor.close())
+                    )
+                );
+    }
+
+    /**
+     * A convenient function to process a large result set using a {@link io.vertx.sqlclient.RowStream<Row>}.
+     * @param queryFunction The function that fetches the result set.
+     * @param streamFunction The function that processes the result set.
+     * @param fetchSize the amount to fetch
+     * @return a <code>Future</code> that is completed when the <code>RowStream</code> has been processed.
+     */
+    public Future<Void> withRowStream(Function<DSLContext, ? extends Query> queryFunction, Function<RowStream<Row>,Future<?>> streamFunction, int fetchSize){
+        Query query = createQuery(queryFunction);
+        return ((Pool)delegate).withTransaction(
+                sqlConnection -> sqlConnection
+                        .prepare(toPreparedQuery(query))
+                        .map(ps -> ps.createStream(fetchSize))
+                        .compose(rowStream -> streamFunction
+                                .apply(rowStream)
+                                .transform(x -> rowStream.close())
+                        )
+        );
+    }
+
+
 }

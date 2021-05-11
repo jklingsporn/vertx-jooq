@@ -9,9 +9,11 @@ import io.github.jklingsporn.vertx.jooq.generate.PostgresConfigurationProvider;
 import io.github.jklingsporn.vertx.jooq.generate.ReactiveDatabaseClientProvider;
 import io.github.jklingsporn.vertx.jooq.generate.classic.ClassicTestBase;
 import io.github.jklingsporn.vertx.jooq.generate.converter.SomeJsonPojo;
+import io.vertx.core.Promise;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.pgclient.PgException;
+import io.vertx.sqlclient.Cursor;
 import org.jooq.Condition;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -21,8 +23,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
+import java.util.Arrays;
 import java.util.Random;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Created by jensklingsporn on 02.11.16.
@@ -245,6 +249,81 @@ public class SomethingDaoTest extends ClassicTestBase<Something, Integer, Long, 
                 .map(toVoid(deleted -> Assert.assertEquals(1, deleted.intValue())))
                 .onComplete(countdownLatchHandler(completionLatch)
                 );
+        await(completionLatch);
+    }
+
+    @Test
+    public void withCursorShouldSucceed(){
+        Something pojo1 = createWithId();
+        Something pojo2 = createWithId();
+        CountDownLatch completionLatch = new CountDownLatch(1);
+        dao
+                .insert(Arrays.asList(pojo1,pojo2))
+                .compose(res -> dao.queryExecutor()
+                        .withCursor(
+                                dslContext -> dslContext.selectFrom(Tables.SOMETHING),
+                                cursor -> cursor
+                                .read(2)
+                                .onSuccess(rs -> {
+                                    Assert.assertEquals(2,rs.size());
+                                })
+                                .onFailure(x -> Assert.fail(x.getMessage()))
+                        )
+                )
+                .compose(v -> dao.deleteByIds(Arrays.asList(pojo1.getSomeid(),pojo2.getSomeid())))
+                .onComplete(countdownLatchHandler(completionLatch));
+        await(completionLatch);
+    }
+
+    @Test
+    public void withCursorShouldCloseResources(){
+        CountDownLatch completionLatch = new CountDownLatch(1);
+        AtomicReference<Cursor> ref = new AtomicReference<>();
+        dao.queryExecutor()
+                        .withCursor(
+                                dslContext -> dslContext.selectFrom(Tables.SOMETHING),
+                                cursor -> {
+                                    ref.set(cursor);
+                                    return cursor
+                                            .read(1)
+                                            .onSuccess(rs -> {
+                                                Assert.assertEquals(0,rs.size());
+                                            })
+                                            .onFailure(x -> Assert.fail(x.getMessage()));
+                                }
+                )
+                .onSuccess(h -> Assert.assertTrue(ref.get().isClosed()))
+                .onComplete(countdownLatchHandler(completionLatch));
+        await(completionLatch);
+    }
+
+    @Test
+    public void withRowStreamShouldSucceed(){
+        Something pojo1 = createWithId();
+        Something pojo2 = createWithId();
+        CountDownLatch completionLatch = new CountDownLatch(1);
+        dao
+                .insert(Arrays.asList(pojo1,pojo2))
+                .compose(res -> dao.queryExecutor()
+                        .withRowStream(
+                                dslContext -> dslContext.selectFrom(Tables.SOMETHING),
+                                stream -> {
+                                    CountDownLatch streamLatch = new CountDownLatch(2);
+                                    Promise<Void> completed = Promise.promise();
+                                    stream.handler(row -> {
+                                        streamLatch.countDown();
+                                        if(streamLatch.getCount() == 0){
+                                            completed.complete();
+                                        }
+                                    });
+                                    stream.exceptionHandler(completed::fail);
+                                    return completed.future();
+                                },
+                                2
+                        )
+                )
+                .compose(v -> dao.deleteByIds(Arrays.asList(pojo1.getSomeid(),pojo2.getSomeid())))
+                .onComplete(countdownLatchHandler(completionLatch));
         await(completionLatch);
     }
 
