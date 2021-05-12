@@ -13,6 +13,7 @@ public interface APIStep {
 
     /**
      * @return an {@code ExecutionStep} based on the {@code CompletableFuture} API.
+     * @deprecated
      */
     public ExecutionStep withCompletableFutureAPI();
 

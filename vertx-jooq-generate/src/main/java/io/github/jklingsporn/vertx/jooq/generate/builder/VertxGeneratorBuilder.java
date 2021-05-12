@@ -37,7 +37,6 @@ public class VertxGeneratorBuilder {
 
     enum APIType{
         CLASSIC,
-        COMPLETABLE_FUTURE,
         RX;
     }
 
@@ -98,36 +97,9 @@ public class VertxGeneratorBuilder {
         }
 
         @Override
+        @Deprecated
         public ExecutionStep withCompletableFutureAPI() {
-            return new ExecutionStepImpl(base
-                    .setApiType(APIType.COMPLETABLE_FUTURE)
-                    .setWriteDAOImportsDelegate(out -> {
-                        out.println("import java.util.concurrent.CompletableFuture;");
-                        out.println("import io.github.jklingsporn.vertx.jooq.completablefuture.VertxDAO;");
-                    })
-                    .setRenderQueryExecutorTypesDelegate(new RenderQueryExecutorTypesComponent() {
-                        @Override
-                        public String renderFindOneType(String pType) {
-                            return String.format("CompletableFuture<%s>", pType);
-                        }
-
-                        @Override
-                        public String renderFindManyType(String pType) {
-                            return String.format("CompletableFuture<List<%s>>", pType);
-                        }
-
-                        @Override
-                        public String renderExecType() {
-                            return "CompletableFuture<Integer>";
-                        }
-
-                        @Override
-                        public String renderInsertReturningType(String tType) {
-                            return String.format("CompletableFuture<%s>", tType);
-                        }
-                    })
-                    .setRenderDAOInterfaceDelegate((rType, pType, tType) -> String.format("io.github.jklingsporn.vertx.jooq.completablefuture.VertxDAO<%s,%s,%s>", rType, pType, tType))
-            );
+            throw new UnsupportedOperationException("CompletableFuture API is deprecated");
         }
 
         @Override
@@ -188,17 +160,6 @@ public class VertxGeneratorBuilder {
                                 out.tab(1).println("}");
                             })
                     );
-                case COMPLETABLE_FUTURE:
-                    return new DIStepImpl(base
-                            .setWriteDAOImportsDelegate(base.writeDAOImportsDelegate.andThen(out -> out.println("import io.github.jklingsporn.vertx.jooq.completablefuture.jdbc.JDBCCompletableFutureQueryExecutor;")))
-                            .setRenderQueryExecutorDelegate((rType, pType, tType) -> String.format("JDBCCompletableFutureQueryExecutor<%s,%s,%s>", rType, pType, tType))
-                            .setWriteConstructorDelegate((out, className, tableIdentifier, tableRecord, pType, tType,schema) -> {
-                                out.tab(1).javadoc("@param configuration The Configuration used for rendering and query execution.\n     * @param vertx the vertx instance");
-                                out.tab(1).println("public %s(%s%s configuration, %s vertx) {", className, base.namedInjectionStrategy.apply(schema), Configuration.class, base.renderFQVertxName());
-                                out.tab(2).println("super(%s, %s.class, new %s(configuration,%s.class,vertx));", tableIdentifier, pType, base.renderQueryExecutor(tableRecord, pType, tType), pType);
-                                out.tab(1).println("}");
-                            })
-                    );
                 case RX:
                     return new DIStepImpl(base
                             .setWriteDAOImportsDelegate(base.writeDAOImportsDelegate.andThen(out -> out.println("import io.github.jklingsporn.vertx.jooq.rx.jdbc.JDBCRXQueryExecutor;")))
@@ -236,19 +197,6 @@ public class VertxGeneratorBuilder {
                                 out.tab(1).javadoc("@param configuration Used for rendering, so only SQLDialect must be set and must be one of the MYSQL types or POSTGRES.\n     * @param delegate A configured AsyncSQLClient that is used for query execution");
                                 out.tab(1).println("public %s(%s configuration, %sio.vertx.ext.asyncsql.AsyncSQLClient delegate) {", className, Configuration.class, base.namedInjectionStrategy.apply(schema));
                                 out.tab(2).println("super(%s, %s.class, new %s(configuration,delegate,%s::new, %s));", tableIdentifier, pType, base.renderQueryExecutor(tableRecord, pType, tType),pType, tableIdentifier);
-                                out.tab(1).println("}");
-                            })
-
-                    );
-                case COMPLETABLE_FUTURE:
-                    return new DIStepImpl(base
-                            .setWriteDAOImportsDelegate(base.writeDAOImportsDelegate.andThen(out -> out.println("import io.github.jklingsporn.vertx.jooq.completablefuture.async.AsyncCompletableFutureQueryExecutor;")))
-                            .setRenderQueryExecutorDelegate((rType, pType, tType) -> String.format("AsyncCompletableFutureQueryExecutor<%s,%s,%s>", rType, pType, tType))
-                            .setWriteConstructorDelegate((out, className, tableIdentifier, tableRecord, pType, tType, schema) -> {
-                                out.tab(1).javadoc("@param configuration Used for rendering, so only SQLDialect must be set and must be one of the MYSQL types or POSTGRES.\n" +
-                                        "     * @param vertx the vertx instance\n     * @param delegate A configured AsyncSQLClient that is used for query execution");
-                                out.tab(1).println("public %s(%s configuration, %s vertx, %sio.vertx.ext.asyncsql.AsyncSQLClient delegate) {", className, Configuration.class, base.renderFQVertxName(), base.namedInjectionStrategy.apply(schema));
-                                out.tab(2).println("super(%s, %s.class, new %s(configuration,vertx,delegate,%s::new, %s));", tableIdentifier, pType, base.renderQueryExecutor(tableRecord, pType, tType),pType,tableIdentifier);
                                 out.tab(1).println("}");
                             })
 
@@ -413,26 +361,6 @@ public class VertxGeneratorBuilder {
                             })
 
                     );
-                case COMPLETABLE_FUTURE:
-                    return new DIStepImpl(base
-                            .setWriteDAOImportsDelegate(base.writeDAOImportsDelegate.andThen(out -> out.println("import io.github.jklingsporn.vertx.jooq.completablefuture.reactivepg.ReactiveCompletableFutureQueryExecutor;")))
-                            .setRenderQueryExecutorDelegate((rType, pType, tType) -> String.format("ReactiveCompletableFutureQueryExecutor<%s,%s,%s>", rType, pType, tType))
-                            .setWriteConstructorDelegate((out, className, tableIdentifier, tableRecord, pType, tType, schema) -> {
-                                /*
-                                 * pType = foo.bar.pojos.Somepojo
-                                 * -------^-need--^---------------
-                                 * temp = foo.bar.pojos
-                                 */
-                                String temp = pType.substring(0, pType.lastIndexOf('.'));
-                                String basePath = temp.substring(0, temp.lastIndexOf('.'));
-                                String pojoName = pType.substring(pType.lastIndexOf(".")+1,pType.length());
-                                String mapperFactory = String.format("%s.%s.RowMappers.get%sMapper()",basePath, base.getVertxGeneratorStrategy().getRowMappersSubPackage(), pojoName);
-                                out.tab(1).javadoc("@param configuration The Configuration used for rendering and query execution.\n     * @param vertx the vertx instance");
-                                out.tab(1).println("public %s(%s configuration, %sio.vertx.sqlclient.SqlClient delegate, %s vertx) {", className, Configuration.class, base.namedInjectionStrategy.apply(schema), base.renderFQVertxName());
-                                out.tab(2).println("super(%s, %s.class, new %s(configuration,delegate,%s,vertx));", tableIdentifier, pType, base.renderQueryExecutor(tableRecord, pType, tType), mapperFactory);
-                                out.tab(1).println("}");
-                            })
-                    );
                 case RX:
                     return new DIStepImpl(base
                             .setWriteDAOImportsDelegate(base.writeDAOImportsDelegate.andThen(out -> out.println("import io.github.jklingsporn.vertx.jooq.rx.reactivepg.ReactiveRXQueryExecutor;")))
@@ -479,9 +407,6 @@ public class VertxGeneratorBuilder {
                     switch (base.apiType) {
                         case CLASSIC:
                             daoClassName = "io.github.jklingsporn.vertx.jooq.classic.VertxDAO";
-                            break;
-                        case COMPLETABLE_FUTURE:
-                            daoClassName = "io.github.jklingsporn.vertx.jooq.completablefuture.VertxDAO";
                             break;
                         case RX:
                             daoClassName = "io.github.jklingsporn.vertx.jooq.rx.VertxDAO";
