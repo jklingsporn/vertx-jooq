@@ -5,9 +5,11 @@ import io.github.jklingsporn.vertx.jooq.shared.internal.QueryResult;
 import io.github.jklingsporn.vertx.jooq.shared.reactive.AbstractReactiveQueryExecutor;
 import io.github.jklingsporn.vertx.jooq.shared.reactive.ReactiveQueryExecutor;
 import io.reactivex.Completable;
+import io.reactivex.Flowable;
 import io.reactivex.Maybe;
 import io.reactivex.Single;
-import io.vertx.reactivex.sqlclient.Cursor;
+import io.vertx.core.AsyncResult;
+import io.vertx.core.Handler;
 import io.vertx.reactivex.sqlclient.Transaction;
 import io.vertx.reactivex.sqlclient.*;
 import io.vertx.sqlclient.Row;
@@ -183,40 +185,46 @@ public class ReactiveRXGenericQueryExecutor extends AbstractReactiveQueryExecuto
     }
 
     /**
-     * A convenient function to process a large result set using a {@link io.vertx.reactivex.sqlclient.Cursor}.
+     * A convenient function to process a large result set using a {@link io.reactivex.Flowable<Row>} based on a
+     * {@link io.vertx.reactivex.sqlclient.RowStream<Row>}. This function borrows a connection from the bool and
+     * starts a transaction as long as the <code>Flowable</code> processes items. After completion, the transaction
+     * is committed and the connection is closed and put back into the pool.
      * @param queryFunction The function that fetches the result set.
-     * @param cursorFunction The function that processes the result set.
-     * @return a <code>Future</code> that is completed when the <code>Cursor</code> has been processed.
+     * @param fetchSize the amount to fetch
+     * @return a <code>Flowable</code> to process the large result.
+     * @see #rowStream(Function, int, Handler, Handler)
      */
-    public Completable withCursor(Function<DSLContext, ? extends Query> queryFunction, Function<Cursor,Completable> cursorFunction){
-        Query query = createQuery(queryFunction);
-        io.reactivex.functions.Function<SqlConnection, Maybe<Object>> function = sqlConnection -> sqlConnection
-                .rxPrepare(toPreparedQuery(query))
-                .map(io.vertx.reactivex.sqlclient.PreparedStatement::cursor)
-                .flatMapCompletable(cursor -> cursorFunction
-                        .apply(cursor)
-                        .andThen(cursor.rxClose())
-                ).toMaybe();
-        return Completable.fromMaybe(((Pool) delegate).rxWithTransaction(function));
+    public Flowable<io.vertx.reactivex.sqlclient.Row> rowStream(Function<DSLContext, ? extends Query> queryFunction, int fetchSize){
+        return rowStream(queryFunction,fetchSize,r->{},r->{});
     }
 
-
     /**
-     * A convenient function to process a large result set using a {@link io.vertx.reactivex.sqlclient.RowStream<Row>}.
+     * A convenient function to process a large result set using a {@link io.reactivex.Flowable<Row>} based on a
+     * {@link io.vertx.reactivex.sqlclient.RowStream<Row>}. This function borrows a connection from the bool and
+     * starts a transaction as long as the <code>Flowable</code> processes items. After completion, the transaction
+     * is committed and the connection is closed and put back into the pool.
      * @param queryFunction The function that fetches the result set.
-     * @param streamFunction The function that processes the result set.
      * @param fetchSize the amount to fetch
-     * @return a <code>Completable</code> that is completed when the <code>RowStream</code> has been processed.
+     * @param commitHandler the handler that is notified when the transaction has been committed, either successfully or with a failure
+     * @param closeHandler the handler that is notified when the connection was closed, either successfully or with a failure
+     * @return a <code>Flowable</code> to process the large result.
+     * @see #rowStream(Function, int, Handler, Handler)
      */
-    public <T> Completable withRowStream(Function<DSLContext, ? extends Query> queryFunction, Function<io.vertx.reactivex.sqlclient.RowStream<io.vertx.reactivex.sqlclient.Row>,Completable> streamFunction, int fetchSize){
+    public Flowable<io.vertx.reactivex.sqlclient.Row> rowStream(Function<DSLContext, ? extends Query> queryFunction,
+                                                                int fetchSize,
+                                                                Handler<AsyncResult<Void>> commitHandler,
+                                                                Handler<AsyncResult<Void>> closeHandler){
         Query query = createQuery(queryFunction);
-        io.reactivex.functions.Function<SqlConnection, Maybe<Object>> function = sqlConnection -> sqlConnection
-                .rxPrepare(toPreparedQuery(query))
-                .map(ps -> ps.createStream(fetchSize))
-                .flatMapCompletable(rowStream -> streamFunction
-                        .apply(rowStream)
-                        .andThen(rowStream.rxClose())
-                ).toMaybe();
-        return Completable.fromMaybe(((Pool) delegate).rxWithTransaction(function));
+        return ((Pool) delegate).rxGetConnection()
+                .flatMapPublisher(conn -> conn
+                        .rxBegin()
+                        .flatMapPublisher(tx ->
+                                conn
+                                        .rxPrepare(toPreparedQuery(query))
+                                        .flatMapPublisher(preparedQuery -> preparedQuery.createStream(fetchSize).toFlowable())
+                                        .doAfterTerminate(() -> tx.commit(commitHandler))
+                                        .doAfterTerminate(() -> conn.close(closeHandler))
+                        )
+                );
     }
 }

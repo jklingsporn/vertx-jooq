@@ -3,6 +3,7 @@ package io.github.jklingsporn.vertx.jooq.generate.rx.reactive.regular;
 import generated.rx.reactive.regular.Tables;
 import generated.rx.reactive.regular.enums.Someenum;
 import generated.rx.reactive.regular.tables.daos.SomethingDao;
+import generated.rx.reactive.regular.tables.mappers.RowMappers;
 import generated.rx.reactive.regular.tables.pojos.Something;
 import generated.rx.reactive.regular.tables.records.SomethingRecord;
 import io.github.jklingsporn.vertx.jooq.generate.PostgresConfigurationProvider;
@@ -12,6 +13,7 @@ import io.github.jklingsporn.vertx.jooq.rx.reactivepg.ReactiveRXGenericQueryExec
 import io.github.jklingsporn.vertx.jooq.rx.reactivepg.ReactiveRXQueryExecutor;
 import io.reactivex.Completable;
 import io.reactivex.Single;
+import io.reactivex.internal.functions.Functions;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.pgclient.PgException;
@@ -256,60 +258,39 @@ public class SomethingDaoTest extends RXTestBase<Something, Integer, Long, Somet
     }
 
     @Test
-    public void withCursorShouldSucceed(){
+    public void rowStreamShouldSucceed(){
         Something pojo1 = createWithId();
         Something pojo2 = createWithId();
-        CountDownLatch completionLatch = new CountDownLatch(1);
+        /*
+         * Latch has to count down four times
+         * - one for each processed item (2)
+         * - when the items have been deleted (1)
+         * - upon successful processing (1)
+         */
+        CountDownLatch completionLatch = new CountDownLatch(4);
         dao
                 .insert(Arrays.asList(pojo1,pojo2))
-                .flatMapCompletable(res -> dao.queryExecutor()
-                        .withCursor(
+                .map(res -> dao.queryExecutor()
+                        .rowStream(
                                 dslContext -> dslContext.selectFrom(generated.classic.reactive.regular.Tables.SOMETHING),
-                                cursor -> cursor
-                                        .rxRead(2)
-                                        .doOnSuccess(rs -> {
-                                            Assert.assertEquals(2,rs.size());
-                                        })
-                                        .doOnError(x -> Assert.fail(x.getMessage()))
-                                        .ignoreElement()
+                                2
                         )
+                        .subscribe(
+                                row -> {
+                                    //conveniently map it to a pojo
+                                    Something mapped = RowMappers.getSomethingMapper().apply(row.getDelegate());
+                                    Assert.assertNotNull(mapped);
+                                    completionLatch.countDown();
+                                },
+                                Functions.ON_ERROR_MISSING,
+                                () -> dao.deleteByIds(Arrays.asList(pojo1.getSomeid(),pojo2.getSomeid()))
+                                        .subscribe(i->completionLatch.countDown())
+                                )
+
                 )
-                .toMaybe()
-                .flatMapSingle(v -> dao.deleteByIds(Arrays.asList(pojo1.getSomeid(),pojo2.getSomeid())))
                 .subscribe(countdownLatchHandler(completionLatch));
         await(completionLatch);
     }
-
-//    @Test
-//    public void withRowStreamShouldSucceed(){
-//        Something pojo1 = createWithId();
-//        Something pojo2 = createWithId();
-//        CountDownLatch completionLatch = new CountDownLatch(1);
-//        dao
-//                .insert(Arrays.asList(pojo1,pojo2))
-//                .flatMapCompletable(res -> dao.queryExecutor()
-//                        .withRowStream(
-//                                dslContext -> dslContext.selectFrom(generated.classic.reactive.regular.Tables.SOMETHING),
-//                                stream -> {
-//                                    CountDownLatch streamLatch = new CountDownLatch(2);
-//                                    Promise<Void> completed = Promise.promise();
-//                                    stream.handler(row -> {
-//                                        streamLatch.countDown();
-//                                        if(streamLatch.getCount() == 0){
-//                                            completed.complete();
-//                                        }
-//                                    });
-//                                    stream.exceptionHandler(completed::fail);
-//                                    return CompletableHelper.toCompletable(handler -> completed.future());
-//                                },
-//                                2
-//                        )
-//                )
-//                .toMaybe()
-//                .flatMapSingle(v -> dao.deleteByIds(Arrays.asList(pojo1.getSomeid(),pojo2.getSomeid())))
-//                .subscribe(countdownLatchHandler(completionLatch));
-//        await(completionLatch);
-//    }
 
 
 }
