@@ -172,7 +172,7 @@ public class ReactiveClassicGenericQueryExecutor extends AbstractReactiveQueryEx
     }
 
     /**
-     * A convenient function to process a large result set using a {@link io.vertx.sqlclient.RowStream<Row>}.
+     * A convenient function to process a large result set using a {@link io.vertx.sqlclient.RowStream}.
      * @param queryFunction The function that fetches the result set.
      * @param streamFunction The function that processes the result set.
      * @param fetchSize the amount to fetch

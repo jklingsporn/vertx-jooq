@@ -185,8 +185,8 @@ public class ReactiveRXGenericQueryExecutor extends AbstractReactiveQueryExecuto
     }
 
     /**
-     * A convenient function to process a large result set using a {@link io.reactivex.Flowable<Row>} based on a
-     * {@link io.vertx.reactivex.sqlclient.RowStream<Row>}. This function borrows a connection from the bool and
+     * A convenient function to process a large result set using a {@link io.reactivex.Flowable} based on a
+     * {@link io.vertx.reactivex.sqlclient.RowStream}. This function borrows a connection from the bool and
      * starts a transaction as long as the <code>Flowable</code> processes items. After completion, the transaction
      * is committed and the connection is closed and put back into the pool.
      * @param queryFunction The function that fetches the result set.
@@ -199,8 +199,8 @@ public class ReactiveRXGenericQueryExecutor extends AbstractReactiveQueryExecuto
     }
 
     /**
-     * A convenient function to process a large result set using a {@link io.reactivex.Flowable<Row>} based on a
-     * {@link io.vertx.reactivex.sqlclient.RowStream<Row>}. This function borrows a connection from the bool and
+     * A convenient function to process a large result set using a {@link io.reactivex.Flowable} based on a
+     * {@link io.vertx.reactivex.sqlclient.RowStream}. This function borrows a connection from the bool and
      * starts a transaction as long as the <code>Flowable</code> processes items. After completion, the transaction
      * is committed and the connection is closed and put back into the pool.
      * @param queryFunction The function that fetches the result set.
