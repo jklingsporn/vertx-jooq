@@ -3,7 +3,6 @@ package io.github.jklingsporn.vertx.jooq.generate.rx.reactive.regular;
 import generated.rx.reactive.regular.Tables;
 import generated.rx.reactive.regular.enums.Someenum;
 import generated.rx.reactive.regular.tables.daos.SomethingDao;
-import generated.rx.reactive.regular.tables.mappers.RowMappers;
 import generated.rx.reactive.regular.tables.pojos.Something;
 import generated.rx.reactive.regular.tables.records.SomethingRecord;
 import io.github.jklingsporn.vertx.jooq.generate.PostgresConfigurationProvider;
@@ -27,6 +26,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 
@@ -258,28 +258,32 @@ public class SomethingDaoTest extends RXTestBase<Something, Integer, Long, Somet
     }
 
     @Test
-    public void queryFlowableShouldSucceed(){
+    public void queryFlowableRowShouldSucceed(){
         Something pojo1 = createWithId();
         Something pojo2 = createWithId();
         /*
-         * Latch has to count down four times
+         * Latch has to count down 6 times
          * - one for each processed item (2)
          * - when the items have been deleted (1)
          * - upon successful processing (1)
+         * - when transaction has ben committed (1)
+         * - when connection has been closed (1)
          */
-        CountDownLatch completionLatch = new CountDownLatch(4);
+        CountDownLatch completionLatch = new CountDownLatch(6);
         dao
                 .insert(Arrays.asList(pojo1,pojo2))
                 .map(res -> dao.queryExecutor()
-                        .queryFlowable(
-                                dslContext -> dslContext.selectFrom(generated.classic.reactive.regular.Tables.SOMETHING),
-                                2
+                        .queryFlowableRow(
+                                dslContext -> dslContext.selectFrom(generated.rx.reactive.regular.Tables.SOMETHING),
+                                2,
+                                r -> completionLatch.countDown(), //tx commit
+                                r -> completionLatch.countDown() // connection closed
                         )
                         .subscribe(
                                 //on next
                                 row -> {
                                     //conveniently map it to a pojo
-                                    Something mapped = RowMappers.getSomethingMapper().apply(row.getDelegate());
+                                    Something mapped = dao.queryExecutor().pojoMapper().apply(row.getDelegate());
                                     Assert.assertNotNull(mapped);
                                     completionLatch.countDown();
                                 },
@@ -289,6 +293,48 @@ public class SomethingDaoTest extends RXTestBase<Something, Integer, Long, Somet
                                 () -> dao.deleteByIds(Arrays.asList(pojo1.getSomeid(),pojo2.getSomeid()))
                                         .subscribe(i->completionLatch.countDown())
                                 )
+
+                )
+                .subscribe(countdownLatchHandler(completionLatch));
+        await(completionLatch);
+    }
+
+    @Test
+    public void queryFlowableShouldSucceed(){
+        Something pojo1 = createWithId();
+        Something pojo2 = createWithId();
+        /*
+         * Latch has to count down 6 times
+         * - one for each processed item (2)
+         * - when the items have been deleted (1)
+         * - upon successful processing (1)
+         * - when transaction has ben committed (1)
+         * - when connection has been closed (1)
+         */
+        CountDownLatch completionLatch = new CountDownLatch(6);
+        List<Something> pojos = Arrays.asList(pojo1, pojo2);
+        dao
+                .insert(pojos)
+                .map(res -> dao.queryExecutor()
+                        .queryFlowable(
+                                dslContext -> dslContext.selectFrom(generated.rx.reactive.regular.Tables.SOMETHING),
+                                2,
+                                r -> completionLatch.countDown(), //tx commit
+                                r -> completionLatch.countDown() // connection closed
+                        )
+                        .subscribe(
+                                //on next
+                                pojo -> {
+                                    Assert.assertNotNull(pojo);
+                                    Assert.assertTrue(pojos.stream().anyMatch(p -> p.getSomeid().equals(pojo.getSomeid())));
+                                    completionLatch.countDown();
+                                },
+                                //on error
+                                Functions.ON_ERROR_MISSING,
+                                //on complete (action - does not block)
+                                () -> dao.deleteByIds(Arrays.asList(pojo1.getSomeid(),pojo2.getSomeid()))
+                                        .subscribe(i->completionLatch.countDown())
+                        )
 
                 )
                 .subscribe(countdownLatchHandler(completionLatch));

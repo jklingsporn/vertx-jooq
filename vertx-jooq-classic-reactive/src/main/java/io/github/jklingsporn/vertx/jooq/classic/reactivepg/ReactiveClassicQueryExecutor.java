@@ -66,4 +66,7 @@ public class ReactiveClassicQueryExecutor<R extends UpdatableRecord<R>,P,T> exte
         return pgTransaction -> new ReactiveClassicQueryExecutor<>(configuration(), connection, pojoMapper, pgTransaction);
     }
 
+    public Function<Row, P> pojoMapper() {
+        return pojoMapper;
+    }
 }
