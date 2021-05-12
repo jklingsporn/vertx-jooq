@@ -3,6 +3,18 @@ A [jOOQ](http://www.jooq.org/)-CodeGenerator to create [vertx](http://vertx.io/)
 Perform all CRUD-operations asynchronously and convert your POJOs from/into a `io.vertx.core.json.JsonObject` using the API and
 driver of your choice.
 
+## release 6.3.0
+- Added [stream support](https://github.com/jklingsporn/vertx-jooq/issues/116) for the reactive drivers. This long overdue 
+  feature allows you to process large chunks of data without running out of memory. The available methods depend on the chosen API:
+  - Classic
+    - choose between the usage of a `Cursor` or a `RowStream<Row>`
+    - [Cursor example](https://github.com/jklingsporn/vertx-jooq/blob/master/vertx-jooq-generate/src/test/java/io/github/jklingsporn/vertx/jooq/generate/classic/reactive/regular/SomethingDaoTest.java#L279)
+    - [RowStream example](https://github.com/jklingsporn/vertx-jooq/blob/master/vertx-jooq-generate/src/test/java/io/github/jklingsporn/vertx/jooq/generate/classic/reactive/regular/SomethingDaoTest.java#L301)
+  - RX
+    - choose between `Flowable<Row>` and `Flowable<P>`
+    - [Flowable example](https://github.com/jklingsporn/vertx-jooq/blob/master/vertx-jooq-generate/src/test/java/io/github/jklingsporn/vertx/jooq/generate/rx/reactive/regular/SomethingDaoTest.java#L303-L342)
+- Expose the used `RowMapper` in reactive `QueryExecutors` for convenient usage.
+
 ## release 6.2.0
 - Finally added support for the jooq 3.14 - branch.
 
