@@ -192,10 +192,10 @@ public class ReactiveRXGenericQueryExecutor extends AbstractReactiveQueryExecuto
      * @param queryFunction The function that fetches the result set.
      * @param fetchSize the amount to fetch
      * @return a <code>Flowable</code> to process the large result.
-     * @see #rowStream(Function, int, Handler, Handler)
+     * @see #queryFlowable(Function, int, Handler, Handler)
      */
-    public Flowable<io.vertx.reactivex.sqlclient.Row> rowStream(Function<DSLContext, ? extends Query> queryFunction, int fetchSize){
-        return rowStream(queryFunction,fetchSize,r->{},r->{});
+    public Flowable<io.vertx.reactivex.sqlclient.Row> queryFlowable(Function<DSLContext, ? extends Query> queryFunction, int fetchSize){
+        return queryFlowable(queryFunction,fetchSize, r->{}, r->{});
     }
 
     /**
@@ -208,12 +208,12 @@ public class ReactiveRXGenericQueryExecutor extends AbstractReactiveQueryExecuto
      * @param commitHandler the handler that is notified when the transaction has been committed, either successfully or with a failure
      * @param closeHandler the handler that is notified when the connection was closed, either successfully or with a failure
      * @return a <code>Flowable</code> to process the large result.
-     * @see #rowStream(Function, int, Handler, Handler)
+     * @see #queryFlowable(Function, int, Handler, Handler)
      */
-    public Flowable<io.vertx.reactivex.sqlclient.Row> rowStream(Function<DSLContext, ? extends Query> queryFunction,
-                                                                int fetchSize,
-                                                                Handler<AsyncResult<Void>> commitHandler,
-                                                                Handler<AsyncResult<Void>> closeHandler){
+    public Flowable<io.vertx.reactivex.sqlclient.Row> queryFlowable(Function<DSLContext, ? extends Query> queryFunction,
+                                                                    int fetchSize,
+                                                                    Handler<AsyncResult<Void>> commitHandler,
+                                                                    Handler<AsyncResult<Void>> closeHandler){
         Query query = createQuery(queryFunction);
         return ((Pool) delegate).rxGetConnection()
                 .flatMapPublisher(conn -> conn

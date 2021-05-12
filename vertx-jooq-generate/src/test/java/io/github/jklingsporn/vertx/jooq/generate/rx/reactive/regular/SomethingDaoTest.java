@@ -258,7 +258,7 @@ public class SomethingDaoTest extends RXTestBase<Something, Integer, Long, Somet
     }
 
     @Test
-    public void rowStreamShouldSucceed(){
+    public void queryFlowableShouldSucceed(){
         Something pojo1 = createWithId();
         Something pojo2 = createWithId();
         /*
@@ -271,18 +271,21 @@ public class SomethingDaoTest extends RXTestBase<Something, Integer, Long, Somet
         dao
                 .insert(Arrays.asList(pojo1,pojo2))
                 .map(res -> dao.queryExecutor()
-                        .rowStream(
+                        .queryFlowable(
                                 dslContext -> dslContext.selectFrom(generated.classic.reactive.regular.Tables.SOMETHING),
                                 2
                         )
                         .subscribe(
+                                //on next
                                 row -> {
                                     //conveniently map it to a pojo
                                     Something mapped = RowMappers.getSomethingMapper().apply(row.getDelegate());
                                     Assert.assertNotNull(mapped);
                                     completionLatch.countDown();
                                 },
+                                //on error
                                 Functions.ON_ERROR_MISSING,
+                                //on complete (action - does not block)
                                 () -> dao.deleteByIds(Arrays.asList(pojo1.getSomeid(),pojo2.getSomeid()))
                                         .subscribe(i->completionLatch.countDown())
                                 )
