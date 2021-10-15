@@ -58,9 +58,9 @@ public class SomethingCompositeDaoTest extends ClassicTestBase<Somethingcomposit
 
     @Override
     protected Record2<Integer, Integer> getId(Somethingcomposite pojo) {
-        SomethingcompositeRecord record = new SomethingcompositeRecord();
-        record.from(pojo);
-        return record.key();
+        SomethingcompositeRecord rec = new SomethingcompositeRecord();
+        rec.from(pojo);
+        return rec.key();
     }
 
     @Override

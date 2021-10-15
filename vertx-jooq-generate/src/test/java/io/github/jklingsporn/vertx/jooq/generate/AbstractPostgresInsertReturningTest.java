@@ -2,6 +2,7 @@ package io.github.jklingsporn.vertx.jooq.generate;
 
 import io.vertx.core.json.JsonArray;
 import org.jooq.*;
+import org.jooq.Record;
 import org.jooq.impl.DSL;
 import org.junit.BeforeClass;
 

@@ -10,6 +10,7 @@ import io.vertx.core.Handler;
 import io.vertx.reactivex.core.Promise;
 import io.vertx.reactivex.core.Vertx;
 import org.jooq.*;
+import org.jooq.Record;
 import org.jooq.impl.DSL;
 
 import java.util.function.Function;

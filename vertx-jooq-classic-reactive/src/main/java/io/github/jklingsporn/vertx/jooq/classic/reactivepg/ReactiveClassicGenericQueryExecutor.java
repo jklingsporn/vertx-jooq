@@ -12,6 +12,7 @@ import io.vertx.sqlclient.Transaction;
 import io.vertx.sqlclient.*;
 import org.jooq.Query;
 import org.jooq.*;
+import org.jooq.Record;
 import org.jooq.exception.TooManyRowsException;
 
 import java.util.List;
