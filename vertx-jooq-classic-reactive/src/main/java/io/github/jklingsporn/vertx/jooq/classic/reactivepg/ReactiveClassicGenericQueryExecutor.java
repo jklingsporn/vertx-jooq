@@ -100,7 +100,7 @@ public class ReactiveClassicGenericQueryExecutor extends AbstractReactiveQueryEx
         if(transaction==null){
             return Future.failedFuture(new IllegalStateException("Not in transaction"));
         }
-        return transaction.commit().compose(v->delegate.close());
+        return transaction.commit().eventually(v->delegate.close());
     }
 
     /**
