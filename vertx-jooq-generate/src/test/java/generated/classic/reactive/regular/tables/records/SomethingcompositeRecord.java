@@ -210,6 +210,19 @@ public class SomethingcompositeRecord extends UpdatableRecordImpl<Somethingcompo
         setSomejsonobject(somejsonobject);
     }
 
+    /**
+     * Create a detached, initialised SomethingcompositeRecord
+     */
+    public SomethingcompositeRecord(generated.classic.reactive.regular.tables.pojos.Somethingcomposite value) {
+        super(Somethingcomposite.SOMETHINGCOMPOSITE);
+
+        if (value != null) {
+            setSomeid(value.getSomeid());
+            setSomesecondid(value.getSomesecondid());
+            setSomejsonobject(value.getSomejsonobject());
+        }
+    }
+
         public SomethingcompositeRecord(io.vertx.core.json.JsonObject json) {
                 this();
                 fromJson(json);

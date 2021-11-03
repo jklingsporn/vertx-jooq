@@ -60,16 +60,18 @@ public class Vertx extends SchemaImpl {
 
     @Override
     public final List<Sequence<?>> getSequences() {
-        return Arrays.<Sequence<?>>asList(
+        return Arrays.asList(
             Sequences.SOMETHING_SOMEID_SEQ,
-            Sequences.SOMETHINGWITHOUTJSON_SOMEID_SEQ);
+            Sequences.SOMETHINGWITHOUTJSON_SOMEID_SEQ
+        );
     }
 
     @Override
     public final List<Table<?>> getTables() {
-        return Arrays.<Table<?>>asList(
+        return Arrays.asList(
             Something.SOMETHING,
             Somethingcomposite.SOMETHINGCOMPOSITE,
-            Somethingwithoutjson.SOMETHINGWITHOUTJSON);
+            Somethingwithoutjson.SOMETHINGWITHOUTJSON
+        );
     }
 }

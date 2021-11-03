@@ -15,8 +15,6 @@ import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
 
 import org.jooq.Field;
 import org.jooq.ForeignKey;
@@ -140,7 +138,7 @@ public class Something extends TableImpl<SomethingRecord> {
 
     @Override
     public Schema getSchema() {
-        return Vertx.VERTX;
+        return aliased() ? null : Vertx.VERTX;
     }
 
     @Override
@@ -151,11 +149,6 @@ public class Something extends TableImpl<SomethingRecord> {
     @Override
     public UniqueKey<SomethingRecord> getPrimaryKey() {
         return Keys.KEY_SOMETHING_PRIMARY;
-    }
-
-    @Override
-    public List<UniqueKey<SomethingRecord>> getKeys() {
-        return Arrays.<UniqueKey<SomethingRecord>>asList(Keys.KEY_SOMETHING_PRIMARY);
     }
 
     @Override

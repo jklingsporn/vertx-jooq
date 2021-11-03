@@ -16,7 +16,7 @@ import org.jooq.impl.Internal;
 
 
 /**
- * A class modelling foreign key relationships and constraints of tables in 
+ * A class modelling foreign key relationships and constraints of tables in
  * VERTX.
  */
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
@@ -26,6 +26,6 @@ public class Keys {
     // UNIQUE and PRIMARY KEY definitions
     // -------------------------------------------------------------------------
 
-    public static final UniqueKey<SomethingRecord> SYS_PK_10140 = Internal.createUniqueKey(Something.SOMETHING, DSL.name("SYS_PK_10140"), new TableField[] { Something.SOMETHING.SOMEID }, true);
-    public static final UniqueKey<SomethingcompositeRecord> SYS_PK_10144 = Internal.createUniqueKey(Somethingcomposite.SOMETHINGCOMPOSITE, DSL.name("SYS_PK_10144"), new TableField[] { Somethingcomposite.SOMETHINGCOMPOSITE.SOMEID, Somethingcomposite.SOMETHINGCOMPOSITE.SOMESECONDID }, true);
+    public static final UniqueKey<SomethingRecord> SYS_PK_10138 = Internal.createUniqueKey(Something.SOMETHING, DSL.name("SYS_PK_10138"), new TableField[] { Something.SOMETHING.SOMEID }, true);
+    public static final UniqueKey<SomethingcompositeRecord> SYS_PK_10142 = Internal.createUniqueKey(Somethingcomposite.SOMETHINGCOMPOSITE, DSL.name("SYS_PK_10142"), new TableField[] { Somethingcomposite.SOMETHINGCOMPOSITE.SOMEID, Somethingcomposite.SOMETHINGCOMPOSITE.SOMESECONDID }, true);
 }

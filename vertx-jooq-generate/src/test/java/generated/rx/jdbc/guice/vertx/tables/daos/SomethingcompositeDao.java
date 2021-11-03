@@ -29,8 +29,9 @@ public class SomethingcompositeDao extends AbstractVertxDAO<SomethingcompositeRe
         @javax.inject.Inject
 
         /**
-     * @param configuration The Configuration used for rendering and query execution.
-     * @param vertx the vertx instance
+     * @param configuration The Configuration used for rendering and query
+     * execution.
+     *      * @param vertx the vertx instance
      */
         public SomethingcompositeDao(Configuration configuration, io.vertx.reactivex.core.Vertx vertx) {
                 super(Somethingcomposite.SOMETHINGCOMPOSITE, generated.rx.jdbc.guice.vertx.tables.pojos.Somethingcomposite.class, new JDBCRXQueryExecutor<SomethingcompositeRecord,generated.rx.jdbc.guice.vertx.tables.pojos.Somethingcomposite,Record2<Integer, Integer>>(configuration,generated.rx.jdbc.guice.vertx.tables.pojos.Somethingcomposite.class,vertx));
@@ -42,28 +43,32 @@ public class SomethingcompositeDao extends AbstractVertxDAO<SomethingcompositeRe
         }
 
         /**
-     * Find records that have <code>SOMESECONDID IN (values)</code> asynchronously
+     * Find records that have <code>SOMESECONDID IN (values)</code>
+     * asynchronously
      */
         public Single<List<generated.rx.jdbc.guice.vertx.tables.pojos.Somethingcomposite>> findManyBySomesecondid(Collection<Integer> values) {
                 return findManyByCondition(Somethingcomposite.SOMETHINGCOMPOSITE.SOMESECONDID.in(values));
         }
 
         /**
-     * Find records that have <code>SOMESECONDID IN (values)</code> asynchronously limited by the given limit
+     * Find records that have <code>SOMESECONDID IN (values)</code>
+     * asynchronously limited by the given limit
      */
         public Single<List<generated.rx.jdbc.guice.vertx.tables.pojos.Somethingcomposite>> findManyBySomesecondid(Collection<Integer> values, int limit) {
                 return findManyByCondition(Somethingcomposite.SOMETHINGCOMPOSITE.SOMESECONDID.in(values),limit);
         }
 
         /**
-     * Find records that have <code>SOMEJSONOBJECT IN (values)</code> asynchronously
+     * Find records that have <code>SOMEJSONOBJECT IN (values)</code>
+     * asynchronously
      */
         public Single<List<generated.rx.jdbc.guice.vertx.tables.pojos.Somethingcomposite>> findManyBySomejsonobject(Collection<JsonObject> values) {
                 return findManyByCondition(Somethingcomposite.SOMETHINGCOMPOSITE.SOMEJSONOBJECT.in(values));
         }
 
         /**
-     * Find records that have <code>SOMEJSONOBJECT IN (values)</code> asynchronously limited by the given limit
+     * Find records that have <code>SOMEJSONOBJECT IN (values)</code>
+     * asynchronously limited by the given limit
      */
         public Single<List<generated.rx.jdbc.guice.vertx.tables.pojos.Somethingcomposite>> findManyBySomejsonobject(Collection<JsonObject> values, int limit) {
                 return findManyByCondition(Somethingcomposite.SOMETHINGCOMPOSITE.SOMEJSONOBJECT.in(values),limit);

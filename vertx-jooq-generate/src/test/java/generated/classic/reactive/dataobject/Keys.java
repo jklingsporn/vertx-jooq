@@ -18,7 +18,7 @@ import org.jooq.impl.Internal;
 
 
 /**
- * A class modelling foreign key relationships and constraints of tables in 
+ * A class modelling foreign key relationships and constraints of tables in
  * vertx.
  */
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
