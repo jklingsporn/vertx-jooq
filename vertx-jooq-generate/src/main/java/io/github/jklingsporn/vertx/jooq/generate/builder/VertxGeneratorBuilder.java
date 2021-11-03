@@ -141,7 +141,7 @@ public class VertxGeneratorBuilder {
         public ExecutionStep withRX3API() {
             return new ExecutionStepImpl(base
                     .setRenderFQVertxNameDelegate(() -> "io.vertx.rxjava3.core.Vertx")
-                    .setApiType(APIType.RX)
+                    .setApiType(APIType.RX3)
                     .setWriteDAOImportsDelegate(out -> {
                         out.println("import io.reactivex.rxjava3.core.Single;");
                         out.println("import java.util.Optional;");
