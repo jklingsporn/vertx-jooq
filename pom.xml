@@ -9,21 +9,24 @@
         <module>vertx-jooq-classic</module>
         <module>vertx-jooq-classic-jdbc</module>
         <module>vertx-jooq-rx</module>
+        <module>vertx-jooq-rx3</module>
         <module>vertx-jooq-rx-jdbc</module>
         <module>vertx-jooq-generate</module>
         <module>vertx-jooq-classic-reactive</module>
         <module>vertx-jooq-shared-reactive</module>
         <module>vertx-jooq-rx-reactive</module>
+        <module>vertx-jooq-rx3-reactive</module>
     </modules>
     <properties>
         <jooq.version>3.15.3</jooq.version>
-        <vertx.version>4.1.5</vertx.version>
+        <vertx.version>4.2.1</vertx.version>
         <jackson.databind.version>2.11.3</jackson.databind.version>
         <hsqldb.version>2.5.0</hsqldb.version>
         <junit.version>4.13.1</junit.version>
         <guice.version>4.2.3</guice.version>
         <logback.version>1.2.0</logback.version>
-        <rx.version>2.2.12</rx.version>
+        <rx.version>2.2.21</rx.version>
+        <rx3.version>3.0.13</rx3.version>
         <mysql.driver.version>8.0.19</mysql.driver.version>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
