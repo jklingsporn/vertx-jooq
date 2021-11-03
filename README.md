@@ -3,9 +3,9 @@ A [jOOQ](http://www.jooq.org/)-CodeGenerator to create [vertx](http://vertx.io/)
 Perform all CRUD-operations asynchronously and convert your POJOs from/into a `io.vertx.core.json.JsonObject` using the API and
 driver of your choice.
 
-## pending
+## release 6.4.0
 
-- Added [rxjava3 support](PR) via dedicated vertx-jooq-rx3-reactive module.
+- Added [rxjava3 support](https://github.com/jklingsporn/vertx-jooq/pull/191) via dedicated vertx-jooq-rx3-reactive module.
 - Bumped used Vert.x version to 4.2.1
 
 ## release 6.3.0
