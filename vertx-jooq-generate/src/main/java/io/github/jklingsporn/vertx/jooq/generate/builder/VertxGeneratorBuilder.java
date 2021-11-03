@@ -135,6 +135,40 @@ public class VertxGeneratorBuilder {
                     .setRenderDAOInterfaceDelegate((rType, pType, tType) -> String.format("io.github.jklingsporn.vertx.jooq.rx.VertxDAO<%s,%s,%s>", rType, pType, tType))
             );
         }
+
+        @Override
+        public ExecutionStep withRX3API() {
+            return new ExecutionStepImpl(base
+                    .setRenderFQVertxNameDelegate(() -> "io.vertx.rxjava3.core.Vertx")
+                    .setApiType(APIType.RX)
+                    .setWriteDAOImportsDelegate(out -> {
+                        out.println("import io.reactivex.rxjava3.core.Single;");
+                        out.println("import java.util.Optional;");
+                    })
+                    .setRenderQueryExecutorTypesDelegate(new RenderQueryExecutorTypesComponent() {
+                        @Override
+                        public String renderFindOneType(String pType) {
+                            return String.format("Single<Optional<%s>>",pType);
+                        }
+
+                        @Override
+                        public String renderFindManyType(String pType) {
+                            return String.format("Single<List<%s>>",pType);
+                        }
+
+                        @Override
+                        public String renderExecType() {
+                            return "Single<Integer>";
+                        }
+
+                        @Override
+                        public String renderInsertReturningType(String tType) {
+                            return String.format("Single<%s>", tType);
+                        }
+                    })
+                    .setRenderDAOInterfaceDelegate((rType, pType, tType) -> String.format("io.github.jklingsporn.vertx.jooq.rx.VertxDAO<%s,%s,%s>", rType, pType, tType))
+            );
+        }
     }
 
     static class ExecutionStepImpl implements ExecutionStep {
