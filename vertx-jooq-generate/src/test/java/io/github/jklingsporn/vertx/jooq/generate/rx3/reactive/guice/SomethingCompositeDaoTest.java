@@ -1,9 +1,9 @@
 package io.github.jklingsporn.vertx.jooq.generate.rx3.reactive.guice;
 
-import generated.rx.reactive.guice.Tables;
-import generated.rx.reactive.guice.tables.daos.SomethingcompositeDao;
-import generated.rx.reactive.guice.tables.pojos.Somethingcomposite;
-import generated.rx.reactive.guice.tables.records.SomethingcompositeRecord;
+import generated.rx3.reactive.guice.Tables;
+import generated.rx3.reactive.guice.tables.daos.SomethingcompositeDao;
+import generated.rx3.reactive.guice.tables.pojos.Somethingcomposite;
+import generated.rx3.reactive.guice.tables.records.SomethingcompositeRecord;
 import io.github.jklingsporn.vertx.jooq.generate.PostgresConfigurationProvider;
 import io.github.jklingsporn.vertx.jooq.generate.ReactiveDatabaseClientProvider;
 import io.github.jklingsporn.vertx.jooq.generate.rx3.RX3TestBase;
@@ -23,7 +23,7 @@ public class SomethingCompositeDaoTest extends RX3TestBase<Somethingcomposite, R
 
 
     public SomethingCompositeDaoTest() {
-        super(Tables.SOMETHINGCOMPOSITE.SOMEJSONOBJECT, new SomethingcompositeDao(PostgresConfigurationProvider.getInstance().createDAOConfiguration(), ReactiveDatabaseClientProvider.getInstance().rxGetClient()));
+        super(Tables.SOMETHINGCOMPOSITE.SOMEJSONOBJECT, new SomethingcompositeDao(PostgresConfigurationProvider.getInstance().createDAOConfiguration(), ReactiveDatabaseClientProvider.getInstance().rx3GetClient()));
     }
 
     @BeforeClass

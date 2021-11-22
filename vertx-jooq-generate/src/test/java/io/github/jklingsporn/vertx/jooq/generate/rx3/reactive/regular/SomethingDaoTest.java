@@ -1,10 +1,10 @@
 package io.github.jklingsporn.vertx.jooq.generate.rx3.reactive.regular;
 
-import generated.rx.reactive.regular.Tables;
-import generated.rx.reactive.regular.enums.Someenum;
-import generated.rx.reactive.regular.tables.daos.SomethingDao;
-import generated.rx.reactive.regular.tables.pojos.Something;
-import generated.rx.reactive.regular.tables.records.SomethingRecord;
+import generated.rx3.reactive.regular.Tables;
+import generated.rx3.reactive.regular.enums.Someenum;
+import generated.rx3.reactive.regular.tables.daos.SomethingDao;
+import generated.rx3.reactive.regular.tables.pojos.Something;
+import generated.rx3.reactive.regular.tables.records.SomethingRecord;
 import io.github.jklingsporn.vertx.jooq.generate.PostgresConfigurationProvider;
 import io.github.jklingsporn.vertx.jooq.generate.ReactiveDatabaseClientProvider;
 import io.github.jklingsporn.vertx.jooq.generate.rx3.RX3TestBase;
@@ -36,7 +36,7 @@ import java.util.concurrent.CountDownLatch;
 public class SomethingDaoTest extends RX3TestBase<Something, Integer, Long, SomethingDao> {
 
     public SomethingDaoTest() {
-        super(Tables.SOMETHING.SOMEHUGENUMBER, new SomethingDao(PostgresConfigurationProvider.getInstance().createDAOConfiguration(), ReactiveDatabaseClientProvider.getInstance().rxGetClient()));
+        super(Tables.SOMETHING.SOMEHUGENUMBER, new SomethingDao(PostgresConfigurationProvider.getInstance().createDAOConfiguration(), ReactiveDatabaseClientProvider.getInstance().rx3GetClient()));
     }
 
     @BeforeClass

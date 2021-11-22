@@ -1,14 +1,14 @@
 package io.github.jklingsporn.vertx.jooq.generate.rx3.jdbc.regular;
 
-import generated.rx.jdbc.regular.vertx.Tables;
-import generated.rx.jdbc.regular.vertx.tables.daos.SomethingDao;
-import generated.rx.jdbc.regular.vertx.tables.pojos.Something;
+import generated.rx3.jdbc.regular.vertx.Tables;
+import generated.rx3.jdbc.regular.vertx.tables.daos.SomethingDao;
+import generated.rx3.jdbc.regular.vertx.tables.pojos.Something;
 import io.github.jklingsporn.vertx.jooq.generate.HsqldbConfigurationProvider;
 import io.github.jklingsporn.vertx.jooq.generate.rx3.RX3TestBase;
 import io.vertx.core.VertxOptions;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
-import io.vertx.reactivex.core.Vertx;
+import io.vertx.rxjava3.core.Vertx;
 import org.jooq.Condition;
 import org.junit.BeforeClass;
 

@@ -37,6 +37,12 @@
         </dependency>
         <dependency>
             <groupId>io.github.jklingsporn</groupId>
+            <artifactId>vertx-jooq-rx3-jdbc</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.github.jklingsporn</groupId>
             <artifactId>vertx-jooq-classic-reactive</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>

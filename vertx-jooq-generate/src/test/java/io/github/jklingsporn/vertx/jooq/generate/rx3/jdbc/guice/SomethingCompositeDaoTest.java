@@ -1,13 +1,13 @@
 package io.github.jklingsporn.vertx.jooq.generate.rx3.jdbc.guice;
 
-import generated.rx.jdbc.guice.vertx.Tables;
-import generated.rx.jdbc.guice.vertx.tables.daos.SomethingcompositeDao;
-import generated.rx.jdbc.guice.vertx.tables.pojos.Somethingcomposite;
-import generated.rx.jdbc.guice.vertx.tables.records.SomethingcompositeRecord;
+import generated.rx3.jdbc.guice.vertx.Tables;
+import generated.rx3.jdbc.guice.vertx.tables.daos.SomethingcompositeDao;
+import generated.rx3.jdbc.guice.vertx.tables.pojos.Somethingcomposite;
+import generated.rx3.jdbc.guice.vertx.tables.records.SomethingcompositeRecord;
 import io.github.jklingsporn.vertx.jooq.generate.HsqldbConfigurationProvider;
 import io.github.jklingsporn.vertx.jooq.generate.rx3.RX3TestBase;
 import io.vertx.core.json.JsonObject;
-import io.vertx.reactivex.core.Vertx;
+import io.vertx.rxjava3.core.Vertx;
 import org.jooq.Condition;
 import org.jooq.Record2;
 import org.junit.BeforeClass;
