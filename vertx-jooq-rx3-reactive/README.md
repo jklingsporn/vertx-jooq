@@ -78,8 +78,8 @@ If you are new to jOOQ, I recommend to read the awesome [jOOQ documentation](htt
 
               <!-- Generator parameters -->
               <generator>
-                  <name>io.github.jklingsporn.vertx.jooq.generate.rx3.RXReactiveVertxGenerator</name>
-                  <!-- use 'io.github.jklingsporn.vertx.jooq.generate.rx3.RXReactiveGuiceVertxGenerator' to enable Guice DI -->
+                  <name>io.github.jklingsporn.vertx.jooq.generate.rx3.RX3ReactiveVertxGenerator</name>
+                  <!-- use 'io.github.jklingsporn.vertx.jooq.generate.rx3.RX3ReactiveGuiceVertxGenerator' to enable Guice DI -->
                   <database>
                       <name>org.jooq.meta.postgres.PostgresDatabase</name>
                       <includes>.*</includes>

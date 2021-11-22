@@ -16,6 +16,7 @@
         <module>vertx-jooq-shared-reactive</module>
         <module>vertx-jooq-rx-reactive</module>
         <module>vertx-jooq-rx3-reactive</module>
+        <module>vertx-jooq-rx3-jdbc</module>
     </modules>
     <properties>
         <jooq.version>3.15.4</jooq.version>

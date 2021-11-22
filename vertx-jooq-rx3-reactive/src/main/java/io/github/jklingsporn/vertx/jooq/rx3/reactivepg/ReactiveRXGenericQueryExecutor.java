@@ -1,22 +1,6 @@
 package io.github.jklingsporn.vertx.jooq.rx3.reactivepg;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
-
-import org.jooq.Configuration;
-import org.jooq.DSLContext;
-import org.jooq.Param;
-import org.jooq.Query;
-import org.jooq.ResultQuery;
-import org.jooq.exception.TooManyRowsException;
-import org.jooq.Record;
-import io.vertx.rxjava3.sqlclient.Transaction;
-
-import io.github.jklingsporn.vertx.jooq.rx.RXQueryExecutor;
+import io.github.jklingsporn.vertx.jooq.rx3.RXQueryExecutor;
 import io.github.jklingsporn.vertx.jooq.shared.internal.QueryResult;
 import io.github.jklingsporn.vertx.jooq.shared.reactive.AbstractReactiveQueryExecutor;
 import io.github.jklingsporn.vertx.jooq.shared.reactive.ReactiveQueryExecutor;
@@ -26,13 +10,20 @@ import io.reactivex.rxjava3.core.Maybe;
 import io.reactivex.rxjava3.core.Single;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
-import io.vertx.rxjava3.sqlclient.Pool;
-import io.vertx.rxjava3.sqlclient.RowSet;
-import io.vertx.rxjava3.sqlclient.SqlClient;
-import io.vertx.rxjava3.sqlclient.SqlConnection;
-import io.vertx.rxjava3.sqlclient.SqlResult;
-import io.vertx.rxjava3.sqlclient.Tuple;
+import io.vertx.rxjava3.sqlclient.Transaction;
+import io.vertx.rxjava3.sqlclient.*;
 import io.vertx.sqlclient.Row;
+import org.jooq.Query;
+import org.jooq.Record;
+import org.jooq.*;
+import org.jooq.exception.TooManyRowsException;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 /**
  * Created by jensklingsporn on 01.03.18.

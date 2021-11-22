@@ -1,18 +1,5 @@
 package io.github.jklingsporn.vertx.jooq.rx3.reactivepg;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
-import org.jooq.Configuration;
-import org.jooq.DSLContext;
-import org.jooq.InsertResultStep;
-import org.jooq.ResultQuery;
-import org.jooq.SQLDialect;
-import org.jooq.UpdatableRecord;
-import org.jooq.impl.DefaultConfiguration;
-
 import io.github.jklingsporn.vertx.jooq.shared.internal.QueryExecutor;
 import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.core.Single;
@@ -22,6 +9,13 @@ import io.vertx.rxjava3.sqlclient.SqlClient;
 import io.vertx.rxjava3.sqlclient.SqlConnection;
 import io.vertx.rxjava3.sqlclient.Transaction;
 import io.vertx.sqlclient.Row;
+import org.jooq.*;
+import org.jooq.impl.DefaultConfiguration;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Created by jensklingsporn on 01.03.18.

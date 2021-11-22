@@ -1,4 +1,4 @@
-package io.github.jklingsporn.vertx.jooq.rx;
+package io.github.jklingsporn.vertx.jooq.rx3;
 
 import io.github.jklingsporn.vertx.jooq.shared.internal.QueryResult;
 import io.github.jklingsporn.vertx.jooq.shared.internal.UnifiedQueryExecutor;

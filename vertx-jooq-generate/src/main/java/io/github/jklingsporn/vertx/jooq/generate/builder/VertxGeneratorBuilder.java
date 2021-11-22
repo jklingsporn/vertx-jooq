@@ -208,7 +208,17 @@ public class VertxGeneratorBuilder {
                             })
                     );
                 case RX3:
-                  throw new UnsupportedOperationException(base.apiType.toString());
+                    return new DIStepImpl(base
+                            .setWriteDAOImportsDelegate(base.writeDAOImportsDelegate.andThen(out -> out.println("import io.github.jklingsporn.vertx.jooq.rx3.jdbc.JDBCRXQueryExecutor;")))
+                            .setRenderQueryExecutorDelegate((rType, pType, tType) -> String.format("JDBCRXQueryExecutor<%s,%s,%s>", rType, pType, tType))
+                            .setWriteConstructorDelegate((out, className, tableIdentifier, tableRecord, pType, tType, schema) -> {
+                                out.tab(1).javadoc("@param configuration The Configuration used for rendering and query execution.\n" +
+                                        "     * @param vertx the vertx instance");
+                                out.tab(1).println("public %s(%s%s configuration, %s vertx) {", className, base.namedInjectionStrategy.apply(schema), Configuration.class, base.renderFQVertxName());
+                                out.tab(2).println("super(%s, %s.class, new %s(configuration,%s.class,vertx));", tableIdentifier, pType, base.renderQueryExecutor(tableRecord, pType, tType),pType);
+                                out.tab(1).println("}");
+                            })
+                    );
                 default: throw new UnsupportedOperationException(base.apiType.toString());
             }
         }
