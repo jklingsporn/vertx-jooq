@@ -1,23 +1,4 @@
-package io.github.jklingsporn.vertx.jooq.rx.reactivepg;
-
-import io.github.jklingsporn.vertx.jooq.rx.RXQueryExecutor;
-import io.github.jklingsporn.vertx.jooq.shared.internal.QueryResult;
-import io.github.jklingsporn.vertx.jooq.shared.reactive.AbstractReactiveQueryExecutor;
-import io.github.jklingsporn.vertx.jooq.shared.reactive.ReactiveQueryExecutor;
-import io.reactivex.Completable;
-import io.reactivex.Flowable;
-import io.reactivex.Maybe;
-import io.reactivex.Single;
-import io.vertx.core.AsyncResult;
-import io.vertx.core.Handler;
-import io.vertx.reactivex.sqlclient.Transaction;
-import io.vertx.reactivex.sqlclient.*;
-import io.vertx.sqlclient.Row;
-import org.jooq.Query;
-import org.jooq.Record;
-import org.jooq.*;
-import org.jooq.Record;
-import org.jooq.exception.TooManyRowsException;
+package io.github.jklingsporn.vertx.jooq.rx3.reactivepg;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +6,33 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+
+import org.jooq.Configuration;
+import org.jooq.DSLContext;
+import org.jooq.Param;
+import org.jooq.Query;
+import org.jooq.ResultQuery;
+import org.jooq.exception.TooManyRowsException;
+import org.jooq.Record;
+import io.vertx.rxjava3.sqlclient.Transaction;
+
+import io.github.jklingsporn.vertx.jooq.rx.RXQueryExecutor;
+import io.github.jklingsporn.vertx.jooq.shared.internal.QueryResult;
+import io.github.jklingsporn.vertx.jooq.shared.reactive.AbstractReactiveQueryExecutor;
+import io.github.jklingsporn.vertx.jooq.shared.reactive.ReactiveQueryExecutor;
+import io.reactivex.rxjava3.core.Completable;
+import io.reactivex.rxjava3.core.Flowable;
+import io.reactivex.rxjava3.core.Maybe;
+import io.reactivex.rxjava3.core.Single;
+import io.vertx.core.AsyncResult;
+import io.vertx.core.Handler;
+import io.vertx.rxjava3.sqlclient.Pool;
+import io.vertx.rxjava3.sqlclient.RowSet;
+import io.vertx.rxjava3.sqlclient.SqlClient;
+import io.vertx.rxjava3.sqlclient.SqlConnection;
+import io.vertx.rxjava3.sqlclient.SqlResult;
+import io.vertx.rxjava3.sqlclient.Tuple;
+import io.vertx.sqlclient.Row;
 
 /**
  * Created by jensklingsporn on 01.03.18.
@@ -57,7 +65,7 @@ public class ReactiveRXGenericQueryExecutor extends AbstractReactiveQueryExecuto
     /**
      * for some reason getDelegate returns untyped version
      */
-    io.vertx.sqlclient.RowSet<io.vertx.sqlclient.Row> rxGetDelegate(RowSet<io.vertx.reactivex.sqlclient.Row> res) {
+    io.vertx.sqlclient.RowSet<io.vertx.sqlclient.Row> rxGetDelegate(RowSet<io.vertx.rxjava3.sqlclient.Row> res) {
         return res.getDelegate();
     }
 
@@ -93,7 +101,7 @@ public class ReactiveRXGenericQueryExecutor extends AbstractReactiveQueryExecuto
     public <R extends Record> Single<QueryResult> query(Function<DSLContext, ? extends ResultQuery<R>> queryFunction) {
         Query query = createQuery(queryFunction);
         log(query);
-        Single<RowSet<io.vertx.reactivex.sqlclient.Row>> rowSingle = delegate.preparedQuery(toPreparedQuery(query)).rxExecute(rxGetBindValues(query));
+        Single<RowSet<io.vertx.rxjava3.sqlclient.Row>> rowSingle = delegate.preparedQuery(toPreparedQuery(query)).rxExecute(rxGetBindValues(query));
         return rowSingle.map(RxReactiveQueryResult::new);
     }
 
@@ -112,7 +120,7 @@ public class ReactiveRXGenericQueryExecutor extends AbstractReactiveQueryExecuto
             .flatMap(conn->conn.rxBegin().map(newInstance(conn)));
     }
 
-    protected io.reactivex.functions.Function<Transaction, ? extends ReactiveRXGenericQueryExecutor> newInstance(SqlConnection conn) {
+    protected io.reactivex.rxjava3.functions.Function<Transaction, ? extends ReactiveRXGenericQueryExecutor> newInstance(SqlConnection conn) {
         return transaction -> new ReactiveRXGenericQueryExecutor(configuration(),conn,transaction);
     }
 
@@ -159,7 +167,7 @@ public class ReactiveRXGenericQueryExecutor extends AbstractReactiveQueryExecuto
      * @param <U> the return type.
      * @return the result of the transaction.
      */
-    public <U> Maybe<U> transaction(io.reactivex.functions.Function<ReactiveRXGenericQueryExecutor, Maybe<U>> transaction){
+    public <U> Maybe<U> transaction(io.reactivex.rxjava3.functions.Function<ReactiveRXGenericQueryExecutor, Maybe<U>> transaction){
         return beginTransaction()
                 .toMaybe()
                 .flatMap(queryExecutor -> transaction.apply(queryExecutor) //perform user tasks
@@ -180,7 +188,7 @@ public class ReactiveRXGenericQueryExecutor extends AbstractReactiveQueryExecuto
      * @param queryFunction the query to execute
      * @return the results, never null
      */
-    public Single<RowSet<io.vertx.reactivex.sqlclient.Row>> executeAny(Function<DSLContext, ? extends Query> queryFunction) {
+    public Single<RowSet<io.vertx.rxjava3.sqlclient.Row>> executeAny(Function<DSLContext, ? extends Query> queryFunction) {
         Query query = createQuery(queryFunction);
         log(query);
         return delegate.preparedQuery(toPreparedQuery(query)).rxExecute(rxGetBindValues(query));
@@ -196,7 +204,7 @@ public class ReactiveRXGenericQueryExecutor extends AbstractReactiveQueryExecuto
      * @return a <code>Flowable</code> to process the large result.
      * @see #queryFlowableRow(Function, int, Handler, Handler)
      */
-    public Flowable<io.vertx.reactivex.sqlclient.Row> queryFlowableRow(Function<DSLContext, ? extends Query> queryFunction, int fetchSize){
+    public Flowable<io.vertx.rxjava3.sqlclient.Row> queryFlowableRow(Function<DSLContext, ? extends Query> queryFunction, int fetchSize){
         return queryFlowableRow(queryFunction,fetchSize, r->{}, r->{});
     }
 
@@ -212,7 +220,7 @@ public class ReactiveRXGenericQueryExecutor extends AbstractReactiveQueryExecuto
      * @return a <code>Flowable</code> to process the large result.
      * @see #queryFlowableRow(Function, int, Handler, Handler)
      */
-    public Flowable<io.vertx.reactivex.sqlclient.Row> queryFlowableRow(Function<DSLContext, ? extends Query> queryFunction,
+    public Flowable<io.vertx.rxjava3.sqlclient.Row> queryFlowableRow(Function<DSLContext, ? extends Query> queryFunction,
                                                                        int fetchSize,
                                                                        Handler<AsyncResult<Void>> commitHandler,
                                                                        Handler<AsyncResult<Void>> closeHandler){
@@ -224,8 +232,8 @@ public class ReactiveRXGenericQueryExecutor extends AbstractReactiveQueryExecuto
                                 conn
                                         .rxPrepare(toPreparedQuery(query))
                                         .flatMapPublisher(preparedQuery -> preparedQuery.createStream(fetchSize).toFlowable())
-                                        .doAfterTerminate(() -> tx.commit(commitHandler))
-                                        .doAfterTerminate(() -> conn.close(closeHandler))
+                                        .doAfterTerminate(() -> tx.getDelegate().commit(commitHandler))
+                                        .doAfterTerminate(() -> conn.getDelegate().close(closeHandler))
                         )
                 );
     }

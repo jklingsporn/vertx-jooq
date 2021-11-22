@@ -3,3 +3,7 @@
 *.iws
 .vertx/
 target/
+.classpath
+.settings
+.project
+.factorypath

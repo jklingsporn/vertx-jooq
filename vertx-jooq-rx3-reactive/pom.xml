@@ -8,14 +8,20 @@
         <version>6.4.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <packaging>jar</packaging>
-    <artifactId>vertx-jooq-classic</artifactId>
+
+    <artifactId>vertx-jooq-rx3-reactive</artifactId>
 
     <dependencies>
         <dependency>
             <groupId>io.github.jklingsporn</groupId>
-            <artifactId>vertx-jooq-shared</artifactId>
+            <artifactId>vertx-jooq-rx3</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.github.jklingsporn</groupId>
+            <artifactId>vertx-jooq-shared-reactive</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>
+
 </project>

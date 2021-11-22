@@ -3,6 +3,11 @@ A [jOOQ](http://www.jooq.org/)-CodeGenerator to create [vertx](http://vertx.io/)
 Perform all CRUD-operations asynchronously and convert your POJOs from/into a `io.vertx.core.json.JsonObject` using the API and
 driver of your choice.
 
+## release 6.4.0
+
+- Added [rxjava3 support](https://github.com/jklingsporn/vertx-jooq/pull/191) via dedicated vertx-jooq-rx3-reactive module.
+- Bumped used Vert.x version to 4.2.1
+
 ## release 6.3.0
 - Added [stream support](https://github.com/jklingsporn/vertx-jooq/issues/116) for the reactive drivers. This long overdue 
   feature allows you to process large chunks of data without running out of memory. The available methods depend on the chosen API:
@@ -43,6 +48,7 @@ Before you start generating code using vertx-jooq, you have to answer these ques
 - What API do you want to use? There are two options:
   - a `io.vertx.core.Future`-based API. This is `vertx-jooq-classic`.
   - a [rxjava2](https://github.com/ReactiveX/RxJava) based API. This is `vertx-jooq-rx`.
+  - a [rxjava3](https://github.com/ReactiveX/RxJava) based API. This is `vertx-jooq-rx3`.
 - How do you want to communicate with the database? There are two options:
   - Using good old JDBC, check for the modules with `-jdbc` suffix.
   - Using this [reactive](https://github.com/eclipse-vertx/vertx-sql-client) database driver, check for `-reactive` modules.
@@ -58,6 +64,7 @@ When you made your choice, you can start to configure the code-generator. This c
 - [`vertx-jooq-classic-reactive`](vertx-jooq-classic-reactive)
 - [`vertx-jooq-rx-jdbc`](vertx-jooq-rx-jdbc)
 - [`vertx-jooq-rx-reactive`](vertx-jooq-rx-reactive)
+- [`vertx-jooq-rx3-reactive`](vertx-jooq-rx3-reactive)
 
 ## example
 Once the generator is set up, it will create DAOs like in the code snippet below (classic-API, JDBC, no dependency injection):

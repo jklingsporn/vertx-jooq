@@ -22,4 +22,9 @@ public interface APIStep {
      */
     public ExecutionStep withRXAPI();
 
+    /**
+     * @return an {@code ExecutionStep} based on the RX Java 3 API.
+     */
+    public ExecutionStep withRX3API();
+
 }
