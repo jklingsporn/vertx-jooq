@@ -168,6 +168,18 @@ public class SomethingwithoutjsonRecord extends UpdatableRecordImpl<Somethingwit
         setSomestring(somestring);
     }
 
+    /**
+     * Create a detached, initialised SomethingwithoutjsonRecord
+     */
+    public SomethingwithoutjsonRecord(generated.rx.reactive.guice.tables.pojos.Somethingwithoutjson value) {
+        super(Somethingwithoutjson.SOMETHINGWITHOUTJSON);
+
+        if (value != null) {
+            setSomeid(value.getSomeid());
+            setSomestring(value.getSomestring());
+        }
+    }
+
         public SomethingwithoutjsonRecord(io.vertx.core.json.JsonObject json) {
                 this();
                 fromJson(json);

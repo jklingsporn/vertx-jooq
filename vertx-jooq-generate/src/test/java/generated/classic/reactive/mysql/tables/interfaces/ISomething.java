@@ -126,12 +126,14 @@ public interface ISomething extends VertxPojo, Serializable {
     // -------------------------------------------------------------------------
 
     /**
-     * Load data from another generated Record/POJO implementing the common interface ISomething
+     * Load data from another generated Record/POJO implementing the common
+     * interface ISomething
      */
     public void from(ISomething from);
 
     /**
-     * Copy data into another generated Record/POJO implementing the common interface ISomething
+     * Copy data into another generated Record/POJO implementing the common
+     * interface ISomething
      */
     public <E extends ISomething> E into(E into);
 

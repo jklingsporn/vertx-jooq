@@ -8,9 +8,6 @@ import generated.rx.reactive.regular.Keys;
 import generated.rx.reactive.regular.Vertx;
 import generated.rx.reactive.regular.tables.records.SomethingwithoutjsonRecord;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.jooq.Field;
 import org.jooq.ForeignKey;
 import org.jooq.Name;
@@ -92,17 +89,12 @@ public class Somethingwithoutjson extends TableImpl<SomethingwithoutjsonRecord> 
 
     @Override
     public Schema getSchema() {
-        return Vertx.VERTX;
+        return aliased() ? null : Vertx.VERTX;
     }
 
     @Override
     public UniqueKey<SomethingwithoutjsonRecord> getPrimaryKey() {
         return Keys.SOMETHINGWITHOUTJSON_PKEY;
-    }
-
-    @Override
-    public List<UniqueKey<SomethingwithoutjsonRecord>> getKeys() {
-        return Arrays.<UniqueKey<SomethingwithoutjsonRecord>>asList(Keys.SOMETHINGWITHOUTJSON_PKEY);
     }
 
     @Override

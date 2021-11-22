@@ -11,9 +11,6 @@ import generated.classic.jdbc.regular.vertx.tables.records.SomethingcompositeRec
 import io.github.jklingsporn.vertx.jooq.shared.JsonObjectConverter;
 import io.vertx.core.json.JsonObject;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.jooq.Field;
 import org.jooq.ForeignKey;
 import org.jooq.Name;
@@ -100,17 +97,12 @@ public class Somethingcomposite extends TableImpl<SomethingcompositeRecord> {
 
     @Override
     public Schema getSchema() {
-        return Vertx.VERTX;
+        return aliased() ? null : Vertx.VERTX;
     }
 
     @Override
     public UniqueKey<SomethingcompositeRecord> getPrimaryKey() {
-        return Keys.SYS_PK_10142;
-    }
-
-    @Override
-    public List<UniqueKey<SomethingcompositeRecord>> getKeys() {
-        return Arrays.<UniqueKey<SomethingcompositeRecord>>asList(Keys.SYS_PK_10142);
+        return Keys.SYS_PK_10140;
     }
 
     @Override

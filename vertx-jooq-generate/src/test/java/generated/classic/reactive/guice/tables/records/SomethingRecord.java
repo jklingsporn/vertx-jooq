@@ -793,6 +793,33 @@ public class SomethingRecord extends UpdatableRecordImpl<SomethingRecord> implem
         setSomestringaslist(somestringaslist);
     }
 
+    /**
+     * Create a detached, initialised SomethingRecord
+     */
+    public SomethingRecord(generated.classic.reactive.guice.tables.pojos.Something value) {
+        super(Something.SOMETHING);
+
+        if (value != null) {
+            setSomeid(value.getSomeid());
+            setSomestring(value.getSomestring());
+            setSomehugenumber(value.getSomehugenumber());
+            setSomesmallnumber(value.getSomesmallnumber());
+            setSomeregularnumber(value.getSomeregularnumber());
+            setSomedouble(value.getSomedouble());
+            setSomeenum(value.getSomeenum());
+            setSomejsonobject(value.getSomejsonobject());
+            setSomecustomjsonobject(value.getSomecustomjsonobject());
+            setSomejsonarray(value.getSomejsonarray());
+            setSomevertxjsonobject(value.getSomevertxjsonobject());
+            setSometime(value.getSometime());
+            setSomedate(value.getSomedate());
+            setSometimestamp(value.getSometimestamp());
+            setSometimestampwithtz(value.getSometimestampwithtz());
+            setSomebytea(value.getSomebytea());
+            setSomestringaslist(value.getSomestringaslist());
+        }
+    }
+
         public SomethingRecord(io.vertx.core.json.JsonObject json) {
                 this();
                 fromJson(json);

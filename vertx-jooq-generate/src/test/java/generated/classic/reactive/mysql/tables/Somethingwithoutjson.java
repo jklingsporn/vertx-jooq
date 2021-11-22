@@ -8,9 +8,6 @@ import generated.classic.reactive.mysql.Keys;
 import generated.classic.reactive.mysql.Vertx;
 import generated.classic.reactive.mysql.tables.records.SomethingwithoutjsonRecord;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.jooq.Field;
 import org.jooq.ForeignKey;
 import org.jooq.Identity;
@@ -93,7 +90,7 @@ public class Somethingwithoutjson extends TableImpl<SomethingwithoutjsonRecord> 
 
     @Override
     public Schema getSchema() {
-        return Vertx.VERTX;
+        return aliased() ? null : Vertx.VERTX;
     }
 
     @Override
@@ -104,11 +101,6 @@ public class Somethingwithoutjson extends TableImpl<SomethingwithoutjsonRecord> 
     @Override
     public UniqueKey<SomethingwithoutjsonRecord> getPrimaryKey() {
         return Keys.KEY_SOMETHINGWITHOUTJSON_PRIMARY;
-    }
-
-    @Override
-    public List<UniqueKey<SomethingwithoutjsonRecord>> getKeys() {
-        return Arrays.<UniqueKey<SomethingwithoutjsonRecord>>asList(Keys.KEY_SOMETHINGWITHOUTJSON_PRIMARY);
     }
 
     @Override

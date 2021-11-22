@@ -206,7 +206,7 @@ public class SomethingDaoTest extends RXTestBase<Something, Integer, Long, Somet
                         .flatMapCompletable(v -> transactionQE.commit()) //should throw error because the transaction was already rolled back
                         .doOnComplete(() -> Assert.fail("Should not succeed"))
                         .onErrorResumeNext(x -> {
-                            Assert.assertTrue("Wrong exception. Got: " + x.getMessage(), x.getMessage().contains("Transaction already completed"));
+                            Assert.assertTrue("Wrong exception. Got: " + x.getMessage(), x.getMessage().contains("Rollback"));
                             return Completable.complete();
                         })
                 )

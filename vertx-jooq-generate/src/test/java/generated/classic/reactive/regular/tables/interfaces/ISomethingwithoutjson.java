@@ -41,12 +41,14 @@ public interface ISomethingwithoutjson extends VertxPojo, Serializable {
     // -------------------------------------------------------------------------
 
     /**
-     * Load data from another generated Record/POJO implementing the common interface ISomethingwithoutjson
+     * Load data from another generated Record/POJO implementing the common
+     * interface ISomethingwithoutjson
      */
     public void from(ISomethingwithoutjson from);
 
     /**
-     * Copy data into another generated Record/POJO implementing the common interface ISomethingwithoutjson
+     * Copy data into another generated Record/POJO implementing the common
+     * interface ISomethingwithoutjson
      */
     public <E extends ISomethingwithoutjson> E into(E into);
 
