@@ -2,7 +2,7 @@ package generated.rx3.jdbc.guice.vertx.tables.modules;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.TypeLiteral;
-import io.github.jklingsporn.vertx.jooq.rx.VertxDAO;
+import io.github.jklingsporn.vertx.jooq.rx3.VertxDAO;
 
 public class DaoModule extends AbstractModule {
         @Override

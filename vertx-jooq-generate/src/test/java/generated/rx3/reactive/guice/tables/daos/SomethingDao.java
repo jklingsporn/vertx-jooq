@@ -32,7 +32,7 @@ import io.github.jklingsporn.vertx.jooq.rx3.reactivepg.ReactiveRXQueryExecutor;
  */
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 @javax.inject.Singleton
-public class SomethingDao extends AbstractReactiveVertxDAO<SomethingRecord, generated.rx3.reactive.guice.tables.pojos.Something, Integer, Single<List<generated.rx3.reactive.guice.tables.pojos.Something>>, Single<Optional<generated.rx3.reactive.guice.tables.pojos.Something>>, Single<Integer>, Single<Integer>> implements io.github.jklingsporn.vertx.jooq.rx.VertxDAO<SomethingRecord,generated.rx3.reactive.guice.tables.pojos.Something,Integer> {
+public class SomethingDao extends AbstractReactiveVertxDAO<SomethingRecord, generated.rx3.reactive.guice.tables.pojos.Something, Integer, Single<List<generated.rx3.reactive.guice.tables.pojos.Something>>, Single<Optional<generated.rx3.reactive.guice.tables.pojos.Something>>, Single<Integer>, Single<Integer>> implements io.github.jklingsporn.vertx.jooq.rx3.VertxDAO<SomethingRecord,generated.rx3.reactive.guice.tables.pojos.Something,Integer> {
         @javax.inject.Inject
 
         /**

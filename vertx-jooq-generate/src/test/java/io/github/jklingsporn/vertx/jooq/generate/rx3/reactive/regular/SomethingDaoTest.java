@@ -8,11 +8,11 @@ import generated.rx3.reactive.regular.tables.records.SomethingRecord;
 import io.github.jklingsporn.vertx.jooq.generate.PostgresConfigurationProvider;
 import io.github.jklingsporn.vertx.jooq.generate.ReactiveDatabaseClientProvider;
 import io.github.jklingsporn.vertx.jooq.generate.rx3.RX3TestBase;
-import io.github.jklingsporn.vertx.jooq.rx.reactivepg.ReactiveRXGenericQueryExecutor;
-import io.github.jklingsporn.vertx.jooq.rx.reactivepg.ReactiveRXQueryExecutor;
-import io.reactivex.Completable;
-import io.reactivex.Single;
-import io.reactivex.internal.functions.Functions;
+import io.github.jklingsporn.vertx.jooq.rx3.reactivepg.ReactiveRXGenericQueryExecutor;
+import io.github.jklingsporn.vertx.jooq.rx3.reactivepg.ReactiveRXQueryExecutor;
+import io.reactivex.rxjava3.core.Completable;
+import io.reactivex.rxjava3.core.Single;
+import io.reactivex.rxjava3.internal.functions.Functions;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.pgclient.PgException;
@@ -250,10 +250,10 @@ public class SomethingDaoTest extends RX3TestBase<Something, Integer, Long, Some
         ) //implicitly commit the transaction
                 .flatMapSingle(v -> dao.findOneById(pojo.getSomeid())) //now known because we committed the transaction
                 .doOnSuccess(this::optionalAssertNotNull)
-                .flatMap(v -> dao.deleteById(pojo.getSomeid()))
+                .flatMapSingle(v -> dao.deleteById(pojo.getSomeid()))
                 .doOnSuccess(deleted -> Assert.assertEquals(1, deleted.intValue()))
-                .subscribe(countdownLatchHandler(completionLatch)
-                );
+                .toSingle()
+                .subscribe(countdownLatchHandler(completionLatch));
         await(completionLatch);
     }
 

@@ -26,7 +26,7 @@ import io.github.jklingsporn.vertx.jooq.rx3.jdbc.JDBCRXQueryExecutor;
  */
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 @javax.inject.Singleton
-public class SomethingDao extends AbstractVertxDAO<SomethingRecord, generated.rx3.jdbc.guice.vertx.tables.pojos.Something, Integer, Single<List<generated.rx3.jdbc.guice.vertx.tables.pojos.Something>>, Single<Optional<generated.rx3.jdbc.guice.vertx.tables.pojos.Something>>, Single<Integer>, Single<Integer>> implements io.github.jklingsporn.vertx.jooq.rx.VertxDAO<SomethingRecord,generated.rx3.jdbc.guice.vertx.tables.pojos.Something,Integer> {
+public class SomethingDao extends AbstractVertxDAO<SomethingRecord, generated.rx3.jdbc.guice.vertx.tables.pojos.Something, Integer, Single<List<generated.rx3.jdbc.guice.vertx.tables.pojos.Something>>, Single<Optional<generated.rx3.jdbc.guice.vertx.tables.pojos.Something>>, Single<Integer>, Single<Integer>> implements io.github.jklingsporn.vertx.jooq.rx3.VertxDAO<SomethingRecord,generated.rx3.jdbc.guice.vertx.tables.pojos.Something,Integer> {
         @javax.inject.Inject
 
         /**
@@ -184,7 +184,6 @@ public class SomethingDao extends AbstractVertxDAO<SomethingRecord, generated.rx
         public Single<List<generated.rx3.jdbc.guice.vertx.tables.pojos.Something>> findManyBySometimestamp(Collection<LocalDateTime> values, int limit) {
                 return findManyByCondition(Something.SOMETHING.SOMETIMESTAMP.in(values),limit);
         }
-
 
         @Override
         public JDBCRXQueryExecutor<SomethingRecord,generated.rx3.jdbc.guice.vertx.tables.pojos.Something,Integer> queryExecutor(){

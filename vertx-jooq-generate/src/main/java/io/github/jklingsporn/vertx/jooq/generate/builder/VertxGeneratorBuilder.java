@@ -167,7 +167,7 @@ public class VertxGeneratorBuilder {
                             return String.format("Single<%s>", tType);
                         }
                     })
-                    .setRenderDAOInterfaceDelegate((rType, pType, tType) -> String.format("io.github.jklingsporn.vertx.jooq.rx.VertxDAO<%s,%s,%s>", rType, pType, tType))
+                    .setRenderDAOInterfaceDelegate((rType, pType, tType) -> String.format("io.github.jklingsporn.vertx.jooq.rx3.VertxDAO<%s,%s,%s>", rType, pType, tType))
             );
         }
     }
@@ -492,8 +492,7 @@ public class VertxGeneratorBuilder {
                             daoClassName = "io.github.jklingsporn.vertx.jooq.rx.VertxDAO";
                             break;
                         case RX3:
-                            //TODO rename package
-                            daoClassName = "io.github.jklingsporn.vertx.jooq.rx.VertxDAO";
+                            daoClassName = "io.github.jklingsporn.vertx.jooq.rx3.VertxDAO";
                             break;
                         default:
                             throw new UnsupportedOperationException(base.apiType.toString());

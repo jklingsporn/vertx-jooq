@@ -23,7 +23,7 @@ import io.github.jklingsporn.vertx.jooq.rx3.reactivepg.ReactiveRXQueryExecutor;
  */
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 @javax.inject.Singleton
-public class SomethingwithoutjsonDao extends AbstractReactiveVertxDAO<SomethingwithoutjsonRecord, generated.rx3.reactive.guice.tables.pojos.Somethingwithoutjson, Integer, Single<List<generated.rx3.reactive.guice.tables.pojos.Somethingwithoutjson>>, Single<Optional<generated.rx3.reactive.guice.tables.pojos.Somethingwithoutjson>>, Single<Integer>, Single<Integer>> implements io.github.jklingsporn.vertx.jooq.rx.VertxDAO<SomethingwithoutjsonRecord,generated.rx3.reactive.guice.tables.pojos.Somethingwithoutjson,Integer> {
+public class SomethingwithoutjsonDao extends AbstractReactiveVertxDAO<SomethingwithoutjsonRecord, generated.rx3.reactive.guice.tables.pojos.Somethingwithoutjson, Integer, Single<List<generated.rx3.reactive.guice.tables.pojos.Somethingwithoutjson>>, Single<Optional<generated.rx3.reactive.guice.tables.pojos.Somethingwithoutjson>>, Single<Integer>, Single<Integer>> implements io.github.jklingsporn.vertx.jooq.rx3.VertxDAO<SomethingwithoutjsonRecord,generated.rx3.reactive.guice.tables.pojos.Somethingwithoutjson,Integer> {
         @javax.inject.Inject
 
         /**

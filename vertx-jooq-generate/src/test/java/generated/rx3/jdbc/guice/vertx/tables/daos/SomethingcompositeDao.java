@@ -25,7 +25,7 @@ import io.github.jklingsporn.vertx.jooq.rx3.jdbc.JDBCRXQueryExecutor;
  */
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 @javax.inject.Singleton
-public class SomethingcompositeDao extends AbstractVertxDAO<SomethingcompositeRecord, generated.rx3.jdbc.guice.vertx.tables.pojos.Somethingcomposite, Record2<Integer, Integer>, Single<List<generated.rx3.jdbc.guice.vertx.tables.pojos.Somethingcomposite>>, Single<Optional<generated.rx3.jdbc.guice.vertx.tables.pojos.Somethingcomposite>>, Single<Integer>, Single<Record2<Integer, Integer>>> implements io.github.jklingsporn.vertx.jooq.rx.VertxDAO<SomethingcompositeRecord,generated.rx3.jdbc.guice.vertx.tables.pojos.Somethingcomposite,Record2<Integer, Integer>> {
+public class SomethingcompositeDao extends AbstractVertxDAO<SomethingcompositeRecord, generated.rx3.jdbc.guice.vertx.tables.pojos.Somethingcomposite, Record2<Integer, Integer>, Single<List<generated.rx3.jdbc.guice.vertx.tables.pojos.Somethingcomposite>>, Single<Optional<generated.rx3.jdbc.guice.vertx.tables.pojos.Somethingcomposite>>, Single<Integer>, Single<Record2<Integer, Integer>>> implements io.github.jklingsporn.vertx.jooq.rx3.VertxDAO<SomethingcompositeRecord,generated.rx3.jdbc.guice.vertx.tables.pojos.Somethingcomposite,Record2<Integer, Integer>> {
         @javax.inject.Inject
 
         /**
