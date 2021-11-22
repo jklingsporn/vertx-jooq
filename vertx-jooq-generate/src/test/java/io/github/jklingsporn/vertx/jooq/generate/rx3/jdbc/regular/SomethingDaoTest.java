@@ -5,7 +5,6 @@ import generated.rx3.jdbc.regular.vertx.tables.daos.SomethingDao;
 import generated.rx3.jdbc.regular.vertx.tables.pojos.Something;
 import io.github.jklingsporn.vertx.jooq.generate.HsqldbConfigurationProvider;
 import io.github.jklingsporn.vertx.jooq.generate.rx3.RX3TestBase;
-import io.vertx.core.VertxOptions;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.rxjava3.core.Vertx;
@@ -22,10 +21,7 @@ import java.util.Random;
 public class SomethingDaoTest extends RX3TestBase<Something, Integer, Long, SomethingDao> {
 
     public SomethingDaoTest() {
-        super(Tables.SOMETHING.SOMEHUGENUMBER, new SomethingDao(HsqldbConfigurationProvider.getInstance().createDAOConfiguration(), Vertx.vertx(new VertxOptions()
-            .setEventLoopPoolSize(16)
-            .setWorkerPoolSize(32)
-        .setInternalBlockingPoolSize(64))));
+        super(Tables.SOMETHING.SOMEHUGENUMBER, new SomethingDao(HsqldbConfigurationProvider.getInstance().createDAOConfiguration(), Vertx.vertx()));
     }
 
     @BeforeClass

@@ -46,7 +46,6 @@ public abstract class RXTestBase<P,T,O, DAO extends GenericVertxDAO<?,P, T, Sing
     protected abstract Condition eqPrimaryKey(T id);
     protected abstract void assertDuplicateKeyException(Throwable x);
 
-
     protected void await(CountDownLatch latch)  {
         try {
             if(!latch.await(3, TimeUnit.SECONDS)){
@@ -372,4 +371,6 @@ public abstract class RXTestBase<P,T,O, DAO extends GenericVertxDAO<?,P, T, Sing
                 subscribe(countdownLatchHandler(latch));
         await(latch);
     }
+
+
 }

@@ -1,14 +1,14 @@
 package io.github.jklingsporn.vertx.jooq.generate.rx.reactive.regular;
 
-import io.vertx.pgclient.PgException;
 import generated.rx.reactive.regular.Tables;
 import generated.rx.reactive.regular.tables.daos.SomethingcompositeDao;
 import generated.rx.reactive.regular.tables.pojos.Somethingcomposite;
 import generated.rx.reactive.regular.tables.records.SomethingcompositeRecord;
-import io.github.jklingsporn.vertx.jooq.generate.ReactiveDatabaseClientProvider;
 import io.github.jklingsporn.vertx.jooq.generate.PostgresConfigurationProvider;
+import io.github.jklingsporn.vertx.jooq.generate.ReactiveDatabaseClientProvider;
 import io.github.jklingsporn.vertx.jooq.generate.rx.RXTestBase;
 import io.vertx.core.json.JsonObject;
+import io.vertx.pgclient.PgException;
 import org.jooq.Condition;
 import org.jooq.Record2;
 import org.junit.Assert;
