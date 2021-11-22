@@ -48,7 +48,7 @@ public class SomethingDaoTest extends ClassicTestBase<Something, Integer, Long, 
         something.setSomejsonarray(new JsonArray().add(1).add(2).add(3));
         something.setSomejsonobject(new JsonObject().put("key", "value"));
         something.setSomesmallnumber((short) random.nextInt(Short.MAX_VALUE));
-        //someBoolean has a default value and does not need to be set
+        something.setSomeboolean(random.nextBoolean());
         something.setSomestring("my_string");
         something.setSometimestamp(LocalDateTime.now());
         return something;
