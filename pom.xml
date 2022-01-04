@@ -173,7 +173,7 @@
                         <configuration>
                             <keyname>${gpg.keyname}</keyname>
                             <passphraseServerId>${gpg.keyname}</passphraseServerId>
-                            <executable>gpg2</executable>
+                            <executable>gpg</executable>
                         </configuration>
                     </plugin>
                 </plugins>
