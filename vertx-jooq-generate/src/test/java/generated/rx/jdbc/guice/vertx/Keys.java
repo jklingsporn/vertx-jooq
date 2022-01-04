@@ -26,6 +26,6 @@ public class Keys {
     // UNIQUE and PRIMARY KEY definitions
     // -------------------------------------------------------------------------
 
-    public static final UniqueKey<SomethingRecord> SYS_PK_10092 = Internal.createUniqueKey(Something.SOMETHING, DSL.name("SYS_PK_10092"), new TableField[] { Something.SOMETHING.SOMEID }, true);
-    public static final UniqueKey<SomethingcompositeRecord> SYS_PK_10096 = Internal.createUniqueKey(Somethingcomposite.SOMETHINGCOMPOSITE, DSL.name("SYS_PK_10096"), new TableField[] { Somethingcomposite.SOMETHINGCOMPOSITE.SOMEID, Somethingcomposite.SOMETHINGCOMPOSITE.SOMESECONDID }, true);
+    public static final UniqueKey<SomethingRecord> SYS_PK_10532 = Internal.createUniqueKey(Something.SOMETHING, DSL.name("SYS_PK_10532"), new TableField[] { Something.SOMETHING.SOMEID }, true);
+    public static final UniqueKey<SomethingcompositeRecord> SYS_PK_10536 = Internal.createUniqueKey(Somethingcomposite.SOMETHINGCOMPOSITE, DSL.name("SYS_PK_10536"), new TableField[] { Somethingcomposite.SOMETHINGCOMPOSITE.SOMEID, Somethingcomposite.SOMETHINGCOMPOSITE.SOMESECONDID }, true);
 }

@@ -6,7 +6,6 @@ import generated.classic.jdbc.guice.vertx.tables.pojos.Somethingcomposite;
 import generated.classic.jdbc.guice.vertx.tables.records.SomethingcompositeRecord;
 import io.github.jklingsporn.vertx.jooq.generate.HsqldbConfigurationProvider;
 import io.github.jklingsporn.vertx.jooq.generate.classic.ClassicTestBase;
-import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
 import org.jooq.Condition;
 import org.jooq.Record2;
@@ -23,7 +22,7 @@ public class SomethingCompositeDaoTest extends ClassicTestBase<Somethingcomposit
 
 
     public SomethingCompositeDaoTest() {
-        super(Tables.SOMETHINGCOMPOSITE.SOMEJSONOBJECT, new SomethingcompositeDao(HsqldbConfigurationProvider.getInstance().createDAOConfiguration(), Vertx.vertx()));
+        super(Tables.SOMETHINGCOMPOSITE.SOMEJSONOBJECT, new SomethingcompositeDao(HsqldbConfigurationProvider.getInstance().createDAOConfiguration(), HsqldbConfigurationProvider.getInstance().getVertx()));
     }
 
     @BeforeClass

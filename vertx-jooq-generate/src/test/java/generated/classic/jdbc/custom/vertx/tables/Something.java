@@ -7,28 +7,17 @@ package generated.classic.jdbc.custom.vertx.tables;
 import generated.classic.jdbc.custom.vertx.Keys;
 import generated.classic.jdbc.custom.vertx.Vertx;
 import generated.classic.jdbc.custom.vertx.tables.records.SomethingRecord;
-
 import io.github.jklingsporn.vertx.jooq.shared.JsonArrayConverter;
 import io.github.jklingsporn.vertx.jooq.shared.JsonObjectConverter;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
-
-import java.time.LocalDateTime;
-
-import org.jooq.Field;
-import org.jooq.ForeignKey;
-import org.jooq.Identity;
-import org.jooq.Name;
 import org.jooq.Record;
-import org.jooq.Row10;
-import org.jooq.Schema;
-import org.jooq.Table;
-import org.jooq.TableField;
-import org.jooq.TableOptions;
-import org.jooq.UniqueKey;
+import org.jooq.*;
 import org.jooq.impl.DSL;
 import org.jooq.impl.SQLDataType;
 import org.jooq.impl.TableImpl;
+
+import java.time.LocalDateTime;
 
 
 /**
@@ -147,7 +136,7 @@ public class Something extends TableImpl<SomethingRecord> {
 
     @Override
     public UniqueKey<SomethingRecord> getPrimaryKey() {
-        return Keys.SYS_PK_10144;
+        return Keys.SYS_PK_10486;
     }
 
     @Override

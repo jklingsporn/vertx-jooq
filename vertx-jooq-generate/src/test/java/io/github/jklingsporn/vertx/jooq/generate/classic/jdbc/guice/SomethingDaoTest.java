@@ -5,7 +5,6 @@ import generated.classic.jdbc.guice.vertx.tables.daos.SomethingDao;
 import generated.classic.jdbc.guice.vertx.tables.pojos.Something;
 import io.github.jklingsporn.vertx.jooq.generate.HsqldbConfigurationProvider;
 import io.github.jklingsporn.vertx.jooq.generate.classic.ClassicTestBase;
-import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import org.jooq.Condition;
@@ -22,7 +21,7 @@ import java.util.Random;
 public class SomethingDaoTest extends ClassicTestBase<Something, Integer, Long, SomethingDao> {
 
     public SomethingDaoTest() {
-        super(Tables.SOMETHING.SOMEHUGENUMBER, new SomethingDao(HsqldbConfigurationProvider.getInstance().createDAOConfiguration(), Vertx.vertx()));
+        super(Tables.SOMETHING.SOMEHUGENUMBER, new SomethingDao(HsqldbConfigurationProvider.getInstance().createDAOConfiguration(), HsqldbConfigurationProvider.getInstance().getVertx()));
     }
 
     @BeforeClass

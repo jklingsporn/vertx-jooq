@@ -22,7 +22,7 @@ public class SomethingCompositeDaoTest extends RX3TestBase<Somethingcomposite, R
 
 
     public SomethingCompositeDaoTest() {
-        super(Tables.SOMETHINGCOMPOSITE.SOMEJSONOBJECT, new SomethingcompositeDao(HsqldbConfigurationProvider.getInstance().createDAOConfiguration(), Vertx.vertx()));
+        super(Tables.SOMETHINGCOMPOSITE.SOMEJSONOBJECT, new SomethingcompositeDao(HsqldbConfigurationProvider.getInstance().createDAOConfiguration(), Vertx.newInstance(HsqldbConfigurationProvider.getInstance().getVertx())));
     }
 
     @BeforeClass

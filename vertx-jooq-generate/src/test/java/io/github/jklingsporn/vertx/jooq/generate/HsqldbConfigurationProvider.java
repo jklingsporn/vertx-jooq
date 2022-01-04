@@ -1,5 +1,6 @@
 package io.github.jklingsporn.vertx.jooq.generate;
 
+import io.vertx.core.Vertx;
 import org.hsqldb.jdbc.JDBCPool;
 import org.jooq.SQLDialect;
 import org.jooq.impl.DefaultConfiguration;
@@ -7,6 +8,7 @@ import org.jooq.meta.hsqldb.HSQLDBDatabase;
 import org.jooq.meta.jaxb.Configuration;
 import org.jooq.meta.jaxb.Jdbc;
 
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.DriverManager;
 
@@ -16,6 +18,7 @@ import java.sql.DriverManager;
 public class HsqldbConfigurationProvider extends AbstractDatabaseConfigurationProvider {
 
     private final JDBCPool pool;
+    private final Vertx vertx;
     private static HsqldbConfigurationProvider INSTANCE;
     public static HsqldbConfigurationProvider getInstance() {
         return INSTANCE == null ? INSTANCE = new HsqldbConfigurationProvider() : INSTANCE;
@@ -26,6 +29,7 @@ public class HsqldbConfigurationProvider extends AbstractDatabaseConfigurationPr
         this.pool.setURL("jdbc:hsqldb:mem:test");
         this.pool.setUser(Credentials.HSQLDB.getUser());
         this.pool.setPassword(Credentials.HSQLDB.getPassword());
+        this.vertx = Vertx.vertx();
     }
 
     @Override
@@ -79,4 +83,12 @@ public class HsqldbConfigurationProvider extends AbstractDatabaseConfigurationPr
         return configuration;
     }
 
+    @Override
+    public DataSource getDataSource() {
+        return pool;
+    }
+
+    public Vertx getVertx() {
+        return vertx;
+    }
 }
