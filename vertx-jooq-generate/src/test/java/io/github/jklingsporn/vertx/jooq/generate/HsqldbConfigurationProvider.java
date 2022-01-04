@@ -46,6 +46,7 @@ public class HsqldbConfigurationProvider extends AbstractDatabaseConfigurationPr
                     "  someHugeNumber bigint ,\n" +
                     "  someSmallNumber smallint ,\n" +
                     "  someRegularNumber int ,\n" +
+                    "  someDecimal decimal(10,2) ,\n" +
                     "  someBoolean boolean default false not null,\n" +
                     "  someDouble double ,\n" +
                     "  someJsonObject varchar(45) ,\n" +

@@ -7,13 +7,14 @@ import generated.classic.reactive.guice.tables.pojos.Something;
 import io.github.jklingsporn.vertx.jooq.generate.PostgresConfigurationProvider;
 import io.github.jklingsporn.vertx.jooq.generate.ReactiveDatabaseClientProvider;
 import io.github.jklingsporn.vertx.jooq.generate.classic.ClassicTestBase;
-import io.vertx.pgclient.PgException;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+import io.vertx.pgclient.PgException;
 import org.jooq.Condition;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -56,6 +57,7 @@ public class SomethingDaoTest extends ClassicTestBase<Something, Integer, Long, 
         something.setSometimestamp(LocalDateTime.now());
         something.setSometime(LocalTime.now());
         something.setSomedate(LocalDate.now());
+        something.setSomedecimal(new BigDecimal("1.23E3"));
         something.setSometimestampwithtz(OffsetDateTime.now());
         return something;
     }

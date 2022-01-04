@@ -9,6 +9,7 @@ import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 
@@ -68,6 +69,16 @@ public interface ISomething extends VertxPojo, Serializable {
      * Getter for <code>VERTX.SOMETHING.SOMEREGULARNUMBER</code>.
      */
     public Integer getSomeregularnumber();
+
+    /**
+     * Setter for <code>VERTX.SOMETHING.SOMEDECIMAL</code>.
+     */
+    public ISomething setSomedecimal(BigDecimal value);
+
+    /**
+     * Getter for <code>VERTX.SOMETHING.SOMEDECIMAL</code>.
+     */
+    public BigDecimal getSomedecimal();
 
     /**
      * Setter for <code>VERTX.SOMETHING.SOMEBOOLEAN</code>.
@@ -142,6 +153,7 @@ public interface ISomething extends VertxPojo, Serializable {
                 setOrThrow(this::setSomehugenumber,json::getLong,"SOMEHUGENUMBER","java.lang.Long");
                 setOrThrow(this::setSomesmallnumber,key -> {Integer i = json.getInteger(key); return i==null?null:i.shortValue();},"SOMESMALLNUMBER","java.lang.Short");
                 setOrThrow(this::setSomeregularnumber,json::getInteger,"SOMEREGULARNUMBER","java.lang.Integer");
+                setOrThrow(this::setSomedecimal,key -> {String s = json.getString(key); return s==null?null:new java.math.BigDecimal(s);},"SOMEDECIMAL","java.math.BigDecimal");
                 setOrThrow(this::setSomeboolean,json::getBoolean,"SOMEBOOLEAN","java.lang.Boolean");
                 setOrThrow(this::setSomedouble,json::getDouble,"SOMEDOUBLE","java.lang.Double");
                 setOrThrow(this::setSomejsonobject,json::getJsonObject,"SOMEJSONOBJECT","io.vertx.core.json.JsonObject");
@@ -159,6 +171,7 @@ public interface ISomething extends VertxPojo, Serializable {
                 json.put("SOMEHUGENUMBER",getSomehugenumber());
                 json.put("SOMESMALLNUMBER",getSomesmallnumber());
                 json.put("SOMEREGULARNUMBER",getSomeregularnumber());
+                json.put("SOMEDECIMAL",getSomedecimal()==null?null:getSomedecimal().toString());
                 json.put("SOMEBOOLEAN",getSomeboolean());
                 json.put("SOMEDOUBLE",getSomedouble());
                 json.put("SOMEJSONOBJECT",getSomejsonobject());

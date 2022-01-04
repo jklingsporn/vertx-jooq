@@ -388,7 +388,7 @@ public abstract class VertxGenerator extends JavaGenerator {
                 }
             }else if(isAllowedJsonType(column, columnType)){
                 out.tab(2).println("json.put(\"%s\",%s());", getJsonKeyName(column),getter);
-            }else if(isJavaTimeType(columnType) || isStringSerializableType(columnType)){
+            }else if(isJavaTimeType(columnType) || isType(columnType, BigDecimal.class)){
                 out.tab(2).println("json.put(\"%s\",%s()==null?null:%s().toString());", getJsonKeyName(column),getter,getter);
             }else if(isCollectionType(columnType)){
                 out.tab(2).println("json.put(\"%s\",%s()==null?null: new io.vertx.core.json.JsonArray(%s()));", getJsonKeyName(column),getter,getter);
@@ -428,10 +428,6 @@ public abstract class VertxGenerator extends JavaGenerator {
         return isType(columnType, LocalDateTime.class) || isType(columnType, LocalTime.class)
                 || isType(columnType, ZonedDateTime.class) || isType(columnType, OffsetDateTime.class)
                 || isType(columnType, LocalDate.class);
-    }
-
-    private boolean isStringSerializableType(String columnType) {
-        return isType(columnType, BigDecimal.class);
     }
 
     private boolean isCollectionType(String columnType){

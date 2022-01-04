@@ -9,6 +9,7 @@ import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 
@@ -26,6 +27,7 @@ public class Something implements VertxPojo, Serializable {
     private Long          somehugenumber;
     private Short         somesmallnumber;
     private Integer       someregularnumber;
+    private BigDecimal    somedecimal;
     private Boolean       someboolean;
     private Double        somedouble;
     private JsonObject    somejsonobject;
@@ -40,6 +42,7 @@ public class Something implements VertxPojo, Serializable {
         this.somehugenumber = value.somehugenumber;
         this.somesmallnumber = value.somesmallnumber;
         this.someregularnumber = value.someregularnumber;
+        this.somedecimal = value.somedecimal;
         this.someboolean = value.someboolean;
         this.somedouble = value.somedouble;
         this.somejsonobject = value.somejsonobject;
@@ -53,6 +56,7 @@ public class Something implements VertxPojo, Serializable {
         Long          somehugenumber,
         Short         somesmallnumber,
         Integer       someregularnumber,
+        BigDecimal    somedecimal,
         Boolean       someboolean,
         Double        somedouble,
         JsonObject    somejsonobject,
@@ -64,6 +68,7 @@ public class Something implements VertxPojo, Serializable {
         this.somehugenumber = somehugenumber;
         this.somesmallnumber = somesmallnumber;
         this.someregularnumber = someregularnumber;
+        this.somedecimal = somedecimal;
         this.someboolean = someboolean;
         this.somedouble = somedouble;
         this.somejsonobject = somejsonobject;
@@ -148,6 +153,21 @@ public class Something implements VertxPojo, Serializable {
      */
     public Something setSomeregularnumber(Integer someregularnumber) {
         this.someregularnumber = someregularnumber;
+        return this;
+    }
+
+    /**
+     * Getter for <code>VERTX.SOMETHING.SOMEDECIMAL</code>.
+     */
+    public BigDecimal getSomedecimal() {
+        return this.somedecimal;
+    }
+
+    /**
+     * Setter for <code>VERTX.SOMETHING.SOMEDECIMAL</code>.
+     */
+    public Something setSomedecimal(BigDecimal somedecimal) {
+        this.somedecimal = somedecimal;
         return this;
     }
 
@@ -265,6 +285,12 @@ public class Something implements VertxPojo, Serializable {
         }
         else if (!someregularnumber.equals(other.someregularnumber))
             return false;
+        if (somedecimal == null) {
+            if (other.somedecimal != null)
+                return false;
+        }
+        else if (!somedecimal.equals(other.somedecimal))
+            return false;
         if (someboolean == null) {
             if (other.someboolean != null)
                 return false;
@@ -307,6 +333,7 @@ public class Something implements VertxPojo, Serializable {
         result = prime * result + ((this.somehugenumber == null) ? 0 : this.somehugenumber.hashCode());
         result = prime * result + ((this.somesmallnumber == null) ? 0 : this.somesmallnumber.hashCode());
         result = prime * result + ((this.someregularnumber == null) ? 0 : this.someregularnumber.hashCode());
+        result = prime * result + ((this.somedecimal == null) ? 0 : this.somedecimal.hashCode());
         result = prime * result + ((this.someboolean == null) ? 0 : this.someboolean.hashCode());
         result = prime * result + ((this.somedouble == null) ? 0 : this.somedouble.hashCode());
         result = prime * result + ((this.somejsonobject == null) ? 0 : this.somejsonobject.hashCode());
@@ -324,6 +351,7 @@ public class Something implements VertxPojo, Serializable {
         sb.append(", ").append(somehugenumber);
         sb.append(", ").append(somesmallnumber);
         sb.append(", ").append(someregularnumber);
+        sb.append(", ").append(somedecimal);
         sb.append(", ").append(someboolean);
         sb.append(", ").append(somedouble);
         sb.append(", ").append(somejsonobject);
@@ -341,6 +369,7 @@ public class Something implements VertxPojo, Serializable {
                 setOrThrow(this::setSomehugenumber,json::getLong,"SOMEHUGENUMBER","java.lang.Long");
                 setOrThrow(this::setSomesmallnumber,key -> {Integer i = json.getInteger(key); return i==null?null:i.shortValue();},"SOMESMALLNUMBER","java.lang.Short");
                 setOrThrow(this::setSomeregularnumber,json::getInteger,"SOMEREGULARNUMBER","java.lang.Integer");
+                setOrThrow(this::setSomedecimal,key -> {String s = json.getString(key); return s==null?null:new java.math.BigDecimal(s);},"SOMEDECIMAL","java.math.BigDecimal");
                 setOrThrow(this::setSomeboolean,json::getBoolean,"SOMEBOOLEAN","java.lang.Boolean");
                 setOrThrow(this::setSomedouble,json::getDouble,"SOMEDOUBLE","java.lang.Double");
                 setOrThrow(this::setSomejsonobject,json::getJsonObject,"SOMEJSONOBJECT","io.vertx.core.json.JsonObject");
@@ -358,6 +387,7 @@ public class Something implements VertxPojo, Serializable {
                 json.put("SOMEHUGENUMBER",getSomehugenumber());
                 json.put("SOMESMALLNUMBER",getSomesmallnumber());
                 json.put("SOMEREGULARNUMBER",getSomeregularnumber());
+                json.put("SOMEDECIMAL",getSomedecimal()==null?null:getSomedecimal().toString());
                 json.put("SOMEBOOLEAN",getSomeboolean());
                 json.put("SOMEDOUBLE",getSomedouble());
                 json.put("SOMEJSONOBJECT",getSomejsonobject());

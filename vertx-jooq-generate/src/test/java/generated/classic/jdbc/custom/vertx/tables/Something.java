@@ -7,17 +7,29 @@ package generated.classic.jdbc.custom.vertx.tables;
 import generated.classic.jdbc.custom.vertx.Keys;
 import generated.classic.jdbc.custom.vertx.Vertx;
 import generated.classic.jdbc.custom.vertx.tables.records.SomethingRecord;
+
 import io.github.jklingsporn.vertx.jooq.shared.JsonArrayConverter;
 import io.github.jklingsporn.vertx.jooq.shared.JsonObjectConverter;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
+import org.jooq.Field;
+import org.jooq.ForeignKey;
+import org.jooq.Identity;
+import org.jooq.Name;
 import org.jooq.Record;
-import org.jooq.*;
+import org.jooq.Row11;
+import org.jooq.Schema;
+import org.jooq.Table;
+import org.jooq.TableField;
+import org.jooq.TableOptions;
+import org.jooq.UniqueKey;
 import org.jooq.impl.DSL;
 import org.jooq.impl.SQLDataType;
 import org.jooq.impl.TableImpl;
-
-import java.time.LocalDateTime;
 
 
 /**
@@ -65,6 +77,11 @@ public class Something extends TableImpl<SomethingRecord> {
      * The column <code>VERTX.SOMETHING.SOMEREGULARNUMBER</code>.
      */
     public final TableField<SomethingRecord, Integer> SOMEREGULARNUMBER = createField(DSL.name("SOMEREGULARNUMBER"), SQLDataType.INTEGER, this, "");
+
+    /**
+     * The column <code>VERTX.SOMETHING.SOMEDECIMAL</code>.
+     */
+    public final TableField<SomethingRecord, BigDecimal> SOMEDECIMAL = createField(DSL.name("SOMEDECIMAL"), SQLDataType.DECIMAL(10, 2), this, "");
 
     /**
      * The column <code>VERTX.SOMETHING.SOMEBOOLEAN</code>.
@@ -166,11 +183,11 @@ public class Something extends TableImpl<SomethingRecord> {
     }
 
     // -------------------------------------------------------------------------
-    // Row10 type methods
+    // Row11 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row10<Integer, String, Long, Short, Integer, Boolean, Double, JsonObject, JsonArray, LocalDateTime> fieldsRow() {
-        return (Row10) super.fieldsRow();
+    public Row11<Integer, String, Long, Short, Integer, BigDecimal, Boolean, Double, JsonObject, JsonArray, LocalDateTime> fieldsRow() {
+        return (Row11) super.fieldsRow();
     }
 }

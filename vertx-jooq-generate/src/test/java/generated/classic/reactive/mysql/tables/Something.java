@@ -14,6 +14,7 @@ import io.github.jklingsporn.vertx.jooq.shared.JsonObjectConverter;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import org.jooq.Field;
@@ -21,7 +22,7 @@ import org.jooq.ForeignKey;
 import org.jooq.Identity;
 import org.jooq.Name;
 import org.jooq.Record;
-import org.jooq.Row10;
+import org.jooq.Row11;
 import org.jooq.Schema;
 import org.jooq.Table;
 import org.jooq.TableField;
@@ -82,6 +83,11 @@ public class Something extends TableImpl<SomethingRecord> {
      * The column <code>vertx.something.someDouble</code>.
      */
     public final TableField<SomethingRecord, Double> SOMEDOUBLE = createField(DSL.name("someDouble"), SQLDataType.DOUBLE, this, "");
+
+    /**
+     * The column <code>vertx.something.someDecimal</code>.
+     */
+    public final TableField<SomethingRecord, BigDecimal> SOMEDECIMAL = createField(DSL.name("someDecimal"), SQLDataType.DECIMAL(10, 2), this, "");
 
     /**
      * The column <code>vertx.something.someEnum</code>.
@@ -178,11 +184,11 @@ public class Something extends TableImpl<SomethingRecord> {
     }
 
     // -------------------------------------------------------------------------
-    // Row10 type methods
+    // Row11 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row10<Integer, String, Long, Short, Integer, Double, SomethingSomeenum, JsonObject, JsonArray, LocalDateTime> fieldsRow() {
-        return (Row10) super.fieldsRow();
+    public Row11<Integer, String, Long, Short, Integer, Double, BigDecimal, SomethingSomeenum, JsonObject, JsonArray, LocalDateTime> fieldsRow() {
+        return (Row11) super.fieldsRow();
     }
 }

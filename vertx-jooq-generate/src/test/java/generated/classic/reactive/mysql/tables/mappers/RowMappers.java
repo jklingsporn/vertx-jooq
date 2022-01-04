@@ -16,6 +16,7 @@ public class RowMappers {
                         pojo.setSomesmallnumber(row.getShort("someSmallNumber"));
                         pojo.setSomeregularnumber(row.getInteger("someRegularNumber"));
                         pojo.setSomedouble(row.getDouble("someDouble"));
+                        pojo.setSomedecimal(row.getBigDecimal("someDecimal"));
                         pojo.setSomeenum(java.util.Arrays.stream(generated.classic.reactive.mysql.enums.SomethingSomeenum.values()).filter(td -> td.getLiteral().equals(row.getString("someEnum"))).findFirst().orElse(null));
                         String someJsonObjectString = row.getString("someJsonObject");
                         pojo.setSomejsonobject(someJsonObjectString == null ? null : new io.vertx.core.json.JsonObject(someJsonObjectString));

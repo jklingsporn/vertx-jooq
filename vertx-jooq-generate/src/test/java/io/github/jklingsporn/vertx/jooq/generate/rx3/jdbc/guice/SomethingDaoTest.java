@@ -11,6 +11,7 @@ import io.vertx.rxjava3.core.Vertx;
 import org.jooq.Condition;
 import org.junit.BeforeClass;
 
+import java.math.BigDecimal;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.time.LocalDateTime;
 import java.util.Random;
@@ -47,6 +48,7 @@ public class SomethingDaoTest extends RX3TestBase<Something, Integer, Long, Some
         something.setSomeboolean(random.nextBoolean());
         something.setSomestring("my_string");
         something.setSometimestamp(LocalDateTime.now());
+        something.setSomedecimal(new BigDecimal("1.23E3"));
         return something;
     }
 

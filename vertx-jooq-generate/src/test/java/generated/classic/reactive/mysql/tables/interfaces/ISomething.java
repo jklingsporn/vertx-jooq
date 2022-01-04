@@ -11,6 +11,7 @@ import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 
@@ -82,6 +83,16 @@ public interface ISomething extends VertxPojo, Serializable {
     public Double getSomedouble();
 
     /**
+     * Setter for <code>vertx.something.someDecimal</code>.
+     */
+    public ISomething setSomedecimal(BigDecimal value);
+
+    /**
+     * Getter for <code>vertx.something.someDecimal</code>.
+     */
+    public BigDecimal getSomedecimal();
+
+    /**
      * Setter for <code>vertx.something.someEnum</code>.
      */
     public ISomething setSomeenum(SomethingSomeenum value);
@@ -145,6 +156,7 @@ public interface ISomething extends VertxPojo, Serializable {
                 setOrThrow(this::setSomesmallnumber,key -> {Integer i = json.getInteger(key); return i==null?null:i.shortValue();},"someSmallNumber","java.lang.Short");
                 setOrThrow(this::setSomeregularnumber,json::getInteger,"someRegularNumber","java.lang.Integer");
                 setOrThrow(this::setSomedouble,json::getDouble,"someDouble","java.lang.Double");
+                setOrThrow(this::setSomedecimal,key -> {String s = json.getString(key); return s==null?null:new java.math.BigDecimal(s);},"someDecimal","java.math.BigDecimal");
                 setOrThrow(this::setSomeenum,key -> java.util.Arrays.stream(generated.classic.reactive.mysql.enums.SomethingSomeenum.values()).filter(td -> td.getLiteral().equals(json.getString(key))).findFirst().orElse(null),"someEnum","generated.classic.reactive.mysql.enums.SomethingSomeenum");
                 setOrThrow(this::setSomejsonobject,json::getJsonObject,"someJsonObject","io.vertx.core.json.JsonObject");
                 setOrThrow(this::setSomejsonarray,json::getJsonArray,"someJsonArray","io.vertx.core.json.JsonArray");
@@ -162,6 +174,7 @@ public interface ISomething extends VertxPojo, Serializable {
                 json.put("someSmallNumber",getSomesmallnumber());
                 json.put("someRegularNumber",getSomeregularnumber());
                 json.put("someDouble",getSomedouble());
+                json.put("someDecimal",getSomedecimal()==null?null:getSomedecimal().toString());
                 json.put("someEnum",getSomeenum()==null?null:getSomeenum().getLiteral());
                 json.put("someJsonObject",getSomejsonobject());
                 json.put("someJsonArray",getSomejsonarray());

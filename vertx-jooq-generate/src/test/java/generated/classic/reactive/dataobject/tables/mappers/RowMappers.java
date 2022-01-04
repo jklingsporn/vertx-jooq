@@ -15,6 +15,7 @@ public class RowMappers {
                         pojo.setSomehugenumber(row.getLong("someHugeNumber"));
                         pojo.setSomesmallnumber(row.getShort("someSmallNumber"));
                         pojo.setSomeregularnumber(row.getInteger("someRegularNumber"));
+                        pojo.setSomedecimal(row.getBigDecimal("someDecimal"));
                         pojo.setSomedouble(row.getDouble("someDouble"));
                         pojo.setSomeenum(java.util.Arrays.stream(generated.classic.reactive.dataobject.enums.Someenum.values()).filter(td -> td.getLiteral().equals(row.getString("someEnum"))).findFirst().orElse(null));
                         String someJsonObjectString = row.getString("someJsonObject");

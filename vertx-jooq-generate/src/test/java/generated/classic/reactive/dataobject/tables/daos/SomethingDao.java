@@ -13,6 +13,7 @@ import io.github.jklingsporn.vertx.jooq.shared.reactive.AbstractReactiveVertxDAO
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -108,6 +109,22 @@ public class SomethingDao extends AbstractReactiveVertxDAO<SomethingRecord, gene
      */
         public Future<List<generated.classic.reactive.dataobject.tables.pojos.Something>> findManyBySomeregularnumber(Collection<Integer> values, int limit) {
                 return findManyByCondition(Something.SOMETHING.SOMEREGULARNUMBER.in(values),limit);
+        }
+
+        /**
+     * Find records that have <code>someDecimal IN (values)</code>
+     * asynchronously
+     */
+        public Future<List<generated.classic.reactive.dataobject.tables.pojos.Something>> findManyBySomedecimal(Collection<BigDecimal> values) {
+                return findManyByCondition(Something.SOMETHING.SOMEDECIMAL.in(values));
+        }
+
+        /**
+     * Find records that have <code>someDecimal IN (values)</code>
+     * asynchronously limited by the given limit
+     */
+        public Future<List<generated.classic.reactive.dataobject.tables.pojos.Something>> findManyBySomedecimal(Collection<BigDecimal> values, int limit) {
+                return findManyByCondition(Something.SOMETHING.SOMEDECIMAL.in(values),limit);
         }
 
         /**

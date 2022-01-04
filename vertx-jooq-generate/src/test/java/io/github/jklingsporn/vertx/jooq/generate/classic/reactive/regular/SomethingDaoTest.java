@@ -19,6 +19,7 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -67,6 +68,7 @@ public class SomethingDaoTest extends ClassicTestBase<Something, Integer, Long, 
         something.setSomedate(LocalDate.now());
         something.setSometimestampwithtz(OffsetDateTime.now());
         something.setSomebytea("foo".getBytes());
+        something.setSomedecimal(new BigDecimal("1.23E3"));
         return something;
     }
 

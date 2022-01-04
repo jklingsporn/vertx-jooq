@@ -11,6 +11,7 @@ import io.github.jklingsporn.vertx.jooq.shared.internal.AbstractVertxDAO;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Collection;
 
@@ -104,6 +105,22 @@ public class SomethingDao extends AbstractVertxDAO<SomethingRecord, generated.rx
      */
         public Single<List<generated.rx.jdbc.guice.vertx.tables.pojos.Something>> findManyBySomeregularnumber(Collection<Integer> values, int limit) {
                 return findManyByCondition(Something.SOMETHING.SOMEREGULARNUMBER.in(values),limit);
+        }
+
+        /**
+     * Find records that have <code>SOMEDECIMAL IN (values)</code>
+     * asynchronously
+     */
+        public Single<List<generated.rx.jdbc.guice.vertx.tables.pojos.Something>> findManyBySomedecimal(Collection<BigDecimal> values) {
+                return findManyByCondition(Something.SOMETHING.SOMEDECIMAL.in(values));
+        }
+
+        /**
+     * Find records that have <code>SOMEDECIMAL IN (values)</code>
+     * asynchronously limited by the given limit
+     */
+        public Single<List<generated.rx.jdbc.guice.vertx.tables.pojos.Something>> findManyBySomedecimal(Collection<BigDecimal> values, int limit) {
+                return findManyByCondition(Something.SOMETHING.SOMEDECIMAL.in(values),limit);
         }
 
         /**

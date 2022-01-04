@@ -12,6 +12,7 @@ import io.github.jklingsporn.vertx.jooq.shared.internal.VertxPojo;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -34,6 +35,7 @@ public class Something implements VertxPojo, ISomething {
     private Long           somehugenumber;
     private Short          somesmallnumber;
     private Integer        someregularnumber;
+    private BigDecimal     somedecimal;
     private Double         somedouble;
     private Someenum       someenum;
     private JsonObject     somejsonobject;
@@ -55,6 +57,7 @@ public class Something implements VertxPojo, ISomething {
         this.somehugenumber = value.getSomehugenumber();
         this.somesmallnumber = value.getSomesmallnumber();
         this.someregularnumber = value.getSomeregularnumber();
+        this.somedecimal = value.getSomedecimal();
         this.somedouble = value.getSomedouble();
         this.someenum = value.getSomeenum();
         this.somejsonobject = value.getSomejsonobject();
@@ -75,6 +78,7 @@ public class Something implements VertxPojo, ISomething {
         Long           somehugenumber,
         Short          somesmallnumber,
         Integer        someregularnumber,
+        BigDecimal     somedecimal,
         Double         somedouble,
         Someenum       someenum,
         JsonObject     somejsonobject,
@@ -93,6 +97,7 @@ public class Something implements VertxPojo, ISomething {
         this.somehugenumber = somehugenumber;
         this.somesmallnumber = somesmallnumber;
         this.someregularnumber = someregularnumber;
+        this.somedecimal = somedecimal;
         this.somedouble = somedouble;
         this.someenum = someenum;
         this.somejsonobject = somejsonobject;
@@ -194,6 +199,23 @@ public class Something implements VertxPojo, ISomething {
     @Override
     public Something setSomeregularnumber(Integer someregularnumber) {
         this.someregularnumber = someregularnumber;
+        return this;
+    }
+
+    /**
+     * Getter for <code>vertx.something.someDecimal</code>.
+     */
+    @Override
+    public BigDecimal getSomedecimal() {
+        return this.somedecimal;
+    }
+
+    /**
+     * Setter for <code>vertx.something.someDecimal</code>.
+     */
+    @Override
+    public Something setSomedecimal(BigDecimal somedecimal) {
+        this.somedecimal = somedecimal;
         return this;
     }
 
@@ -440,6 +462,12 @@ public class Something implements VertxPojo, ISomething {
         }
         else if (!someregularnumber.equals(other.someregularnumber))
             return false;
+        if (somedecimal == null) {
+            if (other.somedecimal != null)
+                return false;
+        }
+        else if (!somedecimal.equals(other.somedecimal))
+            return false;
         if (somedouble == null) {
             if (other.somedouble != null)
                 return false;
@@ -524,6 +552,7 @@ public class Something implements VertxPojo, ISomething {
         result = prime * result + ((this.somehugenumber == null) ? 0 : this.somehugenumber.hashCode());
         result = prime * result + ((this.somesmallnumber == null) ? 0 : this.somesmallnumber.hashCode());
         result = prime * result + ((this.someregularnumber == null) ? 0 : this.someregularnumber.hashCode());
+        result = prime * result + ((this.somedecimal == null) ? 0 : this.somedecimal.hashCode());
         result = prime * result + ((this.somedouble == null) ? 0 : this.somedouble.hashCode());
         result = prime * result + ((this.someenum == null) ? 0 : this.someenum.hashCode());
         result = prime * result + ((this.somejsonobject == null) ? 0 : this.somejsonobject.hashCode());
@@ -548,6 +577,7 @@ public class Something implements VertxPojo, ISomething {
         sb.append(", ").append(somehugenumber);
         sb.append(", ").append(somesmallnumber);
         sb.append(", ").append(someregularnumber);
+        sb.append(", ").append(somedecimal);
         sb.append(", ").append(somedouble);
         sb.append(", ").append(someenum);
         sb.append(", ").append(somejsonobject);
@@ -576,6 +606,7 @@ public class Something implements VertxPojo, ISomething {
         setSomehugenumber(from.getSomehugenumber());
         setSomesmallnumber(from.getSomesmallnumber());
         setSomeregularnumber(from.getSomeregularnumber());
+        setSomedecimal(from.getSomedecimal());
         setSomedouble(from.getSomedouble());
         setSomeenum(from.getSomeenum());
         setSomejsonobject(from.getSomejsonobject());

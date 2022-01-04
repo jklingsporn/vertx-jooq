@@ -18,6 +18,7 @@ import io.github.jklingsporn.vertx.jooq.shared.postgres.JSONBToJsonObjectConvert
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -28,7 +29,7 @@ import org.jooq.Field;
 import org.jooq.ForeignKey;
 import org.jooq.Name;
 import org.jooq.Record;
-import org.jooq.Row17;
+import org.jooq.Row18;
 import org.jooq.Schema;
 import org.jooq.Table;
 import org.jooq.TableField;
@@ -84,6 +85,11 @@ public class Something extends TableImpl<SomethingRecord> {
      * The column <code>vertx.something.someRegularNumber</code>.
      */
     public final TableField<SomethingRecord, Integer> SOMEREGULARNUMBER = createField(DSL.name("someRegularNumber"), SQLDataType.INTEGER, this, "");
+
+    /**
+     * The column <code>vertx.something.someDecimal</code>.
+     */
+    public final TableField<SomethingRecord, BigDecimal> SOMEDECIMAL = createField(DSL.name("someDecimal"), SQLDataType.NUMERIC, this, "");
 
     /**
      * The column <code>vertx.something.someDouble</code>.
@@ -215,11 +221,11 @@ public class Something extends TableImpl<SomethingRecord> {
     }
 
     // -------------------------------------------------------------------------
-    // Row17 type methods
+    // Row18 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row17<Integer, String, Long, Short, Integer, Double, Someenum, JsonObject, SomeJsonPojo, JsonArray, JsonObject, LocalTime, LocalDate, LocalDateTime, OffsetDateTime, byte[], List<String>> fieldsRow() {
-        return (Row17) super.fieldsRow();
+    public Row18<Integer, String, Long, Short, Integer, BigDecimal, Double, Someenum, JsonObject, SomeJsonPojo, JsonArray, JsonObject, LocalTime, LocalDate, LocalDateTime, OffsetDateTime, byte[], List<String>> fieldsRow() {
+        return (Row18) super.fieldsRow();
     }
 }

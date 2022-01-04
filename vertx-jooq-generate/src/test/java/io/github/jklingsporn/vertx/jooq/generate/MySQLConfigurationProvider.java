@@ -34,6 +34,7 @@ public class MySQLConfigurationProvider extends AbstractDatabaseConfigurationPro
                     "  `someSmallNumber` SMALLINT(5) NULL,\n" +
                     "  `someRegularNumber` INT(10) NULL,\n" +
                     "  `someDouble` DOUBLE NULL,\n" +
+                    "  `someDecimal` DECIMAL(10,2) NULL,\n" +
                     "  `someEnum` ENUM('FOO', 'BAR', 'BAZ') DEFAULT 'FOO' NOT NULL,\n" +
                     "  `someJsonObject` VARCHAR(45) NULL,\n" +
                     "  `someJsonArray` VARCHAR(45) NULL,\n" +
