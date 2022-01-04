@@ -81,7 +81,6 @@ public abstract class RXTestBase<P,T,O, DAO extends GenericVertxDAO<?,P, T, Sing
         return new SingleObserver<T>() {
             @Override
             public void onSubscribe(Disposable d) {
-
             }
 
             @Override

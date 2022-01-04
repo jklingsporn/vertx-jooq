@@ -34,6 +34,7 @@ public abstract class AbstractVertxGeneratorTest {
             configuration.setOnError(OnError.FAIL);
             configuration.setLogging(Logging.WARN);
             GenerationTool.generate(configuration);
+
             Assert.assertTrue(true);
         } catch (Throwable e) {
             e.printStackTrace();

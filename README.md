@@ -6,7 +6,9 @@ driver of your choice.
 ## release 6.4.0
 
 - Added [rxjava3 support](https://github.com/jklingsporn/vertx-jooq/pull/191) via dedicated vertx-jooq-rx3-reactive module.
-- Bumped used Vert.x version to 4.2.1
+- Minimum required Java version is now 11 (required by latest jOOQ version). 
+- Bumped Vert.x version to 4.2.3
+- Bumped jOOQ version to 3.15.5
 
 ## release 6.3.0
 - Added [stream support](https://github.com/jklingsporn/vertx-jooq/issues/116) for the reactive drivers. This long overdue 

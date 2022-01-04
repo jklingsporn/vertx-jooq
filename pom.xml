@@ -19,21 +19,21 @@
         <module>vertx-jooq-rx3-jdbc</module>
     </modules>
     <properties>
-        <jooq.version>3.15.4</jooq.version>
-        <vertx.version>4.2.1</vertx.version>
-        <jackson.databind.version>2.11.3</jackson.databind.version>
-        <hsqldb.version>2.5.0</hsqldb.version>
-        <junit.version>4.13.1</junit.version>
+        <jooq.version>3.15.5</jooq.version>
+        <vertx.version>4.2.3</vertx.version>
+        <jackson.databind.version>2.13.1</jackson.databind.version>
+        <hsqldb.version>2.6.1</hsqldb.version>
+        <junit.version>4.13.2</junit.version>
         <guice.version>4.2.3</guice.version>
-        <logback.version>1.2.0</logback.version>
+        <logback.version>1.2.10</logback.version>
         <rx.version>2.2.21</rx.version>
         <rx3.version>3.0.13</rx3.version>
-        <mysql.driver.version>8.0.19</mysql.driver.version>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <mysql.driver.version>8.0.25</mysql.driver.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <postgresql.driver.version>42.2.2</postgresql.driver.version>
+        <postgresql.driver.version>42.3.1</postgresql.driver.version>
+        <java.version>11</java.version>
+        <maven.compiler.release>11</maven.compiler.release>
     </properties>
     <groupId>io.github.jklingsporn</groupId>
     <version>6.4.0</version>
@@ -113,6 +113,14 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.0</version>
+                <configuration>
+                    <release>11</release>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
                 <version>3.0.1</version>
                 <executions>
@@ -124,6 +132,11 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.0.0-M5</version>
+            </plugin>
         </plugins>
     </build>
     <profiles>
@@ -134,6 +147,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>3.3.1</version>
                         <executions>
                             <execution>
                                 <id>attach-javadocs</id>
@@ -146,6 +160,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
+                        <version>3.0.1</version>
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>
