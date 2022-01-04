@@ -19,6 +19,8 @@ import org.jooq.meta.*;
 import org.jooq.tools.JooqLogger;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
 import java.time.*;
 import java.util.Collection;
 import java.util.Collections;
@@ -299,6 +301,8 @@ public abstract class VertxGenerator extends JavaGenerator {
                 jsonValueExtractor = "json::getInstant";
             }else if(isJavaTimeType(columnType)){
                 jsonValueExtractor = String.format("key -> {String s = json.getString(key); return s==null?null:%s.parse(s);}",columnType);
+            }else if(isType(columnType, BigDecimal.class)){
+                jsonValueExtractor = String.format("key -> {String s = json.getString(key); return s==null?null:new %s(s);}",columnType);
             }else if(isEnum(table, column)) {
                 //if this is an enum from the database (no converter) it has getLiteral defined
                 if(column.getType().getConverter() == null){
@@ -347,14 +351,14 @@ public abstract class VertxGenerator extends JavaGenerator {
         try {
             Class<?> converterClazz = Class.forName(converter);
             if(PgConverter.class.isAssignableFrom(converterClazz)){
-                PgConverter<?,?,?> converterInstance = (PgConverter<?, ?, ?>) converterClazz.newInstance();
+                PgConverter<?,?,?> converterInstance = (PgConverter<?, ?, ?>) converterClazz.getDeclaredConstructor().newInstance();
                 return converterInstance.rowConverter().fromType();
             }
             return null;
         } catch (ClassNotFoundException e) {
             logger.info(String.format("'%s' to map '%s' could not be accessed from code generator.",converter,columnType));
             return null;
-        } catch (IllegalAccessException | InstantiationException e) {
+        } catch (IllegalAccessException | InstantiationException | NoSuchMethodException | InvocationTargetException e) {
             logger.info(String.format("'%s' to map '%s' could not be instantiated from code generator.",converter,columnType));
             return null;
         }
@@ -384,7 +388,7 @@ public abstract class VertxGenerator extends JavaGenerator {
                 }
             }else if(isAllowedJsonType(column, columnType)){
                 out.tab(2).println("json.put(\"%s\",%s());", getJsonKeyName(column),getter);
-            }else if(isJavaTimeType(columnType)){
+            }else if(isJavaTimeType(columnType) || isStringSerializableType(columnType)){
                 out.tab(2).println("json.put(\"%s\",%s()==null?null:%s().toString());", getJsonKeyName(column),getter,getter);
             }else if(isCollectionType(columnType)){
                 out.tab(2).println("json.put(\"%s\",%s()==null?null: new io.vertx.core.json.JsonArray(%s()));", getJsonKeyName(column),getter,getter);
@@ -424,6 +428,10 @@ public abstract class VertxGenerator extends JavaGenerator {
         return isType(columnType, LocalDateTime.class) || isType(columnType, LocalTime.class)
                 || isType(columnType, ZonedDateTime.class) || isType(columnType, OffsetDateTime.class)
                 || isType(columnType, LocalDate.class);
+    }
+
+    private boolean isStringSerializableType(String columnType) {
+        return isType(columnType, BigDecimal.class);
     }
 
     private boolean isCollectionType(String columnType){
@@ -540,11 +548,11 @@ public abstract class VertxGenerator extends JavaGenerator {
             tType = getJavaType(keyColumns.get(0).getType(),out);
         }
         else if (keyColumns.size() <= Constants.MAX_ROW_DEGREE) {
-            String generics = "";
+            StringBuilder generics = new StringBuilder();
             String separator = "";
 
             for (ColumnDefinition column : keyColumns) {
-                generics += separator + (getJavaType(column.getType(),out));
+                generics.append(separator).append(getJavaType(column.getType(), out));
                 separator = ", ";
             }
 
@@ -607,11 +615,11 @@ public abstract class VertxGenerator extends JavaGenerator {
             tType = getJavaType(keyColumns.get(0).getType(),out);
         }
         else if (keyColumns.size() <= Constants.MAX_ROW_DEGREE) {
-            String generics = "";
+            StringBuilder generics = new StringBuilder();
             String separator = "";
 
             for (ColumnDefinition column : keyColumns) {
-                generics += separator + out.ref(getJavaType(column.getType(),out));
+                generics.append(separator).append(out.ref(getJavaType(column.getType(), out)));
                 separator = ", ";
             }
 
@@ -664,16 +672,16 @@ public abstract class VertxGenerator extends JavaGenerator {
 
         // [#2574] This should be replaced by a call to a method on the target table's Key type
         else {
-            String params = "";
+            StringBuilder params = new StringBuilder();
             String separator = "";
 
             for (ColumnDefinition column : keyColumns) {
-                params += separator + "object." + getStrategy().getJavaGetterName(column, GeneratorStrategy.Mode.POJO) + "()";
+                params.append(separator).append("object.").append(getStrategy().getJavaGetterName(column, GeneratorStrategy.Mode.POJO)).append("()");
 
                 separator = ", ";
             }
 
-            out.tab(2).println("return compositeKeyRecord(%s);", params);
+            out.tab(2).println("return compositeKeyRecord(%s);", params.toString());
         }
 
         out.tab(1).println("}");

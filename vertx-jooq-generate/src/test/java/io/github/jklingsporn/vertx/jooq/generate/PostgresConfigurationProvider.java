@@ -42,6 +42,7 @@ public class PostgresConfigurationProvider extends AbstractDatabaseConfiguration
                     "  \"someHugeNumber\" BIGINT NULL,\n" +
                     "  \"someSmallNumber\" SMALLINT NULL,\n" +
                     "  \"someRegularNumber\" INTEGER NULL,\n" +
+                    "  \"someDecimal\" DECIMAL NULL,\n" +
                     "  \"someDouble\" DOUBLE PRECISION NULL,\n" +
                     "  \"someEnum\" \"someEnum\" DEFAULT 'FOO' ,\n" +
                     "  \"someJsonObject\" VARCHAR(45) NULL,\n" +
