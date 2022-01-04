@@ -22,7 +22,7 @@ public class SomethingCompositeDaoTest extends RXTestBase<Somethingcomposite, Re
 
 
     public SomethingCompositeDaoTest() {
-        super(Tables.SOMETHINGCOMPOSITE.SOMEJSONOBJECT, new SomethingcompositeDao(HsqldbConfigurationProvider.getInstance().createDAOConfiguration(), Vertx.vertx()));
+        super(Tables.SOMETHINGCOMPOSITE.SOMEJSONOBJECT, new SomethingcompositeDao(HsqldbConfigurationProvider.getInstance().createDAOConfiguration(), Vertx.newInstance(HsqldbConfigurationProvider.getInstance().getVertx())));
     }
 
     @BeforeClass
@@ -57,9 +57,9 @@ public class SomethingCompositeDaoTest extends RXTestBase<Somethingcomposite, Re
 
     @Override
     protected Record2<Integer, Integer> getId(Somethingcomposite pojo) {
-        SomethingcompositeRecord record = new SomethingcompositeRecord();
-        record.from(pojo);
-        return record.key();
+        SomethingcompositeRecord rec = new SomethingcompositeRecord();
+        rec.from(pojo);
+        return rec.key();
     }
 
     @Override

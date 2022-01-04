@@ -29,8 +29,9 @@ public class SomethingcompositeDao extends AbstractReactiveVertxDAO<Somethingcom
         @javax.inject.Inject
 
         /**
-     * @param configuration The Configuration used for rendering and query execution.
-     * @param vertx the vertx instance
+     * @param configuration The Configuration used for rendering and query
+     * execution.
+     *      * @param vertx the vertx instance
      */
         public SomethingcompositeDao(Configuration configuration, io.vertx.reactivex.sqlclient.SqlClient delegate) {
                 super(Somethingcomposite.SOMETHINGCOMPOSITE, generated.rx.reactive.guice.tables.pojos.Somethingcomposite.class, new ReactiveRXQueryExecutor<SomethingcompositeRecord,generated.rx.reactive.guice.tables.pojos.Somethingcomposite,Record2<Integer, Integer>>(configuration,delegate,generated.rx.reactive.guice.tables.mappers.RowMappers.getSomethingcompositeMapper()));
@@ -42,28 +43,32 @@ public class SomethingcompositeDao extends AbstractReactiveVertxDAO<Somethingcom
         }
 
         /**
-     * Find records that have <code>someSecondId IN (values)</code> asynchronously
+     * Find records that have <code>someSecondId IN (values)</code>
+     * asynchronously
      */
         public Single<List<generated.rx.reactive.guice.tables.pojos.Somethingcomposite>> findManyBySomesecondid(Collection<Integer> values) {
                 return findManyByCondition(Somethingcomposite.SOMETHINGCOMPOSITE.SOMESECONDID.in(values));
         }
 
         /**
-     * Find records that have <code>someSecondId IN (values)</code> asynchronously limited by the given limit
+     * Find records that have <code>someSecondId IN (values)</code>
+     * asynchronously limited by the given limit
      */
         public Single<List<generated.rx.reactive.guice.tables.pojos.Somethingcomposite>> findManyBySomesecondid(Collection<Integer> values, int limit) {
                 return findManyByCondition(Somethingcomposite.SOMETHINGCOMPOSITE.SOMESECONDID.in(values),limit);
         }
 
         /**
-     * Find records that have <code>someJsonObject IN (values)</code> asynchronously
+     * Find records that have <code>someJsonObject IN (values)</code>
+     * asynchronously
      */
         public Single<List<generated.rx.reactive.guice.tables.pojos.Somethingcomposite>> findManyBySomejsonobject(Collection<JsonObject> values) {
                 return findManyByCondition(Somethingcomposite.SOMETHINGCOMPOSITE.SOMEJSONOBJECT.in(values));
         }
 
         /**
-     * Find records that have <code>someJsonObject IN (values)</code> asynchronously limited by the given limit
+     * Find records that have <code>someJsonObject IN (values)</code>
+     * asynchronously limited by the given limit
      */
         public Single<List<generated.rx.reactive.guice.tables.pojos.Somethingcomposite>> findManyBySomejsonobject(Collection<JsonObject> values, int limit) {
                 return findManyByCondition(Somethingcomposite.SOMETHINGCOMPOSITE.SOMEJSONOBJECT.in(values),limit);

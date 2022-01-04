@@ -50,7 +50,6 @@ public class MySQLConfigurationProvider extends AbstractDatabaseConfigurationPro
                     "  `someId` int(11) NOT NULL AUTO_INCREMENT,\n" +
                     "  `someString` varchar(45) COLLATE utf8_bin DEFAULT NULL,\n" +
                     "  PRIMARY KEY (`someId`));\n").execute();
-            connection.close();
         }
     }
 

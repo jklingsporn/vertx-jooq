@@ -33,7 +33,10 @@ public abstract class AbstractVertxGeneratorTest {
                     generator.getName(), packageLocation, strategy);
             configuration.setOnError(OnError.FAIL);
             configuration.setLogging(Logging.WARN);
-            GenerationTool.generate(configuration);
+            GenerationTool generationTool = new GenerationTool();
+            generationTool.setDataSource(configurationProvider.getDataSource());
+            generationTool.run(configuration);
+
             Assert.assertTrue(true);
         } catch (Throwable e) {
             e.printStackTrace();

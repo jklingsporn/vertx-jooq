@@ -1,23 +1,35 @@
 package io.github.jklingsporn.vertx.jooq.generate;
 
+import io.vertx.core.Vertx;
+import org.hsqldb.jdbc.JDBCPool;
 import org.jooq.SQLDialect;
 import org.jooq.impl.DefaultConfiguration;
 import org.jooq.meta.hsqldb.HSQLDBDatabase;
 import org.jooq.meta.jaxb.Configuration;
 import org.jooq.meta.jaxb.Jdbc;
 
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.SQLException;
 
 /**
  * Created by jensklingsporn on 02.11.16.
  */
 public class HsqldbConfigurationProvider extends AbstractDatabaseConfigurationProvider {
 
+    private final JDBCPool pool;
+    private final Vertx vertx;
     private static HsqldbConfigurationProvider INSTANCE;
     public static HsqldbConfigurationProvider getInstance() {
         return INSTANCE == null ? INSTANCE = new HsqldbConfigurationProvider() : INSTANCE;
+    }
+
+    public HsqldbConfigurationProvider() {
+        this.pool = new JDBCPool(32);
+        this.pool.setURL("jdbc:hsqldb:mem:test");
+        this.pool.setUser(Credentials.HSQLDB.getUser());
+        this.pool.setPassword(Credentials.HSQLDB.getPassword());
+        this.vertx = Vertx.vertx();
     }
 
     @Override
@@ -67,12 +79,16 @@ public class HsqldbConfigurationProvider extends AbstractDatabaseConfigurationPr
     public org.jooq.Configuration createDAOConfiguration(){
         org.jooq.Configuration configuration = new DefaultConfiguration();
         configuration.set(SQLDialect.HSQLDB);
-        try {
-            configuration.set(DriverManager.getConnection("jdbc:hsqldb:mem:test", "test", ""));
-        } catch (SQLException e) {
-            throw new AssertionError("Failed setting up DB.",e);
-        }
+        configuration.set(pool);
         return configuration;
     }
 
+    @Override
+    public DataSource getDataSource() {
+        return pool;
+    }
+
+    public Vertx getVertx() {
+        return vertx;
+    }
 }

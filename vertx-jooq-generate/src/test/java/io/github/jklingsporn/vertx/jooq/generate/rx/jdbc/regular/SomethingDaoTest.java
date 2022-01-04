@@ -5,7 +5,6 @@ import generated.rx.jdbc.regular.vertx.tables.daos.SomethingDao;
 import generated.rx.jdbc.regular.vertx.tables.pojos.Something;
 import io.github.jklingsporn.vertx.jooq.generate.HsqldbConfigurationProvider;
 import io.github.jklingsporn.vertx.jooq.generate.rx.RXTestBase;
-import io.vertx.core.VertxOptions;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.reactivex.core.Vertx;
@@ -22,10 +21,7 @@ import java.util.Random;
 public class SomethingDaoTest extends RXTestBase<Something, Integer, Long, SomethingDao> {
 
     public SomethingDaoTest() {
-        super(Tables.SOMETHING.SOMEHUGENUMBER, new SomethingDao(HsqldbConfigurationProvider.getInstance().createDAOConfiguration(), Vertx.vertx(new VertxOptions()
-            .setEventLoopPoolSize(16)
-            .setWorkerPoolSize(32)
-        .setInternalBlockingPoolSize(64))));
+        super(Tables.SOMETHING.SOMEHUGENUMBER, new SomethingDao(HsqldbConfigurationProvider.getInstance().createDAOConfiguration(), Vertx.newInstance(HsqldbConfigurationProvider.getInstance().getVertx())));
     }
 
     @BeforeClass
@@ -48,7 +44,7 @@ public class SomethingDaoTest extends RXTestBase<Something, Integer, Long, Somet
         something.setSomejsonarray(new JsonArray().add(1).add(2).add(3));
         something.setSomejsonobject(new JsonObject().put("key", "value"));
         something.setSomesmallnumber((short) random.nextInt(Short.MAX_VALUE));
-        //someBoolean has a default value and does not need to be set
+        something.setSomeboolean(random.nextBoolean());
         something.setSomestring("my_string");
         something.setSometimestamp(LocalDateTime.now());
         return something;

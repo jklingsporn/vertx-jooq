@@ -25,8 +25,9 @@ import io.github.jklingsporn.vertx.jooq.rx.reactivepg.ReactiveRXQueryExecutor;
 public class SomethingwithoutjsonDao extends AbstractReactiveVertxDAO<SomethingwithoutjsonRecord, generated.rx.reactive.regular.tables.pojos.Somethingwithoutjson, Integer, Single<List<generated.rx.reactive.regular.tables.pojos.Somethingwithoutjson>>, Single<Optional<generated.rx.reactive.regular.tables.pojos.Somethingwithoutjson>>, Single<Integer>, Single<Integer>> implements io.github.jklingsporn.vertx.jooq.rx.VertxDAO<SomethingwithoutjsonRecord,generated.rx.reactive.regular.tables.pojos.Somethingwithoutjson,Integer> {
 
         /**
-     * @param configuration The Configuration used for rendering and query execution.
-     * @param vertx the vertx instance
+     * @param configuration The Configuration used for rendering and query
+     * execution.
+     *      * @param vertx the vertx instance
      */
         public SomethingwithoutjsonDao(Configuration configuration, io.vertx.reactivex.sqlclient.SqlClient delegate) {
                 super(Somethingwithoutjson.SOMETHINGWITHOUTJSON, generated.rx.reactive.regular.tables.pojos.Somethingwithoutjson.class, new ReactiveRXQueryExecutor<SomethingwithoutjsonRecord,generated.rx.reactive.regular.tables.pojos.Somethingwithoutjson,Integer>(configuration,delegate,generated.rx.reactive.regular.tables.mappers.RowMappers.getSomethingwithoutjsonMapper()));
@@ -45,7 +46,8 @@ public class SomethingwithoutjsonDao extends AbstractReactiveVertxDAO<Somethingw
         }
 
         /**
-     * Find records that have <code>someString IN (values)</code> asynchronously limited by the given limit
+     * Find records that have <code>someString IN (values)</code> asynchronously
+     * limited by the given limit
      */
         public Single<List<generated.rx.reactive.regular.tables.pojos.Somethingwithoutjson>> findManyBySomestring(Collection<String> values, int limit) {
                 return findManyByCondition(Somethingwithoutjson.SOMETHINGWITHOUTJSON.SOMESTRING.in(values),limit);

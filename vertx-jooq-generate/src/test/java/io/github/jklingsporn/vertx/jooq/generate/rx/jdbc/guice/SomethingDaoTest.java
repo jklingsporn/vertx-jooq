@@ -21,7 +21,7 @@ import java.util.Random;
 public class SomethingDaoTest extends RXTestBase<Something, Integer, Long, SomethingDao> {
 
     public SomethingDaoTest() {
-        super(Tables.SOMETHING.SOMEHUGENUMBER, new SomethingDao(HsqldbConfigurationProvider.getInstance().createDAOConfiguration(), Vertx.vertx()));
+        super(Tables.SOMETHING.SOMEHUGENUMBER, new SomethingDao(HsqldbConfigurationProvider.getInstance().createDAOConfiguration(), Vertx.newInstance(HsqldbConfigurationProvider.getInstance().getVertx())));
     }
 
     @BeforeClass
@@ -44,7 +44,7 @@ public class SomethingDaoTest extends RXTestBase<Something, Integer, Long, Somet
         something.setSomejsonarray(new JsonArray().add(1).add(2).add(3));
         something.setSomejsonobject(new JsonObject().put("key", "value"));
         something.setSomesmallnumber((short) random.nextInt(Short.MAX_VALUE));
-        //someBoolean has a default value and does not need to be set
+        something.setSomeboolean(random.nextBoolean());
         something.setSomestring("my_string");
         something.setSometimestamp(LocalDateTime.now());
         return something;

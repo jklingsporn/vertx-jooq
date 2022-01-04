@@ -14,7 +14,9 @@ import io.vertx.reactivex.sqlclient.Transaction;
 import io.vertx.reactivex.sqlclient.*;
 import io.vertx.sqlclient.Row;
 import org.jooq.Query;
+import org.jooq.Record;
 import org.jooq.*;
+import org.jooq.Record;
 import org.jooq.exception.TooManyRowsException;
 
 import java.util.ArrayList;

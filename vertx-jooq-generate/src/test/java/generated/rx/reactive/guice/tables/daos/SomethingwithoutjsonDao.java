@@ -27,8 +27,9 @@ public class SomethingwithoutjsonDao extends AbstractReactiveVertxDAO<Somethingw
         @javax.inject.Inject
 
         /**
-     * @param configuration The Configuration used for rendering and query execution.
-     * @param vertx the vertx instance
+     * @param configuration The Configuration used for rendering and query
+     * execution.
+     *      * @param vertx the vertx instance
      */
         public SomethingwithoutjsonDao(Configuration configuration, io.vertx.reactivex.sqlclient.SqlClient delegate) {
                 super(Somethingwithoutjson.SOMETHINGWITHOUTJSON, generated.rx.reactive.guice.tables.pojos.Somethingwithoutjson.class, new ReactiveRXQueryExecutor<SomethingwithoutjsonRecord,generated.rx.reactive.guice.tables.pojos.Somethingwithoutjson,Integer>(configuration,delegate,generated.rx.reactive.guice.tables.mappers.RowMappers.getSomethingwithoutjsonMapper()));
@@ -47,7 +48,8 @@ public class SomethingwithoutjsonDao extends AbstractReactiveVertxDAO<Somethingw
         }
 
         /**
-     * Find records that have <code>someString IN (values)</code> asynchronously limited by the given limit
+     * Find records that have <code>someString IN (values)</code> asynchronously
+     * limited by the given limit
      */
         public Single<List<generated.rx.reactive.guice.tables.pojos.Somethingwithoutjson>> findManyBySomestring(Collection<String> values, int limit) {
                 return findManyByCondition(Somethingwithoutjson.SOMETHINGWITHOUTJSON.SOMESTRING.in(values),limit);

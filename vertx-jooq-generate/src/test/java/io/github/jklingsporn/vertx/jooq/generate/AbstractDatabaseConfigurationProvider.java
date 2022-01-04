@@ -6,6 +6,7 @@ import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import org.jooq.meta.jaxb.*;
 
+import javax.sql.DataSource;
 import java.util.Arrays;
 
 /**
@@ -102,4 +103,7 @@ abstract class AbstractDatabaseConfigurationProvider {
         return configuration;
     }
 
+    public DataSource getDataSource() {
+        return null;
+    }
 }

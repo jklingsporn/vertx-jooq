@@ -5,7 +5,6 @@ import generated.classic.jdbc.regular.vertx.tables.daos.SomethingDao;
 import generated.classic.jdbc.regular.vertx.tables.pojos.Something;
 import io.github.jklingsporn.vertx.jooq.generate.HsqldbConfigurationProvider;
 import io.github.jklingsporn.vertx.jooq.generate.classic.ClassicTestBase;
-import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import org.jooq.Condition;
@@ -24,7 +23,7 @@ import java.util.concurrent.CountDownLatch;
 public class SomethingDaoTest extends ClassicTestBase<Something, Integer, Long, SomethingDao> {
 
     public SomethingDaoTest() {
-        super(Tables.SOMETHING.SOMEHUGENUMBER, new SomethingDao(HsqldbConfigurationProvider.getInstance().createDAOConfiguration(), Vertx.vertx()));
+        super(Tables.SOMETHING.SOMEHUGENUMBER, new SomethingDao(HsqldbConfigurationProvider.getInstance().createDAOConfiguration(), HsqldbConfigurationProvider.getInstance().getVertx()));
     }
 
     @BeforeClass
@@ -48,7 +47,7 @@ public class SomethingDaoTest extends ClassicTestBase<Something, Integer, Long, 
         something.setSomejsonarray(new JsonArray().add(1).add(2).add(3));
         something.setSomejsonobject(new JsonObject().put("key", "value"));
         something.setSomesmallnumber((short) random.nextInt(Short.MAX_VALUE));
-        //someBoolean has a default value and does not need to be set
+        something.setSomeboolean(random.nextBoolean());
         something.setSomestring("my_string");
         something.setSometimestamp(LocalDateTime.now());
         return something;

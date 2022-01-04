@@ -52,12 +52,14 @@ public interface ISomethingcomposite extends VertxPojo, Serializable {
     // -------------------------------------------------------------------------
 
     /**
-     * Load data from another generated Record/POJO implementing the common interface ISomethingcomposite
+     * Load data from another generated Record/POJO implementing the common
+     * interface ISomethingcomposite
      */
     public void from(ISomethingcomposite from);
 
     /**
-     * Copy data into another generated Record/POJO implementing the common interface ISomethingcomposite
+     * Copy data into another generated Record/POJO implementing the common
+     * interface ISomethingcomposite
      */
     public <E extends ISomethingcomposite> E into(E into);
 

@@ -501,6 +501,26 @@ public class SomethingRecord extends UpdatableRecordImpl<SomethingRecord> implem
         setSometimestamp(sometimestamp);
     }
 
+    /**
+     * Create a detached, initialised SomethingRecord
+     */
+    public SomethingRecord(generated.classic.reactive.mysql.tables.pojos.Something value) {
+        super(Something.SOMETHING);
+
+        if (value != null) {
+            setSomeid(value.getSomeid());
+            setSomestring(value.getSomestring());
+            setSomehugenumber(value.getSomehugenumber());
+            setSomesmallnumber(value.getSomesmallnumber());
+            setSomeregularnumber(value.getSomeregularnumber());
+            setSomedouble(value.getSomedouble());
+            setSomeenum(value.getSomeenum());
+            setSomejsonobject(value.getSomejsonobject());
+            setSomejsonarray(value.getSomejsonarray());
+            setSometimestamp(value.getSometimestamp());
+        }
+    }
+
         public SomethingRecord(io.vertx.core.json.JsonObject json) {
                 this();
                 fromJson(json);

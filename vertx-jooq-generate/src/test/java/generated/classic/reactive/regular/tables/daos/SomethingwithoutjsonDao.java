@@ -24,8 +24,10 @@ import io.github.jklingsporn.vertx.jooq.classic.reactivepg.ReactiveClassicQueryE
 public class SomethingwithoutjsonDao extends AbstractReactiveVertxDAO<SomethingwithoutjsonRecord, generated.classic.reactive.regular.tables.pojos.Somethingwithoutjson, Integer, Future<List<generated.classic.reactive.regular.tables.pojos.Somethingwithoutjson>>, Future<generated.classic.reactive.regular.tables.pojos.Somethingwithoutjson>, Future<Integer>, Future<Integer>> implements io.github.jklingsporn.vertx.jooq.classic.VertxDAO<SomethingwithoutjsonRecord,generated.classic.reactive.regular.tables.pojos.Somethingwithoutjson,Integer> {
 
         /**
-     * @param configuration Used for rendering, so only SQLDialect must be set and must be one of the POSTGREs types.
-     * @param delegate A configured AsyncSQLClient that is used for query execution
+     * @param configuration Used for rendering, so only SQLDialect must be set
+     * and must be one of the POSTGREs types.
+     *      * @param delegate A configured AsyncSQLClient that is used for query
+     * execution
      */
         public SomethingwithoutjsonDao(Configuration configuration, io.vertx.sqlclient.SqlClient delegate) {
                 super(Somethingwithoutjson.SOMETHINGWITHOUTJSON, generated.classic.reactive.regular.tables.pojos.Somethingwithoutjson.class, new ReactiveClassicQueryExecutor<SomethingwithoutjsonRecord,generated.classic.reactive.regular.tables.pojos.Somethingwithoutjson,Integer>(configuration,delegate,generated.classic.reactive.regular.tables.mappers.RowMappers.getSomethingwithoutjsonMapper()));
@@ -44,7 +46,8 @@ public class SomethingwithoutjsonDao extends AbstractReactiveVertxDAO<Somethingw
         }
 
         /**
-     * Find records that have <code>someString IN (values)</code> asynchronously limited by the given limit
+     * Find records that have <code>someString IN (values)</code> asynchronously
+     * limited by the given limit
      */
         public Future<List<generated.classic.reactive.regular.tables.pojos.Somethingwithoutjson>> findManyBySomestring(Collection<String> values, int limit) {
                 return findManyByCondition(Somethingwithoutjson.SOMETHINGWITHOUTJSON.SOMESTRING.in(values),limit);

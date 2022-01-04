@@ -205,7 +205,7 @@ public class SomethingDaoTest extends ClassicTestBase<Something, Integer, Long, 
                                 .map(toVoid(Assert::assertNull)) //not known because transaction was rolled back
                                 .compose(v -> transactionQE.commit()) //should throw error because the transaction was already rolled back
                                 .otherwise(x -> {
-                                    Assert.assertTrue("Wrong exception. Got: " + x.getMessage(), x.getMessage().contains("Transaction already completed"));
+                                    Assert.assertTrue("Wrong exception. Got: " + x.getMessage(), x.getMessage().contains("Rollback"));
                                     return null;
                                 })
                 ).onComplete(countdownLatchHandler(completionLatch));

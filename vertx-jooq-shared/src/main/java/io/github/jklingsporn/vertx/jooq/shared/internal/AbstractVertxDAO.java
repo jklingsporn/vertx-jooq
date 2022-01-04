@@ -2,6 +2,7 @@ package io.github.jklingsporn.vertx.jooq.shared.internal;
 
 import io.vertx.core.impl.Arguments;
 import org.jooq.*;
+import org.jooq.Record;
 import org.jooq.impl.DSL;
 
 import java.util.*;
@@ -50,17 +51,17 @@ public abstract class AbstractVertxDAO<R extends UpdatableRecord<R>, P, T, FIND_
     public EXECUTE update(P object){
         Objects.requireNonNull(object);
         return queryExecutor().execute(dslContext -> {
-            R record = dslContext.newRecord(getTable(), object);
+            R rec = dslContext.newRecord(getTable(), object);
             Condition where = DSL.trueCondition();
             UniqueKey<R> pk = getTable().getPrimaryKey();
             for (TableField<R,?> tableField : pk.getFields()) {
                 //exclude primary keys from update
-                record.changed(tableField,false);
-                where = where.and(((TableField<R,Object>)tableField).eq(record.get(tableField)));
+                rec.changed(tableField,false);
+                where = where.and(((TableField<R,Object>)tableField).eq(rec.get(tableField)));
             }
             Map<String, Object> valuesToUpdate =
-                    Arrays.stream(record.fields())
-                            .collect(HashMap::new, (m, f) -> m.put(f.getName(), f.getValue(record)), HashMap::putAll);
+                    Arrays.stream(rec.fields())
+                            .collect(HashMap::new, (m, f) -> m.put(f.getName(), f.getValue(rec)), HashMap::putAll);
             return dslContext
                     .update(getTable())
                     .set(valuesToUpdate)

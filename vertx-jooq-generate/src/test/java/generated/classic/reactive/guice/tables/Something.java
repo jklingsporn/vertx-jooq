@@ -22,7 +22,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
-import java.util.Arrays;
 import java.util.List;
 
 import org.jooq.Field;
@@ -181,17 +180,12 @@ public class Something extends TableImpl<SomethingRecord> {
 
     @Override
     public Schema getSchema() {
-        return Vertx.VERTX;
+        return aliased() ? null : Vertx.VERTX;
     }
 
     @Override
     public UniqueKey<SomethingRecord> getPrimaryKey() {
         return Keys.SOMETHING_PKEY;
-    }
-
-    @Override
-    public List<UniqueKey<SomethingRecord>> getKeys() {
-        return Arrays.<UniqueKey<SomethingRecord>>asList(Keys.SOMETHING_PKEY);
     }
 
     @Override
