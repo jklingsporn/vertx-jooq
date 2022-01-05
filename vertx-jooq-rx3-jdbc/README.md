@@ -2,7 +2,7 @@
 ```
 <dependency>
   <groupId>io.github.jklingsporn</groupId>
-  <artifactId>vertx-jooq-classic-jdbc</artifactId>
+  <artifactId>vertx-jooq-rx3-jdbc</artifactId>
   <version>6.4.0</version>
 </dependency>
 ```
@@ -31,7 +31,7 @@ If you are new to jOOQ, I recommend to read the awesome [jOOQ documentation](htt
     </dependency>
     <dependency>
       <groupId>io.github.jklingsporn</groupId>
-      <artifactId>vertx-jooq-classic-jdbc</artifactId>
+      <artifactId>vertx-jooq-rx3-jdbc</artifactId>
       <version>6.4.0</version>
     </dependency>
   </dependencies>
@@ -78,8 +78,8 @@ If you are new to jOOQ, I recommend to read the awesome [jOOQ documentation](htt
 
               <!-- Generator parameters -->
               <generator>
-                  <name>io.github.jklingsporn.vertx.jooq.generate.classic.ClassicJDBCVertxGenerator</name>
-              		<!-- use 'io.github.jklingsporn.vertx.jooq.generate.classic.ClassicJDBCGuiceVertxGenerator' to enable Guice DI -->
+                  <name>io.github.jklingsporn.vertx.jooq.generate.rx3.RXJDBCVertxGenerator</name>
+              		<!-- use 'io.github.jklingsporn.vertx.jooq.generate.rx3.RXJDBCGuiceVertxGenerator' to enable Guice DI -->
                   <database>
                       <name>org.jooq.meta.mysql.MySQLDatabase</name>
                       <includes>.*</includes>
@@ -162,7 +162,7 @@ version 'your project version'
 apply plugin: 'java'
 
 dependencies {
-    compile "io.github.jklingsporn:vertx-jooq-classic-jdbc:$vertx_jooq_version"
+    compile "io.github.jklingsporn:vertx-jooq-rx3-jdbc:$vertx_jooq_version"
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
 
@@ -178,7 +178,7 @@ task jooqGenerate {
                 password('YOUR_PASSWORD')
             }
             generator {
-                name('io.github.jklingsporn.vertx.jooq.generate.classic.ClassicJDBCVertxGenerator')
+                name('io.github.jklingsporn.vertx.jooq.generate.rx3.RXJDBCVertxGenerator')
                 database {
                     name('org.jooq.meta.postgres.PostgresDatabase')
                     include('.*')
@@ -231,13 +231,14 @@ SomethingDao dao = new SomethingDao(configuration,vertx);
 
 //fetch something with ID 123...
 dao.findOneById(123)
-    .onComplete(res->{
-    		if(res.succeeded()){
-        		vertx.eventBus().send("sendSomething", res.result().toJson());
-    		}else{
-    				System.err.println("Something failed badly: "+res.cause().getMessage());
-    		}
-    });
+    .doOnEvent((opt,x)->{
+				if(x==null){
+    				//findOne returns Optional for RX
+						opt.ifPresent(something -> vertx.eventBus().send("sendSomething",something.toJson()));
+				}else{
+						System.err.println("Something failed badly: "+x.getMessage());
+				}
+		});
 
 //maybe consume it in another verticle
 vertx.eventBus().<JsonObject>consumer("sendSomething", jsonEvent->{
@@ -247,12 +248,12 @@ vertx.eventBus().<JsonObject>consumer("sendSomething", jsonEvent->{
     //... change some values
     something.setSomeregularnumber(456);
     //... and update it into the DB
-    Future<Integer> updatedFuture = dao.update(something);
+    Single<Integer> updatedFuture = dao.update(something);
 });
 
 //or do you prefer writing your own type-safe SQL?
-JDBCClassicGenericQueryExecutor queryExecutor = new JDBCClassicGenericQueryExecutor(configuration,vertx);
-Future<Integer> updatedCustom = queryExecutor.execute(dslContext ->
+JDBCRXGenericQueryExecutor queryExecutor = new JDBCRXGenericQueryExecutor(configuration,vertx);
+Single<Integer> updatedCustom = queryExecutor.execute(dslContext ->
 				dslContext
 				.update(Tables.SOMETHING)
 				.set(Tables.SOMETHING.SOMEREGULARNUMBER,456)
@@ -261,13 +262,13 @@ Future<Integer> updatedCustom = queryExecutor.execute(dslContext ->
 );
 
 //check for completion
-updatedCustom.onComplete(res->{
-		if(res.succeeded()){
-				System.out.println("Rows updated: "+res.result());
-		}else{
-				System.err.println("Something failed badly: "+res.cause().getMessage());
-		}
-});
+updatedCustom.doOnEvent((updated,x)->{
+				if(x==null){
+						System.out.println("Rows updated: "+updated);
+				}else{
+						System.err.println("Something failed badly: "+x.getMessage());
+				}
+		 });
 ```
 
 # known issues

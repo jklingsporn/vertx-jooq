@@ -27,7 +27,7 @@ If you are new to jOOQ, I recommend to read the awesome [jOOQ documentation](htt
     <dependency>
       <groupId>org.jooq</groupId>
       <artifactId>jooq</artifactId>
-      <version>3.13.3</version>
+      <version>3.15.5</version>
     </dependency>
     <dependency>
       <groupId>io.github.jklingsporn</groupId>
@@ -41,7 +41,7 @@ If you are new to jOOQ, I recommend to read the awesome [jOOQ documentation](htt
           <!-- Specify the maven code generator plugin -->
           <groupId>org.jooq</groupId>
           <artifactId>jooq-codegen-maven</artifactId>
-          <version>3.13.3</version>
+          <version>3.15.5</version>
 
           <!-- The plugin should hook into the generate goal -->
           <executions>
@@ -124,7 +124,7 @@ The following code-snippet can be copy-pasted into your `build.gradle` to genera
 ```gradle
 buildscript {
     ext {
-        vertx_jooq_version = '5.0.0T'
+        vertx_jooq_version = '6.4.0'
         postgresql_version = '42.2.2'
     }
     repositories {
@@ -156,7 +156,7 @@ task jooqGenerate {
     doLast() {
         def writer = new StringWriter()
         new MarkupBuilder(writer)
-                .configuration('xmlns': 'http://www.jooq.org/xsd/jooq-codegen-3.11.0.xsd') {
+                .configuration('xmlns': 'http://www.jooq.org/xsd/jooq-codegen-3.15.5.xsd') {
             jdbc {
                 driver('org.postgresql.Driver')
                 url('jdbc:postgresql://IP:PORT/DATABASE')
