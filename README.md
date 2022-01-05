@@ -16,9 +16,9 @@ driver of your choice.
 ![What do you want](https://media.giphy.com/media/E87jjnSCANThe/giphy.gif)
 
 Before you start generating code using vertx-jooq, you have to answer these questions:
-- What API do you want to use? There are two options:
+- What API do you want to use? There are three options:
   - a `io.vertx.core.Future`-based API. This is `vertx-jooq-classic`.
-  - a [rxjava2](https://github.com/ReactiveX/RxJava) based API. This is `vertx-jooq-rx`.
+  - a [rxjava2](https://github.com/ReactiveX/RxJava/tree/2.x) based API. This is `vertx-jooq-rx`.
   - a [rxjava3](https://github.com/ReactiveX/RxJava) based API. This is `vertx-jooq-rx3`.
 - How do you want to communicate with the database? There are two options:
   - Using good old JDBC, check for the modules with `-jdbc` suffix.
@@ -115,6 +115,10 @@ Increase your file limits. Unfortunately the solution differs by each OS version
 ## is vertx-jooq compatible with Java 8? 
 Starting from `6.4.0` on vertx-jooq implicitly requires Java 11, as this is the minimum required version by the non-commercial version of jOOQ `3.15`. 
 If you're stuck with Java 8, the latest version you can use is `6.3.0`. 
+
+## are you sure this works?
+Yes! There are [many integration tests](https://github.com/jklingsporn/vertx-jooq/tree/master/vertx-jooq-generate/src/test/java/io/github/jklingsporn/vertx/jooq/generate) that cover most usecases. 
+Check them out if you're interested.  
 
 # disclaimer
 This library comes without any warranty - just take it or leave it. Also, the author is neither connected to the
