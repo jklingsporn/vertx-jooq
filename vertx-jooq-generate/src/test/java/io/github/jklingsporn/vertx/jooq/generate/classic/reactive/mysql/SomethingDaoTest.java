@@ -13,7 +13,6 @@ import io.vertx.mysqlclient.MySQLException;
 import org.jooq.Condition;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.math.BigDecimal;
@@ -113,7 +112,6 @@ public class SomethingDaoTest extends ClassicTestBase<Something, Integer, Long, 
     //for now the tests have to be located in this class as transactions are only supported by the reactive driver
 
     @Test
-    @Ignore
     public void manualTransactionProcessingShouldSucceed() throws InterruptedException {
         Something pojo = createWithId();
         CountDownLatch completionLatch = new CountDownLatch(1);
@@ -178,7 +176,6 @@ public class SomethingDaoTest extends ClassicTestBase<Something, Integer, Long, 
     }
 
     @Test
-    @Ignore
     public void illegalQueriesShouldRollbackTransaction() throws InterruptedException {
         Something pojo = createWithId();
         CountDownLatch completionLatch = new CountDownLatch(1);
@@ -204,7 +201,6 @@ public class SomethingDaoTest extends ClassicTestBase<Something, Integer, Long, 
     }
 
     @Test
-    @Ignore
     public void rollbackShouldNotExecuteTransactionalQueries() throws InterruptedException {
         Something pojo = createWithId();
         CountDownLatch completionLatch = new CountDownLatch(1);
@@ -219,7 +215,6 @@ public class SomethingDaoTest extends ClassicTestBase<Something, Integer, Long, 
     }
 
     @Test
-    @Ignore
     public void convenientTransactionShouldSucceed() throws InterruptedException {
         Something pojo = createWithId();
         CountDownLatch completionLatch = new CountDownLatch(1);
