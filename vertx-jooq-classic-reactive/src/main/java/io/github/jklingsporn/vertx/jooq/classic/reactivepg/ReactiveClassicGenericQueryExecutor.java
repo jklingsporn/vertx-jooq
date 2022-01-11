@@ -113,12 +113,13 @@ public class ReactiveClassicGenericQueryExecutor extends AbstractReactiveQueryEx
 	    if(transaction==null){
 		    return Future.failedFuture(new IllegalStateException("Not in transaction"));
 	    }
-	    return transaction.rollback();
+	    return transaction.rollback().eventually(v->delegate.close());
     }
 
     /**
      * Convenience method to perform multiple calls on a transactional QueryExecutor, committing the transaction and
-     * returning a result.
+     * returning a result. In case of errors, the transaction will automatically be rolled back and the error is
+     * represented by the returned <code>Future</code>.
      * @param transaction your code using a transactional QueryExecutor.
      *                    <pre>
      *                    {@code
@@ -138,8 +139,21 @@ public class ReactiveClassicGenericQueryExecutor extends AbstractReactiveQueryEx
     public <U> Future<U> transaction(Function<ReactiveClassicGenericQueryExecutor, Future<U>> transaction){
         return beginTransaction()
                 .compose(queryExecutor -> transaction.apply(queryExecutor) //perform user tasks
-                        .compose(res -> queryExecutor.commit() //commit the transaction
-                                .map(v -> res))); //and return the result
+                        .compose(
+                                //commit the transaction if everything went fine and return the result
+                                res -> queryExecutor.commit().map(v -> res),
+                                //if not already rolled back, rollback the transaction and return the causing error
+                                err -> {
+                                    if (err instanceof TransactionRollbackException) {
+                                        return Future.failedFuture(err);
+                                    } else {
+                                        return queryExecutor
+                                                .rollback()
+                                                .compose(v -> Future.failedFuture(err), failure -> Future.failedFuture(err));
+                                    }
+                                }
+                        )
+                );
     }
 
     /**

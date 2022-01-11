@@ -13,6 +13,7 @@ import io.vertx.core.Handler;
 import io.vertx.rxjava3.sqlclient.Transaction;
 import io.vertx.rxjava3.sqlclient.*;
 import io.vertx.sqlclient.Row;
+import io.vertx.sqlclient.TransactionRollbackException;
 import org.jooq.Query;
 import org.jooq.Record;
 import org.jooq.*;
@@ -103,7 +104,7 @@ public class ReactiveRXGenericQueryExecutor extends AbstractReactiveQueryExecuto
      */
     public Single<? extends ReactiveRXGenericQueryExecutor> beginTransaction(){
         if(transaction != null){
-            throw new IllegalStateException("Already in transaction");
+            return Single.error(new IllegalStateException("Already in transaction"));
         }
 
         Pool pool = (Pool) this.delegate;
@@ -117,26 +118,32 @@ public class ReactiveRXGenericQueryExecutor extends AbstractReactiveQueryExecuto
 
     /**
      * Commits a transaction.
-     * @return a <code>Completable</code> that completes when the transaction has been committed.
-     * @throws IllegalStateException if not called <code>beginTransaction</code> before.
+     * @return a <code>Completable</code> that completes when the transaction has been committed or fails if
+     * the user hasn't called <code>beginTransaction</code> before.
+     * @since 6.4.1 This method no longer throws an IllegalStateException.
      */
     public Completable commit(){
         if(transaction==null){
-            throw new IllegalStateException("Not in transaction");
+            return Completable.error(new IllegalStateException("Not in transaction"));
         }
-        return transaction.rxCommit();
+        return transaction.rxCommit()
+                .andThen(Completable.defer(delegate::close))
+                .onErrorResumeNext(x-> delegate.close().andThen(Completable.error(x)));
     }
 
     /**
      * Rolls a transaction back.
-     * @return a <code>Completable</code> that completes when the transaction has been rolled back.
-     * @throws IllegalStateException if not called <code>beginTransaction</code> before.
+     * @return a <code>Completable</code> that completes when the transaction has been rolled back
+     * or fails if the user hasn't called <code>beginTransaction</code> before.
+     * @since 6.4.1 This method no longer throws an IllegalStateException.
      */
     public Completable rollback(){
         if(transaction==null){
-            throw new IllegalStateException("Not in transaction");
+            return Completable.error(new IllegalStateException("Not in transaction"));
         }
-        return transaction.rxRollback();
+        return transaction.rxRollback()
+                .andThen(Completable.defer(delegate::close))
+                .onErrorResumeNext(x-> delegate.close().andThen(Completable.error(x)));
     }
 
     /**
@@ -163,7 +170,21 @@ public class ReactiveRXGenericQueryExecutor extends AbstractReactiveQueryExecuto
                 .toMaybe()
                 .flatMap(queryExecutor -> transaction.apply(queryExecutor) //perform user tasks
                         .flatMap(res -> queryExecutor.commit() //commit the transaction
-                                .andThen(Maybe.just(res)))) //and return the result
+                                .andThen(Maybe.just(res)))  //and return the result
+                        .onErrorResumeNext(err -> {
+                            //if not already rolled back, rollback the transaction and return the causing error
+                            if (err instanceof TransactionRollbackException) {
+                                return Maybe.<U>error(err);
+                            } else {
+                                return queryExecutor
+                                        .rollback()
+                                        .andThen(Completable.defer(()->Completable.<U>error(err)))
+                                        .<U>toMaybe()
+                                        .onErrorResumeNext(rbError -> Maybe.error(err))
+                                        ;
+                            }
+                        })
+                )
                 ;
     }
 

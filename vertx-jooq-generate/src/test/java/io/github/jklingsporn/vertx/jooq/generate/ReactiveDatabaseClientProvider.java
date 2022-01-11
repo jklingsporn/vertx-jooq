@@ -11,6 +11,7 @@ import io.vertx.sqlclient.SqlClient;
  */
 public class ReactiveDatabaseClientProvider {
 
+    public static int POOL_SIZE = 8;
     private static ReactiveDatabaseClientProvider INSTANCE;
     public static ReactiveDatabaseClientProvider getInstance() {
         return INSTANCE == null ? INSTANCE = new ReactiveDatabaseClientProvider() : INSTANCE;
@@ -23,9 +24,9 @@ public class ReactiveDatabaseClientProvider {
 
     private ReactiveDatabaseClientProvider() {
         this.vertx = Vertx.vertx();
-        this.pgClient = PgPool.pool(vertx, getOptions(), new PoolOptions().setMaxSize(8));
-        this.rxPgClient = new io.vertx.reactivex.sqlclient.Pool(PgPool.pool(vertx, getOptions(), new PoolOptions().setMaxSize(8)));
-        this.rx3PgClient = new io.vertx.rxjava3.sqlclient.Pool(PgPool.pool(vertx, getOptions(), new PoolOptions().setMaxSize(8)));
+        this.pgClient = PgPool.pool(vertx, getOptions(), new PoolOptions().setMaxSize(POOL_SIZE));
+        this.rxPgClient = new io.vertx.reactivex.sqlclient.Pool(PgPool.pool(vertx, getOptions(), new PoolOptions().setMaxSize(POOL_SIZE)));
+        this.rx3PgClient = new io.vertx.rxjava3.sqlclient.Pool(PgPool.pool(vertx, getOptions(), new PoolOptions().setMaxSize(POOL_SIZE)));
     }
 
     public SqlClient getClient() {

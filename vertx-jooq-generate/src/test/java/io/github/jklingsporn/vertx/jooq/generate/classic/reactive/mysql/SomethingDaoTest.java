@@ -5,11 +5,15 @@ import generated.classic.reactive.mysql.tables.daos.SomethingDao;
 import generated.classic.reactive.mysql.tables.pojos.Something;
 import io.github.jklingsporn.vertx.jooq.classic.reactivepg.ReactiveClassicQueryExecutor;
 import io.github.jklingsporn.vertx.jooq.generate.MySQLConfigurationProvider;
+import io.github.jklingsporn.vertx.jooq.generate.ReactiveDatabaseClientProvider;
 import io.github.jklingsporn.vertx.jooq.generate.ReactiveMysqlDatabaseClientProvider;
 import io.github.jklingsporn.vertx.jooq.generate.classic.ClassicTestBase;
+import io.vertx.core.Future;
+import io.vertx.core.Promise;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.mysqlclient.MySQLException;
+import io.vertx.sqlclient.Cursor;
 import org.jooq.Condition;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -17,8 +21,10 @@ import org.junit.Test;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Random;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Created by jensklingsporn on 02.11.16.
@@ -156,22 +162,14 @@ public class SomethingDaoTest extends ClassicTestBase<Something, Integer, Long, 
     @Test
     public void commitTransactionCanNotBeCalledOutsideTransaction(){
         CountDownLatch latch = new CountDownLatch(1);
-//        try{
-            dao.queryExecutor().commit().onFailure(t->latch.countDown());
-//        }catch (IllegalStateException x){
-//            latch.countDown();
-//        }
+        dao.queryExecutor().commit().onFailure(t->latch.countDown());
         await(latch);
     }
 
     @Test
     public void rollbackTransactionCanNotBeCalledOutsideTransaction(){
         CountDownLatch latch = new CountDownLatch(1);
-//        try{
-            dao.queryExecutor().rollback().onFailure(t->latch.countDown());
-//        }catch (IllegalStateException x){
-//            latch.countDown();
-//        }
+        dao.queryExecutor().rollback().onFailure(t->latch.countDown());
         await(latch);
     }
 
@@ -237,6 +235,112 @@ public class SomethingDaoTest extends ClassicTestBase<Something, Integer, Long, 
                 .map(toVoid(deleted -> Assert.assertEquals(1, deleted.intValue())))
                 .onComplete(countdownLatchHandler(completionLatch)
                 );
+        await(completionLatch);
+    }
+
+    @Test
+    public void rollbackTransactionsShouldReturnConnectionToPool(){
+        Something pojo = createWithId();
+        CountDownLatch completionLatch = new CountDownLatch(2);
+        dao.insert(pojo)
+                .map(toVoid(inserted -> Assert.assertEquals(1, inserted.intValue())))
+                .onSuccess(v->completionLatch.countDown())
+                .compose(v->{
+                    /*
+                     * Try to insert the same object inside a transaction. Prior to the fix for
+                     * https://github.com/jklingsporn/vertx-jooq/issues/197 this test should not succeed
+                     * and the connection pool will exhaust
+                     */
+                    Future<Void> result = Future.succeededFuture();
+                    int max = ReactiveDatabaseClientProvider.POOL_SIZE + 1;
+                    for (int i = 0; i < max; i++) {
+                        result = result.compose(v2-> dao.queryExecutor().transaction(
+                                transactionQE -> transactionQE.execute(
+                                        //this should fail
+                                        dslContext -> dslContext.insertInto(dao.getTable()).set(dslContext.newRecord(dao.getTable(), pojo))
+                                ))).otherwise(x -> {
+                            Assert.assertTrue("Wrong exception. Got: " + x.getMessage(), x.getMessage().toLowerCase().contains("duplicate"));
+                            return null;
+                        }).mapEmpty();
+                    }
+                    return result;
+                }).onComplete(countdownLatchHandler(completionLatch))
+        ;
+        await(completionLatch);
+    }
+
+    @Test
+    public void withCursorShouldSucceed(){
+        Something pojo1 = createWithId();
+        Something pojo2 = createWithId();
+        CountDownLatch completionLatch = new CountDownLatch(1);
+        dao
+                .insert(Arrays.asList(pojo1,pojo2))
+                .compose(res -> dao.queryExecutor()
+                        .withCursor(
+                                dslContext -> dslContext.selectFrom(generated.classic.reactive.mysql.Tables.SOMETHING),
+                                cursor -> cursor
+                                        .read(2)
+                                        .onSuccess(rs -> {
+                                            Assert.assertEquals(2,rs.size());
+                                        })
+                                        .onFailure(x -> Assert.fail(x.getMessage()))
+                        )
+                )
+                .compose(v -> dao.deleteByIds(Arrays.asList(pojo1.getSomeid(),pojo2.getSomeid())))
+                .onComplete(countdownLatchHandler(completionLatch));
+        await(completionLatch);
+    }
+
+    @Test
+    public void withCursorShouldCloseResources(){
+        CountDownLatch completionLatch = new CountDownLatch(1);
+        AtomicReference<Cursor> ref = new AtomicReference<>();
+        dao.queryExecutor()
+                .withCursor(
+                        dslContext -> dslContext.selectFrom(generated.classic.reactive.mysql.Tables.SOMETHING),
+                        cursor -> {
+                            ref.set(cursor);
+                            return cursor
+                                    .read(1)
+                                    .onSuccess(rs -> {
+                                        Assert.assertEquals(0,rs.size());
+                                    })
+                                    .onFailure(x -> Assert.fail(x.getMessage()));
+                        }
+                )
+                .onSuccess(h -> Assert.assertTrue(ref.get().isClosed()))
+                .onComplete(countdownLatchHandler(completionLatch));
+        await(completionLatch);
+    }
+
+    @Test
+    public void withRowStreamShouldSucceed(){
+        Something pojo1 = createWithId();
+        Something pojo2 = createWithId();
+        CountDownLatch completionLatch = new CountDownLatch(1);
+        dao
+                .insert(Arrays.asList(pojo1,pojo2))
+                .compose(res -> dao.queryExecutor()
+                        .withRowStream(
+                                dslContext -> dslContext.selectFrom(generated.classic.reactive.mysql.Tables.SOMETHING),
+                                stream -> {
+                                    CountDownLatch streamLatch = new CountDownLatch(2);
+                                    Promise<Void> completed = Promise.promise();
+                                    stream.handler(row -> {
+                                        streamLatch.countDown();
+                                        if(streamLatch.getCount() == 0){
+                                            completed.complete();
+                                        }
+                                    });
+                                    stream.exceptionHandler(completed::fail);
+                                    return completed.future();
+                                },
+                                2
+                        )
+                )
+                .compose(v -> dao.deleteByIds(Arrays.asList(pojo1.getSomeid(),pojo2.getSomeid())))
+                .onComplete(countdownLatchHandler(completionLatch));
         await(completionLatch);
     }
 

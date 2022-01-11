@@ -11,6 +11,8 @@ import io.github.jklingsporn.vertx.jooq.generate.rx3.RX3TestBase;
 import io.github.jklingsporn.vertx.jooq.rx3.reactivepg.ReactiveRXGenericQueryExecutor;
 import io.github.jklingsporn.vertx.jooq.rx3.reactivepg.ReactiveRXQueryExecutor;
 import io.reactivex.rxjava3.core.Completable;
+import io.reactivex.rxjava3.core.Maybe;
+import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.internal.functions.Functions;
 import io.vertx.core.json.JsonArray;
@@ -148,41 +150,32 @@ public class SomethingDaoTest extends RX3TestBase<Something, Integer, Long, Some
     @Test
     public void beginTransactionCanNotBeCalledInTransaction(){
         CountDownLatch latch = new CountDownLatch(1);
-        Single<ReactiveRXQueryExecutor<SomethingRecord, Something, Integer>> transaction = dao.queryExecutor()
-                .beginTransaction();
-        transaction
-                    .flatMap(transactionQE -> {
-                        try{
-                            Single<ReactiveRXQueryExecutor<SomethingRecord, Something, Integer>> shouldFail = transactionQE.beginTransaction();
-                            Assert.fail("Should not succeed");
-                            return shouldFail;
-                        }catch (IllegalStateException e){
-                            return transactionQE.rollback().toSingleDefault(transaction);
-                        }
-                    })
-                .subscribe(countdownLatchHandler(latch));
+        dao.queryExecutor()
+                .beginTransaction()
+                .flatMap(ReactiveRXQueryExecutor::beginTransaction)
+                .subscribe(res-> Assert.fail("should not succeed"), ex-> latch.countDown());
         await(latch);
     }
 
     @Test
     public void commitTransactionCanNotBeCalledOutsideTransaction(){
         CountDownLatch latch = new CountDownLatch(1);
-        try{
-            dao.queryExecutor().commit();
-        }catch (IllegalStateException x){
-            latch.countDown();
-        }
+        dao
+                .queryExecutor()
+                .commit()
+                .subscribe(()->Assert.fail("should not succeed"), ex-> latch.countDown())
+        ;
         await(latch);
     }
 
     @Test
     public void rollbackTransactionCanNotBeCalledOutsideTransaction(){
         CountDownLatch latch = new CountDownLatch(1);
-        try{
-            dao.queryExecutor().rollback();
-        }catch (IllegalStateException x){
-            latch.countDown();
-        }
+        dao
+                .queryExecutor()
+                .rollback()
+                .subscribe(()->Assert.fail("should not succeed"), ex-> latch.countDown())
+        ;
         await(latch);
     }
 
@@ -256,6 +249,49 @@ public class SomethingDaoTest extends RX3TestBase<Something, Integer, Long, Some
                 .doOnSuccess(deleted -> Assert.assertEquals(1, deleted.intValue()))
                 .toSingle()
                 .subscribe(countdownLatchHandler(completionLatch));
+        await(completionLatch);
+    }
+
+    @Test
+    public void rollbackTransactionsShouldReturnConnectionToPool(){
+        Something pojo = createWithId();
+        //we try to create one more connection than available in the pool to ensure that connections are properly returned on rollback
+        //additionally we count down on completion
+        CountDownLatch completionLatch = new CountDownLatch(ReactiveDatabaseClientProvider.POOL_SIZE+2);
+        dao.insert(pojo)
+                .doOnSuccess(inserted -> Assert.assertEquals(1, inserted.intValue()))
+                .flatMapObservable(v->{
+                    /*
+                     * Try to insert the same object inside a transaction. Prior to the fix for
+                     * https://github.com/jklingsporn/vertx-jooq/issues/197 this test should not succeed
+                     * and the connection pool will exhaust
+                     */
+                    return Observable
+                            .range(1,ReactiveDatabaseClientProvider.POOL_SIZE+1)
+                            .flatMapMaybe(i -> dao.queryExecutor().transaction(
+                                    transactionQE -> transactionQE
+                                            .execute(dslContext -> dslContext.insertInto(dao.getTable()).set(dslContext.newRecord(dao.getTable(), pojo))).toMaybe()
+                                    ).doOnSuccess(res -> Assert.fail("Should not succeed"))
+                                    .onErrorResumeNext(x -> {
+                                        completionLatch.countDown();
+                                        Assert.assertTrue("Wrong exception. Got: " + x.getMessage(), x.getMessage().toLowerCase().contains("duplicate"));
+                                        return Maybe.empty();
+                                    })
+                            );
+                })
+                .subscribe(
+                        i -> {
+                            Assert.fail("shouldn't emit item");
+                        },
+                        x-> {
+                            x.printStackTrace();
+                            Assert.fail(x.getMessage());
+                        },
+                        ()->{
+                            completionLatch.countDown();
+                        }
+                        )
+        ;
         await(completionLatch);
     }
 
