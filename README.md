@@ -3,13 +3,12 @@ A [jOOQ](http://www.jooq.org/)-CodeGenerator to create [vertx](http://vertx.io/)
 Perform all CRUD-operations asynchronously and convert your POJOs from/into a `io.vertx.core.json.JsonObject` using the API and
 driver of your choice.
 
-## latest release 6.4.0
+## latest release 6.4.1
 
-- Added [rxjava3 support](https://github.com/jklingsporn/vertx-jooq/pull/191) via dedicated vertx-jooq-rx3-reactive module.
-- Added [BigDecimal support](https://github.com/jklingsporn/vertx-jooq/pull/195).
-- **Breaking change**: Minimum required Java version changed from 8 to 11 (required by latest jOOQ version). 
-- Bumped Vert.x version to 4.2.3
-- Bumped jOOQ version to 3.15.5
+- Fix [Reactive QueryExecutor transaction rollback fails to close connection](https://github.com/jklingsporn/vertx-jooq/issues/197).
+- Make `commit()` and `rollback()` return a failed `Future` / `Completable` instead of throwing an `Exception` in case of failure
+for the reactive QueryExecutors.
+- All other changes from 6.4.0 can be found [here](https://github.com/jklingsporn/vertx-jooq/releases/tag/6.4.0).
 
 
 ## different needs, different apis
