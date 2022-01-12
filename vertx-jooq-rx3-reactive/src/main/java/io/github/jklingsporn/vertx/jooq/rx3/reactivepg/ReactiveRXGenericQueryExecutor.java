@@ -106,6 +106,9 @@ public class ReactiveRXGenericQueryExecutor extends AbstractReactiveQueryExecuto
      * or <code>rollback</code> on the QueryExecutor returned.
      */
     public Single<? extends ReactiveRXGenericQueryExecutor> beginTransaction(){
+        if(transaction != null){
+            return Single.error(new IllegalStateException("Already in transaction"));
+        }
         return delegateAsPool()
                 .flatMap(Pool::rxGetConnection)
                 .flatMap(conn->conn.rxBegin().map(newInstance(conn)));

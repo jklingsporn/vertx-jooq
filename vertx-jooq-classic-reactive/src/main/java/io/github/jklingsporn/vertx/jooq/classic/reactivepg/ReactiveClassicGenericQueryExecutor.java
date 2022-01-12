@@ -80,12 +80,9 @@ public class ReactiveClassicGenericQueryExecutor extends AbstractReactiveQueryEx
         if(transaction!=null){
             return Future.failedFuture(new IllegalStateException("Already in transaction"));
         }
-        if (!(delegate instanceof Pool)) {
-           return Future.failedFuture(new IllegalStateException("pool not given"));
-        }
-        Pool pool = (Pool)delegate;
-        return pool.getConnection()
-            .compose(conn-> conn.begin().map(newInstance(conn)));
+        return delegateAsPool()
+                .compose(Pool::getConnection)
+                .compose(conn-> conn.begin().map(newInstance(conn)));
     }
 
     protected Function<Transaction, ? extends ReactiveClassicGenericQueryExecutor> newInstance(SqlClient connection) {
@@ -179,15 +176,16 @@ public class ReactiveClassicGenericQueryExecutor extends AbstractReactiveQueryEx
      */
     public <T> Future<Void> withCursor(Function<DSLContext, ? extends Query> queryFunction, Function<Cursor,Future<T>> cursorFunction){
         Query query = createQuery(queryFunction);
-        return ((Pool)delegate).withTransaction(
-                sqlConnection -> sqlConnection
-                    .prepare(toPreparedQuery(query))
-                    .map(PreparedStatement::cursor)
-                    .compose(cursor -> cursorFunction
+        return delegateAsPool()
+                .compose(pool->pool.withTransaction(
+                    sqlConnection -> sqlConnection
+                        .prepare(toPreparedQuery(query))
+                        .map(PreparedStatement::cursor)
+                        .compose(cursor -> cursorFunction
                             .apply(cursor)
                             .transform(x -> cursor.close())
                     )
-                );
+                ));
     }
 
     /**
@@ -199,15 +197,24 @@ public class ReactiveClassicGenericQueryExecutor extends AbstractReactiveQueryEx
      */
     public <T> Future<Void> withRowStream(Function<DSLContext, ? extends Query> queryFunction, Function<RowStream<Row>,Future<T>> streamFunction, int fetchSize){
         Query query = createQuery(queryFunction);
-        return ((Pool)delegate).withTransaction(
-                sqlConnection -> sqlConnection
-                        .prepare(toPreparedQuery(query))
-                        .map(ps -> ps.createStream(fetchSize))
-                        .compose(rowStream -> streamFunction
-                                .apply(rowStream)
-                                .transform(x -> rowStream.close())
-                        )
-        );
+        return delegateAsPool()
+                .compose(pool->pool.withTransaction(
+                    sqlConnection -> sqlConnection
+                            .prepare(toPreparedQuery(query))
+                            .map(ps -> ps.createStream(fetchSize))
+                            .compose(rowStream -> streamFunction
+                                    .apply(rowStream)
+                                    .transform(x -> rowStream.close())
+                            )
+        ));
+    }
+
+    protected Future<Pool> delegateAsPool(){
+        if(!(delegate instanceof Pool)){
+            return Future.failedFuture(new IllegalStateException("delegate must be an instance of Pool. Are you calling from inside a transaction?"));
+        }
+        Pool pool = (Pool) this.delegate;
+        return Future.succeededFuture(pool);
     }
 
 
