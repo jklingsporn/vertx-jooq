@@ -13,7 +13,6 @@ import io.vertx.core.Handler;
 import io.vertx.reactivex.sqlclient.Transaction;
 import io.vertx.reactivex.sqlclient.*;
 import io.vertx.sqlclient.Row;
-import io.vertx.sqlclient.TransactionRollbackException;
 import org.jooq.Query;
 import org.jooq.Record;
 import org.jooq.*;
@@ -107,13 +106,9 @@ public class ReactiveRXGenericQueryExecutor extends AbstractReactiveQueryExecuto
      * or <code>rollback</code> on the QueryExecutor returned.
      */
     public Single<? extends ReactiveRXGenericQueryExecutor> beginTransaction(){
-        if(transaction != null){
-            return Single.error(new IllegalStateException("Already in transaction"));
-        }
-
-        Pool pool = (Pool) this.delegate;
-        return pool.rxGetConnection()
-            .flatMap(conn->conn.rxBegin().map(newInstance(conn)));
+        return delegateAsPool()
+                .flatMap(Pool::rxGetConnection)
+                .flatMap(conn->conn.rxBegin().map(newInstance(conn)));
     }
 
     protected io.reactivex.functions.Function<Transaction, ? extends ReactiveRXGenericQueryExecutor> newInstance(SqlConnection conn) {
@@ -170,26 +165,14 @@ public class ReactiveRXGenericQueryExecutor extends AbstractReactiveQueryExecuto
      * @return the result of the transaction.
      */
     public <U> Maybe<U> transaction(io.reactivex.functions.Function<ReactiveRXGenericQueryExecutor, Maybe<U>> transaction){
-        return beginTransaction()
-                .toMaybe()
-                .flatMap(queryExecutor -> transaction.apply(queryExecutor) //perform user tasks
-                        .flatMap(res -> queryExecutor.commit() //commit the transaction
-                                .andThen(Maybe.just(res)))  //and return the result
-                        .onErrorResumeNext(err -> {
-                            //if not already rolled back, rollback the transaction and return the causing error
-                            if (err instanceof TransactionRollbackException) {
-                                return Maybe.<U>error(err);
-                            } else {
-                                return queryExecutor
-                                        .rollback()
-                                        .andThen(Completable.defer(()->Completable.<U>error(err)))
-                                        .onErrorResumeNext(rbError -> Completable.<U>error(err))
-                                        .toMaybe()
-                                        ;
-                            }
-                        })
-                )
-                ;
+        return delegateAsPool()
+                .flatMapMaybe(pool -> pool.rxWithTransaction((io.reactivex.functions.Function<SqlConnection, Maybe<U>>)  sqlConnection -> {
+                    try {
+                        return transaction.apply(new ReactiveRXGenericQueryExecutor(configuration(), sqlConnection));
+                    } catch (Throwable e) {
+                        return Maybe.error(e);
+                    }
+                }));
     }
 
     @Override
@@ -245,7 +228,8 @@ public class ReactiveRXGenericQueryExecutor extends AbstractReactiveQueryExecuto
                                                                        Handler<AsyncResult<Void>> commitHandler,
                                                                        Handler<AsyncResult<Void>> closeHandler){
         Query query = createQuery(queryFunction);
-        return ((Pool) delegate).rxGetConnection()
+        return delegateAsPool()
+                .flatMap(Pool::rxGetConnection)
                 .flatMapPublisher(conn -> conn
                         .rxBegin()
                         .flatMapPublisher(tx ->
@@ -256,5 +240,13 @@ public class ReactiveRXGenericQueryExecutor extends AbstractReactiveQueryExecuto
                                         .doAfterTerminate(() -> conn.close(closeHandler))
                         )
                 );
+    }
+
+    protected Single<Pool> delegateAsPool(){
+        if(!(delegate instanceof Pool)){
+            return Single.error(new IllegalStateException("delegate must be an instance of Pool. Are you calling from inside a transaction?"));
+        }
+        Pool pool = (Pool) this.delegate;
+        return Single.just(pool);
     }
 }
