@@ -91,10 +91,14 @@ public class ReactiveRXGenericQueryExecutor extends AbstractReactiveQueryExecuto
     @Override
     @SuppressWarnings("unchecked")
     public <R extends Record> Single<QueryResult> query(Function<DSLContext, ? extends ResultQuery<R>> queryFunction) {
-        Query query = createQuery(queryFunction);
-        log(query);
-        Single<RowSet<io.vertx.rxjava3.sqlclient.Row>> rowSingle = delegate.preparedQuery(toPreparedQuery(query)).rxExecute(rxGetBindValues(query));
-        return rowSingle.map(RxReactiveQueryResult::new);
+        try{
+            Query query = createQuery(queryFunction);
+            log(query);
+            Single<RowSet<io.vertx.rxjava3.sqlclient.Row>> rowSingle = delegate.preparedQuery(toPreparedQuery(query)).rxExecute(rxGetBindValues(query));
+            return rowSingle.map(RxReactiveQueryResult::new);
+        }catch (Throwable e){
+            return Single.error(e);
+        }
     }
 
     /**
@@ -201,9 +205,13 @@ public class ReactiveRXGenericQueryExecutor extends AbstractReactiveQueryExecuto
      * @return the results, never null
      */
     public Single<RowSet<io.vertx.rxjava3.sqlclient.Row>> executeAny(Function<DSLContext, ? extends Query> queryFunction) {
-        Query query = createQuery(queryFunction);
-        log(query);
-        return delegate.preparedQuery(toPreparedQuery(query)).rxExecute(rxGetBindValues(query));
+        try{
+            Query query = createQuery(queryFunction);
+            log(query);
+            return delegate.preparedQuery(toPreparedQuery(query)).rxExecute(rxGetBindValues(query));
+        }catch (Throwable e){
+            return Single.error(e);
+        }
     }
 
     /**

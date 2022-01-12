@@ -162,9 +162,13 @@ public class ReactiveClassicGenericQueryExecutor extends AbstractReactiveQueryEx
      * @return the results, never null
      */
     public Future<RowSet<Row>> executeAny(Function<DSLContext, ? extends Query> queryFunction) {
-        Query query = createQuery(queryFunction);
-        log(query);
-        return delegate.preparedQuery(toPreparedQuery(query)).execute(getBindValues(query));
+        try{
+            Query query = createQuery(queryFunction);
+            log(query);
+            return delegate.preparedQuery(toPreparedQuery(query)).execute(getBindValues(query));
+        }catch (Throwable e){
+            return Future.failedFuture(e);
+        }
     }
 
     /**
