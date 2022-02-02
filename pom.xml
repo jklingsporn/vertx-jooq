@@ -31,7 +31,7 @@
         <mysql.driver.version>8.0.25</mysql.driver.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <postgresql.driver.version>42.3.1</postgresql.driver.version>
+        <postgresql.driver.version>42.3.2</postgresql.driver.version>
         <java.version>11</java.version>
         <maven.compiler.release>11</maven.compiler.release>
     </properties>
