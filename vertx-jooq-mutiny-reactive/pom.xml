@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>vertx-jooq</artifactId>
+        <groupId>io.github.jklingsporn</groupId>
+        <version>6.5.0</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>vertx-jooq-mutiny-reactive</artifactId>
+
+    <dependencies>
+        <dependency>
+            <groupId>io.github.jklingsporn</groupId>
+            <artifactId>vertx-jooq-mutiny</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.github.jklingsporn</groupId>
+            <artifactId>vertx-jooq-shared-reactive</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.smallrye.reactive</groupId>
+            <artifactId>smallrye-mutiny-vertx-sql-client</artifactId>
+            <version>${mutiny.bingings.version}</version>
+        </dependency>
+    </dependencies>
+
+</project>

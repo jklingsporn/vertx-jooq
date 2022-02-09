@@ -3,7 +3,7 @@
 <dependency>
   <groupId>io.github.jklingsporn</groupId>
   <artifactId>vertx-jooq-rx-jdbc</artifactId>
-  <version>6.4.1</version>
+  <version>6.5.0</version>
 </dependency>
 ```
 
@@ -27,12 +27,12 @@ If you are new to jOOQ, I recommend to read the awesome [jOOQ documentation](htt
     <dependency>
       <groupId>org.jooq</groupId>
       <artifactId>jooq</artifactId>
-      <version>3.15.5</version>
+      <version>3.16.4</version>
     </dependency>
     <dependency>
       <groupId>io.github.jklingsporn</groupId>
       <artifactId>vertx-jooq-rx-jdbc</artifactId>
-      <version>6.4.1</version>
+      <version>6.5.0</version>
     </dependency>
   </dependencies>
   <build>
@@ -41,7 +41,7 @@ If you are new to jOOQ, I recommend to read the awesome [jOOQ documentation](htt
           <!-- Specify the maven code generator plugin -->
           <groupId>org.jooq</groupId>
           <artifactId>jooq-codegen-maven</artifactId>
-          <version>3.15.5</version>
+          <version>3.16.4</version>
 
           <!-- The plugin should hook into the generate goal -->
           <executions>
@@ -61,7 +61,7 @@ If you are new to jOOQ, I recommend to read the awesome [jOOQ documentation](htt
               <dependency>
                   <groupId>io.github.jklingsporn</groupId>
                   <artifactId>vertx-jooq-generate</artifactId>
-                  <version>6.4.1</version>
+                  <version>6.5.0</version>
               </dependency>
           </dependencies>
 
@@ -138,7 +138,7 @@ The following code-snippet can be copy-pasted into your `build.gradle` to genera
 ```gradle
 buildscript {
     ext {
-        vertx_jooq_version = '6.4.0'
+        vertx_jooq_version = '6.5.0'
         postgresql_version = '42.2.2'
     }
     repositories {
@@ -270,6 +270,7 @@ updatedCustom.doOnEvent((updated,x)->{
 				}
 		 });
 ```
+More advanced examples can be found in [the tests](https://github.com/jklingsporn/vertx-jooq/blob/master/vertx-jooq-generate/src/test/java/io/github/jklingsporn/vertx/jooq/generate/rx/RXTestBase.java).
 
 # known issues
 - Since jOOQ is using JDBC under the hood, the non-blocking fashion is achieved by using the `Vertx.executeBlocking` method.

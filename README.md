@@ -3,32 +3,34 @@ A [jOOQ](http://www.jooq.org/)-CodeGenerator to create [vertx](http://vertx.io/)
 Perform all CRUD-operations asynchronously and convert your POJOs from/into a `io.vertx.core.json.JsonObject` using the API and
 driver of your choice.
 
-## latest release 6.4.1
+## latest release 6.5.0
 
+- Add modules for [mutiny-API](https://github.com/jklingsporn/vertx-jooq/issues/197)!
 - Fix [Reactive QueryExecutor transaction rollback fails to close connection](https://github.com/jklingsporn/vertx-jooq/issues/197).
 - Make `commit()` and `rollback()` return a failed `Future` / `Completable` instead of throwing an `Exception` in case of failure
 for the reactive QueryExecutors.
-- All other changes from 6.4.0 can be found [here](https://github.com/jklingsporn/vertx-jooq/releases/tag/6.4.0).
 
 
 ## different needs, different apis
 ![What do you want](https://media.giphy.com/media/E87jjnSCANThe/giphy.gif)
 
 Before you start generating code using vertx-jooq, you have to answer these questions:
-- What API do you want to use? There are three options:
+- **Which API do you want to use?**
   - a `io.vertx.core.Future`-based API. This is `vertx-jooq-classic`.
   - a [rxjava2](https://github.com/ReactiveX/RxJava/tree/2.x) based API. This is `vertx-jooq-rx`.
   - a [rxjava3](https://github.com/ReactiveX/RxJava) based API. This is `vertx-jooq-rx3`.
-- How do you want to communicate with the database? There are two options:
+  - a [mutiny](https://smallrye.io/smallrye-mutiny/) based API. This is `vertx-jooq-mutiny`.
+- **How do you want to communicate with the database?**
   - Using good old JDBC, check for the modules with `-jdbc` suffix.
-  - Using this [reactive](https://github.com/eclipse-vertx/vertx-sql-client) database driver, check for `-reactive` modules.
-- Advanced configuration:
+  - Using the [reactive vertx](https://github.com/eclipse-vertx/vertx-sql-client) database driver, check for `-reactive` modules.
+- **Do you need extras?**
   - Support for [Guice](https://github.com/google/guice) dependency injection
   - Generation of `io.vertx.codegen.annotations.@DataObject`-annotations for your POJOs
   
 
-When you made your choice, you can start to configure the code-generator. This can be either done programmatically or
- using a maven- / gradle-plugin (recommended way). Please check the documentation in the module of the API of your choice how to set it up:
+Once you made your choice, you can start to configure the code-generator. This can be either done programmatically or
+ using a maven- / gradle-plugin (recommended way). 
+Please check the documentation in the module of the API and driver of your choice how to set it up and how to use it:
 
 - [`vertx-jooq-classic-jdbc`](vertx-jooq-classic-jdbc)
 - [`vertx-jooq-classic-reactive`](vertx-jooq-classic-reactive)
@@ -36,9 +38,11 @@ When you made your choice, you can start to configure the code-generator. This c
 - [`vertx-jooq-rx-reactive`](vertx-jooq-rx-reactive)
 - [`vertx-jooq-rx3-jdbc`](vertx-jooq-rx3-jdbc)
 - [`vertx-jooq-rx3-reactive`](vertx-jooq-rx3-reactive)
+- [`vertx-jooq-mutiny-jdbc`](vertx-jooq-mutiny-jdbc)
+- [`vertx-jooq-mutiny-reactive`](vertx-jooq-mutiny-reactive)
 
 ## example
-Once the generator is set up, it will create DAOs like in the code snippet below (classic-API, JDBC, no dependency injection):
+Once the generator is set up, it can create DAOs like in the code snippet below (classic-API, JDBC, no dependency injection):
 ```java
 //Setup your jOOQ configuration
 Configuration configuration = ...
@@ -91,6 +95,7 @@ updatedCustom.onComplete(res->{
 		}
 });
 ```
+More examples can be found [here](https://github.com/jklingsporn/vertx-jooq/blob/master/vertx-jooq-generate/src/test/java/io/github/jklingsporn/vertx/jooq/generate/classic/ClassicTestBase.java), [here](https://github.com/jklingsporn/vertx-jooq/blob/master/vertx-jooq-generate/src/test/java/io/github/jklingsporn/vertx/jooq/generate/rx3/RX3TestBase.java) and [here](https://github.com/jklingsporn/vertx-jooq/blob/master/vertx-jooq-generate/src/test/java/io/github/jklingsporn/vertx/jooq/generate/mutiny/MutinyTestBase.java).
 
 # FAQ
 ## handling custom datatypes
@@ -98,26 +103,18 @@ The generator will omit datatypes that it does not know, e.g. `java.sql.Timestam
  See the `handleCustomTypeFromJson` and `handleCustomTypeToJson` methods in the `AbstractVertxGenerator` or checkout the [`CustomVertxGenerator`](vertx-jooq-generate/src/test/java/io/github/jklingsporn/vertx/jooq/generate/custom)
  from the tests.
  
-## How to run tests
-
-### postgres
-- Build postgres image: `cd docker && docker build -t vertx-jooq-pg -f DockerPostgres .`
-- Run postgres image: `docker run -p 5432:5432 vertx-jooq-pg`
-
-### mysql
-- Run MySQL image: `docker run -p 127.0.0.1:3306:3306 -e MYSQL_ROOT_PASSWORD=vertx -e MYSQL_ROOT_HOST=% mysql:8 --max_connections=500 --default-authentication-plugin=mysql_native_password`
-
-> I receive a "Too many open files" exception on **macOS**
-
-Increase your file limits. Unfortunately the solution differs by each OS version, so you have to do some googling.
-
 ## is vertx-jooq compatible with Java 8? 
-Starting from `6.4.0` on vertx-jooq implicitly requires Java 11, as this is the minimum required version by the non-commercial version of jOOQ `3.15`. 
+Starting with version `6.4.0`, vertx-jooq implicitly requires Java 11, as this is the minimum required version by the non-commercial version of jOOQ `3.15`. 
 If you're stuck with Java 8, the latest version you can use is `6.3.0`. 
 
 ## are you sure this works?
 Yes! There are [many integration tests](https://github.com/jklingsporn/vertx-jooq/tree/master/vertx-jooq-generate/src/test/java/io/github/jklingsporn/vertx/jooq/generate) that cover most usecases. 
-Check them out if you're interested.  
+Check them out if you're interested.
+### how to run tests
+The tests are executed against two docker containers. Please refer to [this readme](docker/README.md) of how to set them up.
+#### I receive a "Too many open files" exception on **macOS**
+Increase your file limits. Unfortunately the solution differs by each OS version, so you have to do some research.
+
 
 # disclaimer
 This library comes without any warranty - just take it or leave it. Also, the author is neither connected to the

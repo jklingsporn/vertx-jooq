@@ -32,7 +32,7 @@ public class SomethingDao extends AbstractVertxDAO<SomethingRecord, generated.cl
         /**
      * @param configuration The Configuration used for rendering and query
      * execution.
-     *      * @param vertx the vertx instance
+     * @param vertx the vertx instance
      */
         public SomethingDao(Configuration configuration, io.vertx.core.Vertx vertx) {
                 super(Something.SOMETHING, generated.classic.jdbc.guice.vertx.tables.pojos.Something.class, new JDBCClassicQueryExecutor<SomethingRecord,generated.classic.jdbc.guice.vertx.tables.pojos.Something,Integer>(configuration,generated.classic.jdbc.guice.vertx.tables.pojos.Something.class,vertx));

@@ -12,12 +12,6 @@ public interface APIStep {
     public ExecutionStep withClassicAPI();
 
     /**
-     * @return an {@code ExecutionStep} based on the {@code CompletableFuture} API.
-     * @deprecated
-     */
-    public ExecutionStep withCompletableFutureAPI();
-
-    /**
      * @return an {@code ExecutionStep} based on the RX Java 2 API.
      */
     public ExecutionStep withRXAPI();
@@ -27,4 +21,8 @@ public interface APIStep {
      */
     public ExecutionStep withRX3API();
 
+    /**
+     * @return an {@code ExecutionStep} based on the Mutiny API.
+     */
+    public ExecutionStep withMutinyAPI();
 }

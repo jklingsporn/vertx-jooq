@@ -5,7 +5,7 @@
     <parent>
         <artifactId>vertx-jooq</artifactId>
         <groupId>io.github.jklingsporn</groupId>
-        <version>6.4.1</version>
+        <version>6.5.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <packaging>jar</packaging>
@@ -56,6 +56,18 @@
         <dependency>
             <groupId>io.github.jklingsporn</groupId>
             <artifactId>vertx-jooq-rx3-reactive</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.github.jklingsporn</groupId>
+            <artifactId>vertx-jooq-mutiny-jdbc</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.github.jklingsporn</groupId>
+            <artifactId>vertx-jooq-mutiny-reactive</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>

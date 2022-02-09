@@ -306,21 +306,22 @@ public abstract class ClassicTestBase<P,T,O, DAO extends GenericVertxDAO<?,P, T,
                         Field<?> field = fields[i];
                         try {
                             queryResult.get(field);
+                            Assert.fail("Expected NoSuchElementException");
                         } catch (NoSuchElementException e) {
                             //ok
                         }
                         try {
                             queryResult.get(field.getName(), field.getType());
+                            Assert.fail("Expected NoSuchElementException");
                         } catch (NoSuchElementException e) {
                             //ok
                         }
                         try {
                             queryResult.get(i, field.getType());
+                            Assert.fail("Expected NoSuchElementException");
                         } catch (NoSuchElementException e) {
                             //ok
-                            continue;
                         }
-                        Assert.fail("Expected NoSuchElementException");
                     }
                 }))
                 .onComplete(countdownLatchHandler(latch))

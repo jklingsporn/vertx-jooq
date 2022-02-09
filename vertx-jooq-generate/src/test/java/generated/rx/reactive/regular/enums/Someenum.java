@@ -48,4 +48,11 @@ public enum Someenum implements EnumType {
     public String getLiteral() {
         return literal;
     }
+
+    /**
+     * Lookup a value of this EnumType by its literal
+     */
+    public static Someenum lookupLiteral(String literal) {
+        return EnumType.lookupLiteral(Someenum.class, literal);
+    }
 }

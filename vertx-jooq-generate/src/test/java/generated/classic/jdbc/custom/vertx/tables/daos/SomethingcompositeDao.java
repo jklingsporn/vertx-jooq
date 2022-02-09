@@ -28,7 +28,7 @@ public class SomethingcompositeDao extends AbstractVertxDAO<SomethingcompositeRe
         /**
      * @param configuration The Configuration used for rendering and query
      * execution.
-     *      * @param vertx the vertx instance
+     * @param vertx the vertx instance
      */
         public SomethingcompositeDao(Configuration configuration, io.vertx.core.Vertx vertx) {
                 super(Somethingcomposite.SOMETHINGCOMPOSITE, generated.classic.jdbc.custom.vertx.tables.pojos.Somethingcomposite.class, new JDBCClassicQueryExecutor<SomethingcompositeRecord,generated.classic.jdbc.custom.vertx.tables.pojos.Somethingcomposite,Record2<Integer, Integer>>(configuration,generated.classic.jdbc.custom.vertx.tables.pojos.Somethingcomposite.class,vertx));

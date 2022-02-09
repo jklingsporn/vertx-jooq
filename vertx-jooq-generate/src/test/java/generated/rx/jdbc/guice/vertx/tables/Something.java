@@ -153,7 +153,7 @@ public class Something extends TableImpl<SomethingRecord> {
 
     @Override
     public UniqueKey<SomethingRecord> getPrimaryKey() {
-        return Keys.SYS_PK_10532;
+        return Keys.SYS_PK_10508;
     }
 
     @Override

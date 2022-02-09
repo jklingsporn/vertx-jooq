@@ -21,12 +21,14 @@ public class ReactiveDatabaseClientProvider {
     private final PgPool pgClient;
     private final io.vertx.reactivex.sqlclient.SqlClient rxPgClient;
     private final io.vertx.rxjava3.sqlclient.SqlClient rx3PgClient;
+    private final io.vertx.mutiny.sqlclient.SqlClient mutinyClient;
 
     private ReactiveDatabaseClientProvider() {
         this.vertx = Vertx.vertx();
         this.pgClient = PgPool.pool(vertx, getOptions(), new PoolOptions().setMaxSize(POOL_SIZE));
         this.rxPgClient = new io.vertx.reactivex.sqlclient.Pool(PgPool.pool(vertx, getOptions(), new PoolOptions().setMaxSize(POOL_SIZE)));
         this.rx3PgClient = new io.vertx.rxjava3.sqlclient.Pool(PgPool.pool(vertx, getOptions(), new PoolOptions().setMaxSize(POOL_SIZE)));
+        this.mutinyClient = new io.vertx.mutiny.sqlclient.Pool(PgPool.pool(vertx, getOptions(), new PoolOptions().setMaxSize(POOL_SIZE)));
     }
 
     public SqlClient getClient() {
@@ -48,6 +50,10 @@ public class ReactiveDatabaseClientProvider {
 
     public io.vertx.rxjava3.sqlclient.SqlClient rx3GetClient() {
         return rx3PgClient;
+    }
+
+    public io.vertx.mutiny.sqlclient.SqlClient mutinyGetClient() {
+        return mutinyClient;
     }
 
     public Vertx getVertx() {

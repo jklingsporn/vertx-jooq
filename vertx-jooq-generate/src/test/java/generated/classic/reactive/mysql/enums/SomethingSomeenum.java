@@ -46,4 +46,11 @@ public enum SomethingSomeenum implements EnumType {
     public String getLiteral() {
         return literal;
     }
+
+    /**
+     * Lookup a value of this EnumType by its literal
+     */
+    public static SomethingSomeenum lookupLiteral(String literal) {
+        return EnumType.lookupLiteral(SomethingSomeenum.class, literal);
+    }
 }

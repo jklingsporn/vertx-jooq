@@ -3,7 +3,7 @@
 <dependency>
   <groupId>io.github.jklingsporn</groupId>
   <artifactId>vertx-jooq-rx3-reactive</artifactId>
-  <version>6.4.1</version>
+  <version>6.5.0</version>
 </dependency>
 ```
 
@@ -27,12 +27,12 @@ If you are new to jOOQ, I recommend to read the awesome [jOOQ documentation](htt
     <dependency>
       <groupId>org.jooq</groupId>
       <artifactId>jooq</artifactId>
-      <version>3.15.5</version>
+      <version>3.16.4</version>
     </dependency>
     <dependency>
       <groupId>io.github.jklingsporn</groupId>
       <artifactId>vertx-jooq-rx3-reactive</artifactId>
-      <version>6.4.1</version>
+      <version>6.5.0</version>
     </dependency>
   </dependencies>
   <build>
@@ -41,7 +41,7 @@ If you are new to jOOQ, I recommend to read the awesome [jOOQ documentation](htt
           <!-- Specify the maven code generator plugin -->
           <groupId>org.jooq</groupId>
           <artifactId>jooq-codegen-maven</artifactId>
-          <version>3.15.5</version>
+          <version>3.16.4</version>
 
           <!-- The plugin should hook into the generate goal -->
           <executions>
@@ -61,7 +61,7 @@ If you are new to jOOQ, I recommend to read the awesome [jOOQ documentation](htt
             <dependency>
                   <groupId>io.github.jklingsporn</groupId>
                   <artifactId>vertx-jooq-generate</artifactId>
-                  <version>6.4.1</version>
+                  <version>6.5.0</version>
               </dependency>
           </dependencies>
 
@@ -124,7 +124,7 @@ The following code-snippet can be copy-pasted into your `build.gradle` to genera
 ```gradle
 buildscript {
     ext {
-        vertx_jooq_version = '6.4.0'
+        vertx_jooq_version = '6.5.0'
         postgresql_version = '42.2.2'
     }
     repositories {
@@ -164,7 +164,7 @@ task jooqGenerate {
                 password('YOUR_PASSWORD')
             }
             generator {
-                name('io.github.jklingsporn.vertx.jooq.generate.rx.RXReactiveVertxGenerator')
+                name('io.github.jklingsporn.vertx.jooq.generate.rx3.RXReactiveVertxGenerator')
                 database {
                     name('org.jooq.meta.postgres.PostgresDatabase')
                     include('.*')
@@ -224,9 +224,9 @@ SomethingDao dao = new SomethingDao(configuration, client);
 dao.findOneById(123)
     .doOnEvent((something,x)->{
         		if(x==null){
-            		opt.ifPresent(something -> vertx.eventBus().send("sendSomething",something.toJson()));
+            		vertx.eventBus().send("sendSomething",something.toJson());
         		}else{
-        				System.err.println("Something failed badly: "+x.getMessage());
+        			System.err.println("Something failed badly: "+x.getMessage());
         		}
         });
 
@@ -258,6 +258,7 @@ updatedCustomFuture.doOnEvent((updated,x)->{
 			}
 	 });
 ```
+More advanced examples can be found in [the tests](https://github.com/jklingsporn/vertx-jooq/blob/master/vertx-jooq-generate/src/test/java/io/github/jklingsporn/vertx/jooq/generate/rx3/RX3TestBase.java).
 
 # known issues
 - Although postgres and the reactive driver permit `false` or `true` as valid JSON, this is not supported. JSON- and JSONB-fields are automatically mapped to a

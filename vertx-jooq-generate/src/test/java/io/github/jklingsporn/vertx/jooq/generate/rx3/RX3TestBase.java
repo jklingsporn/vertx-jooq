@@ -337,21 +337,22 @@ public abstract class RX3TestBase<P,T,O, DAO extends GenericVertxDAO<?,P, T, Sin
                         Field<?> field = fields[i];
                         try {
                             queryResult.get(field);
+                            Assert.fail("Expected NoSuchElementException");
                         } catch (NoSuchElementException e) {
                             //ok
                         }
                         try {
                             queryResult.get(field.getName(), field.getType());
+                            Assert.fail("Expected NoSuchElementException");
                         } catch (NoSuchElementException e) {
                             //ok
                         }
                         try {
                             queryResult.get(i, field.getType());
+                            Assert.fail("Expected NoSuchElementException");
                         } catch (NoSuchElementException e) {
                             //ok
-                            continue;
                         }
-                        Assert.fail("Expected NoSuchElementException");
                     }
                 })
                 .subscribe(countdownLatchHandler(latch))

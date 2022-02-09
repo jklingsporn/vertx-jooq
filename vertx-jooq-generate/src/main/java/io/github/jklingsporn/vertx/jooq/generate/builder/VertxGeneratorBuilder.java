@@ -38,7 +38,8 @@ public class VertxGeneratorBuilder {
     enum APIType{
         CLASSIC,
         RX,
-        RX3;
+        RX3,
+        MUTINY;
     }
 
 
@@ -95,12 +96,6 @@ public class VertxGeneratorBuilder {
                     })
                     .setRenderDAOInterfaceDelegate((rType, pType, tType) -> String.format("io.github.jklingsporn.vertx.jooq.classic.VertxDAO<%s,%s,%s>", rType, pType, tType))
             );
-        }
-
-        @Override
-        @Deprecated
-        public ExecutionStep withCompletableFutureAPI() {
-            throw new UnsupportedOperationException("CompletableFuture API is deprecated");
         }
 
         @Override
@@ -170,6 +165,39 @@ public class VertxGeneratorBuilder {
                     .setRenderDAOInterfaceDelegate((rType, pType, tType) -> String.format("io.github.jklingsporn.vertx.jooq.rx3.VertxDAO<%s,%s,%s>", rType, pType, tType))
             );
         }
+
+        @Override
+        public ExecutionStep withMutinyAPI() {
+            return new ExecutionStepImpl(base
+                    .setRenderFQVertxNameDelegate(() -> "io.vertx.mutiny.core.Vertx")
+                    .setApiType(APIType.MUTINY)
+                    .setWriteDAOImportsDelegate(out -> {
+                        out.println("import io.smallrye.mutiny.Uni;");
+                    })
+                    .setRenderQueryExecutorTypesDelegate(new RenderQueryExecutorTypesComponent() {
+                        @Override
+                        public String renderFindOneType(String pType) {
+                            return String.format("Uni<%s>",pType);
+                        }
+
+                        @Override
+                        public String renderFindManyType(String pType) {
+                            return String.format("Uni<List<%s>>",pType);
+                        }
+
+                        @Override
+                        public String renderExecType() {
+                            return "Uni<Integer>";
+                        }
+
+                        @Override
+                        public String renderInsertReturningType(String tType) {
+                            return String.format("Uni<%s>", tType);
+                        }
+                    })
+                    .setRenderDAOInterfaceDelegate((rType, pType, tType) -> String.format("io.github.jklingsporn.vertx.jooq.mutiny.VertxDAO<%s,%s,%s>", rType, pType, tType))
+            );
+        }
     }
 
     static class ExecutionStepImpl implements ExecutionStep {
@@ -219,62 +247,22 @@ public class VertxGeneratorBuilder {
                                 out.tab(1).println("}");
                             })
                     );
+                case MUTINY:
+                    return new DIStepImpl(base
+                            .setWriteDAOImportsDelegate(base.writeDAOImportsDelegate.andThen(out -> out.println("import io.github.jklingsporn.vertx.jooq.mutiny.jdbc.JDBCMutinyQueryExecutor;")))
+                            .setRenderQueryExecutorDelegate((rType, pType, tType) -> String.format("JDBCMutinyQueryExecutor<%s,%s,%s>", rType, pType, tType))
+                            .setWriteConstructorDelegate((out, className, tableIdentifier, tableRecord, pType, tType, schema) -> {
+                                out.tab(1).javadoc("@param configuration The Configuration used for rendering and query execution.\n" +
+                                        "     * @param vertx the vertx instance");
+                                out.tab(1).println("public %s(%s%s configuration, %s vertx) {", className, base.namedInjectionStrategy.apply(schema), Configuration.class, base.renderFQVertxName());
+                                out.tab(2).println("super(%s, %s.class, new %s(configuration,%s.class,vertx));", tableIdentifier, pType, base.renderQueryExecutor(tableRecord, pType, tType),pType);
+                                out.tab(1).println("}");
+                            })
+                    );
                 default: throw new UnsupportedOperationException(base.apiType.toString());
             }
         }
 
-        @Override
-        public DIStep withAsyncDriver() {
-            base.setRenderDAOExtendsDelegate(()->"io.github.jklingsporn.vertx.jooq.shared.async.AbstractAsyncVertxDAO");
-            base.addOverwriteDAODelegate((schema, out, className, tableIdentifier, tableRecord, pType, tType) -> {
-                if (SUPPORTED_MYSQL_INSERT_RETURNING_TYPES_MAP.containsKey(tType)) {
-                    out.println();
-                    out.tab(1).override();
-                    out.tab(1).println("protected java.util.function.Function<Object,%s> keyConverter(){", tType);
-                    out.tab(2).println("return lastId -> %s.valueOf(((%s)lastId).getLong(0).%sValue());", tType, JsonArray.class.getName(), SUPPORTED_MYSQL_INSERT_RETURNING_TYPES_MAP.get(tType));
-                    out.tab(1).println("}");
-                }
-            });
-            switch (base.apiType) {
-                case CLASSIC:
-                    return new DIStepImpl(base
-                            .setWriteDAOImportsDelegate(base.writeDAOImportsDelegate.andThen(out -> out.println("import io.github.jklingsporn.vertx.jooq.classic.async.AsyncClassicQueryExecutor;")))
-                            .setRenderQueryExecutorDelegate((rType, pType, tType) -> String.format("AsyncClassicQueryExecutor<%s,%s,%s>", rType, pType, tType))
-                            .setWriteConstructorDelegate((out, className, tableIdentifier, tableRecord, pType, tType, schema) -> {
-                                out.tab(1).javadoc("@param configuration Used for rendering, so only SQLDialect must be set and must be one of the MYSQL types or POSTGRES.\n     * @param delegate A configured AsyncSQLClient that is used for query execution");
-                                out.tab(1).println("public %s(%s configuration, %sio.vertx.ext.asyncsql.AsyncSQLClient delegate) {", className, Configuration.class, base.namedInjectionStrategy.apply(schema));
-                                out.tab(2).println("super(%s, %s.class, new %s(configuration,delegate,%s::new, %s));", tableIdentifier, pType, base.renderQueryExecutor(tableRecord, pType, tType),pType, tableIdentifier);
-                                out.tab(1).println("}");
-                            })
-
-                    );
-                case RX:
-                    return new DIStepImpl(base
-                            .setWriteDAOImportsDelegate(base.writeDAOImportsDelegate.andThen(out -> out.println("import io.github.jklingsporn.vertx.jooq.rx.async.AsyncRXQueryExecutor;")))
-                            .setRenderQueryExecutorDelegate((rType, pType, tType) -> String.format("AsyncRXQueryExecutor<%s,%s,%s>", rType, pType, tType))
-                            .setWriteConstructorDelegate((out, className, tableIdentifier, tableRecord, pType, tType, schema) -> {
-                                out.tab(1).javadoc("@param configuration Used for rendering, so only SQLDialect must be set and must be one of the MYSQL types or POSTGRES.\n     * @param delegate A configured AsyncSQLClient that is used for query execution");
-                                out.tab(1).println("public %s(%s configuration,%sio.vertx.reactivex.ext.asyncsql.AsyncSQLClient delegate) {", className, Configuration.class, base.namedInjectionStrategy.apply(schema));
-                                out.tab(2).println("super(%s, %s.class, new %s(configuration,delegate,%s::new, %s));", tableIdentifier, pType, base.renderQueryExecutor(tableRecord, pType, tType),pType,tableIdentifier);
-                                out.tab(1).println("}");
-                            })
-
-                    );
-                case RX3:
-                  return new DIStepImpl(base
-                          .setWriteDAOImportsDelegate(base.writeDAOImportsDelegate.andThen(out -> out.println("import io.github.jklingsporn.vertx.jooq.rx3.async.AsyncRXQueryExecutor;")))
-                          .setRenderQueryExecutorDelegate((rType, pType, tType) -> String.format("AsyncRXQueryExecutor<%s,%s,%s>", rType, pType, tType))
-                          .setWriteConstructorDelegate((out, className, tableIdentifier, tableRecord, pType, tType, schema) -> {
-                              out.tab(1).javadoc("@param configuration Used for rendering, so only SQLDialect must be set and must be one of the MYSQL types or POSTGRES.\n     * @param delegate A configured AsyncSQLClient that is used for query execution");
-                              out.tab(1).println("public %s(%s configuration,%sio.vertx.rxjava3.ext.asyncsql.AsyncSQLClient delegate) {", className, Configuration.class, base.namedInjectionStrategy.apply(schema));
-                              out.tab(2).println("super(%s, %s.class, new %s(configuration,delegate,%s::new, %s));", tableIdentifier, pType, base.renderQueryExecutor(tableRecord, pType, tType),pType,tableIdentifier);
-                              out.tab(1).println("}");
-                          })
-
-                  );
-                default: throw new UnsupportedOperationException(base.apiType.toString());
-            }
-        }
 
         @Override
         public DIStep withPostgresReactiveDriver() {
@@ -462,6 +450,27 @@ public class VertxGeneratorBuilder {
                               out.tab(1).println("}");
                           })
                   );
+                case MUTINY:
+                    return new DIStepImpl(base
+                            .setWriteDAOImportsDelegate(base.writeDAOImportsDelegate.andThen(out -> out.println("import io.github.jklingsporn.vertx.jooq.mutiny.reactive.ReactiveMutinyQueryExecutor;")))
+                            .setRenderQueryExecutorDelegate((rType, pType, tType) -> String.format("ReactiveMutinyQueryExecutor<%s,%s,%s>", rType, pType, tType))
+                            .setWriteConstructorDelegate((out, className, tableIdentifier, tableRecord, pType, tType, schema) -> {
+                                /*
+                                 * pType = foo.bar.pojos.Somepojo
+                                 * -------^-need--^---------------
+                                 * temp = foo.bar.pojos
+                                 */
+                                String temp = pType.substring(0, pType.lastIndexOf('.'));
+                                String basePath = temp.substring(0, temp.lastIndexOf('.'));
+                                String pojoName = pType.substring(pType.lastIndexOf(".") + 1, pType.length());
+                                String mapperFactory = String.format("%s.%s.RowMappers.get%sMapper()",basePath, base.getVertxGeneratorStrategy().getRowMappersSubPackage(), pojoName);
+                                out.tab(1).javadoc("@param configuration The Configuration used for rendering and query execution.\n" +
+                                        "     * @param vertx the vertx instance");
+                                out.tab(1).println("public %s(%s configuration, %sio.vertx.mutiny.sqlclient.SqlClient delegate) {", className, Configuration.class, base.namedInjectionStrategy.apply(schema));
+                                out.tab(2).println("super(%s, %s.class, new %s(configuration,delegate,%s));", tableIdentifier, pType, base.renderQueryExecutor(tableRecord, pType, tType), mapperFactory);
+                                out.tab(1).println("}");
+                            })
+                    );
                 default: throw new UnsupportedOperationException(base.apiType.toString());
             }
         }
@@ -493,6 +502,9 @@ public class VertxGeneratorBuilder {
                             break;
                         case RX3:
                             daoClassName = "io.github.jklingsporn.vertx.jooq.rx3.VertxDAO";
+                            break;
+                        case MUTINY:
+                            daoClassName = "io.github.jklingsporn.vertx.jooq.mutiny.VertxDAO";
                             break;
                         default:
                             throw new UnsupportedOperationException(base.apiType.toString());
