@@ -217,7 +217,8 @@ public class VertxGeneratorBuilder {
                             .setWriteDAOImportsDelegate(base.writeDAOImportsDelegate.andThen(out -> out.println("import io.github.jklingsporn.vertx.jooq.classic.jdbc.JDBCClassicQueryExecutor;")))
                             .setRenderQueryExecutorDelegate((rType, pType, tType) -> String.format("JDBCClassicQueryExecutor<%s,%s,%s>", rType, pType, tType))
                             .setWriteConstructorDelegate((out, className, tableIdentifier, tableRecord, pType, tType, schema) -> {
-                                out.tab(1).javadoc("@param configuration The Configuration used for rendering and query execution.\n     * @param vertx the vertx instance");
+                                out.tab(1).javadoc("@param configuration The Configuration used for rendering and query execution.\n" +
+                                        "@param vertx the vertx instance");
                                 out.tab(1).println("public %s(%s%s configuration, %s vertx) {", className, base.namedInjectionStrategy.apply(schema),Configuration.class, base.renderFQVertxName());
                                 out.tab(2).println("super(%s, %s.class, new %s(configuration,%s.class,vertx));", tableIdentifier, pType, base.renderQueryExecutor(tableRecord, pType, tType), pType);
                                 out.tab(1).println("}");
@@ -229,7 +230,7 @@ public class VertxGeneratorBuilder {
                             .setRenderQueryExecutorDelegate((rType, pType, tType) -> String.format("JDBCRXQueryExecutor<%s,%s,%s>", rType, pType, tType))
                             .setWriteConstructorDelegate((out, className, tableIdentifier, tableRecord, pType, tType, schema) -> {
                                 out.tab(1).javadoc("@param configuration The Configuration used for rendering and query execution.\n" +
-                                        "     * @param vertx the vertx instance");
+                                        "@param vertx the vertx instance");
                                 out.tab(1).println("public %s(%s%s configuration, %s vertx) {", className, base.namedInjectionStrategy.apply(schema), Configuration.class, base.renderFQVertxName());
                                 out.tab(2).println("super(%s, %s.class, new %s(configuration,%s.class,vertx));", tableIdentifier, pType, base.renderQueryExecutor(tableRecord, pType, tType),pType);
                                 out.tab(1).println("}");
@@ -241,7 +242,7 @@ public class VertxGeneratorBuilder {
                             .setRenderQueryExecutorDelegate((rType, pType, tType) -> String.format("JDBCRXQueryExecutor<%s,%s,%s>", rType, pType, tType))
                             .setWriteConstructorDelegate((out, className, tableIdentifier, tableRecord, pType, tType, schema) -> {
                                 out.tab(1).javadoc("@param configuration The Configuration used for rendering and query execution.\n" +
-                                        "     * @param vertx the vertx instance");
+                                        "@param vertx the vertx instance");
                                 out.tab(1).println("public %s(%s%s configuration, %s vertx) {", className, base.namedInjectionStrategy.apply(schema), Configuration.class, base.renderFQVertxName());
                                 out.tab(2).println("super(%s, %s.class, new %s(configuration,%s.class,vertx));", tableIdentifier, pType, base.renderQueryExecutor(tableRecord, pType, tType),pType);
                                 out.tab(1).println("}");
@@ -253,7 +254,7 @@ public class VertxGeneratorBuilder {
                             .setRenderQueryExecutorDelegate((rType, pType, tType) -> String.format("JDBCMutinyQueryExecutor<%s,%s,%s>", rType, pType, tType))
                             .setWriteConstructorDelegate((out, className, tableIdentifier, tableRecord, pType, tType, schema) -> {
                                 out.tab(1).javadoc("@param configuration The Configuration used for rendering and query execution.\n" +
-                                        "     * @param vertx the vertx instance");
+                                        "@param vertx the vertx instance");
                                 out.tab(1).println("public %s(%s%s configuration, %s vertx) {", className, base.namedInjectionStrategy.apply(schema), Configuration.class, base.renderFQVertxName());
                                 out.tab(2).println("super(%s, %s.class, new %s(configuration,%s.class,vertx));", tableIdentifier, pType, base.renderQueryExecutor(tableRecord, pType, tType),pType);
                                 out.tab(1).println("}");
@@ -401,7 +402,8 @@ public class VertxGeneratorBuilder {
                                 String basePath = temp.substring(0, temp.lastIndexOf('.'));
                                 String pojoName = pType.substring(pType.lastIndexOf(".") + 1, pType.length());
                                 String mapperFactory = String.format("%s.%s.RowMappers.get%sMapper()",basePath, base.getVertxGeneratorStrategy().getRowMappersSubPackage(), pojoName);
-                                out.tab(1).javadoc("@param configuration Used for rendering, so only SQLDialect must be set and must be one of the POSTGREs types.\n     * @param delegate A configured AsyncSQLClient that is used for query execution");
+                                out.tab(1).javadoc("@param configuration Used for rendering, so only SQLDialect must be set and must be one of the POSTGREs types.\n" +
+                                        "@param delegate A configured AsyncSQLClient that is used for query execution");
                                 out.tab(1).println("public %s(%s%s configuration, io.vertx.sqlclient.SqlClient delegate) {", className, base.namedInjectionStrategy.apply(schema),Configuration.class);
                                 out.tab(2).println("super(%s, %s.class, new %s(configuration,delegate,%s));", tableIdentifier, pType, base.renderQueryExecutor(tableRecord, pType, tType),mapperFactory);
                                 out.tab(1).println("}");
@@ -423,7 +425,7 @@ public class VertxGeneratorBuilder {
                               String pojoName = pType.substring(pType.lastIndexOf(".") + 1, pType.length());
                               String mapperFactory = String.format("%s.%s.RowMappers.get%sMapper()",basePath, base.getVertxGeneratorStrategy().getRowMappersSubPackage(), pojoName);
                               out.tab(1).javadoc("@param configuration The Configuration used for rendering and query execution.\n" +
-                                      "     * @param vertx the vertx instance");
+                                      "@param vertx the vertx instance");
                               out.tab(1).println("public %s(%s configuration, %sio.vertx.reactivex.sqlclient.SqlClient delegate) {", className, Configuration.class, base.namedInjectionStrategy.apply(schema));
                               out.tab(2).println("super(%s, %s.class, new %s(configuration,delegate,%s));", tableIdentifier, pType, base.renderQueryExecutor(tableRecord, pType, tType), mapperFactory);
                               out.tab(1).println("}");
@@ -444,7 +446,7 @@ public class VertxGeneratorBuilder {
                               String pojoName = pType.substring(pType.lastIndexOf(".") + 1, pType.length());
                               String mapperFactory = String.format("%s.%s.RowMappers.get%sMapper()",basePath, base.getVertxGeneratorStrategy().getRowMappersSubPackage(), pojoName);
                               out.tab(1).javadoc("@param configuration The Configuration used for rendering and query execution.\n" +
-                                      "     * @param vertx the vertx instance");
+                                      "@param vertx the vertx instance");
                               out.tab(1).println("public %s(%s configuration, %sio.vertx.rxjava3.sqlclient.SqlClient delegate) {", className, Configuration.class, base.namedInjectionStrategy.apply(schema));
                               out.tab(2).println("super(%s, %s.class, new %s(configuration,delegate,%s));", tableIdentifier, pType, base.renderQueryExecutor(tableRecord, pType, tType), mapperFactory);
                               out.tab(1).println("}");
@@ -465,7 +467,7 @@ public class VertxGeneratorBuilder {
                                 String pojoName = pType.substring(pType.lastIndexOf(".") + 1, pType.length());
                                 String mapperFactory = String.format("%s.%s.RowMappers.get%sMapper()",basePath, base.getVertxGeneratorStrategy().getRowMappersSubPackage(), pojoName);
                                 out.tab(1).javadoc("@param configuration The Configuration used for rendering and query execution.\n" +
-                                        "     * @param vertx the vertx instance");
+                                        "@param vertx the vertx instance");
                                 out.tab(1).println("public %s(%s configuration, %sio.vertx.mutiny.sqlclient.SqlClient delegate) {", className, Configuration.class, base.namedInjectionStrategy.apply(schema));
                                 out.tab(2).println("super(%s, %s.class, new %s(configuration,delegate,%s));", tableIdentifier, pType, base.renderQueryExecutor(tableRecord, pType, tType), mapperFactory);
                                 out.tab(1).println("}");

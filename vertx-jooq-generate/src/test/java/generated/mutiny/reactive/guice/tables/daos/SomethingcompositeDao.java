@@ -30,7 +30,7 @@ public class SomethingcompositeDao extends AbstractReactiveVertxDAO<Somethingcom
         /**
      * @param configuration The Configuration used for rendering and query
      * execution.
-     *      * @param vertx the vertx instance
+     * @param vertx the vertx instance
      */
         public SomethingcompositeDao(Configuration configuration, io.vertx.mutiny.sqlclient.SqlClient delegate) {
                 super(Somethingcomposite.SOMETHINGCOMPOSITE, generated.mutiny.reactive.guice.tables.pojos.Somethingcomposite.class, new ReactiveMutinyQueryExecutor<SomethingcompositeRecord,generated.mutiny.reactive.guice.tables.pojos.Somethingcomposite,Record2<Integer, Integer>>(configuration,delegate,generated.mutiny.reactive.guice.tables.mappers.RowMappers.getSomethingcompositeMapper()));

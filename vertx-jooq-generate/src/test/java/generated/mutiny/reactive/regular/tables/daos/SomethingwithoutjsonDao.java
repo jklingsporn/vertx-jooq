@@ -26,7 +26,7 @@ public class SomethingwithoutjsonDao extends AbstractReactiveVertxDAO<Somethingw
         /**
      * @param configuration The Configuration used for rendering and query
      * execution.
-     *      * @param vertx the vertx instance
+     * @param vertx the vertx instance
      */
         public SomethingwithoutjsonDao(Configuration configuration, io.vertx.mutiny.sqlclient.SqlClient delegate) {
                 super(Somethingwithoutjson.SOMETHINGWITHOUTJSON, generated.mutiny.reactive.regular.tables.pojos.Somethingwithoutjson.class, new ReactiveMutinyQueryExecutor<SomethingwithoutjsonRecord,generated.mutiny.reactive.regular.tables.pojos.Somethingwithoutjson,Integer>(configuration,delegate,generated.mutiny.reactive.regular.tables.mappers.RowMappers.getSomethingwithoutjsonMapper()));

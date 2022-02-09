@@ -33,7 +33,7 @@ public class SomethingDao extends AbstractVertxDAO<SomethingRecord, generated.rx
         /**
      * @param configuration The Configuration used for rendering and query
      * execution.
-     *      * @param vertx the vertx instance
+     * @param vertx the vertx instance
      */
         public SomethingDao(Configuration configuration, io.vertx.rxjava3.core.Vertx vertx) {
                 super(Something.SOMETHING, generated.rx3.jdbc.guice.vertx.tables.pojos.Something.class, new JDBCRXQueryExecutor<SomethingRecord,generated.rx3.jdbc.guice.vertx.tables.pojos.Something,Integer>(configuration,generated.rx3.jdbc.guice.vertx.tables.pojos.Something.class,vertx));

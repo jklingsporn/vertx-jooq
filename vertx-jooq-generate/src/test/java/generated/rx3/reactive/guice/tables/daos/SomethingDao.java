@@ -39,7 +39,7 @@ public class SomethingDao extends AbstractReactiveVertxDAO<SomethingRecord, gene
         /**
      * @param configuration The Configuration used for rendering and query
      * execution.
-     *      * @param vertx the vertx instance
+     * @param vertx the vertx instance
      */
         public SomethingDao(Configuration configuration, io.vertx.rxjava3.sqlclient.SqlClient delegate) {
                 super(Something.SOMETHING, generated.rx3.reactive.guice.tables.pojos.Something.class, new ReactiveRXQueryExecutor<SomethingRecord,generated.rx3.reactive.guice.tables.pojos.Something,Integer>(configuration,delegate,generated.rx3.reactive.guice.tables.mappers.RowMappers.getSomethingMapper()));

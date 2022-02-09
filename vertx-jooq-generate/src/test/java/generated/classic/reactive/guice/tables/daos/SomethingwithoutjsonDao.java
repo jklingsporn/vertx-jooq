@@ -28,7 +28,7 @@ public class SomethingwithoutjsonDao extends AbstractReactiveVertxDAO<Somethingw
         /**
      * @param configuration Used for rendering, so only SQLDialect must be set
      * and must be one of the POSTGREs types.
-     *      * @param delegate A configured AsyncSQLClient that is used for query
+     * @param delegate A configured AsyncSQLClient that is used for query
      * execution
      */
         public SomethingwithoutjsonDao(Configuration configuration, io.vertx.sqlclient.SqlClient delegate) {

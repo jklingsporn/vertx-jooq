@@ -29,7 +29,7 @@ public class SomethingwithoutjsonDao extends AbstractReactiveVertxDAO<Somethingw
         /**
      * @param configuration The Configuration used for rendering and query
      * execution.
-     *      * @param vertx the vertx instance
+     * @param vertx the vertx instance
      */
         public SomethingwithoutjsonDao(Configuration configuration, io.vertx.rxjava3.sqlclient.SqlClient delegate) {
                 super(Somethingwithoutjson.SOMETHINGWITHOUTJSON, generated.rx3.reactive.guice.tables.pojos.Somethingwithoutjson.class, new ReactiveRXQueryExecutor<SomethingwithoutjsonRecord,generated.rx3.reactive.guice.tables.pojos.Somethingwithoutjson,Integer>(configuration,delegate,generated.rx3.reactive.guice.tables.mappers.RowMappers.getSomethingwithoutjsonMapper()));

@@ -243,7 +243,7 @@ public class ReactiveMutinyGenericQueryExecutor extends AbstractReactiveQueryExe
                                         .call(() -> {
                                             Future<Void> commit = tx.getDelegate().commit();
                                             commit.onComplete(commitHandler);
-                                            Future<Void> close = commit.compose(v -> conn.getDelegate().close()).onComplete(closeHandler);
+                                            Future<Void> close = commit.eventually(v -> conn.getDelegate().close()).onComplete(closeHandler);
                                             return UniHelper.toUni(close);
                                         })
                         )
