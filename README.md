@@ -3,12 +3,13 @@ A [jOOQ](http://www.jooq.org/)-CodeGenerator to create [vertx](http://vertx.io/)
 Perform all CRUD-operations asynchronously and convert your POJOs from/into a `io.vertx.core.json.JsonObject` using the API and
 driver of your choice.
 
-## latest release 6.5.0
+## latest release 6.5.1
 
 - Add modules for [mutiny-API](https://github.com/jklingsporn/vertx-jooq/issues/197)!
 - Fix [Reactive QueryExecutor transaction rollback fails to close connection](https://github.com/jklingsporn/vertx-jooq/issues/197).
 - Make `commit()` and `rollback()` return a failed `Future` / `Completable` instead of throwing an `Exception` in case of failure
 for the reactive QueryExecutors.
+- Fix insertReturning with MySQL-Reactive driver for Mutiny and RXJava-APIs.
 
 
 ## different needs, different apis
