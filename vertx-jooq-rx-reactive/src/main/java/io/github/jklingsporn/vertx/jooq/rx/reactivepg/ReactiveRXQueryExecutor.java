@@ -5,6 +5,7 @@ import io.reactivex.Flowable;
 import io.reactivex.Single;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Handler;
+import io.vertx.reactivex.sqlclient.RowSet;
 import io.vertx.reactivex.sqlclient.SqlClient;
 import io.vertx.reactivex.sqlclient.SqlConnection;
 import io.vertx.reactivex.sqlclient.Transaction;
@@ -14,6 +15,7 @@ import org.jooq.impl.DefaultConfiguration;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -23,6 +25,7 @@ import java.util.stream.Collectors;
 public class ReactiveRXQueryExecutor<R extends UpdatableRecord<R>,P,T> extends ReactiveRXGenericQueryExecutor implements QueryExecutor<R,T,Single<List<P>>,Single<Optional<P>>,Single<Integer>,Single<T>>{
 
     private final Function<Row,P> pojoMapper;
+    private final BiFunction<Function<DSLContext, ? extends InsertResultStep<R>>, Function<Object, T>, Single<T>> insertReturningDelegate;
 
     public ReactiveRXQueryExecutor(SqlClient delegate, Function<Row, P> pojoMapper) {
         this(new DefaultConfiguration().set(SQLDialect.POSTGRES),delegate,pojoMapper);
@@ -35,6 +38,16 @@ public class ReactiveRXQueryExecutor<R extends UpdatableRecord<R>,P,T> extends R
     ReactiveRXQueryExecutor(Configuration configuration, SqlClient delegate, Function<Row, P> pojoMapper, Transaction transaction) {
         super(configuration,delegate,transaction);
         this.pojoMapper = pojoMapper;
+        this.insertReturningDelegate =
+                configuration.dialect().family().equals(SQLDialect.POSTGRES)
+                        ? (queryFunction,keyMapper) -> executeAny(queryFunction)
+                        .map(rows -> rows.iterator().next())
+                        .map(io.vertx.reactivex.sqlclient.Row::getDelegate)
+                        .map(keyMapper::apply)
+                        : (queryFunction,keyMapper) ->
+                        executeAny(queryFunction)
+                        .map(RowSet::getDelegate)
+                        .map(keyMapper::apply);
     }
 
     @Override
@@ -49,10 +62,7 @@ public class ReactiveRXQueryExecutor<R extends UpdatableRecord<R>,P,T> extends R
 
     @Override
     public Single<T> insertReturning(Function<DSLContext, ? extends InsertResultStep<R>> queryFunction, Function<Object, T> keyMapper) {
-        return executeAny(queryFunction)
-                .map(rows -> rows.iterator().next())
-                .map(io.vertx.reactivex.sqlclient.Row::getDelegate)
-                .map(keyMapper::apply);
+        return insertReturningDelegate.apply(queryFunction,keyMapper);
     }
 
 
