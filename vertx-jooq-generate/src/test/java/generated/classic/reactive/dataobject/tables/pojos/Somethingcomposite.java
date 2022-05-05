@@ -107,23 +107,23 @@ public class Somethingcomposite implements VertxPojo, ISomethingcomposite {
         if (getClass() != obj.getClass())
             return false;
         final Somethingcomposite other = (Somethingcomposite) obj;
-        if (someid == null) {
+        if (this.someid == null) {
             if (other.someid != null)
                 return false;
         }
-        else if (!someid.equals(other.someid))
+        else if (!this.someid.equals(other.someid))
             return false;
-        if (somesecondid == null) {
+        if (this.somesecondid == null) {
             if (other.somesecondid != null)
                 return false;
         }
-        else if (!somesecondid.equals(other.somesecondid))
+        else if (!this.somesecondid.equals(other.somesecondid))
             return false;
-        if (somejsonobject == null) {
+        if (this.somejsonobject == null) {
             if (other.somejsonobject != null)
                 return false;
         }
-        else if (!somejsonobject.equals(other.somejsonobject))
+        else if (!this.somejsonobject.equals(other.somejsonobject))
             return false;
         return true;
     }

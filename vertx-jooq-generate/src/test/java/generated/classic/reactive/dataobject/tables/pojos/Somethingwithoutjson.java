@@ -85,17 +85,17 @@ public class Somethingwithoutjson implements VertxPojo, ISomethingwithoutjson {
         if (getClass() != obj.getClass())
             return false;
         final Somethingwithoutjson other = (Somethingwithoutjson) obj;
-        if (someid == null) {
+        if (this.someid == null) {
             if (other.someid != null)
                 return false;
         }
-        else if (!someid.equals(other.someid))
+        else if (!this.someid.equals(other.someid))
             return false;
-        if (somestring == null) {
+        if (this.somestring == null) {
             if (other.somestring != null)
                 return false;
         }
-        else if (!somestring.equals(other.somestring))
+        else if (!this.somestring.equals(other.somestring))
             return false;
         return true;
     }

@@ -118,7 +118,12 @@ public abstract class MutinyTestBase<P,T,O, DAO extends GenericVertxDAO<?,P, T, 
 
             @Override
             public void onFailure(Throwable failure) {
-                Assert.fail(failure.getMessage());
+                failure.printStackTrace();
+                if(failure.getMessage() == null){
+                    Assert.fail();
+                }else{
+                    Assert.fail(failure.getMessage());
+                }
                 latch.countDown();
             }
         };

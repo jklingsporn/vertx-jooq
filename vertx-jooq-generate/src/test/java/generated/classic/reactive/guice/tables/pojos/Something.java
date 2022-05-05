@@ -432,113 +432,113 @@ public class Something implements VertxPojo, ISomething {
         if (getClass() != obj.getClass())
             return false;
         final Something other = (Something) obj;
-        if (someid == null) {
+        if (this.someid == null) {
             if (other.someid != null)
                 return false;
         }
-        else if (!someid.equals(other.someid))
+        else if (!this.someid.equals(other.someid))
             return false;
-        if (somestring == null) {
+        if (this.somestring == null) {
             if (other.somestring != null)
                 return false;
         }
-        else if (!somestring.equals(other.somestring))
+        else if (!this.somestring.equals(other.somestring))
             return false;
-        if (somehugenumber == null) {
+        if (this.somehugenumber == null) {
             if (other.somehugenumber != null)
                 return false;
         }
-        else if (!somehugenumber.equals(other.somehugenumber))
+        else if (!this.somehugenumber.equals(other.somehugenumber))
             return false;
-        if (somesmallnumber == null) {
+        if (this.somesmallnumber == null) {
             if (other.somesmallnumber != null)
                 return false;
         }
-        else if (!somesmallnumber.equals(other.somesmallnumber))
+        else if (!this.somesmallnumber.equals(other.somesmallnumber))
             return false;
-        if (someregularnumber == null) {
+        if (this.someregularnumber == null) {
             if (other.someregularnumber != null)
                 return false;
         }
-        else if (!someregularnumber.equals(other.someregularnumber))
+        else if (!this.someregularnumber.equals(other.someregularnumber))
             return false;
-        if (somedecimal == null) {
+        if (this.somedecimal == null) {
             if (other.somedecimal != null)
                 return false;
         }
-        else if (!somedecimal.equals(other.somedecimal))
+        else if (!this.somedecimal.equals(other.somedecimal))
             return false;
-        if (somedouble == null) {
+        if (this.somedouble == null) {
             if (other.somedouble != null)
                 return false;
         }
-        else if (!somedouble.equals(other.somedouble))
+        else if (!this.somedouble.equals(other.somedouble))
             return false;
-        if (someenum == null) {
+        if (this.someenum == null) {
             if (other.someenum != null)
                 return false;
         }
-        else if (!someenum.equals(other.someenum))
+        else if (!this.someenum.equals(other.someenum))
             return false;
-        if (somejsonobject == null) {
+        if (this.somejsonobject == null) {
             if (other.somejsonobject != null)
                 return false;
         }
-        else if (!somejsonobject.equals(other.somejsonobject))
+        else if (!this.somejsonobject.equals(other.somejsonobject))
             return false;
-        if (somecustomjsonobject == null) {
+        if (this.somecustomjsonobject == null) {
             if (other.somecustomjsonobject != null)
                 return false;
         }
-        else if (!somecustomjsonobject.equals(other.somecustomjsonobject))
+        else if (!this.somecustomjsonobject.equals(other.somecustomjsonobject))
             return false;
-        if (somejsonarray == null) {
+        if (this.somejsonarray == null) {
             if (other.somejsonarray != null)
                 return false;
         }
-        else if (!somejsonarray.equals(other.somejsonarray))
+        else if (!this.somejsonarray.equals(other.somejsonarray))
             return false;
-        if (somevertxjsonobject == null) {
+        if (this.somevertxjsonobject == null) {
             if (other.somevertxjsonobject != null)
                 return false;
         }
-        else if (!somevertxjsonobject.equals(other.somevertxjsonobject))
+        else if (!this.somevertxjsonobject.equals(other.somevertxjsonobject))
             return false;
-        if (sometime == null) {
+        if (this.sometime == null) {
             if (other.sometime != null)
                 return false;
         }
-        else if (!sometime.equals(other.sometime))
+        else if (!this.sometime.equals(other.sometime))
             return false;
-        if (somedate == null) {
+        if (this.somedate == null) {
             if (other.somedate != null)
                 return false;
         }
-        else if (!somedate.equals(other.somedate))
+        else if (!this.somedate.equals(other.somedate))
             return false;
-        if (sometimestamp == null) {
+        if (this.sometimestamp == null) {
             if (other.sometimestamp != null)
                 return false;
         }
-        else if (!sometimestamp.equals(other.sometimestamp))
+        else if (!this.sometimestamp.equals(other.sometimestamp))
             return false;
-        if (sometimestampwithtz == null) {
+        if (this.sometimestampwithtz == null) {
             if (other.sometimestampwithtz != null)
                 return false;
         }
-        else if (!sometimestampwithtz.equals(other.sometimestampwithtz))
+        else if (!this.sometimestampwithtz.equals(other.sometimestampwithtz))
             return false;
-        if (somebytea == null) {
+        if (this.somebytea == null) {
             if (other.somebytea != null)
                 return false;
         }
-        else if (!Arrays.equals(somebytea, other.somebytea))
+        else if (!Arrays.equals(this.somebytea, other.somebytea))
             return false;
-        if (somestringaslist == null) {
+        if (this.somestringaslist == null) {
             if (other.somestringaslist != null)
                 return false;
         }
-        else if (!somestringaslist.equals(other.somestringaslist))
+        else if (!this.somestringaslist.equals(other.somestringaslist))
             return false;
         return true;
     }

@@ -1,6 +1,7 @@
 package io.github.jklingsporn.vertx.jooq.generate;
 
 import io.vertx.core.Vertx;
+import io.vertx.mutiny.sqlclient.Pool;
 import io.vertx.mysqlclient.MySQLConnectOptions;
 import io.vertx.mysqlclient.MySQLPool;
 import io.vertx.sqlclient.PoolOptions;
@@ -12,6 +13,7 @@ import io.vertx.sqlclient.SqlClient;
 public class ReactiveMysqlDatabaseClientProvider {
 
     private static ReactiveMysqlDatabaseClientProvider INSTANCE;
+
     public static ReactiveMysqlDatabaseClientProvider getInstance() {
         return INSTANCE == null ? INSTANCE = new ReactiveMysqlDatabaseClientProvider() : INSTANCE;
     }
@@ -19,11 +21,13 @@ public class ReactiveMysqlDatabaseClientProvider {
     private final Vertx vertx;
     private final MySQLPool pgClient;
     private final io.vertx.reactivex.sqlclient.SqlClient rxPgClient;
+    private final io.vertx.mutiny.sqlclient.SqlClient mutinyClient;
 
     private ReactiveMysqlDatabaseClientProvider() {
         this.vertx = Vertx.vertx();
         this.pgClient = MySQLPool.pool(vertx, getOptions(), new PoolOptions());
         this.rxPgClient = new io.vertx.reactivex.sqlclient.Pool(pgClient);
+        this.mutinyClient = new Pool(pgClient);
     }
 
     public SqlClient getClient() {
@@ -44,6 +48,7 @@ public class ReactiveMysqlDatabaseClientProvider {
         return rxPgClient;
     }
 
+    public io.vertx.mutiny.sqlclient.SqlClient mutinyGetClient(){ return mutinyClient;}
 
     public Vertx getVertx() {
         return vertx;

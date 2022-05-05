@@ -2,6 +2,7 @@ package io.github.jklingsporn.vertx.jooq.mutiny.reactive;
 
 import io.github.jklingsporn.vertx.jooq.shared.internal.QueryExecutor;
 import io.smallrye.mutiny.Uni;
+import io.vertx.mutiny.sqlclient.RowSet;
 import io.vertx.mutiny.sqlclient.SqlClient;
 import io.vertx.mutiny.sqlclient.SqlConnection;
 import io.vertx.mutiny.sqlclient.Transaction;
@@ -10,6 +11,7 @@ import org.jooq.*;
 import org.jooq.impl.DefaultConfiguration;
 
 import java.util.List;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -19,6 +21,7 @@ import java.util.stream.Collectors;
 public class ReactiveMutinyQueryExecutor<R extends UpdatableRecord<R>,P,T> extends ReactiveMutinyGenericQueryExecutor implements QueryExecutor<R,T, Uni<List<P>>,Uni<P>,Uni<Integer>,Uni<T>>{
 
     private final Function<Row,P> pojoMapper;
+    private final BiFunction<Function<DSLContext, ? extends InsertResultStep<R>>, Function<Object, T>, Uni<T>> insertReturningDelegate;
 
     public ReactiveMutinyQueryExecutor(SqlClient delegate, Function<Row, P> pojoMapper) {
         this(new DefaultConfiguration().set(SQLDialect.POSTGRES),delegate,pojoMapper);
@@ -31,6 +34,16 @@ public class ReactiveMutinyQueryExecutor<R extends UpdatableRecord<R>,P,T> exten
     ReactiveMutinyQueryExecutor(Configuration configuration, SqlClient delegate, Function<Row, P> pojoMapper, Transaction transaction) {
         super(configuration,delegate,transaction);
         this.pojoMapper = pojoMapper;
+        this.insertReturningDelegate =
+                configuration.dialect().family().equals(SQLDialect.POSTGRES)
+                        ? (queryFunction,keyMapper) -> executeAny(queryFunction)
+                        .map(rows -> rows.iterator().next())
+                        .map(io.vertx.mutiny.sqlclient.Row::getDelegate)
+                        .map(keyMapper::apply)
+                        : (queryFunction,keyMapper) ->
+                        executeAny(queryFunction)
+                        .map(RowSet::getDelegate)
+                        .map(keyMapper::apply);
     }
 
     @Override
@@ -45,10 +58,7 @@ public class ReactiveMutinyQueryExecutor<R extends UpdatableRecord<R>,P,T> exten
 
     @Override
     public Uni<T> insertReturning(Function<DSLContext, ? extends InsertResultStep<R>> queryFunction, Function<Object, T> keyMapper) {
-        return executeAny(queryFunction)
-                .map(rows -> rows.iterator().next())
-                .map(io.vertx.mutiny.sqlclient.Row::getDelegate)
-                .map(keyMapper);
+        return insertReturningDelegate.apply(queryFunction,keyMapper);
     }
 
     @Override
