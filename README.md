@@ -99,6 +99,9 @@ updatedCustom.onComplete(res->{
 More examples can be found [here](https://github.com/jklingsporn/vertx-jooq/blob/master/vertx-jooq-generate/src/test/java/io/github/jklingsporn/vertx/jooq/generate/classic/ClassicTestBase.java), [here](https://github.com/jklingsporn/vertx-jooq/blob/master/vertx-jooq-generate/src/test/java/io/github/jklingsporn/vertx/jooq/generate/rx3/RX3TestBase.java) and [here](https://github.com/jklingsporn/vertx-jooq/blob/master/vertx-jooq-generate/src/test/java/io/github/jklingsporn/vertx/jooq/generate/mutiny/MutinyTestBase.java).
 
 # FAQ
+## vertx is cool, but what about quarkus?
+Checkout [this repository](https://github.com/jklingsporn/quarkus-jooq-reactive-example) to figure out how to utilize vertx-jooq to create Quarkus-compatible classes.
+
 ## handling custom datatypes
 The generator will omit datatypes that it does not know, e.g. `java.sql.Timestamp`. To fix this, you can subclass the generator, handle these types and generate the code using your generator.
  See the `handleCustomTypeFromJson` and `handleCustomTypeToJson` methods in the `AbstractVertxGenerator` or checkout the [`CustomVertxGenerator`](vertx-jooq-generate/src/test/java/io/github/jklingsporn/vertx/jooq/generate/custom)
