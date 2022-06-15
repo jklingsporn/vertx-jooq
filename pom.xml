@@ -23,8 +23,8 @@
     </modules>
     <properties>
         <jooq.version>3.16.6</jooq.version>
-        <vertx.version>4.2.7</vertx.version>
-        <jackson.databind.version>2.13.1</jackson.databind.version>
+        <vertx.version>4.3.1</vertx.version>
+        <jackson.databind.version>2.13.2.1</jackson.databind.version>
         <hsqldb.version>2.6.1</hsqldb.version>
         <junit.version>4.13.2</junit.version>
         <guice.version>4.2.3</guice.version>
@@ -41,7 +41,7 @@
         <mutiny.bingings.version>2.18.0</mutiny.bingings.version>
     </properties>
     <groupId>io.github.jklingsporn</groupId>
-    <version>6.5.1</version>
+    <version>6.5.2</version>
     <artifactId>vertx-jooq</artifactId>
     <name>${project.groupId}:${project.artifactId}</name>
     <description>A jOOQ-CodeGenerator to create vertxified DAOs and POJOs</description>
