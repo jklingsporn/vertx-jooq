@@ -11,7 +11,7 @@ driver of your choice.
 for the reactive QueryExecutors.
 - Fix insertReturning with MySQL-Reactive driver for Mutiny and RXJava-APIs.
 - Fix parameter binding issues for the reactive drivers.
-- Fix string primary key with reactive mysql [#203](https://github.com/jklingsporn/vertx-jooq/issues/203)!
+- Fix string primary key with reactive mysql [#203](https://github.com/jklingsporn/vertx-jooq/issues/203)
 
 
 ## different needs, different apis
