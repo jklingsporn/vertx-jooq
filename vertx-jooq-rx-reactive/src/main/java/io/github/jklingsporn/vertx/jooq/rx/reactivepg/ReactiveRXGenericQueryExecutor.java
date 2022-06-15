@@ -18,7 +18,6 @@ import org.jooq.Record;
 import org.jooq.*;
 import org.jooq.exception.TooManyRowsException;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
@@ -77,13 +76,13 @@ public class ReactiveRXGenericQueryExecutor extends AbstractReactiveQueryExecuto
     }
 
     protected Tuple rxGetBindValues(Query query) {
-        ArrayList<Object> bindValues = new ArrayList<>();
-        for (Param<?> param : query.getParams().values()) {
-            Object value = convertToDatabaseType(param);
-            bindValues.add(value);
-        }
         Tuple tuple = Tuple.tuple();
-        bindValues.forEach(tuple::addValue);
+        query.getParams()
+                .values()
+                .stream()
+                .filter(param -> !param.isInline())
+                .map(this::convertToDatabaseType)
+                .forEach(tuple::addValue);
         return tuple;
     }
 
