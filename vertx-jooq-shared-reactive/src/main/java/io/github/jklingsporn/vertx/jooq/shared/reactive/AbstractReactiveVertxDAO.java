@@ -80,7 +80,14 @@ public abstract class AbstractReactiveVertxDAO<R extends UpdatableRecord<R>, P, 
                 return (T)(Byte) (extractMysqlLastInsertProperty().apply(rs).byteValue());
             };
         }
-        throw new UnsupportedOperationException("Unsupported primary key type "+pkType);
+        /*
+         * https://github.com/jklingsporn/vertx-jooq/issues/203
+         * Non-numeric primary keys are not generated and must be extracted from the inserted POJO/Record.
+         * Do not fail on creation, but on usage.
+         */
+        return o-> {
+            throw new UnsupportedOperationException("Unsupported primary key type '"+pkType+"' for insertReturning");
+        };
     }
 
     protected Function<RowSet<Row>,Long> extractMysqlLastInsertProperty(){

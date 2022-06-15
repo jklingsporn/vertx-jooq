@@ -47,4 +47,13 @@ public class RowMappers {
                 };
         }
 
+        public static Function<Row,generated.mutiny.reactive.mysql.tables.pojos.Stringkey> getStringkeyMapper() {
+                return row -> {
+                        generated.mutiny.reactive.mysql.tables.pojos.Stringkey pojo = new generated.mutiny.reactive.mysql.tables.pojos.Stringkey();
+                        pojo.setKey(row.getString("key"));
+                        pojo.setValue(row.getInteger("value"));
+                        return pojo;
+                };
+        }
+
 }

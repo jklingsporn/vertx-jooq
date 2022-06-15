@@ -7,6 +7,7 @@ package generated.classic.reactive.mysql;
 import generated.classic.reactive.mysql.tables.Something;
 import generated.classic.reactive.mysql.tables.Somethingcomposite;
 import generated.classic.reactive.mysql.tables.Somethingwithoutjson;
+import generated.classic.reactive.mysql.tables.Stringkey;
 
 import java.util.Arrays;
 import java.util.List;
@@ -45,6 +46,11 @@ public class Vertx extends SchemaImpl {
     public final Somethingwithoutjson SOMETHINGWITHOUTJSON = Somethingwithoutjson.SOMETHINGWITHOUTJSON;
 
     /**
+     * The table <code>vertx.stringKey</code>.
+     */
+    public final Stringkey STRINGKEY = Stringkey.STRINGKEY;
+
+    /**
      * No further instances allowed
      */
     private Vertx() {
@@ -62,7 +68,8 @@ public class Vertx extends SchemaImpl {
         return Arrays.asList(
             Something.SOMETHING,
             Somethingcomposite.SOMETHINGCOMPOSITE,
-            Somethingwithoutjson.SOMETHINGWITHOUTJSON
+            Somethingwithoutjson.SOMETHINGWITHOUTJSON,
+            Stringkey.STRINGKEY
         );
     }
 }

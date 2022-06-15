@@ -7,6 +7,7 @@ package generated.classic.reactive.mysql;
 import generated.classic.reactive.mysql.tables.Something;
 import generated.classic.reactive.mysql.tables.Somethingcomposite;
 import generated.classic.reactive.mysql.tables.Somethingwithoutjson;
+import generated.classic.reactive.mysql.tables.Stringkey;
 
 
 /**
@@ -29,4 +30,9 @@ public class Tables {
      * The table <code>vertx.somethingWithoutJson</code>.
      */
     public static final Somethingwithoutjson SOMETHINGWITHOUTJSON = Somethingwithoutjson.SOMETHINGWITHOUTJSON;
+
+    /**
+     * The table <code>vertx.stringKey</code>.
+     */
+    public static final Stringkey STRINGKEY = Stringkey.STRINGKEY;
 }

@@ -7,6 +7,7 @@ package generated.mutiny.reactive.mysql;
 import generated.mutiny.reactive.mysql.tables.Something;
 import generated.mutiny.reactive.mysql.tables.Somethingcomposite;
 import generated.mutiny.reactive.mysql.tables.Somethingwithoutjson;
+import generated.mutiny.reactive.mysql.tables.Stringkey;
 
 
 /**
@@ -29,4 +30,9 @@ public class Tables {
      * The table <code>vertx.somethingWithoutJson</code>.
      */
     public static final Somethingwithoutjson SOMETHINGWITHOUTJSON = Somethingwithoutjson.SOMETHINGWITHOUTJSON;
+
+    /**
+     * The table <code>vertx.stringKey</code>.
+     */
+    public static final Stringkey STRINGKEY = Stringkey.STRINGKEY;
 }

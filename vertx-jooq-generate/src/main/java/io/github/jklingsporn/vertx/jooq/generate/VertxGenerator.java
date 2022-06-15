@@ -517,7 +517,6 @@ public abstract class VertxGenerator extends JavaGenerator {
     protected void generateFindManyByMethods(JavaWriter out, String pType, String colName, String colClass, String colType, String colIdentifier) {
         out.tab(1).javadoc("Find records that have <code>%s IN (values)</code> asynchronously", colName);
         out.tab(1).println("public %s findManyBy%s(%s<%s> values) {", renderFindManyType(pType), colClass, Collection.class, colType);
-        //out.tab(2).println("return findMany(%s, values);", colIdentifier);
         out.tab(2).println("return findManyByCondition(%s.in(values));", colIdentifier);
         out.tab(1).println("}");
     }
@@ -525,7 +524,6 @@ public abstract class VertxGenerator extends JavaGenerator {
     protected void generateFindManyByLimitMethods(JavaWriter out, String pType, String colName, String colClass, String colType, String colIdentifier) {
         out.tab(1).javadoc("Find records that have <code>%s IN (values)</code> asynchronously limited by the given limit", colName);
         out.tab(1).println("public %s findManyBy%s(%s<%s> values, int limit) {", renderFindManyType(pType), colClass, Collection.class, colType);
-        //out.tab(2).println("return findMany(%s, values);", colIdentifier);
         out.tab(2).println("return findManyByCondition(%s.in(values),limit);", colIdentifier);
         out.tab(1).println("}");
     }
