@@ -18,7 +18,7 @@ public class JSONBToJsonArrayConverter implements PgConverter<JsonArray, JSONB, 
 
     @Override
     public JsonArray from(JSONB t) {
-        return t == null || t.data() == null? null : new JsonArray(t.data());
+        return t == null|| t.data().equals("null") ? null : new JsonArray(t.data());
     }
 
     @Override

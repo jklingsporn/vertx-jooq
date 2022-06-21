@@ -18,7 +18,7 @@ public class JSONToJsonObjectConverter implements PgConverter<JsonObject, JSON, 
 
     @Override
     public JsonObject from(JSON t) {
-        return t == null || t.data() == null || t.data().equals("null") ? null : new JsonObject(t.data());
+        return t == null || t.data().equals("null") ? null : new JsonObject(t.data());
     }
 
     @Override

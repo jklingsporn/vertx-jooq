@@ -1,7 +1,6 @@
 package io.github.jklingsporn.vertx.jooq.shared.postgres;
 
 import io.vertx.core.json.Json;
-import io.vertx.core.json.jackson.DatabindCodec;
 import io.vertx.core.spi.json.JsonCodec;
 import org.jooq.Converter;
 import org.jooq.JSONB;
@@ -25,7 +24,7 @@ public class JSONBToJsonPojoConverter<U> implements Converter<JSONB, U> {
 
     @Override
     public U from(JSONB t) {
-        return t == null || t.data() == null ? null : jsonCodec.fromString(t.data(),userType);
+        return t == null || t.data().equals("null")  ? null : jsonCodec.fromString(t.data(),userType);
     }
 
     @Override
