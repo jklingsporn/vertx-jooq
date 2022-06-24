@@ -60,7 +60,7 @@ public class Somethingcomposite extends TableImpl<SomethingcompositeRecord> {
     /**
      * The column <code>vertx.somethingComposite.someJsonObject</code>.
      */
-    public final TableField<SomethingcompositeRecord, JsonObject> SOMEJSONOBJECT = createField(DSL.name("someJsonObject"), SQLDataType.VARCHAR(45), this, "", new JsonObjectConverter());
+    public final TableField<SomethingcompositeRecord, JsonObject> SOMEJSONOBJECT = createField(DSL.name("someJsonObject"), SQLDataType.VARCHAR(512), this, "", new JsonObjectConverter());
 
     private Somethingcomposite(Name alias, Table<SomethingcompositeRecord> aliased) {
         this(alias, aliased, null);

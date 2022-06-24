@@ -104,7 +104,7 @@ public class Something extends TableImpl<SomethingRecord> {
     /**
      * The column <code>vertx.something.someJsonObject</code>.
      */
-    public final TableField<SomethingRecord, JsonObject> SOMEJSONOBJECT = createField(DSL.name("someJsonObject"), SQLDataType.VARCHAR(45), this, "", new JsonObjectConverter());
+    public final TableField<SomethingRecord, JsonObject> SOMEJSONOBJECT = createField(DSL.name("someJsonObject"), SQLDataType.VARCHAR(512), this, "", new JsonObjectConverter());
 
     /**
      * The column <code>vertx.something.someCustomJsonObject</code>.
@@ -114,7 +114,7 @@ public class Something extends TableImpl<SomethingRecord> {
     /**
      * The column <code>vertx.something.someJsonArray</code>.
      */
-    public final TableField<SomethingRecord, JsonArray> SOMEJSONARRAY = createField(DSL.name("someJsonArray"), SQLDataType.VARCHAR(45), this, "", new JsonArrayConverter());
+    public final TableField<SomethingRecord, JsonArray> SOMEJSONARRAY = createField(DSL.name("someJsonArray"), SQLDataType.VARCHAR(512), this, "", new JsonArrayConverter());
 
     /**
      * The column <code>vertx.something.someVertxJsonObject</code>.
@@ -149,7 +149,7 @@ public class Something extends TableImpl<SomethingRecord> {
     /**
      * The column <code>vertx.something.someStringAsList</code>.
      */
-    public final TableField<SomethingRecord, List<String>> SOMESTRINGASLIST = createField(DSL.name("someStringAsList"), SQLDataType.VARCHAR(45), this, "", new CommaSeparatedStringIntoListConverter());
+    public final TableField<SomethingRecord, List<String>> SOMESTRINGASLIST = createField(DSL.name("someStringAsList"), SQLDataType.VARCHAR(512), this, "", new CommaSeparatedStringIntoListConverter());
 
     private Something(Name alias, Table<SomethingRecord> aliased) {
         this(alias, aliased, null);

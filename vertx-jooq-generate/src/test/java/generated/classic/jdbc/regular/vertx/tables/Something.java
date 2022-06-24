@@ -96,12 +96,12 @@ public class Something extends TableImpl<SomethingRecord> {
     /**
      * The column <code>VERTX.SOMETHING.SOMEJSONOBJECT</code>.
      */
-    public final TableField<SomethingRecord, JsonObject> SOMEJSONOBJECT = createField(DSL.name("SOMEJSONOBJECT"), SQLDataType.VARCHAR(45), this, "", new JsonObjectConverter());
+    public final TableField<SomethingRecord, JsonObject> SOMEJSONOBJECT = createField(DSL.name("SOMEJSONOBJECT"), SQLDataType.VARCHAR(512), this, "", new JsonObjectConverter());
 
     /**
      * The column <code>VERTX.SOMETHING.SOMEJSONARRAY</code>.
      */
-    public final TableField<SomethingRecord, JsonArray> SOMEJSONARRAY = createField(DSL.name("SOMEJSONARRAY"), SQLDataType.VARCHAR(45), this, "", new JsonArrayConverter());
+    public final TableField<SomethingRecord, JsonArray> SOMEJSONARRAY = createField(DSL.name("SOMEJSONARRAY"), SQLDataType.VARCHAR(512), this, "", new JsonArrayConverter());
 
     /**
      * The column <code>VERTX.SOMETHING.SOMETIMESTAMP</code>.
