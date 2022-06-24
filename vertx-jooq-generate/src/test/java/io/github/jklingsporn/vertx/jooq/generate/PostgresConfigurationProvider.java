@@ -45,21 +45,21 @@ public class PostgresConfigurationProvider extends AbstractDatabaseConfiguration
                     "  \"someDecimal\" DECIMAL NULL,\n" +
                     "  \"someDouble\" DOUBLE PRECISION NULL,\n" +
                     "  \"someEnum\" \"someEnum\" DEFAULT 'FOO' ,\n" +
-                    "  \"someJsonObject\" VARCHAR(45) NULL,\n" +
+                    "  \"someJsonObject\" VARCHAR(512) NULL,\n" +
                     "  \"someCustomJsonObject\" JSONB NULL,\n" +
-                    "  \"someJsonArray\" VARCHAR(45) NULL,\n" +
+                    "  \"someJsonArray\" VARCHAR(512) NULL,\n" +
                     "  \"someVertxJsonObject\" JSONB NULL,\n" +
                     "  \"someTime\" TIME NULL,\n" +
                     "  \"someDate\" DATE NULL,\n" +
                     "  \"someTimestamp\" TIMESTAMP NULL,\n" +
                     "  \"someTimestampWithTZ\" TIMESTAMP WITH TIME ZONE NULL,\n" +
                     "  \"someByteA\" bytea NULL,\n" +
-                    "  \"someStringAsList\" VARCHAR(45) NULL,\n" +
+                    "  \"someStringAsList\" VARCHAR(512) NULL,\n" +
                     "  PRIMARY KEY (\"someId\"));").execute();
             connection.prepareStatement("CREATE TABLE \"somethingComposite\" (\n" +
                     "  \"someId\" INTEGER NOT NULL,\n" +
                     "  \"someSecondId\" INTEGER NOT NULL,\n" +
-                    "  \"someJsonObject\" VARCHAR(45) NULL,\n" +
+                    "  \"someJsonObject\" VARCHAR(512) NULL,\n" +
                     "  PRIMARY KEY (\"someId\", \"someSecondId\"));\n").execute();
             connection.prepareStatement("CREATE TABLE \"somethingWithoutJson\" (\n" +
                     "  \"someId\" SERIAL,\n" +

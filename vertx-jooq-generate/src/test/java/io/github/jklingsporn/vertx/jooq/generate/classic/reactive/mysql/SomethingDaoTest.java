@@ -42,11 +42,14 @@ public class SomethingDaoTest extends ClassicTestBase<Something, Integer, Long, 
 
     @Override
     protected Something create() {
-        return createWithId().setSomeid(null);
+        return create("create");
     }
 
-    @Override
-    protected Something createWithId() {
+    protected Something create(String method) {
+        return createWithId(method).setSomeid(null);
+    }
+
+    protected Something createWithId(String method) {
         Random random = new Random();
         Something something = new Something();
         something.setSomeid(random.nextInt());
@@ -54,12 +57,17 @@ public class SomethingDaoTest extends ClassicTestBase<Something, Integer, Long, 
         something.setSomeregularnumber(random.nextInt());
         something.setSomehugenumber(random.nextLong());
         something.setSomejsonarray(new JsonArray().add(1).add(2).add(3));
-        something.setSomejsonobject(new JsonObject().put("key", "value"));
+        something.setSomejsonobject(new JsonObject().put("key", method));
         something.setSomesmallnumber((short) random.nextInt(Short.MAX_VALUE));
         something.setSomedecimal(new BigDecimal("1.23E3"));
         something.setSomestring("my_string");
         something.setSometimestamp(LocalDateTime.now());
         return something;
+    }
+
+    @Override
+    protected Something createWithId() {
+        return createWithId("createWithId");
     }
 
     @Override
@@ -98,7 +106,7 @@ public class SomethingDaoTest extends ClassicTestBase<Something, Integer, Long, 
     public void containsShouldSucceed() throws InterruptedException {
         //https://github.com/jklingsporn/vertx-jooq/issues/93
         CountDownLatch latch = new CountDownLatch(1);
-        insertAndReturn(create())
+        insertAndReturn(create("containsShouldSucceed"))
                 .compose(dao::findOneById)
                 .compose(something -> dao.queryExecutor().findManyRow(dslContext -> dslContext.selectFrom(Tables.SOMETHING).where(Tables.SOMETHING.SOMESTRING.containsIgnoreCase(something.getSomestring())))
                         .compose(rows -> {
@@ -119,7 +127,7 @@ public class SomethingDaoTest extends ClassicTestBase<Something, Integer, Long, 
 
     @Test
     public void manualTransactionProcessingShouldSucceed() throws InterruptedException {
-        Something pojo = createWithId();
+        Something pojo = createWithId("manualTransactionProcessingShouldSucceed");
         CountDownLatch completionLatch = new CountDownLatch(1);
         dao.queryExecutor().beginTransaction()
                 .compose(
@@ -175,7 +183,7 @@ public class SomethingDaoTest extends ClassicTestBase<Something, Integer, Long, 
 
     @Test
     public void illegalQueriesShouldRollbackTransaction() throws InterruptedException {
-        Something pojo = createWithId();
+        Something pojo = createWithId("illegalQueriesShouldRollbackTransaction");
         CountDownLatch completionLatch = new CountDownLatch(1);
         dao.queryExecutor().beginTransaction()
                 .compose(
@@ -186,21 +194,19 @@ public class SomethingDaoTest extends ClassicTestBase<Something, Integer, Long, 
                                 //insert again to trigger an exception
                                 v -> transactionQE.execute(
                                         dslContext -> dslContext.insertInto(dao.getTable()).set(dslContext.newRecord(dao.getTable(), pojo))
-                                ).otherwiseEmpty() //we know it failed, just recover from the exception
+                                )
+                                        .map(toVoid(x -> Assert.fail("Expected duplicate entry")))
+                                        .otherwiseEmpty() //we know it failed, just recover from the exception
                         ).compose(v -> dao.findOneById(pojo.getSomeid()))
-                                .map(toVoid(Assert::assertNull)) //not known because transaction was rolled back
-                                .compose(v -> transactionQE.commit()) //should throw error because the transaction was already rolled back
-                                .otherwise(x -> {
-                                    Assert.assertTrue("Wrong exception. Got: " + x.getMessage(), x.getMessage().contains("Rollback"));
-                                    return null;
-                                })
+                        .map(toVoid(Assert::assertNull)) //not known because outside transaction
+                        .compose(v -> transactionQE.rollback())
                 ).onComplete(countdownLatchHandler(completionLatch));
         await(completionLatch);
     }
 
     @Test
     public void rollbackShouldNotExecuteTransactionalQueries() throws InterruptedException {
-        Something pojo = createWithId();
+        Something pojo = createWithId("rollbackShouldNotExecuteTransactionalQueries");
         CountDownLatch completionLatch = new CountDownLatch(1);
         dao.queryExecutor().beginTransaction()
                 .compose(transactionQE -> transactionQE.execute(dslContext -> dslContext.insertInto(dao.getTable()).set(dslContext.newRecord(dao.getTable(), pojo)))
@@ -214,7 +220,7 @@ public class SomethingDaoTest extends ClassicTestBase<Something, Integer, Long, 
 
     @Test
     public void convenientTransactionShouldSucceed() throws InterruptedException {
-        Something pojo = createWithId();
+        Something pojo = createWithId("convenientTransactionShouldSucceed");
         CountDownLatch completionLatch = new CountDownLatch(1);
         dao.queryExecutor().transaction(
                 transactionQE -> transactionQE.execute(
@@ -240,7 +246,7 @@ public class SomethingDaoTest extends ClassicTestBase<Something, Integer, Long, 
 
     @Test
     public void rollbackTransactionsShouldReturnConnectionToPool(){
-        Something pojo = createWithId();
+        Something pojo = createWithId("rollbackTransactionsShouldReturnConnectionToPool");
         CountDownLatch completionLatch = new CountDownLatch(2);
         dao.insert(pojo)
                 .map(toVoid(inserted -> Assert.assertEquals(1, inserted.intValue())))
@@ -264,15 +270,17 @@ public class SomethingDaoTest extends ClassicTestBase<Something, Integer, Long, 
                         }).mapEmpty();
                     }
                     return result;
-                }).onComplete(countdownLatchHandler(completionLatch))
+                })
+                .compose(v -> dao.deleteById(pojo.getSomeid()))
+                .onComplete(countdownLatchHandler(completionLatch))
         ;
         await(completionLatch);
     }
 
     @Test
     public void withCursorShouldSucceed(){
-        Something pojo1 = createWithId();
-        Something pojo2 = createWithId();
+        Something pojo1 = createWithId("withCursorShouldSucceed1");
+        Something pojo2 = createWithId("withCursorShouldSucceed2");
         CountDownLatch completionLatch = new CountDownLatch(1);
         dao
                 .insert(Arrays.asList(pojo1,pojo2))
@@ -281,9 +289,7 @@ public class SomethingDaoTest extends ClassicTestBase<Something, Integer, Long, 
                                 dslContext -> dslContext.selectFrom(generated.classic.reactive.mysql.Tables.SOMETHING),
                                 cursor -> cursor
                                         .read(2)
-                                        .onSuccess(rs -> {
-                                            Assert.assertEquals(2,rs.size());
-                                        })
+                                        .map(toVoid(rs -> Assert.assertEquals(2,rs.size())))
                                         .onFailure(x -> Assert.fail(x.getMessage()))
                         )
                 )
@@ -298,26 +304,24 @@ public class SomethingDaoTest extends ClassicTestBase<Something, Integer, Long, 
         AtomicReference<Cursor> ref = new AtomicReference<>();
         dao.queryExecutor()
                 .withCursor(
-                        dslContext -> dslContext.selectFrom(generated.classic.reactive.mysql.Tables.SOMETHING),
+                        dslContext -> dslContext.selectFrom(Tables.SOMETHING),
                         cursor -> {
                             ref.set(cursor);
                             return cursor
                                     .read(1)
-                                    .onSuccess(rs -> {
-                                        Assert.assertEquals(0,rs.size());
-                                    })
-                                    .onFailure(x -> Assert.fail(x.getMessage()));
+                                    .onFailure(x -> Assert.fail(x.getMessage()))
+                                    .map(toVoid(rs -> Assert.assertEquals(0,rs.size())));
                         }
                 )
-                .onSuccess(h -> Assert.assertTrue(ref.get().isClosed()))
+                .map(toVoid(h -> Assert.assertTrue(ref.get().isClosed())))
                 .onComplete(countdownLatchHandler(completionLatch));
         await(completionLatch);
     }
 
     @Test
     public void withRowStreamShouldSucceed(){
-        Something pojo1 = createWithId();
-        Something pojo2 = createWithId();
+        Something pojo1 = createWithId("withRowStreamShouldSucceed1");
+        Something pojo2 = createWithId("withRowStreamShouldSucceed2");
         CountDownLatch completionLatch = new CountDownLatch(1);
         dao
                 .insert(Arrays.asList(pojo1,pojo2))

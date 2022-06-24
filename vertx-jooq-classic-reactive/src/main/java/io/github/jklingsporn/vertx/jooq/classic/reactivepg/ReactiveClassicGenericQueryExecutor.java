@@ -183,7 +183,12 @@ public class ReactiveClassicGenericQueryExecutor extends AbstractReactiveQueryEx
                         .map(PreparedStatement::cursor)
                         .compose(cursor -> cursorFunction
                             .apply(cursor)
-                            .transform(x -> cursor.close())
+                            .transform(res -> cursor.close().compose(v -> {
+                                if(res.succeeded()){
+                                    return Future.succeededFuture();
+                                }
+                                return Future.failedFuture(res.cause());
+                            }))
                     )
                 ));
     }

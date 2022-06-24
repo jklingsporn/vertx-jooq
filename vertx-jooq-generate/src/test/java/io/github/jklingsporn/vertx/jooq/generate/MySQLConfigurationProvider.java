@@ -36,15 +36,15 @@ public class MySQLConfigurationProvider extends AbstractDatabaseConfigurationPro
                     "  `someDouble` DOUBLE NULL,\n" +
                     "  `someDecimal` DECIMAL(10,2) NULL,\n" +
                     "  `someEnum` ENUM('FOO', 'BAR', 'BAZ') DEFAULT 'FOO' NOT NULL,\n" +
-                    "  `someJsonObject` VARCHAR(45) NULL,\n" +
-                    "  `someJsonArray` VARCHAR(45) NULL,\n" +
+                    "  `someJsonObject` VARCHAR(512) NULL,\n" +
+                    "  `someJsonArray` VARCHAR(512) NULL,\n" +
                     "  `someTimestamp` TIMESTAMP NULL,\n" +
                     "  PRIMARY KEY (`someId`));").execute();
             connection.prepareStatement("DROP TABLE IF EXISTS somethingComposite;").execute();
             connection.prepareStatement("CREATE TABLE `somethingComposite` (\n" +
                     "  `someId` INT NOT NULL,\n" +
                     "  `someSecondId` INT NOT NULL,\n" +
-                    "  `someJsonObject` VARCHAR(45) NULL,\n" +
+                    "  `someJsonObject` VARCHAR(512) NULL,\n" +
                     "  PRIMARY KEY (`someId`, `someSecondId`));\n").execute();
             connection.prepareStatement("DROP TABLE IF EXISTS somethingWithoutJson;").execute();
             connection.prepareStatement("CREATE TABLE `somethingWithoutJson` (\n" +

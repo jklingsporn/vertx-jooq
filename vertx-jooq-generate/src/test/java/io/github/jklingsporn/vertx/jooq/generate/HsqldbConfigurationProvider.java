@@ -49,8 +49,8 @@ public class HsqldbConfigurationProvider extends AbstractDatabaseConfigurationPr
                     "  someDecimal decimal(10,2) ,\n" +
                     "  someBoolean boolean default false not null,\n" +
                     "  someDouble double ,\n" +
-                    "  someJsonObject varchar(45) ,\n" +
-                    "  someJsonArray varchar(45), \n" +
+                    "  someJsonObject varchar(512) ,\n" +
+                    "  someJsonArray varchar(512), \n" +
                     "  someTimestamp timestamp(2) \n" +
                     ");").execute();
             connection.prepareStatement("DROP TABLE IF EXISTS somethingComposite");
@@ -58,7 +58,7 @@ public class HsqldbConfigurationProvider extends AbstractDatabaseConfigurationPr
                     "CREATE TABLE somethingComposite (\n" +
                     "  someId INTEGER,\n" +
                     "  someSecondId INTEGER,\n" +
-                    "  someJsonObject varchar(45), PRIMARY KEY (someId,someSecondId)\n" +
+                    "  someJsonObject varchar(512), PRIMARY KEY (someId,someSecondId)\n" +
                     ");").execute();
         }
     }
