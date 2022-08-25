@@ -7,10 +7,7 @@ import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 import io.vertx.sqlclient.Tuple;
 import io.vertx.sqlclient.impl.ArrayTuple;
-import org.jooq.Configuration;
-import org.jooq.Param;
-import org.jooq.Query;
-import org.jooq.SQLDialect;
+import org.jooq.*;
 import org.jooq.conf.ParamType;
 
 /**
@@ -48,7 +45,10 @@ public abstract class AbstractReactiveQueryExecutor extends AbstractQueryExecuto
             if (param.getValue() == null) {
                 return null;
             }
-            return param.getValue().toString();
+            /*
+             * https://github.com/jklingsporn/vertx-jooq/issues/209
+             */
+            return ((EnumType)param.getValue()).getLiteral();
         }
         if (byte[].class.isAssignableFrom(param.getBinding().converter().fromType())) { // jooq treats BINARY types as byte[] but the reactive client expects a Buffer to write to blobs
             byte[] bytes = (byte[]) param.getBinding().converter().to(param.getValue());

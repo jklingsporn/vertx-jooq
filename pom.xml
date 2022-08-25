@@ -41,7 +41,7 @@
         <mutiny.bingings.version>2.18.0</mutiny.bingings.version>
     </properties>
     <groupId>io.github.jklingsporn</groupId>
-    <version>6.5.4</version>
+    <version>6.5.5</version>
     <artifactId>vertx-jooq</artifactId>
     <name>${project.groupId}:${project.artifactId}</name>
     <description>A jOOQ-CodeGenerator to create vertxified DAOs and POJOs</description>
