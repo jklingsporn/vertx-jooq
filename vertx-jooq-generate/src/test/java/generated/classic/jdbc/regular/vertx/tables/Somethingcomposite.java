@@ -11,12 +11,17 @@ import generated.classic.jdbc.regular.vertx.tables.records.SomethingcompositeRec
 import io.github.jklingsporn.vertx.jooq.shared.JsonObjectConverter;
 import io.vertx.core.json.JsonObject;
 
+import java.util.function.Function;
+
 import org.jooq.Field;
 import org.jooq.ForeignKey;
+import org.jooq.Function3;
 import org.jooq.Name;
 import org.jooq.Record;
+import org.jooq.Records;
 import org.jooq.Row3;
 import org.jooq.Schema;
+import org.jooq.SelectField;
 import org.jooq.Table;
 import org.jooq.TableField;
 import org.jooq.TableOptions;
@@ -115,6 +120,11 @@ public class Somethingcomposite extends TableImpl<SomethingcompositeRecord> {
         return new Somethingcomposite(alias, this);
     }
 
+    @Override
+    public Somethingcomposite as(Table<?> alias) {
+        return new Somethingcomposite(alias.getQualifiedName(), this);
+    }
+
     /**
      * Rename this table
      */
@@ -131,6 +141,14 @@ public class Somethingcomposite extends TableImpl<SomethingcompositeRecord> {
         return new Somethingcomposite(name, null);
     }
 
+    /**
+     * Rename this table
+     */
+    @Override
+    public Somethingcomposite rename(Table<?> name) {
+        return new Somethingcomposite(name.getQualifiedName(), null);
+    }
+
     // -------------------------------------------------------------------------
     // Row3 type methods
     // -------------------------------------------------------------------------
@@ -138,5 +156,20 @@ public class Somethingcomposite extends TableImpl<SomethingcompositeRecord> {
     @Override
     public Row3<Integer, Integer, JsonObject> fieldsRow() {
         return (Row3) super.fieldsRow();
+    }
+
+    /**
+     * Convenience mapping calling {@link SelectField#convertFrom(Function)}.
+     */
+    public <U> SelectField<U> mapping(Function3<? super Integer, ? super Integer, ? super JsonObject, ? extends U> from) {
+        return convertFrom(Records.mapping(from));
+    }
+
+    /**
+     * Convenience mapping calling {@link SelectField#convertFrom(Class,
+     * Function)}.
+     */
+    public <U> SelectField<U> mapping(Class<U> toType, Function3<? super Integer, ? super Integer, ? super JsonObject, ? extends U> from) {
+        return convertFrom(toType, Records.mapping(from));
     }
 }

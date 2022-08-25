@@ -19,7 +19,7 @@ public class Somethingwithoutjson implements VertxPojo, ISomethingwithoutjson {
     private static final long serialVersionUID = 1L;
 
     private Integer someid;
-    private String  somestring;
+    private String somestring;
 
     public Somethingwithoutjson() {}
 
@@ -30,7 +30,7 @@ public class Somethingwithoutjson implements VertxPojo, ISomethingwithoutjson {
 
     public Somethingwithoutjson(
         Integer someid,
-        String  somestring
+        String somestring
     ) {
         this.someid = someid;
         this.somestring = somestring;

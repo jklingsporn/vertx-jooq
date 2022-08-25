@@ -24,17 +24,17 @@ public class Something implements VertxPojo, ISomething {
 
     private static final long serialVersionUID = 1L;
 
-    private Integer           someid;
-    private String            somestring;
-    private Long              somehugenumber;
-    private Short             somesmallnumber;
-    private Integer           someregularnumber;
-    private Double            somedouble;
-    private BigDecimal        somedecimal;
+    private Integer someid;
+    private String somestring;
+    private Long somehugenumber;
+    private Short somesmallnumber;
+    private Integer someregularnumber;
+    private Double somedouble;
+    private BigDecimal somedecimal;
     private SomethingSomeenum someenum;
-    private JsonObject        somejsonobject;
-    private JsonArray         somejsonarray;
-    private LocalDateTime     sometimestamp;
+    private JsonObject somejsonobject;
+    private JsonArray somejsonarray;
+    private LocalDateTime sometimestamp;
 
     public Something() {}
 
@@ -53,17 +53,17 @@ public class Something implements VertxPojo, ISomething {
     }
 
     public Something(
-        Integer           someid,
-        String            somestring,
-        Long              somehugenumber,
-        Short             somesmallnumber,
-        Integer           someregularnumber,
-        Double            somedouble,
-        BigDecimal        somedecimal,
+        Integer someid,
+        String somestring,
+        Long somehugenumber,
+        Short somesmallnumber,
+        Integer someregularnumber,
+        Double somedouble,
+        BigDecimal somedecimal,
         SomethingSomeenum someenum,
-        JsonObject        somejsonobject,
-        JsonArray         somejsonarray,
-        LocalDateTime     sometimestamp
+        JsonObject somejsonobject,
+        JsonArray somejsonarray,
+        LocalDateTime sometimestamp
     ) {
         this.someid = someid;
         this.somestring = somestring;

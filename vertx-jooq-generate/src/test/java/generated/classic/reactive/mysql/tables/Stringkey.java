@@ -8,12 +8,17 @@ import generated.classic.reactive.mysql.Keys;
 import generated.classic.reactive.mysql.Vertx;
 import generated.classic.reactive.mysql.tables.records.StringkeyRecord;
 
+import java.util.function.Function;
+
 import org.jooq.Field;
 import org.jooq.ForeignKey;
+import org.jooq.Function2;
 import org.jooq.Name;
 import org.jooq.Record;
+import org.jooq.Records;
 import org.jooq.Row2;
 import org.jooq.Schema;
+import org.jooq.SelectField;
 import org.jooq.Table;
 import org.jooq.TableField;
 import org.jooq.TableOptions;
@@ -107,6 +112,11 @@ public class Stringkey extends TableImpl<StringkeyRecord> {
         return new Stringkey(alias, this);
     }
 
+    @Override
+    public Stringkey as(Table<?> alias) {
+        return new Stringkey(alias.getQualifiedName(), this);
+    }
+
     /**
      * Rename this table
      */
@@ -123,6 +133,14 @@ public class Stringkey extends TableImpl<StringkeyRecord> {
         return new Stringkey(name, null);
     }
 
+    /**
+     * Rename this table
+     */
+    @Override
+    public Stringkey rename(Table<?> name) {
+        return new Stringkey(name.getQualifiedName(), null);
+    }
+
     // -------------------------------------------------------------------------
     // Row2 type methods
     // -------------------------------------------------------------------------
@@ -130,5 +148,20 @@ public class Stringkey extends TableImpl<StringkeyRecord> {
     @Override
     public Row2<String, Integer> fieldsRow() {
         return (Row2) super.fieldsRow();
+    }
+
+    /**
+     * Convenience mapping calling {@link SelectField#convertFrom(Function)}.
+     */
+    public <U> SelectField<U> mapping(Function2<? super String, ? super Integer, ? extends U> from) {
+        return convertFrom(Records.mapping(from));
+    }
+
+    /**
+     * Convenience mapping calling {@link SelectField#convertFrom(Class,
+     * Function)}.
+     */
+    public <U> SelectField<U> mapping(Class<U> toType, Function2<? super String, ? super Integer, ? extends U> from) {
+        return convertFrom(toType, Records.mapping(from));
     }
 }

@@ -24,13 +24,17 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.function.Function;
 
 import org.jooq.Field;
 import org.jooq.ForeignKey;
+import org.jooq.Function18;
 import org.jooq.Name;
 import org.jooq.Record;
+import org.jooq.Records;
 import org.jooq.Row18;
 import org.jooq.Schema;
+import org.jooq.SelectField;
 import org.jooq.Table;
 import org.jooq.TableField;
 import org.jooq.TableOptions;
@@ -204,6 +208,11 @@ public class Something extends TableImpl<SomethingRecord> {
         return new Something(alias, this);
     }
 
+    @Override
+    public Something as(Table<?> alias) {
+        return new Something(alias.getQualifiedName(), this);
+    }
+
     /**
      * Rename this table
      */
@@ -220,6 +229,14 @@ public class Something extends TableImpl<SomethingRecord> {
         return new Something(name, null);
     }
 
+    /**
+     * Rename this table
+     */
+    @Override
+    public Something rename(Table<?> name) {
+        return new Something(name.getQualifiedName(), null);
+    }
+
     // -------------------------------------------------------------------------
     // Row18 type methods
     // -------------------------------------------------------------------------
@@ -227,5 +244,20 @@ public class Something extends TableImpl<SomethingRecord> {
     @Override
     public Row18<Integer, String, Long, Short, Integer, BigDecimal, Double, Someenum, JsonObject, SomeJsonPojo, JsonArray, JsonObject, LocalTime, LocalDate, LocalDateTime, OffsetDateTime, byte[], List<String>> fieldsRow() {
         return (Row18) super.fieldsRow();
+    }
+
+    /**
+     * Convenience mapping calling {@link SelectField#convertFrom(Function)}.
+     */
+    public <U> SelectField<U> mapping(Function18<? super Integer, ? super String, ? super Long, ? super Short, ? super Integer, ? super BigDecimal, ? super Double, ? super Someenum, ? super JsonObject, ? super SomeJsonPojo, ? super JsonArray, ? super JsonObject, ? super LocalTime, ? super LocalDate, ? super LocalDateTime, ? super OffsetDateTime, ? super byte[], ? super List<String>, ? extends U> from) {
+        return convertFrom(Records.mapping(from));
+    }
+
+    /**
+     * Convenience mapping calling {@link SelectField#convertFrom(Class,
+     * Function)}.
+     */
+    public <U> SelectField<U> mapping(Class<U> toType, Function18<? super Integer, ? super String, ? super Long, ? super Short, ? super Integer, ? super BigDecimal, ? super Double, ? super Someenum, ? super JsonObject, ? super SomeJsonPojo, ? super JsonArray, ? super JsonObject, ? super LocalTime, ? super LocalDate, ? super LocalDateTime, ? super OffsetDateTime, ? super byte[], ? super List<String>, ? extends U> from) {
+        return convertFrom(toType, Records.mapping(from));
     }
 }

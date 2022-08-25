@@ -18,7 +18,7 @@ public class Stringkey implements VertxPojo, IStringkey {
 
     private static final long serialVersionUID = 1L;
 
-    private String  key;
+    private String key;
     private Integer value;
 
     public Stringkey() {}
@@ -29,7 +29,7 @@ public class Stringkey implements VertxPojo, IStringkey {
     }
 
     public Stringkey(
-        String  key,
+        String key,
         Integer value
     ) {
         this.key = key;

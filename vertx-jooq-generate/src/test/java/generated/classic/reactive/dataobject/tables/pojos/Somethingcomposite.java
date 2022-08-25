@@ -20,8 +20,8 @@ public class Somethingcomposite implements VertxPojo, ISomethingcomposite {
 
     private static final long serialVersionUID = 1L;
 
-    private Integer    someid;
-    private Integer    somesecondid;
+    private Integer someid;
+    private Integer somesecondid;
     private JsonObject somejsonobject;
 
     public Somethingcomposite() {}
@@ -33,8 +33,8 @@ public class Somethingcomposite implements VertxPojo, ISomethingcomposite {
     }
 
     public Somethingcomposite(
-        Integer    someid,
-        Integer    somesecondid,
+        Integer someid,
+        Integer somesecondid,
         JsonObject somejsonobject
     ) {
         this.someid = someid;

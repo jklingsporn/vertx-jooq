@@ -30,24 +30,24 @@ public class Something implements VertxPojo, ISomething {
 
     private static final long serialVersionUID = 1L;
 
-    private Integer        someid;
-    private String         somestring;
-    private Long           somehugenumber;
-    private Short          somesmallnumber;
-    private Integer        someregularnumber;
-    private BigDecimal     somedecimal;
-    private Double         somedouble;
-    private Someenum       someenum;
-    private JsonObject     somejsonobject;
-    private SomeJsonPojo   somecustomjsonobject;
-    private JsonArray      somejsonarray;
-    private JsonObject     somevertxjsonobject;
-    private LocalTime      sometime;
-    private LocalDate      somedate;
-    private LocalDateTime  sometimestamp;
+    private Integer someid;
+    private String somestring;
+    private Long somehugenumber;
+    private Short somesmallnumber;
+    private Integer someregularnumber;
+    private BigDecimal somedecimal;
+    private Double somedouble;
+    private Someenum someenum;
+    private JsonObject somejsonobject;
+    private SomeJsonPojo somecustomjsonobject;
+    private JsonArray somejsonarray;
+    private JsonObject somevertxjsonobject;
+    private LocalTime sometime;
+    private LocalDate somedate;
+    private LocalDateTime sometimestamp;
     private OffsetDateTime sometimestampwithtz;
-    private byte[]         somebytea;
-    private List<String>   somestringaslist;
+    private byte[] somebytea;
+    private List<String> somestringaslist;
 
     public Something() {}
 
@@ -73,24 +73,24 @@ public class Something implements VertxPojo, ISomething {
     }
 
     public Something(
-        Integer        someid,
-        String         somestring,
-        Long           somehugenumber,
-        Short          somesmallnumber,
-        Integer        someregularnumber,
-        BigDecimal     somedecimal,
-        Double         somedouble,
-        Someenum       someenum,
-        JsonObject     somejsonobject,
-        SomeJsonPojo   somecustomjsonobject,
-        JsonArray      somejsonarray,
-        JsonObject     somevertxjsonobject,
-        LocalTime      sometime,
-        LocalDate      somedate,
-        LocalDateTime  sometimestamp,
+        Integer someid,
+        String somestring,
+        Long somehugenumber,
+        Short somesmallnumber,
+        Integer someregularnumber,
+        BigDecimal somedecimal,
+        Double somedouble,
+        Someenum someenum,
+        JsonObject somejsonobject,
+        SomeJsonPojo somecustomjsonobject,
+        JsonArray somejsonarray,
+        JsonObject somevertxjsonobject,
+        LocalTime sometime,
+        LocalDate somedate,
+        LocalDateTime sometimestamp,
         OffsetDateTime sometimestampwithtz,
-        byte[]         somebytea,
-        List<String>   somestringaslist
+        byte[] somebytea,
+        List<String> somestringaslist
     ) {
         this.someid = someid;
         this.somestring = somestring;

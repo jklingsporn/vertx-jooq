@@ -15,14 +15,18 @@ import io.vertx.core.json.JsonObject;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.function.Function;
 
 import org.jooq.Field;
 import org.jooq.ForeignKey;
+import org.jooq.Function11;
 import org.jooq.Identity;
 import org.jooq.Name;
 import org.jooq.Record;
+import org.jooq.Records;
 import org.jooq.Row11;
 import org.jooq.Schema;
+import org.jooq.SelectField;
 import org.jooq.Table;
 import org.jooq.TableField;
 import org.jooq.TableOptions;
@@ -166,6 +170,11 @@ public class Something extends TableImpl<SomethingRecord> {
         return new Something(alias, this);
     }
 
+    @Override
+    public Something as(Table<?> alias) {
+        return new Something(alias.getQualifiedName(), this);
+    }
+
     /**
      * Rename this table
      */
@@ -182,6 +191,14 @@ public class Something extends TableImpl<SomethingRecord> {
         return new Something(name, null);
     }
 
+    /**
+     * Rename this table
+     */
+    @Override
+    public Something rename(Table<?> name) {
+        return new Something(name.getQualifiedName(), null);
+    }
+
     // -------------------------------------------------------------------------
     // Row11 type methods
     // -------------------------------------------------------------------------
@@ -189,5 +206,20 @@ public class Something extends TableImpl<SomethingRecord> {
     @Override
     public Row11<Integer, String, Long, Short, Integer, BigDecimal, Boolean, Double, JsonObject, JsonArray, LocalDateTime> fieldsRow() {
         return (Row11) super.fieldsRow();
+    }
+
+    /**
+     * Convenience mapping calling {@link SelectField#convertFrom(Function)}.
+     */
+    public <U> SelectField<U> mapping(Function11<? super Integer, ? super String, ? super Long, ? super Short, ? super Integer, ? super BigDecimal, ? super Boolean, ? super Double, ? super JsonObject, ? super JsonArray, ? super LocalDateTime, ? extends U> from) {
+        return convertFrom(Records.mapping(from));
+    }
+
+    /**
+     * Convenience mapping calling {@link SelectField#convertFrom(Class,
+     * Function)}.
+     */
+    public <U> SelectField<U> mapping(Class<U> toType, Function11<? super Integer, ? super String, ? super Long, ? super Short, ? super Integer, ? super BigDecimal, ? super Boolean, ? super Double, ? super JsonObject, ? super JsonArray, ? super LocalDateTime, ? extends U> from) {
+        return convertFrom(toType, Records.mapping(from));
     }
 }
