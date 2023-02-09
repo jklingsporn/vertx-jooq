@@ -12,11 +12,13 @@ import generated.rx.reactive.regular.tables.records.SomethingRecord;
 import io.github.jklingsporn.vertx.jooq.generate.converter.CommaSeparatedStringIntoListConverter;
 import io.github.jklingsporn.vertx.jooq.generate.converter.SomeJsonPojo;
 import io.github.jklingsporn.vertx.jooq.generate.converter.SomeJsonPojoConverter;
+import io.github.jklingsporn.vertx.jooq.generate.converter.YearToSecondIntervalConverter;
 import io.github.jklingsporn.vertx.jooq.shared.JsonArrayConverter;
 import io.github.jklingsporn.vertx.jooq.shared.JsonObjectConverter;
 import io.github.jklingsporn.vertx.jooq.shared.postgres.JSONBToJsonObjectConverter;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+import io.vertx.pgclient.data.Interval;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -28,11 +30,11 @@ import java.util.function.Function;
 
 import org.jooq.Field;
 import org.jooq.ForeignKey;
-import org.jooq.Function18;
+import org.jooq.Function19;
 import org.jooq.Name;
 import org.jooq.Record;
 import org.jooq.Records;
-import org.jooq.Row18;
+import org.jooq.Row19;
 import org.jooq.Schema;
 import org.jooq.SelectField;
 import org.jooq.Table;
@@ -146,6 +148,11 @@ public class Something extends TableImpl<SomethingRecord> {
     public final TableField<SomethingRecord, OffsetDateTime> SOMETIMESTAMPWITHTZ = createField(DSL.name("someTimestampWithTZ"), SQLDataType.TIMESTAMPWITHTIMEZONE(6), this, "");
 
     /**
+     * The column <code>vertx.something.someInterval</code>.
+     */
+    public final TableField<SomethingRecord, Interval> SOMEINTERVAL = createField(DSL.name("someInterval"), SQLDataType.INTERVAL, this, "", new YearToSecondIntervalConverter());
+
+    /**
      * The column <code>vertx.something.someByteA</code>.
      */
     public final TableField<SomethingRecord, byte[]> SOMEBYTEA = createField(DSL.name("someByteA"), SQLDataType.BLOB, this, "");
@@ -238,18 +245,18 @@ public class Something extends TableImpl<SomethingRecord> {
     }
 
     // -------------------------------------------------------------------------
-    // Row18 type methods
+    // Row19 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row18<Integer, String, Long, Short, Integer, BigDecimal, Double, Someenum, JsonObject, SomeJsonPojo, JsonArray, JsonObject, LocalTime, LocalDate, LocalDateTime, OffsetDateTime, byte[], List<String>> fieldsRow() {
-        return (Row18) super.fieldsRow();
+    public Row19<Integer, String, Long, Short, Integer, BigDecimal, Double, Someenum, JsonObject, SomeJsonPojo, JsonArray, JsonObject, LocalTime, LocalDate, LocalDateTime, OffsetDateTime, Interval, byte[], List<String>> fieldsRow() {
+        return (Row19) super.fieldsRow();
     }
 
     /**
      * Convenience mapping calling {@link SelectField#convertFrom(Function)}.
      */
-    public <U> SelectField<U> mapping(Function18<? super Integer, ? super String, ? super Long, ? super Short, ? super Integer, ? super BigDecimal, ? super Double, ? super Someenum, ? super JsonObject, ? super SomeJsonPojo, ? super JsonArray, ? super JsonObject, ? super LocalTime, ? super LocalDate, ? super LocalDateTime, ? super OffsetDateTime, ? super byte[], ? super List<String>, ? extends U> from) {
+    public <U> SelectField<U> mapping(Function19<? super Integer, ? super String, ? super Long, ? super Short, ? super Integer, ? super BigDecimal, ? super Double, ? super Someenum, ? super JsonObject, ? super SomeJsonPojo, ? super JsonArray, ? super JsonObject, ? super LocalTime, ? super LocalDate, ? super LocalDateTime, ? super OffsetDateTime, ? super Interval, ? super byte[], ? super List<String>, ? extends U> from) {
         return convertFrom(Records.mapping(from));
     }
 
@@ -257,7 +264,7 @@ public class Something extends TableImpl<SomethingRecord> {
      * Convenience mapping calling {@link SelectField#convertFrom(Class,
      * Function)}.
      */
-    public <U> SelectField<U> mapping(Class<U> toType, Function18<? super Integer, ? super String, ? super Long, ? super Short, ? super Integer, ? super BigDecimal, ? super Double, ? super Someenum, ? super JsonObject, ? super SomeJsonPojo, ? super JsonArray, ? super JsonObject, ? super LocalTime, ? super LocalDate, ? super LocalDateTime, ? super OffsetDateTime, ? super byte[], ? super List<String>, ? extends U> from) {
+    public <U> SelectField<U> mapping(Class<U> toType, Function19<? super Integer, ? super String, ? super Long, ? super Short, ? super Integer, ? super BigDecimal, ? super Double, ? super Someenum, ? super JsonObject, ? super SomeJsonPojo, ? super JsonArray, ? super JsonObject, ? super LocalTime, ? super LocalDate, ? super LocalDateTime, ? super OffsetDateTime, ? super Interval, ? super byte[], ? super List<String>, ? extends U> from) {
         return convertFrom(toType, Records.mapping(from));
     }
 }

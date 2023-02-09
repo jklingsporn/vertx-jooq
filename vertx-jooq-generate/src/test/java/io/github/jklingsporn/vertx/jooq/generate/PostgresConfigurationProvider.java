@@ -3,6 +3,7 @@ package io.github.jklingsporn.vertx.jooq.generate;
 import io.github.jklingsporn.vertx.jooq.generate.converter.CommaSeparatedStringIntoListConverter;
 import io.github.jklingsporn.vertx.jooq.generate.converter.SomeJsonPojo;
 import io.github.jklingsporn.vertx.jooq.generate.converter.SomeJsonPojoConverter;
+import io.github.jklingsporn.vertx.jooq.generate.converter.YearToSecondIntervalConverter;
 import io.github.jklingsporn.vertx.jooq.shared.postgres.JSONBToJsonObjectConverter;
 import io.vertx.core.json.JsonObject;
 import org.jooq.SQLDialect;
@@ -53,6 +54,7 @@ public class PostgresConfigurationProvider extends AbstractDatabaseConfiguration
                     "  \"someDate\" DATE NULL,\n" +
                     "  \"someTimestamp\" TIMESTAMP NULL,\n" +
                     "  \"someTimestampWithTZ\" TIMESTAMP WITH TIME ZONE NULL,\n" +
+                    "  \"someInterval\" INTERVAL NULL,\n" +
                     "  \"someByteA\" bytea NULL,\n" +
                     "  \"someStringAsList\" VARCHAR(512) NULL,\n" +
                     "  PRIMARY KEY (\"someId\"));").execute();
@@ -96,10 +98,17 @@ public class PostgresConfigurationProvider extends AbstractDatabaseConfiguration
         stringToCSListMapping.setIncludeExpression("someStringAsList");
         stringToCSListMapping.setIncludeTypes(".*");
 
+        ForcedType yearToSecondIntervalMapping = new ForcedType();
+        yearToSecondIntervalMapping.setUserType("io.vertx.pgclient.data.Interval");
+        yearToSecondIntervalMapping.setConverter(YearToSecondIntervalConverter.class.getName());
+        yearToSecondIntervalMapping.setIncludeExpression("someInterval");
+        yearToSecondIntervalMapping.setIncludeTypes(".*");
+
         List<ForcedType> forcedTypes = new ArrayList<>(generatorConfig.getGenerator().getDatabase().getForcedTypes());
         forcedTypes.add(customJsonMapping);
         forcedTypes.add(jsonbToJsonObjectMapping);
         forcedTypes.add(stringToCSListMapping);
+        forcedTypes.add(yearToSecondIntervalMapping);
         generatorConfig.getGenerator().getDatabase().setForcedTypes(forcedTypes);
         return generatorConfig;
     }

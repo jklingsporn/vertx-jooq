@@ -12,6 +12,7 @@ import io.github.jklingsporn.vertx.jooq.generate.converter.SomeJsonPojo;
 import io.github.jklingsporn.vertx.jooq.shared.reactive.AbstractReactiveVertxDAO;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+import io.vertx.pgclient.data.Interval;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -281,6 +282,22 @@ public class SomethingDao extends AbstractReactiveVertxDAO<SomethingRecord, gene
      */
         public Single<List<generated.rx.reactive.regular.tables.pojos.Something>> findManyBySometimestampwithtz(Collection<OffsetDateTime> values, int limit) {
                 return findManyByCondition(Something.SOMETHING.SOMETIMESTAMPWITHTZ.in(values),limit);
+        }
+
+        /**
+     * Find records that have <code>someInterval IN (values)</code>
+     * asynchronously
+     */
+        public Single<List<generated.rx.reactive.regular.tables.pojos.Something>> findManyBySomeinterval(Collection<Interval> values) {
+                return findManyByCondition(Something.SOMETHING.SOMEINTERVAL.in(values));
+        }
+
+        /**
+     * Find records that have <code>someInterval IN (values)</code>
+     * asynchronously limited by the given limit
+     */
+        public Single<List<generated.rx.reactive.regular.tables.pojos.Something>> findManyBySomeinterval(Collection<Interval> values, int limit) {
+                return findManyByCondition(Something.SOMETHING.SOMEINTERVAL.in(values),limit);
         }
 
         /**

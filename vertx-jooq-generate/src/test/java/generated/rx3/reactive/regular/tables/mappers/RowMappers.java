@@ -28,6 +28,7 @@ public class RowMappers {
                         pojo.setSomedate(row.getLocalDate("someDate"));
                         pojo.setSometimestamp(row.getLocalDateTime("someTimestamp"));
                         pojo.setSometimestampwithtz(row.getOffsetDateTime("someTimestampWithTZ"));
+                        pojo.setSomeinterval(generated.rx3.reactive.regular.tables.converters.Converters.IO_GITHUB_JKLINGSPORN_VERTX_JOOQ_GENERATE_CONVERTER_YEARTOSECONDINTERVALCONVERTER_INSTANCE.rowConverter().fromRow(key->row.get(generated.rx3.reactive.regular.tables.converters.Converters.IO_GITHUB_JKLINGSPORN_VERTX_JOOQ_GENERATE_CONVERTER_YEARTOSECONDINTERVALCONVERTER_INSTANCE.rowConverter().fromType(),key),"someInterval"));
                         io.vertx.core.buffer.Buffer someByteABuffer = row.getBuffer("someByteA");
                         pojo.setSomebytea(someByteABuffer == null?null:someByteABuffer.getBytes());
                         pojo.setSomestringaslist(generated.rx3.reactive.regular.tables.converters.Converters.IO_GITHUB_JKLINGSPORN_VERTX_JOOQ_GENERATE_CONVERTER_COMMASEPARATEDSTRINGINTOLISTCONVERTER_INSTANCE.rowConverter().fromRow(key->row.get(generated.rx3.reactive.regular.tables.converters.Converters.IO_GITHUB_JKLINGSPORN_VERTX_JOOQ_GENERATE_CONVERTER_COMMASEPARATEDSTRINGINTOLISTCONVERTER_INSTANCE.rowConverter().fromType(),key),"someStringAsList"));

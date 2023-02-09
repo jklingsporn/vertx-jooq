@@ -9,6 +9,7 @@ import io.github.jklingsporn.vertx.jooq.generate.PostgresConfigurationProvider;
 import io.github.jklingsporn.vertx.jooq.generate.ReactiveDatabaseClientProvider;
 import io.github.jklingsporn.vertx.jooq.generate.classic.ClassicTestBase;
 import io.github.jklingsporn.vertx.jooq.generate.converter.SomeJsonPojo;
+import io.github.jklingsporn.vertx.jooq.generate.converter.YearToSecondIntervalConverter;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import io.vertx.core.json.JsonArray;
@@ -16,15 +17,14 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.pgclient.PgException;
 import io.vertx.sqlclient.Cursor;
 import org.jooq.Condition;
+import org.jooq.types.YearToSecond;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.OffsetDateTime;
+import java.time.*;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.concurrent.CountDownLatch;
@@ -68,6 +68,7 @@ public class SomethingDaoTest extends ClassicTestBase<Something, Integer, Long, 
         something.setSometime(LocalTime.now());
         something.setSomedate(LocalDate.now());
         something.setSometimestampwithtz(OffsetDateTime.now());
+        something.setSomeinterval(new YearToSecondIntervalConverter().from(YearToSecond.valueOf(Duration.ofMillis(random.nextLong()))));
         something.setSomebytea("foo".getBytes());
         something.setSomedecimal(new BigDecimal("1.23E3"));
         return something;
@@ -349,6 +350,23 @@ public class SomethingDaoTest extends ClassicTestBase<Something, Integer, Long, 
                         )
                 )
                 .compose(v -> dao.deleteByIds(Arrays.asList(pojo1.getSomeid(),pojo2.getSomeid())))
+                .onComplete(countdownLatchHandler(completionLatch));
+        await(completionLatch);
+    }
+
+    @Test
+    @Ignore
+    public void intervalShouldBeInserted(){
+        //covers https://github.com/jklingsporn/vertx-jooq/issues/220
+        Something pojo1 = createWithId();
+        CountDownLatch completionLatch = new CountDownLatch(1);
+        dao
+                .insertReturningPrimary(pojo1)
+                .compose(dao::findOneById)
+                .compose(s -> {
+                    Assert.assertNotNull(s.getSomeinterval());
+                    return Future.succeededFuture();
+                })
                 .onComplete(countdownLatchHandler(completionLatch));
         await(completionLatch);
     }

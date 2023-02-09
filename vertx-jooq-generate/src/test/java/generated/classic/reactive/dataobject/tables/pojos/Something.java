@@ -11,6 +11,7 @@ import io.github.jklingsporn.vertx.jooq.generate.converter.SomeJsonPojo;
 import io.github.jklingsporn.vertx.jooq.shared.internal.VertxPojo;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+import io.vertx.pgclient.data.Interval;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -47,6 +48,7 @@ public class Something implements VertxPojo, ISomething {
     private LocalDate somedate;
     private LocalDateTime sometimestamp;
     private OffsetDateTime sometimestampwithtz;
+    private Interval someinterval;
     private byte[] somebytea;
     private List<String> somestringaslist;
 
@@ -69,6 +71,7 @@ public class Something implements VertxPojo, ISomething {
         this.somedate = value.getSomedate();
         this.sometimestamp = value.getSometimestamp();
         this.sometimestampwithtz = value.getSometimestampwithtz();
+        this.someinterval = value.getSomeinterval();
         this.somebytea = value.getSomebytea();
         this.somestringaslist = value.getSomestringaslist();
     }
@@ -90,6 +93,7 @@ public class Something implements VertxPojo, ISomething {
         LocalDate somedate,
         LocalDateTime sometimestamp,
         OffsetDateTime sometimestampwithtz,
+        Interval someinterval,
         byte[] somebytea,
         List<String> somestringaslist
     ) {
@@ -109,6 +113,7 @@ public class Something implements VertxPojo, ISomething {
         this.somedate = somedate;
         this.sometimestamp = sometimestamp;
         this.sometimestampwithtz = sometimestampwithtz;
+        this.someinterval = someinterval;
         this.somebytea = somebytea;
         this.somestringaslist = somestringaslist;
     }
@@ -391,6 +396,23 @@ public class Something implements VertxPojo, ISomething {
     }
 
     /**
+     * Getter for <code>vertx.something.someInterval</code>.
+     */
+    @Override
+    public Interval getSomeinterval() {
+        return this.someinterval;
+    }
+
+    /**
+     * Setter for <code>vertx.something.someInterval</code>.
+     */
+    @Override
+    public Something setSomeinterval(Interval someinterval) {
+        this.someinterval = someinterval;
+        return this;
+    }
+
+    /**
      * Getter for <code>vertx.something.someByteA</code>.
      */
     @Override
@@ -529,6 +551,12 @@ public class Something implements VertxPojo, ISomething {
         }
         else if (!this.sometimestampwithtz.equals(other.sometimestampwithtz))
             return false;
+        if (this.someinterval == null) {
+            if (other.someinterval != null)
+                return false;
+        }
+        else if (!this.someinterval.equals(other.someinterval))
+            return false;
         if (this.somebytea == null) {
             if (other.somebytea != null)
                 return false;
@@ -564,6 +592,7 @@ public class Something implements VertxPojo, ISomething {
         result = prime * result + ((this.somedate == null) ? 0 : this.somedate.hashCode());
         result = prime * result + ((this.sometimestamp == null) ? 0 : this.sometimestamp.hashCode());
         result = prime * result + ((this.sometimestampwithtz == null) ? 0 : this.sometimestampwithtz.hashCode());
+        result = prime * result + ((this.someinterval == null) ? 0 : this.someinterval.hashCode());
         result = prime * result + ((this.somebytea == null) ? 0 : Arrays.hashCode(this.somebytea));
         result = prime * result + ((this.somestringaslist == null) ? 0 : this.somestringaslist.hashCode());
         return result;
@@ -589,6 +618,7 @@ public class Something implements VertxPojo, ISomething {
         sb.append(", ").append(somedate);
         sb.append(", ").append(sometimestamp);
         sb.append(", ").append(sometimestampwithtz);
+        sb.append(", ").append(someinterval);
         sb.append(", ").append("[binary...]");
         sb.append(", ").append(somestringaslist);
 
@@ -618,6 +648,7 @@ public class Something implements VertxPojo, ISomething {
         setSomedate(from.getSomedate());
         setSometimestamp(from.getSometimestamp());
         setSometimestampwithtz(from.getSometimestampwithtz());
+        setSomeinterval(from.getSomeinterval());
         setSomebytea(from.getSomebytea());
         setSomestringaslist(from.getSomestringaslist());
     }

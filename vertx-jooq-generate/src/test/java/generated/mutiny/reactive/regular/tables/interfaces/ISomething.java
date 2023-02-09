@@ -10,6 +10,7 @@ import io.github.jklingsporn.vertx.jooq.generate.converter.SomeJsonPojo;
 import io.github.jklingsporn.vertx.jooq.shared.internal.VertxPojo;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+import io.vertx.pgclient.data.Interval;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -188,6 +189,16 @@ public interface ISomething extends VertxPojo, Serializable {
     public OffsetDateTime getSometimestampwithtz();
 
     /**
+     * Setter for <code>vertx.something.someInterval</code>.
+     */
+    public ISomething setSomeinterval(Interval value);
+
+    /**
+     * Getter for <code>vertx.something.someInterval</code>.
+     */
+    public Interval getSomeinterval();
+
+    /**
      * Setter for <code>vertx.something.someByteA</code>.
      */
     public ISomething setSomebytea(byte[] value);
@@ -241,6 +252,7 @@ public interface ISomething extends VertxPojo, Serializable {
                 setOrThrow(this::setSomedate,key -> {String s = json.getString(key); return s==null?null:java.time.LocalDate.parse(s);},"someDate","java.time.LocalDate");
                 setOrThrow(this::setSometimestamp,key -> {String s = json.getString(key); return s==null?null:java.time.LocalDateTime.parse(s);},"someTimestamp","java.time.LocalDateTime");
                 setOrThrow(this::setSometimestampwithtz,key -> {String s = json.getString(key); return s==null?null:java.time.OffsetDateTime.parse(s);},"someTimestampWithTZ","java.time.OffsetDateTime");
+                // Omitting unrecognized type io.vertx.pgclient.data.Interval for column someInterval!
                 setOrThrow(this::setSomebytea,json::getBinary,"someByteA","byte[]");
                 setOrThrow(this::setSomestringaslist,key -> {io.vertx.core.json.JsonArray arr = json.getJsonArray(key); return arr==null?null:new java.util.ArrayList<String>(arr.getList());},"someStringAsList","java.util.List<String>");
                 return this;
@@ -266,6 +278,7 @@ public interface ISomething extends VertxPojo, Serializable {
                 json.put("someDate",getSomedate()==null?null:getSomedate().toString());
                 json.put("someTimestamp",getSometimestamp()==null?null:getSometimestamp().toString());
                 json.put("someTimestampWithTZ",getSometimestampwithtz()==null?null:getSometimestampwithtz().toString());
+                // Omitting unrecognized type io.vertx.pgclient.data.Interval for column someInterval!
                 json.put("someByteA",getSomebytea());
                 json.put("someStringAsList",getSomestringaslist()==null?null: new io.vertx.core.json.JsonArray(getSomestringaslist()));
                 return json;

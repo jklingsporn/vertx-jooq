@@ -9,6 +9,9 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <packaging>jar</packaging>
+    <properties>
+        <jaxb-api.version>2.3.1</jaxb-api.version>
+    </properties>
     <artifactId>vertx-jooq-generate</artifactId>
 
     <dependencies>
@@ -89,5 +92,18 @@
             <version>${vertx.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
+            <version>4.0.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-impl</artifactId>
+            <version>4.0.2</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 </project>
