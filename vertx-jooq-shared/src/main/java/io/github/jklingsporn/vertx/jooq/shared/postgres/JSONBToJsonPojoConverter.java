@@ -2,13 +2,16 @@ package io.github.jklingsporn.vertx.jooq.shared.postgres;
 
 import io.vertx.core.json.Json;
 import io.vertx.core.spi.json.JsonCodec;
+
+import org.jooq.ContextConverter;
 import org.jooq.Converter;
+import org.jooq.ConverterContext;
 import org.jooq.JSONB;
 
 /**
  * @author jensklingsporn
  */
-public class JSONBToJsonPojoConverter<U> implements Converter<JSONB, U> {
+public class JSONBToJsonPojoConverter<U> implements ContextConverter<JSONB, U> {
 
     private final Class<U> userType;
     private final JsonCodec jsonCodec;
@@ -23,12 +26,12 @@ public class JSONBToJsonPojoConverter<U> implements Converter<JSONB, U> {
     }
 
     @Override
-    public U from(JSONB t) {
+    public U from(JSONB t, ConverterContext converterContext) {
         return t == null || t.data().equals("null")  ? null : jsonCodec.fromString(t.data(),userType);
     }
 
     @Override
-    public JSONB to(U u) {
+    public JSONB to(U u, ConverterContext converterContext) {
         return u == null ? null : JSONB.valueOf(jsonCodec.toString(u));
     }
 

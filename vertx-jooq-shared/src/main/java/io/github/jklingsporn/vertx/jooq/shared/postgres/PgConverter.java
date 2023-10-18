@@ -1,5 +1,6 @@
 package io.github.jklingsporn.vertx.jooq.shared.postgres;
 
+import org.jooq.ContextConverter;
 import org.jooq.Converter;
 
 /**
@@ -11,7 +12,7 @@ import org.jooq.Converter;
  * @param <T> the jooq data type, e.g. <code>org.jooq.JSONB</code>
  * @param <U> the user-type
  */
-public interface PgConverter<P,T,U> extends Converter<T,U> {
+public interface PgConverter<P,T,U> extends ContextConverter<T,U> {
 
     /**
      * @return convert from the PGClient-type to the user-type

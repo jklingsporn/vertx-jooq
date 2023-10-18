@@ -2,6 +2,7 @@ package io.github.jklingsporn.vertx.jooq.shared.postgres;
 
 import io.vertx.core.json.JsonObject;
 import org.jooq.Converter;
+import org.jooq.ConverterContext;
 import org.jooq.JSONB;
 
 /**
@@ -17,12 +18,12 @@ public class JSONBToJsonObjectConverter implements PgConverter<JsonObject,JSONB,
     }
 
     @Override
-    public JsonObject from(JSONB t) {
+    public JsonObject from(JSONB t, ConverterContext converterContext) {
         return t == null || t.data().equals("null")  ? null : new JsonObject(t.data());
     }
 
     @Override
-    public JSONB to(JsonObject u) {
+    public JSONB to(JsonObject u, ConverterContext converterContext) {
         return u == null ? null : JSONB.valueOf(u.encode());
     }
 
