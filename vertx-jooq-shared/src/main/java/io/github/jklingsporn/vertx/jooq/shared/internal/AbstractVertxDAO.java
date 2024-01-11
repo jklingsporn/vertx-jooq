@@ -60,7 +60,7 @@ public abstract class AbstractVertxDAO<R extends UpdatableRecord<R>, P, T, FIND_
                 where = where.and(((TableField<R,Object>)tableField).eq(rec.get(tableField)));
             }
             Map<String, Object> valuesToUpdate =
-                    Arrays.stream(rec.fields())
+                    Arrays.stream(rec.fields()).filter(f -> rec.changed(f))
                             .collect(HashMap::new, (m, f) -> m.put(f.getName(), f.getValue(rec)), HashMap::putAll);
             return dslContext
                     .update(getTable())
